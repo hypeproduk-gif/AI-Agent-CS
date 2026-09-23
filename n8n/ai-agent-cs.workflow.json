@@ -1,0 +1,436 @@
+{
+  "name": "AI Agent CS v2",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "f8a25d64-d657-498a-a177-71a844693f42",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "name": "Webhook",
+      "webhookId": "f8a25d64-d657-498a-a177-71a844693f42",
+      "id": "aics-01"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "not-from-me",
+              "leftValue": "={{ $json.body.isFromMe }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "not-group",
+              "leftValue": "={{ $json.body.isGroup }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        0
+      ],
+      "name": "Hanya Chat Lead",
+      "id": "aics-02"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "qZYFr5OtcUD8F8Co",
+          "mode": "list",
+          "cachedResultName": "leads_context",
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/qZYFr5OtcUD8F8Co"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone",
+              "keyValue": "={{ $json.body.phone }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        440,
+        0
+      ],
+      "name": "Get row(s)",
+      "alwaysOutputData": true,
+      "id": "aics-03"
+    },
+    {
+      "parameters": {
+        "jsCode": "// System prompt per produk. Aturan gaya dan handoff dipakai bersama semua produk.\n\nconst STYLE_RULES =\n  \"CARA GIRING KE PRODUK: Jangan langsung kasih semua fitur/manfaat sekaligus. Kalau lead nanya 'apa aja' atau 'gimana caranya', kasih SATU insight/benefit paling menarik dulu (1-2 kalimat), lalu pancing dengan pertanyaan balik atau tawaran ('mau tau lebih detail?'). List/breakdown lengkap HANYA kalau lead eksplisit minta rincian atau sudah menunjukkan minat serius. \" +\n  \"HARD LIMIT: setiap balasan maksimal 2-3 kalimat singkat, TIDAK BOLEH pakai numbered/bullet list kecuali lead sudah minta rincian spesifik. \" +\n  \"FORMAT TEKS: Untuk bold, gunakan SATU tanda bintang di kedua sisi seperti *ini* (format WhatsApp), BUKAN dua tanda bintang **ini**.\";\n\nconst HANDOFF_RULE =\n  \"HANDOFF: Kalau pertanyaan harus dijawab tim CS manusia (kondisi medis/alergi spesifik, komplain, nego harga di luar daftar, atau di luar scope produk), balas singkat bahwa tim CS akan segera membantu, lalu akhiri balasan dengan token [HANDOFF] persis seperti itu. Jangan pakai token itu untuk hal lain.\";\n\nconst PRODUCTS = {\n  SalGlow:\n    \"Kamu adalah CS SalGlow yang membantu calon pembeli dari chat awal sampai closing. PRODUK: Salep Glowing FILO, netto 5gram, pakai malam hari (wajib sunscreen paginya). Manfaat: memudarkan flek & bekas jerawat, melembabkan, efek glowing, anti-aging. Progres: terlihat sejak 7 hari, hasil signifikan 2-3 minggu. HARGA: Beli 1 Gratis 1 = Rp139.000, Beli 2 Gratis 2 = Rp219.000. Promo: gratis sunscreen + eyeliner untuk pembelian hari ini. TONE: Empatik, dekat, tidak overclaim. Jawab keberatan dengan reframe positif.\",\n  KarierKit:\n    \"Kamu adalah CS KarierKit yang membantu calon pembeli dari chat awal sampai closing. PRODUK: CV ATS Builder Rp79.000, dengan order bump Surat/Email Lamaran Rp20.000. TONE: Profesional tapi approachable.\",\n  KitJelangNikah:\n    \"Kamu adalah CS KitJelangNikah yang membantu calon pembeli dari chat awal sampai closing. PRODUK: tools digital untuk persiapan pernikahan. TONE: Hangat, membantu, seperti teman yang paham serunya (dan repotnya) prepare pernikahan.\",\n};\n\nconst DEFAULT_PRODUCT = 'SalGlow';\n\nfunction buildSystemPrompt(product) {\n  const base = PRODUCTS[product] || PRODUCTS[DEFAULT_PRODUCT];\n  return [base, HANDOFF_RULE, STYLE_RULES].join(' ');\n}\n\n// Susun konteks untuk Claude dari payload webhook Wablas + baris leads_context.\n// Mengembalikan null kalau bot harus diam (lead sedang ditangani manusia).\n\nconst MAX_HISTORY = 20;\nconst MODEL = 'claude-haiku-4-5-20251001';\nconst MAX_TOKENS = 500;\n\nconst PRODUCT_PATTERNS = [\n  ['KitJelangNikah', /\\b(nikah|menikah|pernikahan|wedding)\\b/i],\n  ['KarierKit', /\\b(cv|karier|karir|lamaran kerja|ats)\\b/i],\n];\n\nconst CLOSING_PATTERNS = [\n  /\\bcod\\b/i,\n  /\\b(sudah|udah|udh|sdh) (bayar|transfer|tf)\\b/i,\n  /\\b(saya|aku|sy) (ambil|order|pesan|mau order)\\b/i,\n  /\\boke? deal\\b/i,\n  /^\\s*gas+\\b/i,\n  /\\bbukti (transfer|tf)\\b/i,\n];\n\nconst MEDIA_LABELS = {\n  image: '[Lead mengirim gambar]',\n  video: '[Lead mengirim video]',\n  audio: '[Lead mengirim voice note]',\n  ptt: '[Lead mengirim voice note]',\n  document: '[Lead mengirim dokumen]',\n  sticker: '[Lead mengirim stiker]',\n};\n\nfunction detectProduct(text) {\n  for (const [product, pattern] of PRODUCT_PATTERNS) {\n    if (pattern.test(text)) return product;\n  }\n  return DEFAULT_PRODUCT;\n}\n\nfunction isClosingMessage(text) {\n  return CLOSING_PATTERNS.some((p) => p.test(text));\n}\n\nfunction normalizeIncoming(body) {\n  const text = String(body.message || '').trim();\n  if (text) return text;\n  return MEDIA_LABELS[body.messageType] || '[Lead mengirim pesan non-teks]';\n}\n\nfunction parseHistory(raw) {\n  if (!raw) return [];\n  try {\n    const parsed = JSON.parse(raw);\n    return Array.isArray(parsed) ? parsed : [];\n  } catch (e) {\n    return [];\n  }\n}\n\n// Claude butuh pesan pertama ber-role user dan role yang bergantian.\nfunction trimHistory(history) {\n  let trimmed = history.slice(-MAX_HISTORY);\n  while (trimmed.length && trimmed[0].role !== 'user') trimmed = trimmed.slice(1);\n  const merged = [];\n  for (const msg of trimmed) {\n    const last = merged[merged.length - 1];\n    if (last && last.role === msg.role) last.content += '\\n' + msg.content;\n    else merged.push({ role: msg.role, content: msg.content });\n  }\n  return merged;\n}\n\nfunction prepareContext(body, row) {\n  if (row && String(row.handoff) === 'true') return null;\n\n  const incoming = normalizeIncoming(body);\n  const product = (row && row.active_product) || detectProduct(incoming);\n  const history = parseHistory(row && row.history);\n  history.push({ role: 'user', content: incoming });\n  const messages = trimHistory(history);\n\n  return {\n    phone: body.phone,\n    name: body.pushName || '',\n    incoming,\n    active_product: product,\n    isClosing: isClosingMessage(incoming),\n    messages,\n    requestBody: {\n      model: MODEL,\n      max_tokens: MAX_TOKENS,\n      system: buildSystemPrompt(product),\n      messages,\n    },\n  };\n}\n\nconst body = $('Webhook').first().json.body;\nconst first = items.length ? items[0].json : null;\nconst row = first && first.phone ? first : null;\nconst ctx = prepareContext(body, row);\nreturn ctx ? [{ json: ctx }] : [];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "name": "Siapkan Konteks",
+      "id": "aics-04"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        880,
+        0
+      ],
+      "name": "Claude",
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "id": "aics-05"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Ambil teks balasan Claude, deteksi token handoff, rapikan format untuk WhatsApp.\n\nconst HANDOFF_TOKEN = '[HANDOFF]';\nconst FALLBACK_REPLY =\n  'Maaf kak, sistem kami lagi sibuk sebentar. Tim CS akan segera membalas chat kakak ya 🙏';\n\nfunction toWhatsApp(text) {\n  return text\n    .replace(/\\*\\*(.+?)\\*\\*/g, '*$1*')\n    .replace(/^#+\\s*/gm, '')\n    .trim();\n}\n\nfunction parseReply(response) {\n  const block = response && Array.isArray(response.content)\n    ? response.content.find((c) => c.type === 'text')\n    : null;\n\n  if (!block || !block.text) {\n    const error = (response && response.error && response.error.message) || 'Respons Claude kosong';\n    return { reply: FALLBACK_REPLY, needsHuman: true, apiError: error };\n  }\n\n  const needsHuman = block.text.includes(HANDOFF_TOKEN);\n  const reply = toWhatsApp(block.text.split(HANDOFF_TOKEN).join(''));\n  return { reply: reply || FALLBACK_REPLY, needsHuman, apiError: null };\n}\n\nconst ctx = $('Siapkan Konteks').first().json;\nconst parsed = parseReply($input.first().json);\nconst history = ctx.messages.concat([{ role: 'assistant', content: parsed.reply }]);\nreturn [{\n  json: {\n    phone: ctx.phone,\n    name: ctx.name,\n    incoming: ctx.incoming,\n    active_product: ctx.active_product,\n    isClosing: ctx.isClosing,\n    needsHuman: parsed.needsHuman,\n    apiError: parsed.apiError,\n    reply: parsed.reply,\n    history: JSON.stringify(history),\n    notify: ctx.isClosing || parsed.needsHuman,\n  },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        0
+      ],
+      "name": "Olah Balasan",
+      "id": "aics-06"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "notify",
+              "leftValue": "={{ $json.notify }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1320,
+        0
+      ],
+      "name": "Perlu Notif?",
+      "id": "aics-07"
+    },
+    {
+      "parameters": {
+        "chatId": "-5439732568",
+        "text": "={{ $json.needsHuman ? '🟠 *BUTUH CS MANUSIA*' : '🟢 *CLOSING BARU*' }}\n\n📱 Nomor: {{ $json.phone }}\n👤 Nama: {{ $json.name }}\n🛍️ Produk: {{ $json.active_product }}\n💬 Chat Terakhir: {{ $json.incoming }}\n🤖 Balasan AI: {{ $json.reply }}{{ $json.apiError ? '\\n⚠️ Error API: ' + $json.apiError : '' }}{{ $json.needsHuman ? '\\n\\nBot dijeda untuk nomor ini. Set kolom handoff = false di leads_context untuk mengaktifkan lagi.' : '' }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1540,
+        0
+      ],
+      "name": "Telegram Admin",
+      "onError": "continueRegularOutput",
+      "id": "aics-08"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://jkt.wablas.com/api/send-message",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "phone",
+              "value": "={{ $('Olah Balasan').item.json.phone }}"
+            },
+            {
+              "name": "message",
+              "value": "={{ $('Olah Balasan').item.json.reply }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1760,
+        0
+      ],
+      "name": "Kirim WhatsApp",
+      "id": "aics-09"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "qZYFr5OtcUD8F8Co",
+          "mode": "list",
+          "cachedResultName": "leads_context",
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/qZYFr5OtcUD8F8Co"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone",
+              "keyValue": "={{ $('Olah Balasan').item.json.phone }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone": "={{ $('Olah Balasan').item.json.phone }}",
+            "active_product": "={{ $('Olah Balasan').item.json.active_product }}",
+            "history": "={{ $('Olah Balasan').item.json.history }}",
+            "handoff": "={{ String($('Olah Balasan').item.json.needsHuman) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "active_product",
+              "displayName": "active_product",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "history",
+              "displayName": "history",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "handoff",
+              "displayName": "handoff",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1980,
+        0
+      ],
+      "name": "Simpan Histori",
+      "id": "aics-10"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Hanya Chat Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hanya Chat Lead": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Siapkan Konteks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Siapkan Konteks": {
+      "main": [
+        [
+          {
+            "node": "Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude": {
+      "main": [
+        [
+          {
+            "node": "Olah Balasan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Olah Balasan": {
+      "main": [
+        [
+          {
+            "node": "Perlu Notif?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perlu Notif?": {
+      "main": [
+        [
+          {
+            "node": "Telegram Admin",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Kirim WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Admin": {
+      "main": [
+        [
+          {
+            "node": "Kirim WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kirim WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Simpan Histori",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}
