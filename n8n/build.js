@@ -37,6 +37,7 @@ return [{
     name: ctx.name,
     incoming: ctx.incoming,
     active_product: ctx.active_product,
+    ref: ctx.ref,
     isClosing: ctx.isClosing,
     needsHuman: parsed.needsHuman,
     apiError: parsed.apiError,
@@ -125,7 +126,7 @@ const nodes = [
   node('Telegram Admin', 'n8n-nodes-base.telegram', 1.2, 1540, {
     chatId: TELEGRAM_CHAT_ID,
     text: "={{ $json.needsHuman ? '🟠 *BUTUH CS MANUSIA*' : '🟢 *CLOSING BARU*' }}\n\n" +
-      '📱 Nomor: {{ $json.phone }}\n👤 Nama: {{ $json.name }}\n🛍️ Produk: {{ $json.active_product }}\n' +
+      '📱 Nomor: {{ $json.phone }}\n👤 Nama: {{ $json.name }}\n🛍️ Produk: {{ $json.active_product }}\n🔗 Ref LP: {{ $json.ref || \'-\' }}\n' +
       '💬 Chat Terakhir: {{ $json.incoming }}\n🤖 Balasan AI: {{ $json.reply }}' +
       "{{ $json.apiError ? '\\n⚠️ Error API: ' + $json.apiError : '' }}" +
       "{{ $json.needsHuman ? '\\n\\nBot dijeda untuk nomor ini. Set kolom handoff = false di leads_context untuk mengaktifkan lagi.' : '' }}",
@@ -158,9 +159,10 @@ const nodes = [
         active_product: "={{ $('Olah Balasan').item.json.active_product }}",
         history: "={{ $('Olah Balasan').item.json.history }}",
         handoff: "={{ String($('Olah Balasan').item.json.needsHuman) }}",
+        ref: "={{ $('Olah Balasan').item.json.ref }}",
       },
       matchingColumns: [],
-      schema: ['phone', 'active_product', 'history', 'handoff'].map(column),
+      schema: ['phone', 'active_product', 'history', 'handoff', 'ref'].map(column),
       attemptToConvertTypes: false,
       convertFieldsToString: false,
     },
@@ -195,3 +197,59 @@ const workflow = {
 const out = path.join(__dirname, 'ai-agent-cs.workflow.json');
 fs.writeFileSync(out, JSON.stringify(workflow, null, 2) + '\n');
 console.log('Wrote', path.relative(process.cwd(), out));
+
+// Workflow kedua: terima atribusi dari LP (lp/wa-redirect.js) → Data Table lp_attribution.
+const ATTR_FIELDS = [
+  'ref', 'product', 'fbclid', 'fbc', 'fbp', 'utm_source', 'utm_medium', 'utm_campaign',
+  'utm_content', 'utm_term', 'landing_url', 'referrer', 'user_agent', 'client_ip', 'clicked_at',
+];
+
+const attrCode = `const req = $input.first().json;
+let data = req.body;
+if (typeof data === 'string') {
+  try { data = JSON.parse(data); } catch (e) { data = {}; }
+}
+if (!data || !/^(SG|KK|KJN)-[A-Z0-9]{5}$/.test(data.ref || '')) return [];
+const h = req.headers || {};
+data.client_ip = h['cf-connecting-ip'] || h['x-real-ip'] || '';
+const out = {};
+for (const k of ${JSON.stringify(ATTR_FIELDS)}) out[k] = String(data[k] || '').slice(0, 1000);
+return [{ json: out }];`;
+
+const attrWorkflow = {
+  name: 'AI Agent CS - LP Attribution',
+  nodes: [
+    node('LP Webhook', 'n8n-nodes-base.webhook', 2.1, 0, {
+      httpMethod: 'POST',
+      path: 'lp-attribution',
+      responseMode: 'onReceived',
+      options: { allowedOrigins: '*', rawBody: false },
+    }, { webhookId: 'lp-attribution' }),
+    node('Validasi', 'n8n-nodes-base.code', 2, 220, { jsCode: attrCode }),
+    node('Simpan Atribusi', 'n8n-nodes-base.dataTable', 1.1, 440, {
+      operation: 'insert',
+      dataTableId: { __rl: true, value: '', mode: 'list', cachedResultName: 'lp_attribution' },
+      columns: {
+        mappingMode: 'autoMapInputData',
+        value: {},
+        matchingColumns: [],
+        schema: ATTR_FIELDS.map(column),
+        attemptToConvertTypes: false,
+        convertFieldsToString: true,
+      },
+      options: {},
+    }),
+  ].map((n, i) => ({ ...n, id: `aics-attr-${i + 1}` })),
+  pinData: {},
+  connections: {
+    'LP Webhook': link('Validasi'),
+    Validasi: link('Simpan Atribusi'),
+  },
+  active: false,
+  settings: { executionOrder: 'v1' },
+  tags: [],
+};
+
+const attrOut = path.join(__dirname, 'lp-attribution.workflow.json');
+fs.writeFileSync(attrOut, JSON.stringify(attrWorkflow, null, 2) + '\n');
+console.log('Wrote', path.relative(process.cwd(), attrOut));

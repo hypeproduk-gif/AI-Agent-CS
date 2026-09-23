@@ -6,9 +6,14 @@ const MODEL = 'claude-haiku-4-5-20251001';
 const MAX_TOKENS = 500;
 
 const PRODUCT_PATTERNS = [
-  ['KitJelangNikah', /\b(nikah|menikah|pernikahan|wedding)\b/i],
-  ['KarierKit', /\b(cv|karier|karir|lamaran kerja|ats)\b/i],
+  ['KitJelangNikah', /\b(nikah|menikah|pernikahan|wedding|kit jelang nikah|kitjelangnikah)\b/i],
+  ['KarierKit', /\b(cv|karier|karir|lamaran kerja|ats|karierkit)\b/i],
+  ['SalGlow', /\b(salglow|salep|glowing|flek|bekas jerawat|filo)\b/i],
 ];
+
+// Kode ref dari landing page, contoh "KJN-7Q2MX". Prefix menentukan produk.
+const REF_PATTERN = /\b(SG|KK|KJN)-([A-Z0-9]{5})\b/;
+const REF_PRODUCTS = { SG: 'SalGlow', KK: 'KarierKit', KJN: 'KitJelangNikah' };
 
 const CLOSING_PATTERNS = [
   /\bcod\b/i,
@@ -28,11 +33,26 @@ const MEDIA_LABELS = {
   sticker: '[Lead mengirim stiker]',
 };
 
+// Produk yang disebut eksplisit di pesan, atau null kalau tidak ada.
 function detectProduct(text) {
   for (const [product, pattern] of PRODUCT_PATTERNS) {
     if (pattern.test(text)) return product;
   }
-  return DEFAULT_PRODUCT;
+  return null;
+}
+
+function extractRef(text) {
+  const m = String(text || '').toUpperCase().match(REF_PATTERN);
+  return m ? { ref: m[0], product: REF_PRODUCTS[m[1]] } : null;
+}
+
+// Produk aktif: kode ref LP > produk yang disebut di pesan ini > produk tersimpan > default.
+function resolveProduct(incoming, storedProduct) {
+  const fromRef = extractRef(incoming);
+  const mentioned = fromRef ? fromRef.product : detectProduct(incoming);
+  const product = mentioned || storedProduct || DEFAULT_PRODUCT;
+  const switchedFrom = storedProduct && mentioned && mentioned !== storedProduct ? storedProduct : null;
+  return { product, switchedFrom, ref: fromRef ? fromRef.ref : null };
 }
 
 function isClosingMessage(text) {
@@ -72,22 +92,29 @@ function prepareContext(body, row) {
   if (row && String(row.handoff) === 'true') return null;
 
   const incoming = normalizeIncoming(body);
-  const product = (row && row.active_product) || detectProduct(incoming);
+  const { product, switchedFrom, ref } = resolveProduct(incoming, row && row.active_product);
   const history = parseHistory(row && row.history);
   history.push({ role: 'user', content: incoming });
   const messages = trimHistory(history);
+
+  let system = buildSystemPrompt(product);
+  if (switchedFrom) {
+    system += ` KONTEKS: Lead baru saja pindah topik dari ${switchedFrom} ke ${product}. Jawab tentang ${product}; jangan lanjut menawarkan ${switchedFrom} kecuali lead menanyakannya lagi.`;
+  }
 
   return {
     phone: body.phone,
     name: body.pushName || '',
     incoming,
     active_product: product,
+    switchedFrom,
+    ref: ref || (row && row.ref) || '',
     isClosing: isClosingMessage(incoming),
     messages,
     requestBody: {
       model: MODEL,
       max_tokens: MAX_TOKENS,
-      system: buildSystemPrompt(product),
+      system,
       messages,
     },
   };

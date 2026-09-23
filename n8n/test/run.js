@@ -19,7 +19,27 @@ const test = (name, fn) => { fn(); passed++; console.log('ok -', name); };
 test('deteksi produk dari chat pertama', () => {
   assert.strictEqual(detectProduct('mau info produk kit nikah dong'), 'KitJelangNikah');
   assert.strictEqual(detectProduct('bikin CV ATS bisa?'), 'KarierKit');
-  assert.strictEqual(detectProduct('halo kak'), 'SalGlow');
+  assert.strictEqual(detectProduct('halo kak'), null);
+  assert.strictEqual(prepareContext({ phone: '1', message: 'halo kak' }, null).active_product, 'SalGlow');
+});
+
+test('kode ref LP menentukan produk & disimpan', () => {
+  const r = prepareContext({ phone: '1', message: 'Halo kak, mau info ya (kode: KJN-7Q2MX)' }, null);
+  assert.strictEqual(r.active_product, 'KitJelangNikah');
+  assert.strictEqual(r.ref, 'KJN-7Q2MX');
+  const next = prepareContext({ phone: '1', message: 'harganya?' }, { phone: '1', active_product: 'KitJelangNikah', ref: 'KJN-7Q2MX' });
+  assert.strictEqual(next.ref, 'KJN-7Q2MX');
+});
+
+test('override produk kalau lead ganti topik', () => {
+  const row = { phone: '1', active_product: 'SalGlow', history: '[]' };
+  const r = prepareContext({ phone: '1', message: 'kak kalau bikin CV ada juga?' }, row);
+  assert.strictEqual(r.active_product, 'KarierKit');
+  assert.strictEqual(r.switchedFrom, 'SalGlow');
+  assert.ok(r.requestBody.system.includes('pindah topik dari SalGlow ke KarierKit'));
+  const same = prepareContext({ phone: '1', message: 'oke kak' }, row);
+  assert.strictEqual(same.active_product, 'SalGlow');
+  assert.strictEqual(same.switchedFrom, null);
 });
 
 test('keyword closing tidak salah tangkap', () => {
@@ -55,7 +75,7 @@ test('histori dipotong & selalu diawali user', () => {
 
 test('produk terkunci dari data sebelumnya', () => {
   const row = { phone: '62812', active_product: 'KarierKit', history: '[{"role":"user","content":"a"},{"role":"assistant","content":"b"}]' };
-  const r = prepareContext({ phone: '62812', message: 'nikah' }, row);
+  const r = prepareContext({ phone: '62812', message: 'oke lanjut' }, row);
   assert.strictEqual(r.active_product, 'KarierKit');
   assert.strictEqual(r.messages.length, 3);
 });
@@ -92,3 +112,15 @@ test('workflow hasil build valid & tanpa secret', () => {
 });
 
 console.log(`\n${passed} tes lulus`);
+
+test('LP attribution workflow: validasi ref & ambil IP', () => {
+  const wf = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'lp-attribution.workflow.json'), 'utf8'));
+  const code = wf.nodes.find((n) => n.name === 'Validasi').parameters.jsCode;
+  const run = (json) => new Function('$input', code)({ first: () => ({ json }) });
+  const ok = run({ body: JSON.stringify({ ref: 'KJN-7Q2MX', fbc: 'fb.1.1.abc' }), headers: { 'cf-connecting-ip': '1.2.3.4' } });
+  assert.strictEqual(ok[0].json.ref, 'KJN-7Q2MX');
+  assert.strictEqual(ok[0].json.client_ip, '1.2.3.4');
+  assert.strictEqual(ok[0].json.fbp, '');
+  assert.deepStrictEqual(run({ body: { ref: 'hack' } }), []);
+});
+console.log(`${passed} tes lulus (total)`);

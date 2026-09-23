@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contoh LP → WhatsApp</title>
+  <!-- Meta Pixel: ganti PIXEL_ID -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'PIXEL_ID');
+    fbq('track', 'PageView');
+  </script>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px 16px; }
+    .cta { display: block; text-align: center; background: #25d366; color: #fff; padding: 16px;
+           border-radius: 12px; font-weight: 600; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <h1>Kit Jelang Nikah</h1>
+  <p>Konten LP di sini.</p>
+  <a class="cta" href="#" data-wa-cta>Chat Admin via WhatsApp</a>
+
+  <script>
+    window.AICS = {
+      product: 'KJN',
+      waNumber: '6285180108370',
+      message: 'Halo kak, mau info Kit Jelang Nikah',
+      endpoint: 'https://hypeproduk.app.n8n.cloud/webhook/lp-attribution',
+      pixelEvent: 'Contact',
+    };
+  </script>
+  <script src="wa-redirect.js"></script>
+</body>
+</html>
