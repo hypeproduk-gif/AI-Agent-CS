@@ -88,6 +88,13 @@ function trimHistory(history) {
   return merged;
 }
 
+// Order terakhir lead kalau masih dalam jendela anti-dobel.
+function recentOrder(row, now = Date.now()) {
+  if (!row || !row.last_order_id || !row.last_order_at) return null;
+  const age = now - new Date(row.last_order_at).getTime();
+  return age >= 0 && age < SCALEV.duplicateOrderHours * 3600000 ? row.last_order_id : null;
+}
+
 function prepareContext(body, row) {
   if (row && String(row.handoff) === 'true') return null;
 
@@ -97,7 +104,9 @@ function prepareContext(body, row) {
   history.push({ role: 'user', content: incoming });
   const messages = trimHistory(history);
 
+  const tools = orderTools(product);
   let system = buildSystemPrompt(product);
+  if (tools) system += ' ' + ORDER_RULE;
   if (switchedFrom) {
     system += ` KONTEKS: Lead baru saja pindah topik dari ${switchedFrom} ke ${product}. Jawab tentang ${product}; jangan lanjut menawarkan ${switchedFrom} kecuali lead menanyakannya lagi.`;
   }
@@ -110,12 +119,14 @@ function prepareContext(body, row) {
     switchedFrom,
     ref: ref || (row && row.ref) || '',
     isClosing: isClosingMessage(incoming),
+    lastOrder: recentOrder(row),
     messages,
     requestBody: {
       model: MODEL,
       max_tokens: MAX_TOKENS,
       system,
       messages,
+      ...(tools ? { tools } : {}),
     },
   };
 }

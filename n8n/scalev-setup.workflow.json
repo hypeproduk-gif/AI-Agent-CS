@@ -1,0 +1,145 @@
+{
+  "name": "AI Agent CS - Scalev Setup",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "name": "Jalankan Manual",
+      "id": "aics-setup-1"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.scalev.com/v3/stores/simplified?page_size=50",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        220,
+        0
+      ],
+      "name": "Ambil Store",
+      "onError": "continueRegularOutput",
+      "id": "aics-setup-2"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "name": "Daftar Store",
+      "id": "aics-setup-3"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.scalev.com/v3/stores/{{ $json.id }}/products?page_size=100",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        660,
+        0
+      ],
+      "name": "Ambil Produk",
+      "onError": "continueRegularOutput",
+      "id": "aics-setup-4"
+    },
+    {
+      "parameters": {
+        "jsCode": "const out = [];\nconst stores = $('Daftar Store').all();\nfor (const [i, item] of $input.all().entries()) {\n  const store = stores[i].json;\n  for (const p of item.json.data || []) {\n    for (const v of p.variants || []) {\n      out.push({ json: {\n        store_id: store.id, store_unique_id: store.unique_id, store_name: store.name,\n        product: p.name, variant: v.fullname, variant_id: v.id, variant_unique_id: v.unique_id, price: v.price,\n      } });\n    }\n  }\n}\nreturn out;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        0
+      ],
+      "name": "Ringkas ID",
+      "id": "aics-setup-5"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Jalankan Manual": {
+      "main": [
+        [
+          {
+            "node": "Ambil Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Store": {
+      "main": [
+        [
+          {
+            "node": "Daftar Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daftar Store": {
+      "main": [
+        [
+          {
+            "node": "Ambil Produk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Produk": {
+      "main": [
+        [
+          {
+            "node": "Ringkas ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}

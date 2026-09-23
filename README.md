@@ -9,7 +9,9 @@ Bot CS WhatsApp (Wablas → n8n → Claude Haiku 4.5) untuk SalGlow, KarierKit, 
 - `n8n/lp-attribution.workflow.json` — webhook penerima atribusi dari LP
 - `lp/wa-redirect.js` — script LP: capture fbclid/_fbc/_fbp + UTM, buat kode ref, buka wa.me
 - `lp/index.html` — contoh LP
-- `n8n/test/run.js` — tes logika
+- `n8n/scalev-setup.workflow.json` — jalankan manual sekali untuk melihat ID store & varian Scalev
+- `n8n/src/order-config.js` — konfigurasi Scalev (store, varian, berat, fee COD)
+- `n8n/test/run.js` — tes logika + simulasi workflow penuh dengan HTTP tiruan
 
 ```bash
 node n8n/test/run.js   # tes + build ulang workflow
@@ -17,13 +19,18 @@ node n8n/test/run.js   # tes + build ulang workflow
 
 ## Setup di n8n
 
-1. Buat 2 credential **Header Auth**:
+1. Buat 3 credential **Header Auth**:
    - `Anthropic API` → Name `x-api-key`, Value = API key Anthropic
    - `Wablas` → Name `Authorization`, Value = token Wablas
-2. Tambah kolom `handoff` dan `ref` (string) di Data Table `leads_context`.
+   - `Scalev` → Name `Authorization`, Value = `Bearer sk_...` (Scalev → Settings → Developers → API Keys)
+2. Tambah kolom `handoff`, `ref`, `last_order_id`, `last_order_at` (string) di Data Table `leads_context`.
    Buat Data Table `lp_attribution` dengan kolom: ref, product, fbclid, fbc, fbp, utm_source,
    utm_medium, utm_campaign, utm_content, utm_term, landing_url, referrer, user_agent, client_ip, clicked_at.
 3. Import `n8n/ai-agent-cs.workflow.json`, pilih credential di node **Claude** dan **Kirim WhatsApp**, cek credential Telegram.
+3a. Import `n8n/scalev-setup.workflow.json`, pilih credential Scalev, klik Execute. Salin `store_id`,
+    `store_unique_id`, `variant_id`, `variant_unique_id` SalGlow B1G1/B2G2 ke `n8n/src/order-config.js`
+    (plus berat paket), lalu `node n8n/test/run.js` untuk build ulang, dan import ulang workflow utama.
+    Pilih credential Scalev di node Scalev Lokasi/Gudang/Kurir/Buat Order.
 4. Import `n8n/lp-attribution.workflow.json`, pilih tabel `lp_attribution`, aktifkan.
 5. Nonaktifkan workflow lama, aktifkan v2 (path webhook sama).
 
