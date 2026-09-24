@@ -78,7 +78,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const out = [];\nconst stores = $('Daftar Store').all();\nfor (const [i, item] of $input.all().entries()) {\n  const store = stores[i].json;\n  for (const p of item.json.data || []) {\n    for (const v of p.variants || []) {\n      out.push({ json: {\n        store_id: store.id, store_unique_id: store.unique_id, store_name: store.name,\n        product: p.name, variant: v.fullname, variant_id: v.id, variant_unique_id: v.unique_id, price: v.price,\n      } });\n    }\n  }\n}\nreturn out;"
+        "jsCode": "const out = [];\nconst stores = $('Daftar Store').all();\nfor (const [i, item] of $input.all().entries()) {\n  const store = (stores[i] || stores[0]).json;\n  for (const p of item.json.data || []) {\n    const variants = p.variants || p.product_variants || p.variant_list || [];\n    const base = {\n      store_id: store.id, store_unique_id: store.unique_id, store_name: store.name,\n      product_id: p.id, product: p.name,\n    };\n    if (!variants.length) {\n      out.push({ json: { ...base, catatan: 'varian tidak ditemukan', field_produk: Object.keys(p).join(', ') } });\n    }\n    for (const v of variants) {\n      out.push({ json: { ...base, variant: v.fullname || v.name, variant_id: v.id,\n        variant_unique_id: v.unique_id || v.uuid, price: v.price } });\n    }\n  }\n}\nreturn out;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,

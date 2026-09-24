@@ -1,8 +1,8 @@
-// Konfigurasi Scalev. Isi nilai "ISI_..." pakai output workflow "AI Agent CS - Scalev Setup".
+// Konfigurasi Scalev. ID diambil dari output workflow "AI Agent CS - Scalev Setup".
 
 const SCALEV = {
-  storeId: 0, // integer, dari stores[].id
-  storeUniqueId: 'ISI_STORE_UNIQUE_ID', // dari stores[].unique_id
+  storeId: 2709, // Filomall Beauty
+  storeUniqueId: 'store_WQ9th267cKN4103Qini2iUW5',
   warehouseCity: 'Surabaya', // gudang asal
   providerCode: 'mengantar',
   courierPattern: /j\s*&?\s*t|jnt/i, // JNT (J&T Express)
@@ -18,13 +18,13 @@ const PACKAGES = {
       label: 'SalGlow Beli 1 Gratis 1',
       price: 139000,
       weight: 200, // gram, total paket
-      items: [{ variantId: 0, variantUniqueId: 'ISI_VARIANT_UNIQUE_ID_B1G1', qty: 1 }],
+      items: [{ variantId: 8693, variantUniqueId: 'variant_sg2gckDGhXXI4mctTMEgkBEC', qty: 1 }], // Salep Glowing Filo
     },
     B2G2: {
       label: 'SalGlow Beli 2 Gratis 2',
       price: 219000,
       weight: 400,
-      items: [{ variantId: 0, variantUniqueId: 'ISI_VARIANT_UNIQUE_ID_B2G2', qty: 1 }],
+      items: [{ variantId: 8421, variantUniqueId: 'variant_EWWpG6ef8GdXo617vHyFEyP6', qty: 1 }], // 4 Salep Glowing Filo (219.000)
     },
   },
 };

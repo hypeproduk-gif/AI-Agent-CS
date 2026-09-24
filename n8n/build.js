@@ -351,13 +351,19 @@ console.log('Wrote', path.relative(process.cwd(), attrOut));
 const setupSummary = `const out = [];
 const stores = $('Daftar Store').all();
 for (const [i, item] of $input.all().entries()) {
-  const store = stores[i].json;
+  const store = (stores[i] || stores[0]).json;
   for (const p of item.json.data || []) {
-    for (const v of p.variants || []) {
-      out.push({ json: {
-        store_id: store.id, store_unique_id: store.unique_id, store_name: store.name,
-        product: p.name, variant: v.fullname, variant_id: v.id, variant_unique_id: v.unique_id, price: v.price,
-      } });
+    const variants = p.variants || p.product_variants || p.variant_list || [];
+    const base = {
+      store_id: store.id, store_unique_id: store.unique_id, store_name: store.name,
+      product_id: p.id, product: p.name,
+    };
+    if (!variants.length) {
+      out.push({ json: { ...base, catatan: 'varian tidak ditemukan', field_produk: Object.keys(p).join(', ') } });
+    }
+    for (const v of variants) {
+      out.push({ json: { ...base, variant: v.fullname || v.name, variant_id: v.id,
+        variant_unique_id: v.unique_id || v.uuid, price: v.price } });
     }
   }
 }
@@ -387,3 +393,41 @@ const setupWorkflow = {
 const setupOut = path.join(__dirname, 'scalev-setup.workflow.json');
 fs.writeFileSync(setupOut, JSON.stringify(setupWorkflow, null, 2) + '\n');
 console.log('Wrote', path.relative(process.cwd(), setupOut));
+
+// Workflow keempat: tes cek ongkir ke Scalev asli tanpa membuat order.
+// Ubah input di node "Input Tes" lalu Execute.
+const byName = Object.fromEntries(nodes.map((n) => [n.name, n]));
+const testChain = ['Scalev Lokasi', 'Pilih Lokasi', 'Lokasi OK?', 'Scalev Gudang', 'Pilih Gudang', 'Scalev Kurir', 'Hitung Ongkir'];
+const ongkirTestWorkflow = {
+  name: 'AI Agent CS - Tes Ongkir',
+  nodes: [
+    node('Jalankan Manual', 'n8n-nodes-base.manualTrigger', 1, 0, {}),
+    node('Siapkan Konteks', 'n8n-nodes-base.code', 2, 220, {
+      jsCode: "return [{ json: { phone: '6280000000000', active_product: 'SalGlow', ref: '', lastOrder: null } }];",
+    }),
+    node('Mulai Tool', 'n8n-nodes-base.code', 2, 440, {
+      jsCode: toolCode(`// Ubah input tes di sini
+const input = { paket: 'B1G1', pembayaran: 'cod', kecamatan: 'Wonokromo', kota: 'Surabaya' };
+return [{ json: startTool({ id: 'tes', name: 'cek_ongkir', input }, $('Siapkan Konteks').first().json) }];`),
+    }),
+    ...testChain.map((name, i) => ({ ...byName[name], position: [660 + i * 220, 0] })),
+  ].map((n, i) => ({ ...n, id: `aics-tes-${i + 1}` })),
+  pinData: {},
+  connections: {
+    'Jalankan Manual': link('Siapkan Konteks'),
+    'Siapkan Konteks': link('Mulai Tool'),
+    'Mulai Tool': link('Scalev Lokasi'),
+    'Scalev Lokasi': link('Pilih Lokasi'),
+    'Pilih Lokasi': link('Lokasi OK?'),
+    'Lokasi OK?': link('Scalev Gudang'),
+    'Scalev Gudang': link('Pilih Gudang'),
+    'Pilih Gudang': link('Scalev Kurir'),
+    'Scalev Kurir': link('Hitung Ongkir'),
+  },
+  active: false,
+  settings: { executionOrder: 'v1' },
+  tags: [],
+};
+const testOut = path.join(__dirname, 'tes-ongkir.workflow.json');
+fs.writeFileSync(testOut, JSON.stringify(ongkirTestWorkflow, null, 2) + '\n');
+console.log('Wrote', path.relative(process.cwd(), testOut));

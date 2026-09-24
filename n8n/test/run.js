@@ -267,4 +267,14 @@ test('simulasi: pesan dari admin sendiri diabaikan', () => {
   assert.strictEqual(r.requests.length, 0);
 });
 
-console.log(`\n${passed} tes lulus (total)`);
+
+
+test('workflow tes ongkir jalan dengan API tiruan & tidak membuat order', () => {
+  const wf = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'tes-ongkir.workflow.json'), 'utf8'));
+  wf.connections.Webhook = { main: [[{ node: 'Siapkan Konteks', type: 'main', index: 0 }]] };
+  wf.nodes.push({ name: 'Webhook', type: 'n8n-nodes-base.webhook', parameters: {} });
+  const r = simulate(wf, { webhookBody: {}, row: null, http: (name) => ({ 'Scalev Lokasi': LOCATIONS, 'Scalev Gudang': WAREHOUSES, 'Scalev Kurir': COURIERS })[name] });
+  assert.ok(!r.requests.some((q) => q.url && q.url.endsWith('/orders')));
+  assert.deepStrictEqual(r.outputs['Hitung Ongkir'][0].totals, { price: 139000, shipping: 12000, codFee: 4530, total: 155530 });
+});
+console.log(`${passed} tes lulus (final)`);
