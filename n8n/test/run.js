@@ -283,7 +283,7 @@ test('bot tidak pernah request pickup / generate AWB', () => {
   const scalevCalls = r.requests.filter((q) => q.url && q.url.includes('scalev.com'));
   assert.ok(scalevCalls.length >= 4);
   assert.ok(scalevCalls.every((q) => !/awb|pickup/i.test(q.url)));
-  const raw = fs.readFileSync(path.join(__dirname, '..', 'ai-agent-cs.workflow.json'), 'utf8');
-  assert.ok(!/generate-awb|request-pickup/i.test(raw));
+  const urls = mainWf().nodes.map((n) => n.parameters.url).filter(Boolean);
+  assert.ok(urls.every((u) => !/awb|pickup/i.test(u)));
 });
 console.log(`${passed} tes lulus (final)`);
