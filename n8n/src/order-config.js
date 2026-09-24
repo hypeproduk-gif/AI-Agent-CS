@@ -18,7 +18,7 @@ const PACKAGES = {
       label: 'SalGlow Beli 1 Gratis 1',
       price: 139000,
       weight: 200, // gram, total paket
-      items: [{ variantId: 8693, variantUniqueId: 'variant_sg2gckDGhXXI4mctTMEgkBEC', qty: 1 }], // Salep Glowing Filo
+      items: [{ variantId: 8419, variantUniqueId: 'variant_T2ffVOfNELb6rwSTNTf9xw8A', qty: 1 }], // 2 Salep Glowing Filo (139.000)
     },
     B2G2: {
       label: 'SalGlow Beli 2 Gratis 2',
