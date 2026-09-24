@@ -102,6 +102,8 @@ function pickCourier(state, response) {
   };
 }
 
+// Hanya membuat order. Bot sengaja TIDAK memanggil generate-awb / Request Pickup:
+// pickup ditangani langganan pickup sendiri di Mengantar.
 function orderRequest(state, ctx) {
   const i = state.input;
   const body = {

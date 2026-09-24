@@ -277,4 +277,13 @@ test('workflow tes ongkir jalan dengan API tiruan & tidak membuat order', () => 
   assert.ok(!r.requests.some((q) => q.url && q.url.endsWith('/orders')));
   assert.deepStrictEqual(r.outputs['Hitung Ongkir'][0].totals, { price: 139000, shipping: 12000, codFee: 4530, total: 155530 });
 });
+test('bot tidak pernah request pickup / generate AWB', () => {
+  const r = scenario({ message: 'oke',
+    first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'cod', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'S', alamat: 'Jl. A' }) });
+  const scalevCalls = r.requests.filter((q) => q.url && q.url.includes('scalev.com'));
+  assert.ok(scalevCalls.length >= 4);
+  assert.ok(scalevCalls.every((q) => !/awb|pickup/i.test(q.url)));
+  const raw = fs.readFileSync(path.join(__dirname, '..', 'ai-agent-cs.workflow.json'), 'utf8');
+  assert.ok(!/generate-awb|request-pickup/i.test(raw));
+});
 console.log(`${passed} tes lulus (final)`);
