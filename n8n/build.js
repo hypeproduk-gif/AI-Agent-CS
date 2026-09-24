@@ -90,7 +90,8 @@ return [{
     orderText: order ? order.orderId + ' (' + (order.method === 'cod' ? 'COD' : 'Transfer') + ', Rp' + order.total.toLocaleString('id-ID') + ')' : '',
     last_order_id: order ? order.orderId : (stored.last_order_id || ''),
     last_order_at: order ? new Date().toISOString() : (stored.last_order_at || ''),
-    notify: ctx.isClosing || parsed.needsHuman || Boolean(order),
+    // Notif closing hanya saat order benar-benar dibuat di Scalev.
+    notify: Boolean(order) || parsed.needsHuman,
   },
 }];`,
 ].join('\n');
@@ -203,7 +204,7 @@ const nodes = [
 
   node('Telegram Admin', 'n8n-nodes-base.telegram', 1.2, 3800, {
     chatId: TELEGRAM_CHAT_ID,
-    text: "={{ $json.needsHuman ? '🟠 *BUTUH CS MANUSIA*' : ($json.order ? '🛒 *ORDER MASUK SCALEV*' : '🟢 *CLOSING BARU*') }}\n\n" +
+    text: "={{ $json.needsHuman ? '🟠 *BUTUH CS MANUSIA*' : ($json.apiError ? '⚠️ *BOT ERROR*' : '🛒 *ORDER FIX MASUK SCALEV*') }}\n\n" +
       "{{ $json.order ? '🧾 Order: ' + $json.orderText + '\\n' : '' }}" +
       '📱 Nomor: {{ $json.phone }}\n👤 Nama: {{ $json.name }}\n🛍️ Produk: {{ $json.active_product }}\n🔗 Ref LP: {{ $json.ref || \'-\' }}\n' +
       '💬 Chat Terakhir: {{ $json.incoming }}\n🤖 Balasan AI: {{ $json.reply }}' +

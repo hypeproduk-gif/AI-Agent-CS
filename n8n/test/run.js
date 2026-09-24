@@ -212,7 +212,7 @@ test('simulasi: buat order transfer → payload Scalev benar & tersimpan', () =>
   assert.ok(body.notes.includes('SG-ABCDE'));
   assert.strictEqual(r.toolResults[0].link_pembayaran, 'https://pay.example/SV123');
   assert.strictEqual(r.req('Simpan Histori').body.last_order_id, 'SV123');
-  assert.ok(r.req('Telegram Admin').body.includes('ORDER MASUK SCALEV'));
+  assert.ok(r.req('Telegram Admin').body.includes('ORDER FIX MASUK SCALEV'));
   assert.ok(r.req('Telegram Admin').body.includes('SV123 (Transfer, Rp231.000)'));
 });
 
@@ -298,5 +298,17 @@ test('permintaan handoff dari Claude tetap menjeda bot', () => {
   const r = scenario({ message: 'saya alergi', first: text('Tim CS kami bantu ya kak [HANDOFF]') });
   assert.strictEqual(r.req('Simpan Histori').body.handoff, 'true');
   assert.ok(r.req('Telegram Admin').body.includes('Bot dijeda'));
+});
+test('kata closing tanpa order TIDAK kirim notif Telegram', () => {
+  const r = scenario({ message: 'oke saya ambil, cod ya', first: text('Siap kak, paketnya mau yang mana?') });
+  assert.ok(!r.req('Telegram Admin'));
+  assert.ok(r.req('Kirim WhatsApp'));
+});
+
+test('prompt jualan: alur, larangan klaim palsu, hitungan hemat benar', () => {
+  const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
+  for (const k of ['GALI MASALAH', 'EMPATI', 'KEBERATAN', 'CLOSING', 'BPOM', 'Rp54.750/pcs', 'Rp69.500/pcs']) assert.ok(sys.includes(k), k);
+  assert.strictEqual(219000 / 4, 54750);
+  assert.strictEqual(139000 / 2, 69500);
 });
 console.log(`${passed} tes lulus (final)`);
