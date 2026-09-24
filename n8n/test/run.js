@@ -386,19 +386,37 @@ function withFacts(wf) {
     if (n.parameters && typeof n.parameters.jsCode === 'string') {
       n.parameters.jsCode = n.parameters.jsCode
         .replace("bpom: '',", "bpom: 'NA18230100999',")
-        .replace('testimonials: [],', "testimonials: ['https://x.test/t1.jpg', 'https://x.test/t2.jpg', 'https://x.test/t3.jpg', 'https://x.test/t4.jpg'],");
+        .replace(/testimonials: \[[^\]]*\],/, "testimonials: ['https://x.test/t1.jpg', 'https://x.test/t2.jpg', 'https://x.test/t3.jpg', 'https://x.test/t4.jpg'],");
     }
   }
   return wf;
 }
 
-test('tanpa data BPOM/testimoni: prompt tidak menyebutnya, gambar tidak dikirim', () => {
+test('tanpa data testimoni: prompt tidak menyebutnya, gambar tidak dikirim', () => {
+  const saved = vm.runInContext('FACTS.SalGlow.testimonials', ctx);
+  vm.runInContext('FACTS.SalGlow.testimonials = []', ctx);
+  try {
+    const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
+    assert.ok(!sys.includes('TESTIMONI:'));
+    assert.ok(!sys.includes('terdaftar dengan nomor'));
+  } finally {
+    ctx.__saved = saved;
+    vm.runInContext('FACTS.SalGlow.testimonials = __saved', ctx);
+  }
+  const wf = mainWf();
+  wf.nodes.forEach((n) => { if (n.parameters.jsCode) n.parameters.jsCode = n.parameters.jsCode.replace(/testimonials: \[[^\]]*\],/, 'testimonials: [],'); });
+  const r = simulate(wf, { webhookBody: { phone: '1', message: 'ada testimoni?' }, row: SALGLOW_ROW, http: (name) => (name === 'Claude' ? text('Aku kirimin ya kak [TESTIMONI]') : { status: true }) });
+  assert.ok(!r.requests.some((q) => q.node === 'Kirim Gambar'));
+  assert.strictEqual(r.requests.find((q) => q.node === 'Kirim WhatsApp').body.message, 'Aku kirimin ya kak');
+});
+
+test('25 testimoni Imgur terpasang, link langsung & unik, prompt menawarkan testimoni', () => {
+  const list = vm.runInContext('FACTS.SalGlow.testimonials', ctx);
+  assert.strictEqual(list.length, 25);
+  assert.strictEqual(new Set(list).size, 25);
+  assert.ok(list.every((u) => /^https:\/\/i\.imgur\.com\/[A-Za-z0-9]{7}\.(jpeg|png)$/.test(u)));
   const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
-  assert.ok(!sys.includes('TESTIMONI:'));
-  assert.ok(!sys.includes('terdaftar dengan nomor'));
-  const r = scenario({ message: 'ada testimoni?', first: text('Aku kirimin ya kak [TESTIMONI]') });
-  assert.ok(!r.req('Kirim Gambar'));
-  assert.strictEqual(r.req('Kirim WhatsApp').body.message, 'Aku kirimin ya kak');
+  assert.ok(sys.includes('[TESTIMONI]'));
 });
 
 test('dengan BPOM & testimoni: nomor BPOM di prompt, 3 foto dikirim setelah balasan', () => {
