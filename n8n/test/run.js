@@ -410,10 +410,10 @@ test('tanpa data testimoni: prompt tidak menyebutnya, gambar tidak dikirim', () 
   assert.strictEqual(r.requests.find((q) => q.node === 'Kirim WhatsApp').body.message, 'Aku kirimin ya kak');
 });
 
-test('25 testimoni Imgur terpasang, link langsung & unik, prompt menawarkan testimoni', () => {
+test('24 testimoni Imgur terpasang, link langsung & unik, prompt menawarkan testimoni', () => {
   const list = vm.runInContext('FACTS.SalGlow.testimonials', ctx).map((t) => t.url);
-  assert.strictEqual(list.length, 25);
-  assert.strictEqual(new Set(list).size, 25);
+  assert.strictEqual(list.length, 24);
+  assert.strictEqual(new Set(list).size, 24);
   assert.ok(list.every((u) => /^https:\/\/i\.imgur\.com\/[A-Za-z0-9]{7}\.(jpeg|png)$/.test(u)));
   const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
   assert.ok(sys.includes('[TESTIMONI]'));
