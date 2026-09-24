@@ -14,6 +14,8 @@ const PRODUCT_PATTERNS = [
 
 // Kode ref dari landing page, contoh "KJN-7Q2MX". Prefix menentukan produk.
 const REF_PATTERN = /\b(SG|KK|KJN)-([A-Z0-9]{5})\b/;
+// Format LP terbaru: "#promo7Q2MX" -> ref PROMO7Q2MX (produk dari konteks/default).
+const PROMO_PATTERN = /#PROMO([A-Z0-9]{5})\b/;
 const REF_PRODUCTS = { SG: 'SalGlow', KK: 'KarierKit', KJN: 'KitJelangNikah' };
 
 const CLOSING_PATTERNS = [
@@ -43,14 +45,17 @@ function detectProduct(text) {
 }
 
 function extractRef(text) {
-  const m = String(text || '').toUpperCase().match(REF_PATTERN);
+  const upper = String(text || '').toUpperCase();
+  const promo = upper.match(PROMO_PATTERN);
+  if (promo) return { ref: 'PROMO' + promo[1], product: null };
+  const m = upper.match(REF_PATTERN);
   return m ? { ref: m[0], product: REF_PRODUCTS[m[1]] } : null;
 }
 
 // Produk aktif: kode ref LP > produk yang disebut di pesan ini > produk tersimpan > default.
 function resolveProduct(incoming, storedProduct) {
   const fromRef = extractRef(incoming);
-  const mentioned = fromRef ? fromRef.product : detectProduct(incoming);
+  const mentioned = (fromRef && fromRef.product) || detectProduct(incoming);
   const product = mentioned || storedProduct || DEFAULT_PRODUCT;
   const switchedFrom = storedProduct && mentioned && mentioned !== storedProduct ? storedProduct : null;
   return { product, switchedFrom, ref: fromRef ? fromRef.ref : null };

@@ -441,7 +441,7 @@ let data = req.body;
 if (typeof data === 'string') {
   try { data = JSON.parse(data); } catch (e) { data = {}; }
 }
-if (!data || !/^(SG|KK|KJN)-[A-Z0-9]{5}$/.test(data.ref || '')) return [];
+if (!data || !/^((SG|KK|KJN)-|PROMO)[A-Z0-9]{5}$/.test(data.ref || '')) return [];
 const h = req.headers || {};
 data.client_ip = h['cf-connecting-ip'] || h['x-real-ip'] || '';
 const out = {};

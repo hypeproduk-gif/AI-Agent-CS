@@ -584,4 +584,13 @@ test('workflow rekap: jadwal 23:55 WIB, urutan node benar', () => {
   assert.strictEqual(wf.nodes.find((n) => n.name === 'Tiap Malam 23:55').parameters.rule.interval[0].expression, '55 23 * * *');
   new Function('$', wf.nodes.find((n) => n.name === 'Hitung Rekap').parameters.jsCode);
 });
+test('kode #promo dari LP dikenali sebagai ref, produk tetap SalGlow', () => {
+  const r = prepareContext({ phone: '1', message: 'Halo kak, mau tanya salep glowing filo #promo7Q2MX' }, null);
+  assert.strictEqual(r.ref, 'PROMO7Q2MX');
+  assert.strictEqual(r.active_product, 'SalGlow');
+  const wf = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'lp-attribution.workflow.json'), 'utf8'));
+  const code = wf.nodes.find((n) => n.name === 'Validasi').parameters.jsCode;
+  const out = new Function('$input', code)({ first: () => ({ json: { body: { ref: 'PROMO7Q2MX' }, headers: {} } }) });
+  assert.strictEqual(out[0].json.ref, 'PROMO7Q2MX');
+});
 console.log(`${passed} tes lulus (final)`);

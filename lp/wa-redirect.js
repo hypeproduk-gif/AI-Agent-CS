@@ -9,7 +9,7 @@
  *      <script src="https://cdn.jsdelivr.net/gh/.../wa-redirect.js"></script>  (atau isi script langsung)
  *
  * Saat tombol diklik, script:
- *   - membuat kode ref (mis. SG-7Q2MX) dan menempelkannya di akhir pesan WA,
+ *   - menempelkan kode unik di akhir pesan WA (mis. #promo7Q2MX),
  *   - mengirim fbclid/_fbc/_fbp/UTM/IP (dicatat server)/user agent ke n8n (webhook lp-attribution),
  *   - lalu membuka WhatsApp seperti biasa.
  * Kalau script gagal dimuat, link wa.me tetap jalan normal (hanya tanpa atribusi).
@@ -96,7 +96,8 @@
   function handle(e, el, wa) {
     e.preventDefault();
     var saved = readStored();
-    var ref = PRODUCT + '-' + randomCode(5);
+    var code = randomCode(5);
+    var ref = 'PROMO' + code; // tampil di pesan sebagai #promo<kode>
     send({
       ref: ref,
       product: PRODUCT,
@@ -119,7 +120,7 @@
     }
 
     var phone = (wa && wa.phone) || cfg.waNumber;
-    var text = ((wa && wa.text) || cfg.message || 'Halo kak') + ' (kode: ' + ref + ')';
+    var text = ((wa && wa.text) || cfg.message || 'Halo kak') + ' #promo' + code;
     var url = buildWaUrl(phone, text);
     var newTab = el.getAttribute('target') === '_blank';
     setTimeout(function () {

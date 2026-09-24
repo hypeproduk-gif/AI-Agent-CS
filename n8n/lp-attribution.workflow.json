@@ -23,7 +23,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const req = $input.first().json;\nlet data = req.body;\nif (typeof data === 'string') {\n  try { data = JSON.parse(data); } catch (e) { data = {}; }\n}\nif (!data || !/^(SG|KK|KJN)-[A-Z0-9]{5}$/.test(data.ref || '')) return [];\nconst h = req.headers || {};\ndata.client_ip = h['cf-connecting-ip'] || h['x-real-ip'] || '';\nconst out = {};\nfor (const k of [\"ref\",\"product\",\"fbclid\",\"fbc\",\"fbp\",\"utm_source\",\"utm_medium\",\"utm_campaign\",\"utm_content\",\"utm_term\",\"landing_url\",\"referrer\",\"user_agent\",\"client_ip\",\"clicked_at\"]) out[k] = String(data[k] || '').slice(0, 1000);\nreturn [{ json: out }];"
+        "jsCode": "const req = $input.first().json;\nlet data = req.body;\nif (typeof data === 'string') {\n  try { data = JSON.parse(data); } catch (e) { data = {}; }\n}\nif (!data || !/^((SG|KK|KJN)-|PROMO)[A-Z0-9]{5}$/.test(data.ref || '')) return [];\nconst h = req.headers || {};\ndata.client_ip = h['cf-connecting-ip'] || h['x-real-ip'] || '';\nconst out = {};\nfor (const k of [\"ref\",\"product\",\"fbclid\",\"fbc\",\"fbp\",\"utm_source\",\"utm_medium\",\"utm_campaign\",\"utm_content\",\"utm_term\",\"landing_url\",\"referrer\",\"user_agent\",\"client_ip\",\"clicked_at\"]) out[k] = String(data[k] || '').slice(0, 1000);\nreturn [{ json: out }];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
