@@ -87,7 +87,7 @@ return [{
     isClosing: ctx.isClosing,
     needsHuman: parsed.needsHuman,
     infoAdmin: parsed.infoAdmin,
-    testimoni: parsed.sendTestimoni ? pickTestimonials(ctx.active_product) : [],
+    testimoni: parsed.sendTestimoni ? pickTestimonials(ctx.active_product, parsed.testimoniTopics) : [],
     // Error API (bukan permintaan lead) cukup dinotif, bot tidak dijeda.
     pauseBot: parsed.needsHuman && !parsed.apiError,
     apiError: parsed.apiError,

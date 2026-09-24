@@ -386,7 +386,7 @@ function withFacts(wf) {
     if (n.parameters && typeof n.parameters.jsCode === 'string') {
       n.parameters.jsCode = n.parameters.jsCode
         .replace("bpom: '',", "bpom: 'NA18230100999',")
-        .replace(/testimonials: \[[^\]]*\],/, "testimonials: ['https://x.test/t1.jpg', 'https://x.test/t2.jpg', 'https://x.test/t3.jpg', 'https://x.test/t4.jpg'],");
+        .replace(/testimonials: \[[\s\S]*?\n    \],/, "testimonials: [{ url: 'https://x.test/t1.jpg', tags: ['flek'] }, { url: 'https://x.test/t2.jpg', tags: ['kusam'] }, { url: 'https://x.test/t3.jpg', tags: [] }, { url: 'https://x.test/t4.jpg', tags: ['flek', 'kusam'] }, { url: 'https://x.test/t5.jpg', tags: ['jerawat'] }],");
     }
   }
   return wf;
@@ -404,14 +404,14 @@ test('tanpa data testimoni: prompt tidak menyebutnya, gambar tidak dikirim', () 
     vm.runInContext('FACTS.SalGlow.testimonials = __saved', ctx);
   }
   const wf = mainWf();
-  wf.nodes.forEach((n) => { if (n.parameters.jsCode) n.parameters.jsCode = n.parameters.jsCode.replace(/testimonials: \[[^\]]*\],/, 'testimonials: [],'); });
+  wf.nodes.forEach((n) => { if (n.parameters.jsCode) n.parameters.jsCode = n.parameters.jsCode.replace(/testimonials: \[[\s\S]*?\n    \],/, 'testimonials: [],'); });
   const r = simulate(wf, { webhookBody: { phone: '1', message: 'ada testimoni?' }, row: SALGLOW_ROW, http: (name) => (name === 'Claude' ? text('Aku kirimin ya kak [TESTIMONI]') : { status: true }) });
   assert.ok(!r.requests.some((q) => q.node === 'Kirim Gambar'));
   assert.strictEqual(r.requests.find((q) => q.node === 'Kirim WhatsApp').body.message, 'Aku kirimin ya kak');
 });
 
 test('25 testimoni Imgur terpasang, link langsung & unik, prompt menawarkan testimoni', () => {
-  const list = vm.runInContext('FACTS.SalGlow.testimonials', ctx);
+  const list = vm.runInContext('FACTS.SalGlow.testimonials', ctx).map((t) => t.url);
   assert.strictEqual(list.length, 25);
   assert.strictEqual(new Set(list).size, 25);
   assert.ok(list.every((u) => /^https:\/\/i\.imgur\.com\/[A-Za-z0-9]{7}\.(jpeg|png)$/.test(u)));
@@ -450,5 +450,23 @@ test('BPOM belum ada: bot jujur, tidak klaim aman/bebas merkuri, kulit sensitif 
   assert.ok(sys.includes('tidak molor dan tidak lengket'));
   assert.ok(sys.includes('tes tempel'));
   assert.ok(!/aman untuk kulit sensitif[^']/.test(sys.replace("'aman untuk kulit sensitif'", '')));
+});
+test('testimoni relevan: [TESTIMONI:flek] kirim foto berlabel flek dulu', () => {
+  const wf = withFacts(mainWf());
+  const r = simulate(wf, {
+    webhookBody: { phone: '6281', message: 'flek saya parah, ada bukti?', isFromMe: false, isGroup: false },
+    row: SALGLOW_ROW,
+    http: (name) => (name === 'Claude' ? text('Ada kak, aku kirimin yang mirip kondisi kakak ya [TESTIMONI:flek]') : { status: true }),
+  });
+  const imgs = r.requests.filter((q) => q.node === 'Kirim Gambar').map((q) => q.body.image);
+  assert.strictEqual(imgs.length, 3);
+  assert.deepStrictEqual(imgs.slice(0, 2).sort(), ['https://x.test/t1.jpg', 'https://x.test/t4.jpg']);
+  assert.strictEqual(r.requests.find((q) => q.node === 'Kirim WhatsApp').body.message, 'Ada kak, aku kirimin yang mirip kondisi kakak ya');
+});
+
+test('parse token testimoni dengan beberapa topik', () => {
+  const r = parseReply({ content: [{ type: 'text', text: 'Ini kak [TESTIMONI:bekas_jerawat, kusam]' }] });
+  assert.strictEqual(JSON.stringify(r.testimoniTopics), JSON.stringify(['bekas_jerawat', 'kusam']));
+  assert.strictEqual(r.reply, 'Ini kak');
 });
 console.log(`${passed} tes lulus (final)`);

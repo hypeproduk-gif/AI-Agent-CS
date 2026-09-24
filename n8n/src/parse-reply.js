@@ -24,8 +24,14 @@ function parseReply(response) {
 
   const needsHuman = block.text.includes(HANDOFF_TOKEN);
   const infoAdmin = block.text.includes(INFO_TOKEN);
-  const sendTestimoni = block.text.includes('[TESTIMONI]');
-  const clean = [HANDOFF_TOKEN, INFO_TOKEN, '[TESTIMONI]'].reduce((t, tok) => t.split(tok).join(''), block.text);
+  // [TESTIMONI] atau [TESTIMONI:flek,kusam]
+  const testiMatch = block.text.match(/\[TESTIMONI(?::([a-z_,\s]+))?\]/i);
+  const sendTestimoni = Boolean(testiMatch);
+  const testimoniTopics = testiMatch && testiMatch[1]
+    ? testiMatch[1].split(',').map((t) => t.trim().toLowerCase()).filter(Boolean)
+    : [];
+  const clean = [HANDOFF_TOKEN, INFO_TOKEN].reduce((t, tok) => t.split(tok).join(''), block.text)
+    .replace(/\[TESTIMONI(?::[^\]]*)?\]/gi, '');
   const reply = toWhatsApp(clean);
-  return { reply: reply || FALLBACK_REPLY, needsHuman, infoAdmin, sendTestimoni, apiError: null };
+  return { reply: reply || FALLBACK_REPLY, needsHuman, infoAdmin, sendTestimoni, testimoniTopics, apiError: null };
 }
