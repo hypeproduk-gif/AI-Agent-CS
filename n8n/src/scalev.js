@@ -13,12 +13,30 @@ function normalize(s) {
   return String(s || '').toLowerCase().replace(/^(kec\.?|kecamatan|kab\.?|kabupaten|kota)\s+/g, '').trim();
 }
 
+// Syarat alamat order: jalan + nomor/RT, kelurahan, patokan.
+function missingAddressParts(input) {
+  const missing = [];
+  const alamat = String(input.alamat || '').trim();
+  if (alamat.length < 6) missing.push('nama jalan/gang/dusun');
+  if (!/\d/.test(alamat)) missing.push('nomor rumah atau RT/RW');
+  if (String(input.kelurahan || '').trim().length < 3) missing.push('desa/kelurahan');
+  if (String(input.patokan || '').trim().length < 3) missing.push('patokan/ancer-ancer rumah');
+  if (String(input.nama || '').trim().length < 2) missing.push('nama penerima');
+  return missing;
+}
+
 // Mulai tool: validasi input + paket.
 function startTool(toolUse, ctx) {
   const input = toolUse.input || {};
   const pkg = (PACKAGES[ctx.active_product] || {})[input.paket];
   const base = { toolUseId: toolUse.id, tool: toolUse.name, input, phone: ctx.phone };
   if (!pkg) return { ...base, ok: false, error: `Paket "${input.paket}" tidak tersedia untuk ${ctx.active_product}.` };
+  if (toolUse.name === 'buat_order') {
+    const missing = missingAddressParts(input);
+    if (missing.length) {
+      return { ...base, ok: false, error: `Alamat belum lengkap: ${missing.join(', ')}. Minta lead melengkapi dulu, JANGAN buat order.` };
+    }
+  }
   if (toolUse.name === 'buat_order' && ctx.lastOrder) {
     return { ...base, ok: false, error: `Lead ini sudah punya order ${ctx.lastOrder} dalam ${SCALEV.duplicateOrderHours} jam terakhir. Jangan buat order baru; minta tim CS membantu kalau lead mau mengubah order. [HANDOFF]` };
   }
@@ -39,6 +57,30 @@ function pickLocation(state, response) {
   }
   const options = matches.slice(0, 5).map((m) => m.display).join('; ');
   return { ...state, ok: false, error: `Ada beberapa lokasi cocok: ${options}. Tanyakan ke lead yang mana.` };
+}
+
+// Kode pos dari GET /v3/locations/{id}/postal-codes. Bentuk item belum pasti, jadi dibaca longgar.
+function postalOptions(response) {
+  return ((response && response.data) || []).map((item) => {
+    if (typeof item === 'string' || typeof item === 'number') return { code: String(item), area: '' };
+    const code = item.postal_code || item.code || item.zip_code || item.kode_pos || '';
+    const area = item.urban || item.village || item.kelurahan || item.name || item.area || '';
+    return { code: String(code), area: String(area) };
+  }).filter((o) => /^\d{5}$/.test(o.code));
+}
+
+function pickPostalCode(state, response) {
+  if (!state.ok) return state;
+  const options = postalOptions(response);
+  const given = String(state.input.kode_pos || '').trim();
+  const kel = normalize(state.input.kelurahan).replace(/^(kel\.?|kelurahan|desa|ds\.?)\s+/, '');
+  const byArea = kel ? options.filter((o) => o.area && normalize(o.area).includes(kel)) : [];
+  const uniqueCodes = [...new Set(options.map((o) => o.code))];
+  let postal = '';
+  if (given && (!options.length || uniqueCodes.includes(given))) postal = given;
+  else if (byArea.length) postal = byArea[0].code;
+  else if (uniqueCodes.length === 1) postal = uniqueCodes[0];
+  return { ...state, postal, postalOptions: postal ? [] : options.slice(0, 10) };
 }
 
 function warehouseRequest(state) {
@@ -66,7 +108,7 @@ function courierRequest(state) {
     location_id: state.location.id,
     payment_method: paymentMethod(state.input.pembayaran),
     weight: state.pkg.weight,
-    ...(state.input.kode_pos ? { postal_code: String(state.input.kode_pos) } : {}),
+    ...(state.postal ? { postal_code: state.postal } : {}),
   };
 }
 
@@ -110,7 +152,7 @@ function orderRequest(state, ctx) {
     store_unique_id: SCALEV.storeUniqueId,
     customer_name: i.nama,
     customer_phone: state.phone,
-    address: i.alamat,
+    address: `${i.alamat}, ${i.kelurahan}${i.patokan ? ` (Patokan: ${i.patokan})` : ''}`,
     location_id: state.location.id,
     warehouse_unique_id: state.warehouse.uniqueId,
     courier_service_id: state.courier.id,
@@ -121,7 +163,7 @@ function orderRequest(state, ctx) {
     notes: `Order via AI CS WhatsApp${ctx.ref ? ' | ref ' + ctx.ref : ''}`,
     metadata: { source: 'ai-agent-cs', ref: ctx.ref || '' },
   };
-  if (i.kode_pos) body.postal_code = String(i.kode_pos);
+  if (state.postal) body.postal_code = state.postal;
   if (state.totals.codFee) {
     body.other_income = state.totals.codFee;
     body.other_income_name = SCALEV.codFeeName;
@@ -140,7 +182,9 @@ function toolResult(state, orderResponse) {
     content = {
       ok: true,
       paket: state.pkg.label,
-      tujuan: state.location.display,
+      alamat_resmi: `${state.input.kelurahan ? state.input.kelurahan + ', ' : ''}${state.location.display}`,
+      kode_pos: state.postal || null,
+      pilihan_kode_pos: state.postal ? undefined : (state.postalOptions || []).map((o) => (o.area ? `${o.code} (${o.area})` : o.code)),
       kurir: state.courier.name,
       estimasi: state.courier.etd,
       harga_produk: rupiah(t.price),

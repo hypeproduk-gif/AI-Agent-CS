@@ -60,7 +60,7 @@ test('pesan gambar tidak bikin error', () => {
 test('system prompt aman untuk JSON (ada kutip & enter)', () => {
   const r = prepareContext({ phone: '62812', message: 'halo "kak"\nada?' }, null);
   const parsed = JSON.parse(JSON.stringify(r.requestBody));
-  assert.ok(parsed.system.includes("'apa aja'"));
+  assert.ok(parsed.system.includes("'Terima kasih sudah menghubungi'"));
   assert.strictEqual(parsed.messages[0].content, 'halo "kak"\nada?');
 });
 
@@ -133,6 +133,10 @@ const LOCATIONS = { data: [
   { id: 11, subdistrict_name: 'Wonokromo', city_name: 'Kota Surabaya', province_name: 'Jawa Timur', display: 'Wonokromo, Kota Surabaya, Jawa Timur' },
   { id: 12, subdistrict_name: 'Wonokromo', city_name: 'Kab. Bantul', province_name: 'DIY', display: 'Wonokromo, Kab. Bantul, DIY' },
 ] };
+const POSTAL = { data: [
+  { postal_code: '60243', urban: 'Jagir' },
+  { postal_code: '60244', urban: 'Ngagel Rejo' },
+] };
 const WAREHOUSES = { data: [
   { warehouse: { id: 7, unique_id: 'wh_jkt', name: 'Gudang Jakarta', warehouse_address: { city: 'Jakarta Barat' } } },
   { warehouse: { id: 8, unique_id: 'wh_sby', name: 'Gudang Surabaya', warehouse_address: { city: 'Kota Surabaya' } } },
@@ -165,6 +169,7 @@ function scenario({ message, row = SALGLOW_ROW, first, order }) {
           toolResults.push(JSON.parse(body.messages[body.messages.length - 1].content[0].content));
           return text('Balasan akhir ke lead');
         case 'Scalev Lokasi': return LOCATIONS;
+        case 'Scalev Kode Pos': return POSTAL;
         case 'Scalev Gudang': return WAREHOUSES;
         case 'Scalev Kurir': return COURIERS;
         case 'Scalev Buat Order': return order || { id: 'uuid-1', order_id: 'SV123', public_order_url: 'https://pay.example/SV123' };
@@ -199,7 +204,7 @@ test('simulasi: cek ongkir COD pilih JNT Mengantar + fee 3%', () => {
 test('simulasi: buat order transfer → payload Scalev benar & tersimpan', () => {
   const r = scenario({ message: 'iya kak betul, proses ya',
     row: { ...SALGLOW_ROW, ref: 'SG-ABCDE' },
-    first: toolUse('buat_order', { paket: 'B2G2', pembayaran: 'transfer', kecamatan: 'Wonokromo', kota: 'Kota Surabaya', nama: 'Sari', alamat: 'Jl. Mawar 5 RT 1/2' }) });
+    first: toolUse('buat_order', { paket: 'B2G2', pembayaran: 'transfer', kecamatan: 'Wonokromo', kota: 'Kota Surabaya', nama: 'Sari', alamat: 'Jl. Mawar 5 RT 1/2', kelurahan: 'Jagir', patokan: 'depan masjid' }) });
   const body = r.req('Scalev Buat Order').body;
   assert.strictEqual(r.req('Scalev Buat Order').url, 'https://api.scalev.com/v3/orders');
   assert.strictEqual(body.payment_method, 'bank_transfer');
@@ -218,7 +223,7 @@ test('simulasi: buat order transfer → payload Scalev benar & tersimpan', () =>
 
 test('simulasi: order COD menambah other_income 3%', () => {
   const r = scenario({ message: 'oke',
-    first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'cod', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'Sari', alamat: 'Jl. Mawar 5' }) });
+    first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'cod', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'Sari', alamat: 'Jl. Mawar 5', kelurahan: 'Jagir', patokan: 'depan masjid' }) });
   const body = r.req('Scalev Buat Order').body;
   assert.strictEqual(body.payment_method, 'cod');
   assert.strictEqual(body.courier_service_id, 3);
@@ -238,7 +243,7 @@ test('simulasi: lokasi ambigu → tanya lead, tidak lanjut ke Scalev', () => {
 test('simulasi: order gagal di Scalev → handoff', () => {
   const r = scenario({ message: 'oke',
     order: { error: { message: 'variant not found' } },
-    first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'cod', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'S', alamat: 'Jl. A' }) });
+    first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'cod', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'Sa', alamat: 'Jl. Anggrek 7', kelurahan: 'Jagir', patokan: 'depan masjid' }) });
   assert.strictEqual(r.toolResults[0].ok, false);
   assert.ok(r.toolResults[0].error.includes('variant not found'));
   assert.strictEqual(r.req('Simpan Histori').body.last_order_id, '');
@@ -247,7 +252,7 @@ test('simulasi: order gagal di Scalev → handoff', () => {
 test('simulasi: cegah order dobel dalam 6 jam', () => {
   const recent = { ...SALGLOW_ROW, last_order_id: 'SV999', last_order_at: new Date(Date.now() - 3600000).toISOString() };
   const r = scenario({ message: 'order lagi', row: recent,
-    first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'cod', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'S', alamat: 'Jl. A' }) });
+    first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'cod', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'Sa', alamat: 'Jl. Anggrek 7', kelurahan: 'Jagir', patokan: 'depan masjid' }) });
   assert.ok(!r.req('Scalev Buat Order'));
   assert.ok(r.toolResults[0].error.includes('SV999'));
   assert.strictEqual(r.req('Simpan Histori').body.last_order_id, 'SV999');
@@ -279,7 +284,7 @@ test('workflow tes ongkir jalan dengan API tiruan & tidak membuat order', () => 
 });
 test('bot tidak pernah request pickup / generate AWB', () => {
   const r = scenario({ message: 'oke',
-    first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'cod', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'S', alamat: 'Jl. A' }) });
+    first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'cod', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'Sa', alamat: 'Jl. Anggrek 7', kelurahan: 'Jagir', patokan: 'depan masjid' }) });
   const scalevCalls = r.requests.filter((q) => q.url && q.url.includes('scalev.com'));
   assert.ok(scalevCalls.length >= 4);
   assert.ok(scalevCalls.every((q) => !/awb|pickup/i.test(q.url)));
@@ -310,5 +315,43 @@ test('prompt jualan: alur, larangan klaim palsu, hitungan hemat benar', () => {
   for (const k of ['GALI MASALAH', 'EMPATI', 'KEBERATAN', 'CLOSING', 'BPOM', 'Rp54.750/pcs', 'Rp69.500/pcs']) assert.ok(sys.includes(k), k);
   assert.strictEqual(219000 / 4, 54750);
   assert.strictEqual(139000 / 2, 69500);
+});
+test('alamat belum lengkap → order ditolak, tanpa notif', () => {
+  const r = scenario({ message: 'kirim ke jagir ya',
+    first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'cod', kelurahan: 'Jagir', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'Sari', alamat: 'Jl. Jagir Sidomukti', patokan: '' }) });
+  assert.ok(!r.req('Scalev Lokasi'));
+  assert.ok(!r.req('Scalev Buat Order'));
+  assert.ok(!r.req('Telegram Admin'));
+  assert.ok(r.toolResults[0].error.includes('nomor rumah atau RT/RW'));
+  assert.ok(r.toolResults[0].error.includes('patokan'));
+});
+
+test('lead cuma sebut kelurahan → kode pos & alamat resmi terisi, masuk ke order', () => {
+  const ongkir = scenario({ message: 'kirim ke jagir',
+    first: toolUse('cek_ongkir', { paket: 'B1G1', pembayaran: 'cod', kelurahan: 'Kel. Jagir', kecamatan: 'Wonokromo', kota: 'Surabaya' }) });
+  assert.strictEqual(ongkir.toolResults[0].kode_pos, '60243');
+  assert.strictEqual(ongkir.toolResults[0].alamat_resmi, 'Kel. Jagir, Wonokromo, Kota Surabaya, Jawa Timur');
+  assert.ok(ongkir.req('Scalev Kode Pos').url.endsWith('/locations/11/postal-codes'));
+  assert.strictEqual(ongkir.req('Scalev Kurir').body.postal_code, '60243');
+
+  const order = scenario({ message: 'iya betul',
+    first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'transfer', kelurahan: 'Jagir', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'Sari', alamat: 'Jl. Jagir Sidomukti Gg. 3 No. 12', patokan: 'depan masjid Al Ikhlas' }) });
+  const body = order.req('Scalev Buat Order').body;
+  assert.strictEqual(body.address, 'Jl. Jagir Sidomukti Gg. 3 No. 12, Jagir (Patokan: depan masjid Al Ikhlas)');
+  assert.strictEqual(body.postal_code, '60243');
+  assert.ok(order.req('Telegram Admin').body.includes('ORDER FIX'));
+});
+
+test('kode pos ambigu → kasih pilihan ke Claude', () => {
+  const r = scenario({ message: 'ongkir ke wonokromo',
+    first: toolUse('cek_ongkir', { paket: 'B1G1', pembayaran: 'cod', kecamatan: 'Wonokromo', kota: 'Surabaya' }) });
+  assert.strictEqual(r.toolResults[0].kode_pos, null);
+  assert.deepStrictEqual(r.toolResults[0].pilihan_kode_pos, ['60243 (Jagir)', '60244 (Ngagel Rejo)']);
+  assert.ok(r.toolResults[0].ok);
+});
+
+test('prompt: larangan basa-basi & syarat alamat', () => {
+  const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
+  for (const k of ['DILARANG basa-basi', 'patokan', 'JANGAN tanya kecamatan/kota/provinsi/kode pos']) assert.ok(sys.includes(k), k);
 });
 console.log(`${passed} tes lulus (final)`);

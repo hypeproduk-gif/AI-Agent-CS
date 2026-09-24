@@ -37,9 +37,12 @@ const toolUse = ($input.first().json.content || []).find((c) => c.type === 'tool
 return [{ json: startTool(toolUse, ctx) }];`);
 
 const locationCode = toolCode(`const state = pickLocation($('Mulai Tool').first().json, $input.first().json);
+return [{ json: state }];`);
+
+const postalCode = toolCode(`const state = pickPostalCode($('Pilih Lokasi').first().json, $input.first().json);
 return [{ json: { ...state, next: state.ok ? warehouseRequest(state) : null } }];`);
 
-const warehouseCode = toolCode(`const state = pickWarehouse($('Pilih Lokasi').first().json, $input.first().json);
+const warehouseCode = toolCode(`const state = pickWarehouse($('Pilih Kode Pos').first().json, $input.first().json);
 return [{ json: { ...state, next: state.ok ? courierRequest(state) : null } }];`);
 
 const courierCode = toolCode(`const ctx = $('Siapkan Konteks').first().json;
@@ -49,7 +52,7 @@ return [{ json: { ...state, createOrder: wantsOrder, next: wantsOrder ? orderReq
 
 const resultCode = toolCode(`const ctx = $('Siapkan Konteks').first().json;
 const first = $('Claude').first().json;
-const state = $('Hitung Ongkir').isExecuted ? $('Hitung Ongkir').first().json : $('Pilih Lokasi').first().json;
+const state = ['Hitung Ongkir', 'Pilih Lokasi', 'Mulai Tool'].map((n) => $(n)).find((n) => n.isExecuted).first().json;
 const orderResponse = $('Scalev Buat Order').isExecuted ? $('Scalev Buat Order').first().json : null;
 const { block, order } = toolResult(state, orderResponse);
 const req = ctx.requestBody;
@@ -176,9 +179,12 @@ const nodes = [
 
   ifNode('Pakai Tool?', 1000, 0, "={{ $json.stop_reason === 'tool_use' }}"),
   node('Mulai Tool', 'n8n-nodes-base.code', 2, 1000, { jsCode: startCode }, { y: 300 }),
+  ifNode('Tool OK?', 1100, 300, '={{ $json.ok }}'),
   scalevHttp('Scalev Lokasi', 1200, 'GET', "/locations?search={{ encodeURIComponent($json.search || '') }}&page_size=25"),
   node('Pilih Lokasi', 'n8n-nodes-base.code', 2, 1400, { jsCode: locationCode }, { y: 300 }),
   ifNode('Lokasi OK?', 1600, 300, '={{ $json.ok }}'),
+  scalevHttp('Scalev Kode Pos', 1800, 'GET', '/locations/{{ $json.location.id }}/postal-codes'),
+  node('Pilih Kode Pos', 'n8n-nodes-base.code', 2, 1900, { jsCode: postalCode }, { y: 450 }),
   scalevHttp('Scalev Gudang', 1800, 'POST', '/shipping-costs/search-warehouse', '={{ JSON.stringify($json.next) }}'),
   node('Pilih Gudang', 'n8n-nodes-base.code', 2, 2000, { jsCode: warehouseCode }, { y: 300 }),
   scalevHttp('Scalev Kurir', 2200, 'POST', '/shipping-costs/search-courier-service', '={{ JSON.stringify($json.next || {}) }}'),
@@ -252,6 +258,18 @@ const nodes = [
   }),
 ];
 
+// Tata letak: baris atas alur chat, baris bawah alur tool Scalev.
+const TOP = ['Webhook', 'Hanya Chat Lead', 'Get row(s)', 'Siapkan Konteks', 'Claude', 'Pakai Tool?'];
+const BOTTOM = ['Mulai Tool', 'Tool OK?', 'Scalev Lokasi', 'Pilih Lokasi', 'Lokasi OK?', 'Scalev Kode Pos', 'Pilih Kode Pos',
+  'Scalev Gudang', 'Pilih Gudang', 'Scalev Kurir', 'Hitung Ongkir', 'Buat Order?', 'Scalev Buat Order', 'Hasil Tool', 'Claude Lanjutan'];
+const TAIL = ['Olah Balasan', 'Perlu Notif?', 'Telegram Admin', 'Kirim WhatsApp', 'Simpan Histori'];
+const place = (names, x0, y) => names.forEach((name, i) => {
+  nodes.find((n) => n.name === name).position = [x0 + i * 220, y];
+});
+place(TOP, 0, 0);
+place(BOTTOM, 1100, 300);
+place(TAIL, 1100 + BOTTOM.length * 220, 0);
+
 nodes.forEach((n, i) => { n.id = `aics-${String(i + 1).padStart(2, '0')}`; });
 
 const link = (...targets) => ({ main: targets.map((t) => (t ? [{ node: t, type: 'main', index: 0 }] : [])) });
@@ -267,10 +285,13 @@ const workflow = {
     'Siapkan Konteks': link('Claude'),
     Claude: link('Pakai Tool?'),
     'Pakai Tool?': link('Mulai Tool', 'Olah Balasan'),
-    'Mulai Tool': link('Scalev Lokasi'),
+    'Mulai Tool': link('Tool OK?'),
+    'Tool OK?': link('Scalev Lokasi', 'Hasil Tool'),
     'Scalev Lokasi': link('Pilih Lokasi'),
     'Pilih Lokasi': link('Lokasi OK?'),
-    'Lokasi OK?': link('Scalev Gudang', 'Hasil Tool'),
+    'Lokasi OK?': link('Scalev Kode Pos', 'Hasil Tool'),
+    'Scalev Kode Pos': link('Pilih Kode Pos'),
+    'Pilih Kode Pos': link('Scalev Gudang'),
     'Scalev Gudang': link('Pilih Gudang'),
     'Pilih Gudang': link('Scalev Kurir'),
     'Scalev Kurir': link('Hitung Ongkir'),
@@ -400,7 +421,7 @@ console.log('Wrote', path.relative(process.cwd(), setupOut));
 // Workflow keempat: tes cek ongkir ke Scalev asli tanpa membuat order.
 // Ubah input di node "Input Tes" lalu Execute.
 const byName = Object.fromEntries(nodes.map((n) => [n.name, n]));
-const testChain = ['Scalev Lokasi', 'Pilih Lokasi', 'Lokasi OK?', 'Scalev Gudang', 'Pilih Gudang', 'Scalev Kurir', 'Hitung Ongkir'];
+const testChain = ['Tool OK?', 'Scalev Lokasi', 'Pilih Lokasi', 'Lokasi OK?', 'Scalev Kode Pos', 'Pilih Kode Pos', 'Scalev Gudang', 'Pilih Gudang', 'Scalev Kurir', 'Hitung Ongkir'];
 const ongkirTestWorkflow = {
   name: 'AI Agent CS - Tes Ongkir',
   nodes: [
@@ -410,7 +431,7 @@ const ongkirTestWorkflow = {
     }),
     node('Mulai Tool', 'n8n-nodes-base.code', 2, 440, {
       jsCode: toolCode(`// Ubah input tes di sini
-const input = { paket: 'B1G1', pembayaran: 'cod', kecamatan: 'Wonokromo', kota: 'Surabaya' };
+const input = { paket: 'B1G1', pembayaran: 'cod', kelurahan: 'Jagir', kecamatan: 'Wonokromo', kota: 'Surabaya' };
 return [{ json: startTool({ id: 'tes', name: 'cek_ongkir', input }, $('Siapkan Konteks').first().json) }];`),
     }),
     ...testChain.map((name, i) => ({ ...byName[name], position: [660 + i * 220, 0] })),
@@ -419,10 +440,13 @@ return [{ json: startTool({ id: 'tes', name: 'cek_ongkir', input }, $('Siapkan K
   connections: {
     'Jalankan Manual': link('Siapkan Konteks'),
     'Siapkan Konteks': link('Mulai Tool'),
-    'Mulai Tool': link('Scalev Lokasi'),
+    'Mulai Tool': link('Tool OK?'),
+    'Tool OK?': link('Scalev Lokasi'),
     'Scalev Lokasi': link('Pilih Lokasi'),
     'Pilih Lokasi': link('Lokasi OK?'),
-    'Lokasi OK?': link('Scalev Gudang'),
+    'Lokasi OK?': link('Scalev Kode Pos'),
+    'Scalev Kode Pos': link('Pilih Kode Pos'),
+    'Pilih Kode Pos': link('Scalev Gudang'),
     'Scalev Gudang': link('Pilih Gudang'),
     'Pilih Gudang': link('Scalev Kurir'),
     'Scalev Kurir': link('Hitung Ongkir'),
