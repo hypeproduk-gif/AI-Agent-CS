@@ -338,7 +338,7 @@ test('kata closing tanpa order TIDAK kirim notif Telegram', () => {
 
 test('prompt jualan: alur, larangan klaim palsu, hitungan hemat benar', () => {
   const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
-  for (const k of ['GALI MASALAH', 'EMPATI', 'KEBERATAN', 'CLOSING', 'BPOM', 'Rp54.750/pcs', 'Rp69.500/pcs']) assert.ok(sys.includes(k), k);
+  for (const k of ['PERTANYAAN/KEBERATAN', 'Mau yang mana kak?', 'Ada lagi yang mau ditanyakan sebelum order', 'JANGAN jualan lagi', 'BPOM', 'Rp54.750/pcs', 'Rp69.500/pcs']) assert.ok(sys.includes(k), k);
   assert.strictEqual(219000 / 4, 54750);
   assert.strictEqual(139000 / 2, 69500);
 });
@@ -378,7 +378,7 @@ test('kode pos ambigu → kasih pilihan ke Claude', () => {
 
 test('prompt: larangan basa-basi & syarat alamat', () => {
   const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
-  for (const k of ['DILARANG basa-basi', 'patokan', 'JANGAN tanya kecamatan/kota/provinsi/kode pos']) assert.ok(sys.includes(k), k);
+  for (const k of ['DILARANG: basa-basi', "'Mantap'", "'Yeay'", 'Baik kak, saya proses ya', 'patokan', 'kecamatan', 'supaya paket tidak nyasar di ekspedisi', 'sudah saya prioritaskan untuk pengiriman', 'Jangan tanya kode pos/provinsi']) assert.ok(sys.includes(k), k);
 });
 // Workflow dengan fakta produk terisi (BPOM + testimoni) untuk tes.
 function withFacts(wf) {
@@ -468,5 +468,19 @@ test('parse token testimoni dengan beberapa topik', () => {
   const r = parseReply({ content: [{ type: 'text', text: 'Ini kak [TESTIMONI:bekas_jerawat, kusam]' }] });
   assert.strictEqual(JSON.stringify(r.testimoniTopics), JSON.stringify(['bekas_jerawat', 'kusam']));
   assert.strictEqual(r.reply, 'Ini kak');
+});
+test('alamat desa tanpa nomor/RT diterima kalau ada nama dusun + patokan', () => {
+  const r = scenario({ message: 'ok',
+    first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'cod', kelurahan: 'Jagir', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'Axela', alamat: 'Dsn Nganten', patokan: 'pagar putih hadap selatan, 3 rumah dari praktik dr Diana' }) });
+  assert.ok(r.req('Scalev Buat Order'));
+  const bad = scenario({ message: 'ok',
+    first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'cod', kelurahan: 'Jagir', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'Axela', alamat: 'Sokosari Tuban', patokan: 'pagar putih' }) });
+  assert.ok(!bad.req('Scalev Buat Order'));
+});
+
+test('balasan yang cuma berisi token testimoni tidak jadi pesan "sistem sibuk"', () => {
+  const r = parseReply({ content: [{ type: 'text', text: '[TESTIMONI:flek]' }] });
+  assert.strictEqual(r.reply, 'Ini beberapa testimoni pembeli ya kak.');
+  assert.strictEqual(r.sendTestimoni, true);
 });
 console.log(`${passed} tes lulus (final)`);

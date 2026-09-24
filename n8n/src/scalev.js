@@ -18,7 +18,10 @@ function missingAddressParts(input) {
   const missing = [];
   const alamat = String(input.alamat || '').trim();
   if (alamat.length < 6) missing.push('nama jalan/gang/dusun');
-  if (!/\d/.test(alamat)) missing.push('nomor rumah atau RT/RW');
+  // Di desa sering tidak ada nomor/RT: nama dusun/dukuh + patokan sudah cukup.
+  if (!/\d/.test(alamat) && !/\b(dusun|dsn|dukuh|dk|kampung|kp|lingkungan|lingk)\b\.?/i.test(alamat)) {
+    missing.push('nomor rumah atau RT/RW (kalau tidak ada, sebutkan nama dusun)');
+  }
   if (String(input.kelurahan || '').trim().length < 3) missing.push('desa/kelurahan');
   if (String(input.patokan || '').trim().length < 3) missing.push('patokan/ancer-ancer rumah');
   if (String(input.nama || '').trim().length < 2) missing.push('nama penerima');

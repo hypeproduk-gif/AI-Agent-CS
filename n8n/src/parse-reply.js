@@ -32,6 +32,7 @@ function parseReply(response) {
     : [];
   const clean = [HANDOFF_TOKEN, INFO_TOKEN].reduce((t, tok) => t.split(tok).join(''), block.text)
     .replace(/\[TESTIMONI(?::[^\]]*)?\]/gi, '');
-  const reply = toWhatsApp(clean);
+  // Balasan yang isinya hanya token testimoni tetap dijawab singkat, bukan pesan "sistem sibuk".
+  const reply = toWhatsApp(clean) || (sendTestimoni ? 'Ini beberapa testimoni pembeli ya kak.' : '');
   return { reply: reply || FALLBACK_REPLY, needsHuman, infoAdmin, sendTestimoni, testimoniTopics, apiError: null };
 }
