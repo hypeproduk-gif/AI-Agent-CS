@@ -224,8 +224,9 @@ test('simulasi: buat order transfer → payload Scalev benar & tersimpan', () =>
   assert.strictEqual(body.location_id, 11);
   assert.strictEqual(body.customer_phone, '6281');
   assert.strictEqual(body.other_income, undefined);
-  assert.ok(body.notes.includes('SG-ABCDE'));
-  assert.ok(body.notes.startsWith('[TEST AI] Order via AI CS WhatsApp'));
+  assert.strictEqual(body.notes, 'Beli 2 Gratis 2 (4 pcs) + bonus sunscreen + eyeliner');
+  assert.strictEqual(body.customer_name, '[TEST AI] Sari');
+  assert.strictEqual(body.metadata.ref, 'SG-ABCDE');
   assert.strictEqual(r.toolResults[0].link_pembayaran, 'https://pay.example/SV123');
   assert.strictEqual(r.req('Simpan Histori').body.last_order_id, 'SV123');
   assert.ok(r.req('Telegram Admin').body.includes('ORDER FIX MASUK SCALEV'));
@@ -499,7 +500,8 @@ test('workflow TEST: webhook & store terpisah dari produksi', () => {
       'Scalev Buat Order': { id: 'u', order_id: 'T1' } })[name] || { status: true } });
   const body = r.requests.find((q) => q.node === 'Scalev Buat Order').body;
   assert.strictEqual(body.store_unique_id, 'ISI_STORE_UNIQUE_ID_TES');
-  assert.ok(body.notes.startsWith('[TES BOT] '));
+  assert.strictEqual(body.customer_name, '[TES BOT] Sa');
+  assert.strictEqual(body.notes, 'Beli 1 Gratis 1 (2 pcs) + bonus sunscreen + eyeliner');
   assert.ok(r.requests.find((q) => q.node === 'Telegram Admin').body.startsWith('🧪 *[TES]*'));
 });
 console.log(`${passed} tes lulus (final)`);

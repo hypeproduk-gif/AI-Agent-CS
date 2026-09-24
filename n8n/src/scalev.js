@@ -153,7 +153,7 @@ function orderRequest(state, ctx) {
   const i = state.input;
   const body = {
     store_unique_id: SCALEV.storeUniqueId,
-    customer_name: i.nama,
+    customer_name: `${SCALEV.namePrefix || ''}${i.nama}`,
     customer_phone: state.phone,
     address: `${i.alamat}, ${i.kelurahan}${i.patokan ? ` (Patokan: ${i.patokan})` : ''}`,
     location_id: state.location.id,
@@ -163,7 +163,7 @@ function orderRequest(state, ctx) {
     shipment_provider_code: SCALEV.providerCode,
     payment_method: paymentMethod(i.pembayaran),
     ordervariants: state.pkg.items.map((it) => ({ variant_unique_id: it.variantUniqueId, quantity: it.qty })),
-    notes: `${SCALEV.orderNotePrefix || ''}Order via AI CS WhatsApp${ctx.ref ? ' | ref ' + ctx.ref : ''}`,
+    notes: state.pkg.note || state.pkg.label,
     metadata: { source: 'ai-agent-cs', ref: ctx.ref || '' },
   };
   if (state.postal) body.postal_code = state.postal;
