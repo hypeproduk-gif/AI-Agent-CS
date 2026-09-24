@@ -483,4 +483,22 @@ test('balasan yang cuma berisi token testimoni tidak jadi pesan "sistem sibuk"',
   assert.strictEqual(r.reply, 'Ini beberapa testimoni pembeli ya kak.');
   assert.strictEqual(r.sendTestimoni, true);
 });
+test('workflow TEST: webhook & store terpisah dari produksi', () => {
+  const prod = mainWf();
+  const tst = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'ai-agent-cs.test.workflow.json'), 'utf8'));
+  const hook = (wf) => wf.nodes.find((n) => n.type === 'n8n-nodes-base.webhook').parameters.path;
+  assert.notStrictEqual(hook(prod), hook(tst));
+  assert.strictEqual(tst.name, 'AI Agent CS v2 (TEST)');
+  const code = (wf) => wf.nodes.filter((n) => n.parameters.jsCode).map((n) => n.parameters.jsCode).join('\n');
+  assert.ok(code(prod).includes("const STORE_PROFILE = 'prod';") && !code(prod).includes("STORE_PROFILE = 'test'"));
+  assert.ok(code(tst).includes("const STORE_PROFILE = 'test';") && !code(tst).includes("STORE_PROFILE = 'prod'"));
+  const r = simulate(tst, { webhookBody: { phone: '1', message: 'ok' }, row: SALGLOW_ROW,
+    http: (name) => ({ Claude: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'cod', kelurahan: 'Jagir', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'Sa', alamat: 'Jl. A 1', patokan: 'depan masjid' }),
+      'Claude Lanjutan': text('ok'), 'Scalev Lokasi': LOCATIONS, 'Scalev Kode Pos': POSTAL, 'Scalev Gudang': WAREHOUSES, 'Scalev Kurir': COURIERS,
+      'Scalev Buat Order': { id: 'u', order_id: 'T1' } })[name] || { status: true } });
+  const body = r.requests.find((q) => q.node === 'Scalev Buat Order').body;
+  assert.strictEqual(body.store_unique_id, 'ISI_STORE_UNIQUE_ID_TES');
+  assert.ok(body.notes.startsWith('[TES BOT] '));
+  assert.ok(r.requests.find((q) => q.node === 'Telegram Admin').body.startsWith('🧪 *[TES]*'));
+});
 console.log(`${passed} tes lulus (final)`);

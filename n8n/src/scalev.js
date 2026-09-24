@@ -163,7 +163,7 @@ function orderRequest(state, ctx) {
     shipment_provider_code: SCALEV.providerCode,
     payment_method: paymentMethod(i.pembayaran),
     ordervariants: state.pkg.items.map((it) => ({ variant_unique_id: it.variantUniqueId, quantity: it.qty })),
-    notes: `Order via AI CS WhatsApp${ctx.ref ? ' | ref ' + ctx.ref : ''}`,
+    notes: `${SCALEV.orderNotePrefix || ''}Order via AI CS WhatsApp${ctx.ref ? ' | ref ' + ctx.ref : ''}`,
     metadata: { source: 'ai-agent-cs', ref: ctx.ref || '' },
   };
   if (state.postal) body.postal_code = state.postal;

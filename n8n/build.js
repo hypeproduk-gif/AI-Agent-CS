@@ -505,3 +505,23 @@ return [{ json: startTool({ id: 'tes', name: 'cek_ongkir', input }, $('Siapkan K
 const testOut = path.join(__dirname, 'tes-ongkir.workflow.json');
 fs.writeFileSync(testOut, JSON.stringify(ongkirTestWorkflow, null, 2) + '\n');
 console.log('Wrote', path.relative(process.cwd(), testOut));
+
+// Workflow kelima: salinan TEST dari bot utama. Webhook, nama, dan store Scalev terpisah
+// supaya uji coba tidak mengganggu nomor & store produksi.
+const TEST_WEBHOOK_PATH = 'aics-test-7c1e2b90';
+const testWorkflow = JSON.parse(JSON.stringify(workflow));
+testWorkflow.name = 'AI Agent CS v2 (TEST)';
+for (const n of testWorkflow.nodes) {
+  n.id = n.id.replace(/^aics-/, 'aics-test-');
+  if (n.type === 'n8n-nodes-base.webhook') {
+    n.parameters.path = TEST_WEBHOOK_PATH;
+    n.webhookId = TEST_WEBHOOK_PATH;
+  }
+  if (typeof n.parameters.jsCode === 'string') {
+    n.parameters.jsCode = n.parameters.jsCode.replace("const STORE_PROFILE = 'prod';", "const STORE_PROFILE = 'test';");
+  }
+  if (n.name === 'Telegram Admin') n.parameters.text = n.parameters.text.replace('={{ ', "=🧪 *[TES]* {{ ");
+}
+const testOutMain = path.join(__dirname, 'ai-agent-cs.test.workflow.json');
+fs.writeFileSync(testOutMain, JSON.stringify(testWorkflow, null, 2) + '\n');
+console.log('Wrote', path.relative(process.cwd(), testOutMain));
