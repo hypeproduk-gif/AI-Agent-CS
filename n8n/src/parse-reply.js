@@ -1,6 +1,7 @@
 // Ambil teks balasan Claude, deteksi token handoff, rapikan format untuk WhatsApp.
 
-const HANDOFF_TOKEN = '[HANDOFF]';
+const HANDOFF_TOKEN = '[HANDOFF]'; // bot dijeda sementara, CS manusia ambil alih
+const INFO_TOKEN = '[INFO_ADMIN]'; // admin cukup dikabari, bot tetap lanjut jualan
 const FALLBACK_REPLY =
   'Maaf kak, sistem kami lagi sibuk sebentar. Tim CS akan segera membalas chat kakak ya 🙏';
 
@@ -22,6 +23,7 @@ function parseReply(response) {
   }
 
   const needsHuman = block.text.includes(HANDOFF_TOKEN);
-  const reply = toWhatsApp(block.text.split(HANDOFF_TOKEN).join(''));
-  return { reply: reply || FALLBACK_REPLY, needsHuman, apiError: null };
+  const infoAdmin = block.text.includes(INFO_TOKEN);
+  const reply = toWhatsApp(block.text.split(HANDOFF_TOKEN).join('').split(INFO_TOKEN).join(''));
+  return { reply: reply || FALLBACK_REPLY, needsHuman, infoAdmin, apiError: null };
 }

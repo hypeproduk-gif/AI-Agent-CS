@@ -4,6 +4,7 @@
 const MAX_HISTORY = 20;
 const MODEL = 'claude-haiku-4-5-20251001';
 const MAX_TOKENS = 500;
+const HANDOFF_PAUSE_MINUTES = 30; // setelah ini bot aktif lagi otomatis
 
 const PRODUCT_PATTERNS = [
   ['KitJelangNikah', /\b(nikah|menikah|pernikahan|wedding|kit jelang nikah|kitjelangnikah)\b/i],
@@ -95,10 +96,24 @@ function recentOrder(row, now = Date.now()) {
   return age >= 0 && age < SCALEV.duplicateOrderHours * 3600000 ? row.last_order_id : null;
 }
 
-function prepareContext(body, row) {
-  if (row && String(row.handoff) === 'true') return null;
+// Kolom handoff berisi waktu bot dijeda (ISO). 'true' (format lama) = dijeda sampai diubah manual.
+function isPaused(row, now = Date.now()) {
+  const value = String((row && row.handoff) || '');
+  if (value === 'true') return true;
+  const at = Date.parse(value);
+  return !Number.isNaN(at) && now - at < HANDOFF_PAUSE_MINUTES * 60000;
+}
 
+function prepareContext(body, row) {
   const incoming = normalizeIncoming(body);
+
+  // Saat dijeda bot tidak membalas, tapi pesan lead tetap dicatat supaya
+  // konteksnya tidak hilang ketika bot aktif lagi.
+  if (isPaused(row)) {
+    const kept = parseHistory(row.history).concat([{ role: 'user', content: incoming }]);
+    return { paused: true, phone: body.phone, history: JSON.stringify(kept.slice(-MAX_HISTORY * 2)) };
+  }
+
   const { product, switchedFrom, ref } = resolveProduct(incoming, row && row.active_product);
   const history = parseHistory(row && row.history);
   history.push({ role: 'user', content: incoming });

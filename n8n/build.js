@@ -84,6 +84,7 @@ return [{
     ref: ctx.ref,
     isClosing: ctx.isClosing,
     needsHuman: parsed.needsHuman,
+    infoAdmin: parsed.infoAdmin,
     // Error API (bukan permintaan lead) cukup dinotif, bot tidak dijeda.
     pauseBot: parsed.needsHuman && !parsed.apiError,
     apiError: parsed.apiError,
@@ -94,7 +95,7 @@ return [{
     last_order_id: order ? order.orderId : (stored.last_order_id || ''),
     last_order_at: order ? new Date().toISOString() : (stored.last_order_at || ''),
     // Notif closing hanya saat order benar-benar dibuat di Scalev.
-    notify: Boolean(order) || parsed.needsHuman,
+    notify: Boolean(order) || parsed.needsHuman || parsed.infoAdmin,
   },
 }];`,
 ].join('\n');
@@ -164,6 +165,21 @@ const nodes = [
 
   node('Siapkan Konteks', 'n8n-nodes-base.code', 2, 660, { jsCode: prepareCode }),
 
+  ifNode('Bot Dijeda?', 900, 0, '={{ $json.paused === true }}'),
+  node('Simpan Saat Jeda', 'n8n-nodes-base.dataTable', 1.1, 1100, {
+    operation: 'upsert',
+    dataTableId: DATA_TABLE,
+    filters: { conditions: [{ keyName: 'phone', keyValue: '={{ $json.phone }}' }] },
+    columns: {
+      mappingMode: 'defineBelow',
+      value: { phone: '={{ $json.phone }}', history: '={{ $json.history }}' },
+      matchingColumns: [],
+      schema: ['phone', 'history'].map(column),
+      attemptToConvertTypes: false,
+      convertFieldsToString: false,
+    },
+    options: {},
+  }),
   node('Claude', 'n8n-nodes-base.httpRequest', 4.5, 880, {
     method: 'POST',
     url: 'https://api.anthropic.com/v1/messages',
@@ -210,12 +226,12 @@ const nodes = [
 
   node('Telegram Admin', 'n8n-nodes-base.telegram', 1.2, 3800, {
     chatId: TELEGRAM_CHAT_ID,
-    text: "={{ $json.needsHuman ? '🟠 *BUTUH CS MANUSIA*' : ($json.apiError ? '⚠️ *BOT ERROR*' : '🛒 *ORDER FIX MASUK SCALEV*') }}\n\n" +
+    text: "={{ $json.order ? '🛒 *ORDER FIX MASUK SCALEV*' : ($json.apiError ? '⚠️ *BOT ERROR*' : ($json.needsHuman ? '🟠 *BUTUH CS MANUSIA*' : '🔵 *PERTANYAAN UNTUK ADMIN* (bot tetap lanjut)')) }}\n\n" +
       "{{ $json.order ? '🧾 Order: ' + $json.orderText + '\\n' : '' }}" +
       '📱 Nomor: {{ $json.phone }}\n👤 Nama: {{ $json.name }}\n🛍️ Produk: {{ $json.active_product }}\n🔗 Ref LP: {{ $json.ref || \'-\' }}\n' +
       '💬 Chat Terakhir: {{ $json.incoming }}\n🤖 Balasan AI: {{ $json.reply }}' +
       "{{ $json.apiError ? '\\n⚠️ Error API: ' + $json.apiError : '' }}" +
-      "{{ $json.pauseBot ? '\\n\\nBot dijeda untuk nomor ini. Set kolom handoff = false di leads_context untuk mengaktifkan lagi.' : '' }}",
+      "{{ $json.pauseBot ? '\\n\\nBot dijeda 30 menit untuk nomor ini, lalu aktif lagi otomatis. Untuk aktifkan lebih cepat: set kolom handoff = false di leads_context.' : '' }}",
     additionalFields: {},
   }, { onError: 'continueRegularOutput' }),
 
@@ -244,7 +260,7 @@ const nodes = [
         phone: "={{ $('Olah Balasan').item.json.phone }}",
         active_product: "={{ $('Olah Balasan').item.json.active_product }}",
         history: "={{ $('Olah Balasan').item.json.history }}",
-        handoff: "={{ String($('Olah Balasan').item.json.pauseBot) }}",
+        handoff: "={{ $('Olah Balasan').item.json.pauseBot ? new Date().toISOString() : 'false' }}",
         ref: "={{ $('Olah Balasan').item.json.ref }}",
         last_order_id: "={{ $('Olah Balasan').item.json.last_order_id }}",
         last_order_at: "={{ $('Olah Balasan').item.json.last_order_at }}",
@@ -259,7 +275,7 @@ const nodes = [
 ];
 
 // Tata letak: baris atas alur chat, baris bawah alur tool Scalev.
-const TOP = ['Webhook', 'Hanya Chat Lead', 'Get row(s)', 'Siapkan Konteks', 'Claude', 'Pakai Tool?'];
+const TOP = ['Webhook', 'Hanya Chat Lead', 'Get row(s)', 'Siapkan Konteks', 'Bot Dijeda?', 'Claude', 'Pakai Tool?'];
 const BOTTOM = ['Mulai Tool', 'Tool OK?', 'Scalev Lokasi', 'Pilih Lokasi', 'Lokasi OK?', 'Scalev Kode Pos', 'Pilih Kode Pos',
   'Scalev Gudang', 'Pilih Gudang', 'Scalev Kurir', 'Hitung Ongkir', 'Buat Order?', 'Scalev Buat Order', 'Hasil Tool', 'Claude Lanjutan'];
 const TAIL = ['Olah Balasan', 'Perlu Notif?', 'Telegram Admin', 'Kirim WhatsApp', 'Simpan Histori'];
@@ -267,6 +283,7 @@ const place = (names, x0, y) => names.forEach((name, i) => {
   nodes.find((n) => n.name === name).position = [x0 + i * 220, y];
 });
 place(TOP, 0, 0);
+nodes.find((n) => n.name === 'Simpan Saat Jeda').position = [880, -200];
 place(BOTTOM, 1100, 300);
 place(TAIL, 1100 + BOTTOM.length * 220, 0);
 
@@ -282,7 +299,8 @@ const workflow = {
     Webhook: link('Hanya Chat Lead'),
     'Hanya Chat Lead': link('Get row(s)'),
     'Get row(s)': link('Siapkan Konteks'),
-    'Siapkan Konteks': link('Claude'),
+    'Siapkan Konteks': link('Bot Dijeda?'),
+    'Bot Dijeda?': link('Simpan Saat Jeda', 'Claude'),
     Claude: link('Pakai Tool?'),
     'Pakai Tool?': link('Mulai Tool', 'Olah Balasan'),
     'Mulai Tool': link('Tool OK?'),

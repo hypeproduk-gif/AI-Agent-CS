@@ -80,8 +80,18 @@ test('produk terkunci dari data sebelumnya', () => {
   assert.strictEqual(r.messages.length, 3);
 });
 
-test('mode handoff membuat bot diam', () => {
-  assert.strictEqual(prepareContext({ phone: '1', message: 'halo' }, { phone: '1', handoff: 'true' }), null);
+test('mode handoff: bot diam tapi pesan tetap dicatat', () => {
+  const r = prepareContext({ phone: '1', message: 'saya mau yg 139rb' }, { phone: '1', handoff: 'true', history: '[{"role":"user","content":"a"}]' });
+  assert.strictEqual(r.paused, true);
+  assert.deepStrictEqual(JSON.parse(r.history).map((m) => m.content), ['a', 'saya mau yg 139rb']);
+});
+
+test('jeda handoff otomatis selesai setelah 30 menit', () => {
+  const recent = new Date(Date.now() - 10 * 60000).toISOString();
+  const old = new Date(Date.now() - 31 * 60000).toISOString();
+  assert.strictEqual(prepareContext({ phone: '1', message: 'x' }, { phone: '1', handoff: recent }).paused, true);
+  assert.strictEqual(prepareContext({ phone: '1', message: 'x' }, { phone: '1', handoff: old }).paused, undefined);
+  assert.strictEqual(prepareContext({ phone: '1', message: 'x' }, { phone: '1', handoff: 'false' }).paused, undefined);
 });
 
 test('parse balasan: markdown bold jadi WhatsApp bold + token handoff', () => {
@@ -301,8 +311,24 @@ test('error API: notif admin, balasan cadangan, bot TIDAK dijeda', () => {
 
 test('permintaan handoff dari Claude tetap menjeda bot', () => {
   const r = scenario({ message: 'saya alergi', first: text('Tim CS kami bantu ya kak [HANDOFF]') });
-  assert.strictEqual(r.req('Simpan Histori').body.handoff, 'true');
-  assert.ok(r.req('Telegram Admin').body.includes('Bot dijeda'));
+  assert.ok(!Number.isNaN(Date.parse(r.req('Simpan Histori').body.handoff)));
+  assert.ok(r.req('Telegram Admin').body.includes('Bot dijeda 30 menit'));
+});
+
+test('pertanyaan BPOM/testimoni: admin dikabari, bot TIDAK dijeda', () => {
+  const r = scenario({ message: 'udah bpom? ada testimoni?', first: text('Detail BPOM & testimoni dikirim admin di chat ini ya kak. Kakak mau ambil paket yang mana? [INFO_ADMIN]') });
+  assert.strictEqual(r.req('Kirim WhatsApp').body.message, 'Detail BPOM & testimoni dikirim admin di chat ini ya kak. Kakak mau ambil paket yang mana?');
+  assert.ok(r.req('Telegram Admin').body.includes('PERTANYAAN UNTUK ADMIN'));
+  assert.ok(!r.req('Telegram Admin').body.includes('Bot dijeda'));
+  assert.strictEqual(r.req('Simpan Histori').body.handoff, 'false');
+});
+
+test('pesan saat dijeda: tidak panggil Claude, disimpan ke histori', () => {
+  const paused = { ...SALGLOW_ROW, handoff: new Date().toISOString(), history: '[{"role":"user","content":"alergi"}]' };
+  const r = scenario({ message: 'ya udah saya mau yg 139rb', row: paused, first: text('x') });
+  assert.ok(!r.req('Claude'));
+  assert.ok(!r.req('Kirim WhatsApp'));
+  assert.ok(r.req('Simpan Saat Jeda').body.history.includes('saya mau yg 139rb'));
 });
 test('kata closing tanpa order TIDAK kirim notif Telegram', () => {
   const r = scenario({ message: 'oke saya ambil, cod ya', first: text('Siap kak, paketnya mau yang mana?') });
