@@ -17,6 +17,7 @@ const TELEGRAM_CHAT_ID = '-5439732568';
 const WEBHOOK_PATH = 'f8a25d64-d657-498a-a177-71a844693f42';
 
 const prepareCode = [
+  src('product-facts.js'),
   src('prompts.js'),
   src('order-config.js'),
   src('tools.js'),
@@ -69,6 +70,7 @@ return [{ json: {
 } }];`);
 
 const parseCode = [
+  src('product-facts.js'),
   src('parse-reply.js'),
   `const ctx = $('Siapkan Konteks').first().json;
 const parsed = parseReply($input.first().json);
@@ -85,6 +87,7 @@ return [{
     isClosing: ctx.isClosing,
     needsHuman: parsed.needsHuman,
     infoAdmin: parsed.infoAdmin,
+    testimoni: parsed.sendTestimoni ? pickTestimonials(ctx.active_product) : [],
     // Error API (bukan permintaan lead) cukup dinotif, bot tidak dijeda.
     pauseBot: parsed.needsHuman && !parsed.apiError,
     apiError: parsed.apiError,
@@ -250,6 +253,26 @@ const nodes = [
     options: {},
   }),
 
+  ifNode('Kirim Testimoni?', 0, 0, "={{ ($('Olah Balasan').item.json.testimoni || []).length > 0 }}"),
+  node('Pecah Testimoni', 'n8n-nodes-base.code', 2, 0, {
+    jsCode: `const d = $('Olah Balasan').first().json;
+return d.testimoni.map((image) => ({ json: { phone: d.phone, image } }));`,
+  }),
+  node('Kirim Gambar', 'n8n-nodes-base.httpRequest', 4.5, 0, {
+    method: 'POST',
+    url: 'https://jkt.wablas.com/api/send-image',
+    authentication: 'genericCredentialType',
+    genericAuthType: 'httpHeaderAuth',
+    sendBody: true,
+    bodyParameters: {
+      parameters: [
+        { name: 'phone', value: '={{ $json.phone }}' },
+        { name: 'image', value: '={{ $json.image }}' },
+        { name: 'caption', value: '' },
+      ],
+    },
+    options: { batching: { batch: { batchSize: 1, batchInterval: 1500 } } },
+  }, { onError: 'continueRegularOutput' }),
   node('Simpan Histori', 'n8n-nodes-base.dataTable', 1.1, 4200, {
     operation: 'upsert',
     dataTableId: DATA_TABLE,
@@ -284,6 +307,7 @@ const place = (names, x0, y) => names.forEach((name, i) => {
 });
 place(TOP, 0, 0);
 nodes.find((n) => n.name === 'Simpan Saat Jeda').position = [880, -200];
+place(['Kirim Testimoni?', 'Pecah Testimoni', 'Kirim Gambar'], 1100 + (BOTTOM.length + 3) * 220, -200);
 place(BOTTOM, 1100, 300);
 place(TAIL, 1100 + BOTTOM.length * 220, 0);
 
@@ -321,7 +345,12 @@ const workflow = {
     'Olah Balasan': link('Perlu Notif?'),
     'Perlu Notif?': link('Telegram Admin', 'Kirim WhatsApp'),
     'Telegram Admin': link('Kirim WhatsApp'),
-    'Kirim WhatsApp': link('Simpan Histori'),
+    'Kirim WhatsApp': { main: [[
+      { node: 'Simpan Histori', type: 'main', index: 0 },
+      { node: 'Kirim Testimoni?', type: 'main', index: 0 },
+    ]] },
+    'Kirim Testimoni?': link('Pecah Testimoni'),
+    'Pecah Testimoni': link('Kirim Gambar'),
   },
   active: false,
   settings: { executionOrder: 'v1' },

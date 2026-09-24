@@ -42,5 +42,5 @@ const DEFAULT_PRODUCT = 'SalGlow';
 
 function buildSystemPrompt(product) {
   const base = PRODUCTS[product] || PRODUCTS[DEFAULT_PRODUCT];
-  return [base, SALES_RULES, HANDOFF_RULE, STYLE_RULES].join(' ');
+  return [base, factsPrompt(product), SALES_RULES, HANDOFF_RULE, STYLE_RULES].filter(Boolean).join(' ');
 }

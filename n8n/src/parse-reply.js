@@ -24,6 +24,8 @@ function parseReply(response) {
 
   const needsHuman = block.text.includes(HANDOFF_TOKEN);
   const infoAdmin = block.text.includes(INFO_TOKEN);
-  const reply = toWhatsApp(block.text.split(HANDOFF_TOKEN).join('').split(INFO_TOKEN).join(''));
-  return { reply: reply || FALLBACK_REPLY, needsHuman, infoAdmin, apiError: null };
+  const sendTestimoni = block.text.includes('[TESTIMONI]');
+  const clean = [HANDOFF_TOKEN, INFO_TOKEN, '[TESTIMONI]'].reduce((t, tok) => t.split(tok).join(''), block.text);
+  const reply = toWhatsApp(clean);
+  return { reply: reply || FALLBACK_REPLY, needsHuman, infoAdmin, sendTestimoni, apiError: null };
 }

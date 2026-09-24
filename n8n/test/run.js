@@ -7,7 +7,7 @@ const assert = require('assert');
 
 const ctx = {};
 vm.createContext(ctx);
-for (const f of ['prompts.js', 'order-config.js', 'tools.js', 'prepare-context.js', 'parse-reply.js']) {
+for (const f of ['product-facts.js', 'prompts.js', 'order-config.js', 'tools.js', 'prepare-context.js', 'parse-reply.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'src', f), 'utf8'), ctx);
 }
 const { prepareContext, parseReply, detectProduct, isClosingMessage, trimHistory } =
@@ -379,5 +379,49 @@ test('kode pos ambigu → kasih pilihan ke Claude', () => {
 test('prompt: larangan basa-basi & syarat alamat', () => {
   const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
   for (const k of ['DILARANG basa-basi', 'patokan', 'JANGAN tanya kecamatan/kota/provinsi/kode pos']) assert.ok(sys.includes(k), k);
+});
+// Workflow dengan fakta produk terisi (BPOM + testimoni) untuk tes.
+function withFacts(wf) {
+  for (const n of wf.nodes) {
+    if (n.parameters && typeof n.parameters.jsCode === 'string') {
+      n.parameters.jsCode = n.parameters.jsCode
+        .replace("bpom: '',", "bpom: 'NA18230100999',")
+        .replace('testimonials: [],', "testimonials: ['https://x.test/t1.jpg', 'https://x.test/t2.jpg', 'https://x.test/t3.jpg', 'https://x.test/t4.jpg'],");
+    }
+  }
+  return wf;
+}
+
+test('tanpa data BPOM/testimoni: prompt tidak menyebutnya, gambar tidak dikirim', () => {
+  const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
+  assert.ok(!sys.includes('TESTIMONI:'));
+  assert.ok(!sys.includes('terdaftar dengan nomor'));
+  const r = scenario({ message: 'ada testimoni?', first: text('Aku kirimin ya kak [TESTIMONI]') });
+  assert.ok(!r.req('Kirim Gambar'));
+  assert.strictEqual(r.req('Kirim WhatsApp').body.message, 'Aku kirimin ya kak');
+});
+
+test('dengan BPOM & testimoni: nomor BPOM di prompt, 3 foto dikirim setelah balasan', () => {
+  const wf = withFacts(mainWf());
+  const sent = [];
+  const r = simulate(wf, {
+    webhookBody: { phone: '6281', message: 'yakin aman? ada testimoni?', isFromMe: false, isGroup: false },
+    row: SALGLOW_ROW,
+    http: (name, { body }) => {
+      if (name === 'Claude') {
+        sent.push(body.system);
+        return text('Sudah BPOM NA18230100999 kak, bisa dicek di cekbpom.pom.go.id. Aku kirimin beberapa testimoni ya [TESTIMONI]');
+      }
+      return { status: true };
+    },
+  });
+  assert.ok(sent[0].includes('NA18230100999'));
+  const imgs = r.requests.filter((q) => q.node === 'Kirim Gambar');
+  assert.strictEqual(imgs.length, 3);
+  assert.ok(imgs.every((q) => q.url === 'https://jkt.wablas.com/api/send-image' && q.body.phone === '6281' && q.body.image.startsWith('https://x.test/')));
+  assert.strictEqual(new Set(imgs.map((q) => q.body.image)).size, 3);
+  const find = (node) => r.requests.find((q) => q.node === node);
+  assert.ok(!find('Kirim WhatsApp').body.message.includes('[TESTIMONI]'));
+  assert.ok(find('Simpan Histori'));
 });
 console.log(`${passed} tes lulus (final)`);

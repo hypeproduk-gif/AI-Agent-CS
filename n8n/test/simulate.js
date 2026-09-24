@@ -60,11 +60,15 @@ function simulate(workflow, { webhookBody, row, http }) {
         out = input;
         break;
       case 'n8n-nodes-base.httpRequest': {
-        const url = ex(p.url);
-        const body = p.jsonBody ? JSON.parse(ex(p.jsonBody)) :
-          p.bodyParameters ? Object.fromEntries(p.bodyParameters.parameters.map((b) => [b.name, ex(b.value)])) : null;
-        requests.push({ node: name, method: p.method || 'GET', url, body });
-        out = [http(name, { url, body })];
+        // Seperti n8n: satu request per item masuk.
+        out = input.map((item) => {
+          const exi = (v) => evalExpr(v, { $json: item, $ });
+          const url = exi(p.url);
+          const body = p.jsonBody ? JSON.parse(exi(p.jsonBody)) :
+            p.bodyParameters ? Object.fromEntries(p.bodyParameters.parameters.map((b) => [b.name, exi(b.value)])) : null;
+          requests.push({ node: name, method: p.method || 'GET', url, body });
+          return http(name, { url, body });
+        });
         break;
       }
       default:
