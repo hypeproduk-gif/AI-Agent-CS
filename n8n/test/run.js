@@ -424,4 +424,13 @@ test('dengan BPOM & testimoni: nomor BPOM di prompt, 3 foto dikirim setelah bala
   assert.ok(!find('Kirim WhatsApp').body.message.includes('[TESTIMONI]'));
   assert.ok(find('Simpan Histori'));
 });
+test('BPOM belum ada: bot jujur, tidak klaim aman/bebas merkuri, kulit sensitif → tes tempel', () => {
+  const sys = prepareContext({ phone: '1', message: 'udah bpom?' }, null).requestBody.system;
+  assert.ok(sys.includes('belum terdaftar BPOM'));
+  assert.ok(sys.includes('jangan mengelak'));
+  assert.ok(sys.includes("JANGAN klaim 'bebas merkuri'"));
+  assert.ok(sys.includes('tidak molor dan tidak lengket'));
+  assert.ok(sys.includes('tes tempel'));
+  assert.ok(!/aman untuk kulit sensitif[^']/.test(sys.replace("'aman untuk kulit sensitif'", '')));
+});
 console.log(`${passed} tes lulus (final)`);
