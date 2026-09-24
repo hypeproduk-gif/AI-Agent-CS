@@ -81,6 +81,8 @@ return [{
     ref: ctx.ref,
     isClosing: ctx.isClosing,
     needsHuman: parsed.needsHuman,
+    // Error API (bukan permintaan lead) cukup dinotif, bot tidak dijeda.
+    pauseBot: parsed.needsHuman && !parsed.apiError,
     apiError: parsed.apiError,
     reply: parsed.reply,
     history: JSON.stringify(history),
@@ -206,7 +208,7 @@ const nodes = [
       '📱 Nomor: {{ $json.phone }}\n👤 Nama: {{ $json.name }}\n🛍️ Produk: {{ $json.active_product }}\n🔗 Ref LP: {{ $json.ref || \'-\' }}\n' +
       '💬 Chat Terakhir: {{ $json.incoming }}\n🤖 Balasan AI: {{ $json.reply }}' +
       "{{ $json.apiError ? '\\n⚠️ Error API: ' + $json.apiError : '' }}" +
-      "{{ $json.needsHuman ? '\\n\\nBot dijeda untuk nomor ini. Set kolom handoff = false di leads_context untuk mengaktifkan lagi.' : '' }}",
+      "{{ $json.pauseBot ? '\\n\\nBot dijeda untuk nomor ini. Set kolom handoff = false di leads_context untuk mengaktifkan lagi.' : '' }}",
     additionalFields: {},
   }, { onError: 'continueRegularOutput' }),
 
@@ -235,7 +237,7 @@ const nodes = [
         phone: "={{ $('Olah Balasan').item.json.phone }}",
         active_product: "={{ $('Olah Balasan').item.json.active_product }}",
         history: "={{ $('Olah Balasan').item.json.history }}",
-        handoff: "={{ String($('Olah Balasan').item.json.needsHuman) }}",
+        handoff: "={{ String($('Olah Balasan').item.json.pauseBot) }}",
         ref: "={{ $('Olah Balasan').item.json.ref }}",
         last_order_id: "={{ $('Olah Balasan').item.json.last_order_id }}",
         last_order_at: "={{ $('Olah Balasan').item.json.last_order_at }}",

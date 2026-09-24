@@ -286,4 +286,17 @@ test('bot tidak pernah request pickup / generate AWB', () => {
   const urls = mainWf().nodes.map((n) => n.parameters.url).filter(Boolean);
   assert.ok(urls.every((u) => !/awb|pickup/i.test(u)));
 });
+test('error API: notif admin, balasan cadangan, bot TIDAK dijeda', () => {
+  const r = scenario({ message: 'halo', first: { type: 'error', error: { type: 'authentication_error', message: 'Invalid bearer token' } } });
+  assert.ok(r.req('Kirim WhatsApp').body.message.startsWith('Maaf kak'));
+  assert.ok(r.req('Telegram Admin').body.includes('Invalid bearer token'));
+  assert.ok(!r.req('Telegram Admin').body.includes('Bot dijeda'));
+  assert.strictEqual(r.req('Simpan Histori').body.handoff, 'false');
+});
+
+test('permintaan handoff dari Claude tetap menjeda bot', () => {
+  const r = scenario({ message: 'saya alergi', first: text('Tim CS kami bantu ya kak [HANDOFF]') });
+  assert.strictEqual(r.req('Simpan Histori').body.handoff, 'true');
+  assert.ok(r.req('Telegram Admin').body.includes('Bot dijeda'));
+});
 console.log(`${passed} tes lulus (final)`);
