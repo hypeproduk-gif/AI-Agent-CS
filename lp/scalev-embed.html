@@ -1,23 +1,5 @@
-<!-- Tempel seluruh isi file ini ke blok Custom HTML / Kode Kustom di landing page Scalev. -->
-<script>window.AICS = { product: "SG" };</script>
+<script>window.AICS={product:"SG"};</script>
 <script>
-/*
- * LP → WhatsApp dengan capture atribusi Meta (fbclid / _fbc / _fbp).
- *
- * Cara pakai di Scalev (atau LP lain):
- *   1. Tombol WhatsApp cukup diberi link wa.me biasa, contoh:
- *      https://wa.me/6285180108370?text=Halo%20kak%2C%20mau%20tanya%20salep%20glowing%20filo
- *   2. Tempel script ini (custom code / HTML) di halaman yang sama:
- *      <script>window.AICS = { product: 'SG' };</script>
- *      <script src="https://cdn.jsdelivr.net/gh/.../wa-redirect.js"></script>  (atau isi script langsung)
- *
- * Saat tombol diklik, script:
- *   - menempelkan kode unik di akhir pesan WA (mis. #promo7Q2MX),
- *   - mengirim fbclid/_fbc/_fbp/UTM/IP (dicatat server)/user agent ke n8n (webhook lp-attribution),
- *   - lalu membuka WhatsApp seperti biasa.
- * Kalau script gagal dimuat, link wa.me tetap jalan normal (hanya tanpa atribusi).
- * Pixel InitiateCheckout tetap ditangani Scalev; script ini tidak menembak pixel kecuali pixelEvent diisi.
- */
 (function () {
   var cfg = window.AICS || {};
   var PRODUCT = cfg.product || 'SG';
@@ -52,8 +34,6 @@
   function store(data) {
     try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {}
   }
-
-  // Simpan parameter URL saat halaman dibuka (first-touch dipertahankan 7 hari).
   function captureParams() {
     var q = new URLSearchParams(location.search);
     var saved = readStored();
@@ -65,8 +45,6 @@
     if (!saved.ts) saved.ts = Date.now();
     if (saved.fbclid && !saved.fbc) saved.fbc = 'fb.1.' + Date.now() + '.' + saved.fbclid;
     store(saved);
-
-    // Format _fbc sesuai Meta: fb.1.<timestamp ms>.<fbclid>
     if (q.get('fbclid') && !getCookie('_fbc')) {
       setCookie('_fbc', 'fb.1.' + Date.now() + '.' + q.get('fbclid'), 90);
     }
@@ -80,8 +58,6 @@
     } catch (e) {}
     try { fetch(ENDPOINT, { method: 'POST', body: body, keepalive: true, mode: 'no-cors' }); } catch (e) {}
   }
-
-  // Ambil nomor & pesan dari link WhatsApp (wa.me atau api.whatsapp.com).
   function parseWaLink(href) {
     try {
       var u = new URL(href, location.href);
