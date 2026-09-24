@@ -225,6 +225,7 @@ test('simulasi: buat order transfer → payload Scalev benar & tersimpan', () =>
   assert.strictEqual(body.customer_phone, '6281');
   assert.strictEqual(body.other_income, undefined);
   assert.ok(body.notes.includes('SG-ABCDE'));
+  assert.ok(body.notes.startsWith('[TEST AI] Order via AI CS WhatsApp'));
   assert.strictEqual(r.toolResults[0].link_pembayaran, 'https://pay.example/SV123');
   assert.strictEqual(r.req('Simpan Histori').body.last_order_id, 'SV123');
   assert.ok(r.req('Telegram Admin').body.includes('ORDER FIX MASUK SCALEV'));

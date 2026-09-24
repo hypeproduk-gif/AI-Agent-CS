@@ -11,7 +11,7 @@ const STORES = {
       B1G1: { variantId: 8419, variantUniqueId: 'variant_T2ffVOfNELb6rwSTNTf9xw8A' }, // 2 Salep Glowing Filo (139.000)
       B2G2: { variantId: 8421, variantUniqueId: 'variant_EWWpG6ef8GdXo617vHyFEyP6' }, // 4 Salep Glowing Filo (219.000)
     },
-    orderNotePrefix: '',
+    orderNotePrefix: '[TEST AI] ', // hapus (jadi '') kalau bot sudah dianggap final
   },
   test: {
     storeId: 0, // ISI: store_id store tes
