@@ -7,11 +7,11 @@ const assert = require('assert');
 
 const ctx = {};
 vm.createContext(ctx);
-for (const f of ['product-facts.js', 'prompts.js', 'order-config.js', 'tools.js', 'prepare-context.js', 'parse-reply.js']) {
+for (const f of ['capi.js', 'recap.js', 'product-facts.js', 'prompts.js', 'order-config.js', 'tools.js', 'prepare-context.js', 'parse-reply.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'src', f), 'utf8'), ctx);
 }
-const { prepareContext, parseReply, detectProduct, isClosingMessage, trimHistory } =
-  vm.runInContext('({ prepareContext, parseReply, detectProduct, isClosingMessage, trimHistory })', ctx);
+const { prepareContext, parseReply, detectProduct, isClosingMessage, trimHistory, dailyRecap } =
+  vm.runInContext('({ prepareContext, parseReply, detectProduct, isClosingMessage, trimHistory, dailyRecap })', ctx);
 
 let passed = 0;
 const test = (name, fn) => { fn(); passed++; console.log('ok -', name); };
@@ -503,5 +503,85 @@ test('workflow TEST: webhook & store terpisah dari produksi', () => {
   assert.strictEqual(body.customer_name, '[TES BOT] Sa');
   assert.strictEqual(body.notes, 'Beli 1 Gratis 1 (2 pcs) + bonus sunscreen + eyeliner');
   assert.ok(r.requests.find((q) => q.node === 'Telegram Admin').body.startsWith('🧪 *[TES]*'));
+});
+const ATTR = { ref: 'SG-ABCDE', fbc: 'fb.1.1.abc', fbp: 'fb.1.2.xyz', client_ip: '1.2.3.4', user_agent: 'UA', landing_url: 'https://filomallbeauty.myscalev.com/salglow-test-ai?fbclid=abc' };
+
+function orderScenario(row, tables) {
+  const first = toolUse('buat_order', { paket: 'B1G1', pembayaran: 'cod', kelurahan: 'Jagir', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'Sari', alamat: 'Jl. Mawar 5', patokan: 'depan masjid' });
+  return simulate(mainWf(), {
+    webhookBody: { phone: '6281', pushName: 'Sari', message: 'ok', isFromMe: false, isGroup: false },
+    row, tables,
+    http: (name) => ({ Claude: first, 'Claude Lanjutan': text('Oke kak, data order sudah masuk sistem.'), 'Scalev Lokasi': LOCATIONS,
+      'Scalev Kode Pos': POSTAL, 'Scalev Gudang': WAREHOUSES, 'Scalev Kurir': COURIERS,
+      'Scalev Buat Order': { id: 'uuid-9', order_id: 'SV900', public_order_url: 'x' } })[name] || { status: true },
+  });
+}
+
+test('closing: order dicatat & Purchase CAPI dikirim dengan fbc/fbp/IP/UA dari LP', () => {
+  const r = orderScenario({ ...SALGLOW_ROW, ref: 'SG-ABCDE' }, { lp_attribution: [ATTR], aics_orders: [] });
+  const find = (n) => r.requests.find((q) => q.node === n);
+  const log = find('Catat Order').body;
+  assert.strictEqual(log.order_id, 'SV900');
+  assert.strictEqual(log.total, '155530');
+  assert.strictEqual(log.price, '139000');
+  assert.strictEqual(log.method, 'cod');
+  const capi = find('Meta Purchase (CAPI)');
+  assert.strictEqual(capi.url, 'https://api.scalev.com/v3/stores/store_WQ9th267cKN4103Qini2iUW5/public/analytics/meta/events');
+  const ev = capi.body.events[0];
+  assert.strictEqual(ev.event_name, 'Purchase');
+  assert.strictEqual(ev.event_id, 'SV900-Purchase');
+  assert.strictEqual(ev.parameters.value, 139000);
+  assert.strictEqual(ev.parameters.currency, 'IDR');
+  const u = capi.body.user_data;
+  assert.strictEqual(u.fbc, 'fb.1.1.abc');
+  assert.strictEqual(u.fbp, 'fb.1.2.xyz');
+  assert.strictEqual(u.client_ip_address, '1.2.3.4');
+  assert.strictEqual(u.ph, '6281');
+  assert.strictEqual(u.fn, 'sari');
+  assert.strictEqual(capi.body.event_source_url, ATTR.landing_url);
+  const leadsRow = find('Simpan Histori').body;
+  assert.ok(leadsRow.first_chat_at && leadsRow.last_chat_at);
+});
+
+test('closing tanpa klik LP: Purchase tetap dikirim (pakai nomor HP), tanpa fbc', () => {
+  const r = orderScenario(SALGLOW_ROW, { lp_attribution: [], aics_orders: [] });
+  const capi = r.requests.find((q) => q.node === 'Meta Purchase (CAPI)').body;
+  assert.strictEqual(capi.user_data.fbc, undefined);
+  assert.strictEqual(capi.user_data.ph, '6281');
+});
+
+test('chat biasa: tidak ada Purchase & tidak dicatat sebagai order', () => {
+  const r = scenario({ message: 'halo', first: text('Halo kak') });
+  assert.ok(!r.requests.some((q) => q.node === 'Meta Purchase (CAPI)' || q.node === 'Catat Order'));
+});
+
+test('rekap harian: hitung klik, chat, closing, rasio, omzet (zona WIB)', () => {
+  const now = new Date('2026-09-24T16:50:00Z'); // 23:50 WIB
+  const r = dailyRecap({
+    clicks: [{ clicked_at: '2026-09-24T02:00:00Z' }, { clicked_at: '2026-09-24T10:00:00Z' }, { clicked_at: '2026-09-24T12:00:00Z' }, { clicked_at: '2026-09-23T10:00:00Z' }],
+    leads: [
+      { first_chat_at: '2026-09-24T03:00:00Z', last_chat_at: '2026-09-24T15:00:00Z' },
+      { first_chat_at: '2026-09-24T16:30:00Z', last_chat_at: '2026-09-24T16:40:00Z' }, // 23:30 WIB masih hari ini
+      { first_chat_at: '2026-09-23T03:00:00Z', last_chat_at: '2026-09-24T05:00:00Z' },
+      { first_chat_at: '2026-09-24T17:30:00Z', last_chat_at: '2026-09-24T17:30:00Z' }, // 00:30 WIB besok
+    ],
+    orders: [
+      { created_at: '2026-09-24T05:00:00Z', method: 'cod', total: '155530', price: '139000', ref: 'SG-A' },
+      { created_at: '2026-09-24T09:00:00Z', method: 'transfer', total: '225000', price: '219000', ref: '' },
+      { created_at: '2026-09-22T09:00:00Z', method: 'cod', total: '999', price: '999' },
+    ],
+  }, now);
+  assert.deepStrictEqual(JSON.parse(JSON.stringify(r.counts)), { clicks: 3, newChats: 2, activeChats: 3, orders: 2, omzet: 380530, produk: 358000 });
+  assert.ok(r.text.includes('Rasio closing / chat masuk: 100%'));
+  assert.ok(r.text.includes('Omzet (total bayar): Rp380.530'));
+  assert.ok(r.text.includes('COD 1 • Transfer 1'));
+  assert.ok(r.text.includes('Closing dari iklan (ada kode ref): 1'));
+});
+
+test('workflow rekap: jadwal 23:55 WIB, urutan node benar', () => {
+  const wf = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'rekap-harian.workflow.json'), 'utf8'));
+  assert.strictEqual(wf.settings.timezone, 'Asia/Jakarta');
+  assert.strictEqual(wf.nodes.find((n) => n.name === 'Tiap Malam 23:55').parameters.rule.interval[0].expression, '55 23 * * *');
+  new Function('$', wf.nodes.find((n) => n.name === 'Hitung Rekap').parameters.jsCode);
 });
 console.log(`${passed} tes lulus (final)`);

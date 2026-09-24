@@ -197,7 +197,21 @@ function toolResult(state, orderResponse) {
     };
     if (state.tool === 'buat_order') {
       if (orderResponse && orderResponse.order_id) {
-        order = { id: orderResponse.id, orderId: orderResponse.order_id, total: t.total, method: state.input.pembayaran };
+        order = {
+          id: orderResponse.id,
+          orderId: orderResponse.order_id,
+          total: t.total,
+          price: t.price,
+          shipping: t.shipping,
+          codFee: t.codFee,
+          method: state.input.pembayaran,
+          paket: state.input.paket,
+          note: state.pkg.note || state.pkg.label,
+          variants: state.pkg.items.map((it) => ({ variant_unique_id: it.variantUniqueId, quantity: it.qty })),
+          name: state.input.nama,
+          city: state.location.city_name || '',
+          province: state.location.province_name || '',
+        };
         content.order_id = orderResponse.order_id;
         if (state.input.pembayaran !== 'cod') content.link_pembayaran = orderResponse.public_order_url || orderResponse.payment_url;
       } else {

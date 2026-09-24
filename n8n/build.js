@@ -6,6 +6,10 @@ const path = require('path');
 
 const src = (name) => fs.readFileSync(path.join(__dirname, 'src', name), 'utf8');
 
+// Baca profil store dari order-config.js (dipakai untuk URL yang butuh ID store).
+const vm = require('vm');
+const STORES = vm.runInNewContext(src('order-config.js') + '\nSTORES');
+
 const DATA_TABLE = {
   __rl: true,
   value: 'qZYFr5OtcUD8F8Co',
@@ -13,6 +17,10 @@ const DATA_TABLE = {
   cachedResultName: 'leads_context',
   cachedResultUrl: '/projects/K2OXZkkoLw9p8qNz/datatables/qZYFr5OtcUD8F8Co',
 };
+// Tabel tambahan: pilih di n8n setelah import (ID berbeda per akun).
+const tableRef = (name) => ({ __rl: true, value: '', mode: 'list', cachedResultName: name });
+const ORDERS_TABLE = tableRef('aics_orders');
+const ATTRIBUTION_TABLE = tableRef('lp_attribution');
 const TELEGRAM_CHAT_ID = '-5439732568';
 const WEBHOOK_PATH = 'f8a25d64-d657-498a-a177-71a844693f42';
 
@@ -97,11 +105,18 @@ return [{
     orderText: order ? order.orderId + ' (' + (order.method === 'cod' ? 'COD' : 'Transfer') + ', Rp' + order.total.toLocaleString('id-ID') + ')' : '',
     last_order_id: order ? order.orderId : (stored.last_order_id || ''),
     last_order_at: order ? new Date().toISOString() : (stored.last_order_at || ''),
+    first_chat_at: stored.first_chat_at || new Date().toISOString(),
+    last_chat_at: new Date().toISOString(),
     // Notif closing hanya saat order benar-benar dibuat di Scalev.
     notify: Boolean(order) || parsed.needsHuman || parsed.infoAdmin,
   },
 }];`,
 ].join('\n');
+
+const capiCode = [src('capi.js'), `const d = $('Olah Balasan').first().json;
+const rows = $input.all().map((i) => i.json).filter((r) => r && r.ref);
+const attribution = rows.find((r) => r.ref === d.ref) || null;
+return [{ json: { body: purchaseEvent(d.order, d.phone, attribution), matched: Boolean(attribution) } }];`].join('\n');
 
 const column = (id) => ({
   id, displayName: id, required: false, defaultMatch: false,
@@ -175,9 +190,9 @@ const nodes = [
     filters: { conditions: [{ keyName: 'phone', keyValue: '={{ $json.phone }}' }] },
     columns: {
       mappingMode: 'defineBelow',
-      value: { phone: '={{ $json.phone }}', history: '={{ $json.history }}' },
+      value: { phone: '={{ $json.phone }}', history: '={{ $json.history }}', last_chat_at: '={{ new Date().toISOString() }}' },
       matchingColumns: [],
-      schema: ['phone', 'history'].map(column),
+      schema: ['phone', 'history', 'last_chat_at'].map(column),
       attemptToConvertTypes: false,
       convertFieldsToString: false,
     },
@@ -253,6 +268,47 @@ const nodes = [
     options: {},
   }),
 
+  ifNode('Order Baru?', 0, 0, "={{ Boolean($json.order) }}"),
+  node('Catat Order', 'n8n-nodes-base.dataTable', 1.1, 0, {
+    operation: 'insert',
+    dataTableId: ORDERS_TABLE,
+    columns: {
+      mappingMode: 'defineBelow',
+      value: {
+        order_id: '={{ $json.order.orderId }}',
+        phone: '={{ $json.phone }}',
+        paket: '={{ $json.order.paket }}',
+        method: '={{ $json.order.method }}',
+        price: '={{ String($json.order.price) }}',
+        total: '={{ String($json.order.total) }}',
+        ref: '={{ $json.ref }}',
+        created_at: '={{ new Date().toISOString() }}',
+      },
+      matchingColumns: [],
+      schema: ['order_id', 'phone', 'paket', 'method', 'price', 'total', 'ref', 'created_at'].map(column),
+      attemptToConvertTypes: false,
+      convertFieldsToString: true,
+    },
+    options: {},
+  }, { onError: 'continueRegularOutput' }),
+  node('Cari Atribusi', 'n8n-nodes-base.dataTable', 1.1, 0, {
+    operation: 'get',
+    dataTableId: ATTRIBUTION_TABLE,
+    filters: { conditions: [{ keyName: 'ref', keyValue: "={{ $('Olah Balasan').item.json.ref || '-' }}" }] },
+  }, { alwaysOutputData: true, onError: 'continueRegularOutput' }),
+  node('Siapkan CAPI', 'n8n-nodes-base.code', 2, 0, { jsCode: capiCode }),
+  node('Meta Purchase (CAPI)', 'n8n-nodes-base.httpRequest', 4.5, 0, {
+    method: 'POST',
+    url: `https://api.scalev.com/v3/stores/${STORES.prod.storeUniqueId}/public/analytics/meta/events`,
+    authentication: 'genericCredentialType',
+    genericAuthType: 'httpHeaderAuth',
+    sendHeaders: true,
+    headerParameters: { parameters: [{ name: 'Accept', value: 'application/json' }] },
+    sendBody: true,
+    specifyBody: 'json',
+    jsonBody: '={{ JSON.stringify($json.body) }}',
+    options: { response: { response: { neverError: true, fullResponse: true } }, timeout: 20000 },
+  }, { onError: 'continueRegularOutput' }),
   ifNode('Kirim Testimoni?', 0, 0, "={{ ($('Olah Balasan').item.json.testimoni || []).length > 0 }}"),
   node('Pecah Testimoni', 'n8n-nodes-base.code', 2, 0, {
     jsCode: `const d = $('Olah Balasan').first().json;
@@ -287,9 +343,11 @@ return d.testimoni.map((image) => ({ json: { phone: d.phone, image } }));`,
         ref: "={{ $('Olah Balasan').item.json.ref }}",
         last_order_id: "={{ $('Olah Balasan').item.json.last_order_id }}",
         last_order_at: "={{ $('Olah Balasan').item.json.last_order_at }}",
+        first_chat_at: "={{ $('Olah Balasan').item.json.first_chat_at }}",
+        last_chat_at: "={{ $('Olah Balasan').item.json.last_chat_at }}",
       },
       matchingColumns: [],
-      schema: ['phone', 'active_product', 'history', 'handoff', 'ref', 'last_order_id', 'last_order_at'].map(column),
+      schema: ['phone', 'active_product', 'history', 'handoff', 'ref', 'last_order_id', 'last_order_at', 'first_chat_at', 'last_chat_at'].map(column),
       attemptToConvertTypes: false,
       convertFieldsToString: false,
     },
@@ -308,6 +366,8 @@ const place = (names, x0, y) => names.forEach((name, i) => {
 place(TOP, 0, 0);
 nodes.find((n) => n.name === 'Simpan Saat Jeda').position = [880, -200];
 place(['Kirim Testimoni?', 'Pecah Testimoni', 'Kirim Gambar'], 1100 + (BOTTOM.length + 3) * 220, -200);
+place(['Order Baru?', 'Catat Order'], 1100 + (BOTTOM.length + 1) * 220, -400);
+place(['Cari Atribusi', 'Siapkan CAPI', 'Meta Purchase (CAPI)'], 1100 + (BOTTOM.length + 2) * 220, -600);
 place(BOTTOM, 1100, 300);
 place(TAIL, 1100 + BOTTOM.length * 220, 0);
 
@@ -342,7 +402,16 @@ const workflow = {
     'Scalev Buat Order': link('Hasil Tool'),
     'Hasil Tool': link('Claude Lanjutan'),
     'Claude Lanjutan': link('Olah Balasan'),
-    'Olah Balasan': link('Perlu Notif?'),
+    'Olah Balasan': { main: [[
+      { node: 'Perlu Notif?', type: 'main', index: 0 },
+      { node: 'Order Baru?', type: 'main', index: 0 },
+    ]] },
+    'Order Baru?': { main: [[
+      { node: 'Catat Order', type: 'main', index: 0 },
+      { node: 'Cari Atribusi', type: 'main', index: 0 },
+    ], []] },
+    'Cari Atribusi': link('Siapkan CAPI'),
+    'Siapkan CAPI': link('Meta Purchase (CAPI)'),
     'Perlu Notif?': link('Telegram Admin', 'Kirim WhatsApp'),
     'Telegram Admin': link('Kirim WhatsApp'),
     'Kirim WhatsApp': { main: [[
@@ -520,8 +589,54 @@ for (const n of testWorkflow.nodes) {
   if (typeof n.parameters.jsCode === 'string') {
     n.parameters.jsCode = n.parameters.jsCode.replace("const STORE_PROFILE = 'prod';", "const STORE_PROFILE = 'test';");
   }
+  if (n.name === 'Meta Purchase (CAPI)') n.parameters.url = n.parameters.url.replace(STORES.prod.storeUniqueId, STORES.test.storeUniqueId);
   if (n.name === 'Telegram Admin') n.parameters.text = n.parameters.text.replace('={{ ', "=🧪 *[TES]* {{ ");
 }
 const testOutMain = path.join(__dirname, 'ai-agent-cs.test.workflow.json');
 fs.writeFileSync(testOutMain, JSON.stringify(testWorkflow, null, 2) + '\n');
 console.log('Wrote', path.relative(process.cwd(), testOutMain));
+
+// Workflow keenam: rekap harian ke Telegram (23:55 WIB) + tombol tes manual.
+const recapCode = [src('recap.js'), `const rows = (name) => $(name).all().map((i) => i.json).filter((r) => r && Object.keys(r).length);
+const recap = dailyRecap({ clicks: rows('Ambil Klik LP'), leads: rows('Ambil Leads'), orders: rows('Ambil Order') });
+return [{ json: recap }];`].join('\n');
+
+const getAll = (name, x, table) => node(name, 'n8n-nodes-base.dataTable', 1.1, x, {
+  operation: 'get',
+  dataTableId: table,
+  returnAll: true,
+}, { alwaysOutputData: true, executeOnce: true });
+
+const recapWorkflow = {
+  name: 'AI Agent CS - Rekap Harian',
+  nodes: [
+    node('Tiap Malam 23:55', 'n8n-nodes-base.scheduleTrigger', 1.2, 0, {
+      rule: { interval: [{ field: 'cronExpression', expression: '55 23 * * *' }] },
+    }),
+    { ...node('Tes Sekarang', 'n8n-nodes-base.manualTrigger', 1, 0, {}), position: [0, 200] },
+    getAll('Ambil Klik LP', 220, ATTRIBUTION_TABLE),
+    getAll('Ambil Leads', 440, DATA_TABLE),
+    getAll('Ambil Order', 660, ORDERS_TABLE),
+    node('Hitung Rekap', 'n8n-nodes-base.code', 2, 880, { jsCode: recapCode }),
+    node('Kirim Rekap', 'n8n-nodes-base.telegram', 1.2, 1100, {
+      chatId: TELEGRAM_CHAT_ID,
+      text: '={{ $json.text }}',
+      additionalFields: { parse_mode: 'Markdown', appendAttribution: false },
+    }),
+  ].map((n, i) => ({ ...n, id: `aics-recap-${i + 1}` })),
+  pinData: {},
+  connections: {
+    'Tiap Malam 23:55': link('Ambil Klik LP'),
+    'Tes Sekarang': link('Ambil Klik LP'),
+    'Ambil Klik LP': link('Ambil Leads'),
+    'Ambil Leads': link('Ambil Order'),
+    'Ambil Order': link('Hitung Rekap'),
+    'Hitung Rekap': link('Kirim Rekap'),
+  },
+  active: false,
+  settings: { executionOrder: 'v1', timezone: 'Asia/Jakarta' },
+  tags: [],
+};
+const recapOut = path.join(__dirname, 'rekap-harian.workflow.json');
+fs.writeFileSync(recapOut, JSON.stringify(recapWorkflow, null, 2) + '\n');
+console.log('Wrote', path.relative(process.cwd(), recapOut));

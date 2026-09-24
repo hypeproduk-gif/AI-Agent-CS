@@ -9,6 +9,8 @@ Bot CS WhatsApp (Wablas → n8n → Claude Haiku 4.5) untuk SalGlow, KarierKit, 
 - `n8n/lp-attribution.workflow.json` — webhook penerima atribusi dari LP
 - `lp/wa-redirect.js` — script LP: capture fbclid/_fbc/_fbp + UTM, buat kode ref, buka wa.me
 - `lp/index.html` — contoh LP
+- `lp/scalev-embed.html` — script siap tempel ke Custom HTML landing page Scalev
+- `n8n/rekap-harian.workflow.json` — rekap harian Telegram 23:55 WIB
 - `n8n/scalev-setup.workflow.json` — jalankan manual sekali untuk melihat ID store & varian Scalev
 - `n8n/src/order-config.js` — konfigurasi Scalev (store, varian, berat, fee COD)
 - `n8n/test/run.js` — tes logika + simulasi workflow penuh dengan HTTP tiruan
@@ -23,7 +25,9 @@ node n8n/test/run.js   # tes + build ulang workflow
    - `Anthropic API` → Name `x-api-key`, Value = API key Anthropic
    - `Wablas` → Name `Authorization`, Value = token Wablas
    - `Scalev` → Name `Authorization`, Value = `Bearer sk_...` (Scalev → Settings → Developers → API Keys)
-2. Tambah kolom `handoff`, `ref`, `last_order_id`, `last_order_at` (string) di Data Table `leads_context`.
+   - `Scalev Storefront` → Name `X-Scalev-Storefront-Api-Key`, Value = `sfpk_...` (untuk Purchase CAPI)
+2. Tambah kolom `handoff`, `ref`, `last_order_id`, `last_order_at`, `first_chat_at`, `last_chat_at` (string)
+   di `leads_context`. Buat Data Table `aics_orders` (order_id, phone, paket, method, price, total, ref, created_at). di Data Table `leads_context`.
    Buat Data Table `lp_attribution` dengan kolom: ref, product, fbclid, fbc, fbp, utm_source,
    utm_medium, utm_campaign, utm_content, utm_term, landing_url, referrer, user_agent, client_ip, clicked_at.
 3. Import `n8n/ai-agent-cs.workflow.json`, pilih credential di node **Claude** dan **Kirim WhatsApp**, cek credential Telegram.

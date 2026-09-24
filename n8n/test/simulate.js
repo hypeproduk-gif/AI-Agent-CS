@@ -13,7 +13,7 @@ function evalExpr(expr, ctx) {
   });
 }
 
-function simulate(workflow, { webhookBody, row, http }) {
+function simulate(workflow, { webhookBody, row, http, tables = {} }) {
   const byName = Object.fromEntries(workflow.nodes.map((n) => [n.name, n]));
   const outputs = {}; // name → [item json]
   const requests = []; // { node, method, url, body }
@@ -42,7 +42,10 @@ function simulate(workflow, { webhookBody, row, http }) {
         out = p.conditions.conditions.every((c) => ex(c.leftValue) !== c.rightValue) ? input : null;
         break;
       case 'n8n-nodes-base.dataTable':
-        if (p.operation === 'get') out = [row || {}];
+        if (p.operation === 'get') {
+          const table = p.dataTableId && p.dataTableId.cachedResultName;
+          out = table in tables ? (tables[table].length ? tables[table] : [{}]) : [row || {}];
+        }
         else {
           const cols = Object.fromEntries(Object.entries(p.columns.value).map(([k, v]) => [k, ex(v)]));
           requests.push({ node: name, body: cols });
@@ -51,7 +54,7 @@ function simulate(workflow, { webhookBody, row, http }) {
         break;
       case 'n8n-nodes-base.code': {
         const items = input.map((j) => ({ json: j }));
-        const res = new Function('$', '$input', 'items', p.jsCode)($, { first: () => items[0] }, items);
+        const res = new Function('$', '$input', 'items', p.jsCode)($, { first: () => items[0], all: () => items }, items);
         out = res.length ? res.map((r) => r.json) : null;
         break;
       }

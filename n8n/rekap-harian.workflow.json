@@ -1,0 +1,209 @@
+{
+  "name": "AI Agent CS - Rekap Harian",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "55 23 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "name": "Tiap Malam 23:55",
+      "id": "aics-recap-1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        200
+      ],
+      "name": "Tes Sekarang",
+      "id": "aics-recap-2"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "lp_attribution"
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        0
+      ],
+      "name": "Ambil Klik LP",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "id": "aics-recap-3"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "qZYFr5OtcUD8F8Co",
+          "mode": "list",
+          "cachedResultName": "leads_context",
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/qZYFr5OtcUD8F8Co"
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        440,
+        0
+      ],
+      "name": "Ambil Leads",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "id": "aics-recap-4"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "aics_orders"
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        0
+      ],
+      "name": "Ambil Order",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "id": "aics-recap-5"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Rekap harian untuk Telegram: klik LP, chat masuk, closing, rasio, omzet.\n\nconst TZ = 'Asia/Jakarta';\n\nfunction dayKey(value) {\n  const t = Date.parse(value);\n  if (Number.isNaN(t)) return '';\n  return new Date(t).toLocaleDateString('en-CA', { timeZone: TZ }); // YYYY-MM-DD\n}\n\nfunction pct(a, b) {\n  return b ? (Math.round((a / b) * 1000) / 10).toString().replace('.', ',') + '%' : '-';\n}\n\nfunction idr(n) {\n  return 'Rp' + Math.round(n || 0).toLocaleString('id-ID');\n}\n\nfunction dailyRecap({ clicks = [], leads = [], orders = [] }, now = new Date()) {\n  const today = dayKey(now.toISOString());\n  const clickToday = clicks.filter((c) => dayKey(c.clicked_at) === today);\n  const newChats = leads.filter((l) => dayKey(l.first_chat_at) === today);\n  const activeChats = leads.filter((l) => dayKey(l.last_chat_at) === today);\n  const ordersToday = orders.filter((o) => dayKey(o.created_at) === today);\n  const cod = ordersToday.filter((o) => o.method === 'cod');\n  const omzet = ordersToday.reduce((s, o) => s + Number(o.total || 0), 0);\n  const produk = ordersToday.reduce((s, o) => s + Number(o.price || 0), 0);\n  const fromAds = ordersToday.filter((o) => o.ref).length;\n  const tanggal = new Date(now).toLocaleDateString('id-ID', { timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });\n\n  const text = [\n    `📊 *REKAP AI CS* — ${tanggal}`,\n    '',\n    `🖱️ Klik tombol WA (LP): ${clickToday.length}`,\n    `💬 Chat masuk (lead baru): ${newChats.length}`,\n    `🗨️ Chat aktif hari ini: ${activeChats.length}`,\n    `🛒 Closing: ${ordersToday.length} (COD ${cod.length} • Transfer ${ordersToday.length - cod.length})`,\n    '',\n    `📈 Rasio closing / chat masuk: ${pct(ordersToday.length, newChats.length)}`,\n    `📈 Rasio chat masuk / klik LP: ${pct(newChats.length, clickToday.length)}`,\n    '',\n    `💰 Omzet (total bayar): ${idr(omzet)}`,\n    `🧴 Nilai produk: ${idr(produk)}`,\n    `🎯 Closing dari iklan (ada kode ref): ${fromAds}`,\n  ].join('\\n');\n\n  return { text, today, counts: { clicks: clickToday.length, newChats: newChats.length, activeChats: activeChats.length, orders: ordersToday.length, omzet, produk } };\n}\n\nconst rows = (name) => $(name).all().map((i) => i.json).filter((r) => r && Object.keys(r).length);\nconst recap = dailyRecap({ clicks: rows('Ambil Klik LP'), leads: rows('Ambil Leads'), orders: rows('Ambil Order') });\nreturn [{ json: recap }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        0
+      ],
+      "name": "Hitung Rekap",
+      "id": "aics-recap-6"
+    },
+    {
+      "parameters": {
+        "chatId": "-5439732568",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1100,
+        0
+      ],
+      "name": "Kirim Rekap",
+      "id": "aics-recap-7"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Tiap Malam 23:55": {
+      "main": [
+        [
+          {
+            "node": "Ambil Klik LP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tes Sekarang": {
+      "main": [
+        [
+          {
+            "node": "Ambil Klik LP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Klik LP": {
+      "main": [
+        [
+          {
+            "node": "Ambil Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Leads": {
+      "main": [
+        [
+          {
+            "node": "Ambil Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Order": {
+      "main": [
+        [
+          {
+            "node": "Hitung Rekap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hitung Rekap": {
+      "main": [
+        [
+          {
+            "node": "Kirim Rekap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Jakarta"
+  },
+  "tags": []
+}
