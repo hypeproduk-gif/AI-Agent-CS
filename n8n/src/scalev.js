@@ -84,7 +84,12 @@ function pickCourier(state, response) {
 
   if (!services.length) {
     const why = isCod ? 'JNT COD tidak tersedia ke lokasi ini. Tawarkan transfer.' : 'JNT tidak tersedia ke lokasi ini. [HANDOFF]';
-    return { ...state, ok: false, error: why };
+    // Untuk admin: kurir apa saja yang sebenarnya dikembalikan Scalev.
+    const available = ((response && response.data) || []).map((s) => {
+      const cs = s.courier_service || {};
+      return `${(cs.courier || {}).name} ${cs.name} via ${s.shipment_provider_code || '-'}${s.is_cod ? ' (COD)' : ''}`;
+    });
+    return { ...state, ok: false, error: why, kurir_tersedia: available };
   }
   const svc = services[0];
   const price = state.pkg.price;
