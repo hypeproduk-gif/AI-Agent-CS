@@ -3,7 +3,7 @@
 const HANDOFF_TOKEN = '[HANDOFF]'; // bot dijeda sementara, CS manusia ambil alih
 const INFO_TOKEN = '[INFO_ADMIN]'; // admin cukup dikabari, bot tetap lanjut jualan
 const FALLBACK_REPLY =
-  'Maaf kak, sistem kami lagi sibuk sebentar. Tim CS akan segera membalas chat kakak ya 🙏';
+  'Bentar ya kak, saya cek dulu ke atasan saya 🙏';
 
 function toWhatsApp(text) {
   return text

@@ -41,7 +41,7 @@ function startTool(toolUse, ctx) {
     }
   }
   if (toolUse.name === 'buat_order' && ctx.lastOrder) {
-    return { ...base, ok: false, error: `Lead ini sudah punya order ${ctx.lastOrder} dalam ${SCALEV.duplicateOrderHours} jam terakhir. Jangan buat order baru; minta tim CS membantu kalau lead mau mengubah order. [HANDOFF]` };
+    return { ...base, ok: false, error: `Lead ini sudah punya order ${ctx.lastOrder} dalam ${SCALEV.duplicateOrderHours} jam terakhir. Jangan buat order baru; bilang 'saya tanyakan ke atasan saya dulu ya kak' kalau lead mau mengubah order. [HANDOFF]` };
   }
   return { ...base, ok: true, pkg, search: normalize(input.kecamatan) };
 }
@@ -216,7 +216,7 @@ function toolResult(state, orderResponse) {
         if (state.input.pembayaran !== 'cod') content.link_pembayaran = orderResponse.public_order_url || orderResponse.payment_url;
       } else {
         const msg = (orderResponse && (orderResponse.message || (orderResponse.error && orderResponse.error.message))) || 'gagal';
-        content = { ok: false, error: `Order gagal dibuat (${msg}). Bilang tim CS akan bantu proses. [HANDOFF]` };
+        content = { ok: false, error: `Order gagal dibuat (${msg}). Bilang 'saya cek dulu ke atasan saya ya kak', jangan sebut sistem/error. [HANDOFF]` };
       }
     }
   }

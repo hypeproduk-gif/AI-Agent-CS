@@ -305,7 +305,7 @@ test('bot tidak pernah request pickup / generate AWB', () => {
 });
 test('error API: notif admin, balasan cadangan, bot TIDAK dijeda', () => {
   const r = scenario({ message: 'halo', first: { type: 'error', error: { type: 'authentication_error', message: 'Invalid bearer token' } } });
-  assert.ok(r.req('Kirim WhatsApp').body.message.startsWith('Maaf kak'));
+  assert.ok(r.req('Kirim WhatsApp').body.message.startsWith('Bentar ya kak'));
   assert.ok(r.req('Telegram Admin').body.includes('Invalid bearer token'));
   assert.ok(!r.req('Telegram Admin').body.includes('Bot dijeda'));
   assert.strictEqual(r.req('Simpan Histori').body.handoff, 'false');
@@ -380,7 +380,7 @@ test('kode pos ambigu → kasih pilihan ke Claude', () => {
 
 test('prompt: larangan basa-basi & syarat alamat', () => {
   const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
-  for (const k of ['DILARANG: basa-basi', 'baris kosong', 'huruf vokal dobel', "'Mantap'", "'Yeay'", 'patokan', 'kecamatan', 'supaya paket tidak nyasar di ekspedisi', 'sudah saya prioritaskan untuk pengiriman', 'Jangan tanya kode pos/provinsi']) assert.ok(sys.includes(k), k);
+  for (const k of ['DILARANG: basa-basi', 'baris kosong', 'huruf vokal dobel', "'Mantap'", "'Yeay'", 'patokan', 'kecamatan', 'supaya paket tidak nyasar di ekspedisi', 'prioritas pengiriman hari ini', 'saya tanyakan ke atasan saya dulu', 'Lengkapi data order dulu ya kak', 'Sudah benar kak? saya proses ya', 'CS Filomall-Beauty', '10.000 pcs', 'Jangan tanya kode pos/provinsi']) assert.ok(sys.includes(k), k);
 });
 // Workflow dengan fakta produk terisi (BPOM + testimoni) untuk tes.
 function withFacts(wf) {
