@@ -123,13 +123,13 @@ if (picked.winners.length) text = winnerList(picked, brief);
 else if (!items.length) {
   const err = raw.find((j) => j.error);
   text = 'Apify tidak mengembalikan iklan untuk "' + brief.keyword + '".' +
-    (err ? '\nError: ' + JSON.stringify(err.error).slice(0, 300) : '\nCoba sinonim lain / cek saldo Apify.');
+    (err ? '\\nError: ' + JSON.stringify(err.error).slice(0, 300) : '\\nCoba sinonim lain / cek saldo Apify.');
 } else {
   // Ada data tapi tidak terbaca → kirim nama field untuk diagnosa.
   const sample = items[0];
-  text = 'Apify mengembalikan ' + items.length + ' data untuk "' + brief.keyword + '" tapi tidak terbaca.\n' +
-    'Field: ' + Object.keys(sample).slice(0, 40).join(', ') + '\n' +
-    'snapshot: ' + Object.keys(sample.snapshot || {}).slice(0, 40).join(', ') + '\n' +
+  text = 'Apify mengembalikan ' + items.length + ' data untuk "' + brief.keyword + '" tapi tidak terbaca.\\n' +
+    'Field: ' + Object.keys(sample).slice(0, 40).join(', ') + '\\n' +
+    'snapshot: ' + Object.keys(sample.snapshot || {}).slice(0, 40).join(', ') + '\\n' +
     'Contoh: ' + JSON.stringify(sample).slice(0, 1200);
 }
 return chunkText(text).map((t) => ({ json: { text: t } }));`;
