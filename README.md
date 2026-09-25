@@ -59,19 +59,16 @@ Skor = permintaan Shopee (terjual/bln) + tren TikTok + bukti iklan Meta yang akt
 Kenapa Apify: API resmi Shopee/TikTok Shop hanya untuk data toko sendiri, dan Ad Library API resmi Meta
 hanya memuat iklan politik untuk Indonesia, jadi iklan komersial perlu scraper.
 
-## Ad Library → LP & Konten
+## Riset Iklan Winning (Ad Library)
 
-`n8n/ad-to-lp.workflow.json`: isi form (keyword, produk, harga, nomor WA, kode ref) → ambil ±100 iklan aktif
-di Meta Ad Library (Apify) → pilih iklan pesaing yang paling lama jalan (≥30 hari, digabung per variasi)
-→ Claude membedah angle-nya dan menulis LP + 5 naskah iklan + ide gambar → Telegram menerima file
-`lp-<kode>.html` dan naskah iklannya.
+`n8n/ad-to-lp.workflow.json`: ketik `/riset <keyword>` di grup Telegram "RISET PRODUK" (atau isi form)
+→ ambil ±100 iklan aktif Indonesia di Meta Ad Library (Apify `apify/facebook-ads-scraper`)
+→ gabung duplikat, pilih iklan yang jalan ≥30 hari (kalau tidak ada: yang paling lama)
+→ kirim daftar 15 teratas: nama produk, advertiser, lama jalan, jumlah variasi, URL iklan, URL LP pesaing.
 
-1. Pakai credential `Apify` dan `Anthropic API` yang sama dengan workflow riset.
-   Pemicu lain tanpa form: ketik `/riset pengusir tikus` (opsional `| harga | kode`) di grup Telegram "RISET PRODUK".
-2. Import, aktifkan, buka URL **Brief Produk** (Form) lalu isi.
-3. Edit LP: ganti `PIXEL_ID`, placeholder foto/testimoni ([ISI TESTIMONI ASLI]); upload bersama
-   `lp/wa-redirect.js` (atau tempel ke Custom HTML Scalev). Kode ref di form jadi `window.AICS.product`,
-   jadi chat dari LP ini otomatis tercatat atribusinya.
-4. Tambahkan kode ref baru ke deteksi produk bot CS kalau produknya baru.
+1. Credential **Header Auth** `Apify` → `Authorization: Bearer apify_api_...`.
+2. Import, cek credential Apify & Telegram, aktifkan.
+3. Hanya grup yang terdaftar di `ALLOWED_CHATS` (`n8n/src/ad-to-lp.js`) yang bisa memicu (biaya Apify ±$0,58/riset).
 
-Claude diberi aturan: tidak menyalin copy pesaing, patuh kebijakan iklan Meta, dan tidak mengarang testimoni/angka terjual.
+Fungsi pembuat LP + naskah iklan via Claude (`lpRequest`, `renderLp`) masih ada di `n8n/src/ad-to-lp.js`
+tapi tidak dipakai workflow.

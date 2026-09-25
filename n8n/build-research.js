@@ -116,34 +116,19 @@ return [{ json: { brief, actor: ${JSON.stringify(ACTORS.ads)},
 const winnerCode = `${adToLp}
 const brief = $('Siapkan Query').first().json.brief;
 const items = $input.all().map((i) => i.json).filter((j) => !j.error);
-const picked = pickWinners(items);
-if (!picked.winners.length) throw new Error('Tidak ada iklan untuk keyword: ' + brief.keyword);
-return [{ json: { brief, picked, requestBody: lpRequest(brief, picked) } }];`;
+const picked = pickWinners(items, Date.now(), LIST_LIMIT);
+const text = picked.winners.length ? winnerList(picked, brief) : 'Tidak ada iklan aktif untuk "' + brief.keyword + '". Coba sinonim lain.';
+return chunkText(text).map((t) => ({ json: { text: t } }));`;
 
-const buildLpCode = `${adToLp}
-const { brief, picked } = $('Pilih Winner').first().json;
-const copy = parseLpReply($json);
-const html = renderLp(copy, brief);
-const slug = String(brief.code || brief.keyword).toLowerCase().replace(/[^a-z0-9]+/g, '-');
-return [{
-  json: { chunks: chunkText(contentReport(copy, brief, picked)), copy, fileName: 'lp-' + slug + '.html' },
-  binary: { data: { data: Buffer.from(html).toString('base64'), mimeType: 'text/html', fileName: 'lp-' + slug + '.html' } },
-}];`;
-
-const splitCode = `return $json.chunks.map((text) => ({ json: { text } }));`;
 
 id = 0;
 const telegram = { credentials: { telegramApi: { id: 'GvWCKSvWULLSOTrP', name: 'Telegram account' } } };
 const lpNodes = [
   node('Brief Produk', 'n8n-nodes-base.formTrigger', 2.2, 0, {
     formTitle: 'Riset Ad Library → LP & Konten',
-    formDescription: 'Isi keyword produk. Hasil (LP + 5 naskah iklan) dikirim ke Telegram dalam ±3 menit.',
+    formDescription: 'Isi keyword produk. Daftar iklan winning (URL iklan, URL LP, nama produk) dikirim ke Telegram.',
     formFields: { values: [
       { fieldLabel: 'keyword', placeholder: 'pengusir tikus', requiredField: true },
-      { fieldLabel: 'produk', placeholder: 'Nama produkmu (opsional)' },
-      { fieldLabel: 'harga', placeholder: 'Rp99.000 / 3 pcs' },
-      { fieldLabel: 'whatsapp', placeholder: '6285xxxx', requiredField: true },
-      { fieldLabel: 'kode', placeholder: 'Kode ref LP, mis. PT' },
     ] },
     options: {},
   }, { more: { webhookId: 'aics-ad-to-lp' } }),
@@ -152,7 +137,7 @@ const lpNodes = [
   node('Siapkan Query', 'n8n-nodes-base.code', 2, 250, { jsCode: queryCode }),
   node('Konfirmasi', 'n8n-nodes-base.telegram', 1.2, 500, {
     chatId: RISET_CHAT,
-    text: '=⏳ Riset Ad Library "{{ $json.brief.keyword }}" dimulai… hasil LP + naskah iklan ±3–5 menit lagi.',
+    text: '=⏳ Riset Ad Library "{{ $json.brief.keyword }}" dimulai… daftar iklan winning ±2–3 menit lagi.',
     additionalFields: { appendAttribution: false },
   }, { y: 200, more: telegram }),
   node('Ad Library (Apify)', 'n8n-nodes-base.httpRequest', 4.2, 500, {
@@ -164,31 +149,9 @@ const lpNodes = [
     specifyBody: 'json',
     jsonBody: '={{ JSON.stringify($json.input) }}',
     options: { timeout: 300000 },
-  }, { more: { retryOnFail: true, maxTries: 2 } }),
+  }, { more: { retryOnFail: true, maxTries: 2, alwaysOutputData: true } }),
   node('Pilih Winner', 'n8n-nodes-base.code', 2, 750, { jsCode: winnerCode }),
-  node('Claude Copywriter', 'n8n-nodes-base.httpRequest', 4.2, 1000, {
-    method: 'POST',
-    url: 'https://api.anthropic.com/v1/messages',
-    authentication: 'genericCredentialType',
-    genericAuthType: 'httpHeaderAuth',
-    sendHeaders: true,
-    headerParameters: { parameters: [{ name: 'anthropic-version', value: '2023-06-01' }] },
-    sendBody: true,
-    specifyBody: 'json',
-    jsonBody: '={{ JSON.stringify($json.requestBody) }}',
-    options: { timeout: 240000 },
-  }, { more: { retryOnFail: true, maxTries: 2,
-    credentials: { httpHeaderAuth: { id: 'Rg3kLQlwRT919UB4', name: 'Anthropic API' } } } }),
-  node('Susun LP & Konten', 'n8n-nodes-base.code', 2, 1250, { jsCode: buildLpCode }),
-  node('Kirim File LP', 'n8n-nodes-base.telegram', 1.2, 1500, {
-    operation: 'sendDocument',
-    chatId: RISET_CHAT,
-    binaryData: true,
-    binaryPropertyName: 'data',
-    additionalFields: { caption: '=LP siap edit: {{ $json.fileName }} — ganti PIXEL_ID & placeholder foto/testimoni, upload bareng wa-redirect.js' },
-  }, { more: telegram }),
-  node('Pecah Pesan', 'n8n-nodes-base.code', 2, 1500, { jsCode: splitCode }, { y: 200 }),
-  node('Kirim Konten', 'n8n-nodes-base.telegram', 1.2, 1750, {
+  node('Kirim Konten', 'n8n-nodes-base.telegram', 1.2, 1000, {
     chatId: RISET_CHAT,
     text: '={{ $json.text }}',
     additionalFields: { appendAttribution: false, disable_web_page_preview: true },
@@ -196,17 +159,14 @@ const lpNodes = [
 ];
 
 const lpWf = {
-  name: 'Ad Library → LP & Konten',
+  name: 'Riset Iklan Winning (Ad Library)',
   nodes: lpNodes,
   connections: {
     'Brief Produk': link('Siapkan Query'),
     'Perintah Telegram': link('Siapkan Query'),
     'Siapkan Query': { main: [[{ node: 'Ad Library (Apify)', type: 'main', index: 0 }, { node: 'Konfirmasi', type: 'main', index: 0 }]] },
     'Ad Library (Apify)': link('Pilih Winner'),
-    'Pilih Winner': link('Claude Copywriter'),
-    'Claude Copywriter': link('Susun LP & Konten'),
-    'Susun LP & Konten': { main: [[{ node: 'Kirim File LP', type: 'main', index: 0 }, { node: 'Pecah Pesan', type: 'main', index: 0 }]] },
-    'Pecah Pesan': link('Kirim Konten'),
+    'Pilih Winner': link('Kirim Konten'),
   },
   settings: { executionOrder: 'v1', timezone: 'Asia/Jakarta' },
 };

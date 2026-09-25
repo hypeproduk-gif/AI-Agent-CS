@@ -128,9 +128,27 @@ test('laporan konten dipecah ≤ 4096 karakter', () => {
 test('workflow LP ter-build', () => {
   const wf = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'ad-to-lp.workflow.json'), 'utf8'));
   for (const n of wf.nodes.filter((n) => n.type.endsWith('.code'))) new Function('$', '$input', '$json', n.parameters.jsCode);
-  assert.strictEqual(wf.nodes.length, 11);
+  assert.strictEqual(wf.nodes.length, 7);
+  assert.ok(!wf.nodes.some((n) => String(n.parameters.url || '').includes('anthropic')));
   assert.ok(wf.nodes.some((n) => n.type === 'n8n-nodes-base.telegramTrigger'));
 });
+test('daftar winning: nama produk, URL iklan & LP', () => {
+  const winnerList = vm.runInContext('winnerList', ctx);
+  const ads = [
+    { adArchiveID: '11', pageName: 'Brand Store', startDate: daysAgo(50), collationCount: 4,
+      snapshot: { title: 'Pengusir Tikus Herbal | Bonus', link_url: 'https://toko.id/tikus', body: { text: 'COD 99rb' } } },
+    { adArchiveID: '12', pageName: 'Amanah', startDate: daysAgo(40),
+      snapshot: { cards: [{ title: 'Kamper Anti Tikus', link_url: 'https://amanah.id/lp', body: 'Usir tikus' }] } },
+  ];
+  const p = pickWinners(ads, now);
+  const text = winnerList(p, { keyword: 'pengusir tikus' });
+  assert.ok(text.includes('2 iklan jalan ≥30 hari'));
+  assert.ok(text.includes('1. Pengusir Tikus Herbal'));
+  assert.ok(text.includes('Iklan: https://www.facebook.com/ads/library/?id=11'));
+  assert.ok(text.includes('LP: https://amanah.id/lp'));
+  assert.ok(text.includes('• Kamper Anti Tikus'));
+});
+
 test('perintah /riset dari Telegram', () => {
   const parse = vm.runInContext('parseRisetCommand', ctx);
   const a = parse('/riset pengusir tikus');

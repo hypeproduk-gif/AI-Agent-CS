@@ -5,6 +5,21 @@
 const LP_MODEL = 'claude-sonnet-5';
 const PROVEN_DAYS = 30;
 const WINNER_LIMIT = 8;
+const LIST_LIMIT = 15;
+
+// Nama produk & URL LP pesaing dari snapshot iklan.
+function adProduct(it) {
+  const s = it.snapshot || {};
+  const card = (s.cards || [])[0] || {};
+  const name = s.title || card.title || s.link_description || card.link_description || it.ad_creative_link_title || '';
+  return String(name).split(' | ')[0].replace(/\{\{.*?\}\}/g, '').trim().slice(0, 100);
+}
+
+function adLandingUrl(it) {
+  const s = it.snapshot || {};
+  const card = (s.cards || []).find((c) => c.link_url) || {};
+  return s.link_url || card.link_url || it.link_url || '';
+}
 
 function adBody(it) {
   const s = it.snapshot || {};
@@ -24,8 +39,11 @@ function pickWinners(items, now = Date.now(), limit = WINNER_LIMIT) {
     const days = ((Number.isFinite(ad.stop) ? ad.stop : now) - ad.start) / 864e5;
     const variants = Number(it.collation_count || it.collationCount || 1);
     const g = groups.get(key);
-    if (!g) groups.set(key, { page: ad.page, body, title: ad.title, url: ad.url, days, variants });
-    else { g.days = Math.max(g.days, days); g.variants += variants; }
+    if (!g) groups.set(key, { page: ad.page, body, title: ad.title, url: ad.url, days, variants, product: adProduct(it), lpUrl: adLandingUrl(it) });
+    else {
+      g.days = Math.max(g.days, days); g.variants += variants;
+      g.product = g.product || adProduct(it); g.lpUrl = g.lpUrl || adLandingUrl(it);
+    }
   }
   const all = [...groups.values()].map((g) => ({ ...g, days: Math.round(g.days) }));
   const proven = all.filter((g) => g.days >= PROVEN_DAYS);
@@ -204,4 +222,23 @@ function parseRisetCommand(text) {
   if (!keyword) return null;
   const auto = keyword.split(/\s+/).map((w) => w[0]).join('').toUpperCase().slice(0, 4);
   return { keyword, product: '', price, wa: DEFAULT_WA, code: (code || auto).toUpperCase() };
+}
+
+// Daftar iklan winning untuk Telegram (tanpa Claude).
+function winnerList(picked, brief) {
+  const L = [`🏆 Iklan winning "${brief.keyword}" — ${picked.proven} iklan jalan ≥${PROVEN_DAYS} hari` +
+    (picked.proven ? '' : ' (belum ada; ini yang paling lama)'), ''];
+  picked.winners.forEach((w, i) => {
+    L.push(`${i + 1}. ${w.product || '(nama produk tidak ada di iklan)'}`);
+    L.push(`   ${w.page} · ${w.days} hari · ${w.variants} variasi`);
+    L.push(`   Iklan: ${w.url}`);
+    L.push(`   LP: ${w.lpUrl || '-'}`);
+    L.push('');
+  });
+  const names = [...new Set(picked.winners.map((w) => w.product).filter(Boolean))];
+  if (names.length) {
+    L.push('📦 Produk:');
+    for (const n of names) L.push('• ' + n);
+  }
+  return L.join('\n').trim();
 }
