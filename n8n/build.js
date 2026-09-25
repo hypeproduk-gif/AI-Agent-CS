@@ -17,8 +17,46 @@ const DATA_TABLE = {
   cachedResultName: 'leads_context',
   cachedResultUrl: '/projects/K2OXZkkoLw9p8qNz/datatables/qZYFr5OtcUD8F8Co',
 };
-// Tabel tambahan: pilih di n8n setelah import (ID berbeda per akun).
-const tableRef = (name) => ({ __rl: true, value: '', mode: 'list', cachedResultName: name });
+// ID tabel & credential akun n8n (bukan rahasia) supaya import tidak perlu pilih ulang.
+const PROJECT_ID = 'K2OXZkkoLw9p8qNz';
+const TABLE_IDS = {
+  leads_context: 'qZYFr5OtcUD8F8Co',
+  lp_attribution: 'ZKK35xdmV3H3E2A4',
+  aics_orders: 'JigJfYz6uPh04oCK',
+};
+const CREDENTIALS = {
+  anthropic: { httpHeaderAuth: { id: 'Rg3kLQlwRT919UB4', name: 'Anthropic API' } },
+  wablas: { httpHeaderAuth: { id: 'nACcE3iy140ThXzw', name: 'Wablas' } },
+  scalev: { httpHeaderAuth: { id: '3Sg0yQwmYbm9uLyp', name: 'Scalev' } },
+  storefront: { httpHeaderAuth: { id: 'tZrolZtseWagvc2W', name: 'Scalev Storefront' } },
+  telegram: { telegramApi: { id: 'GvWCKSvWULLSOTrP', name: 'Telegram account' } },
+};
+const tableRef = (name) => ({
+  __rl: true, value: TABLE_IDS[name], mode: 'list', cachedResultName: name,
+  cachedResultUrl: `/projects/${PROJECT_ID}/datatables/${TABLE_IDS[name]}`,
+});
+
+function credentialFor(n) {
+  if (n.type === 'n8n-nodes-base.telegram') return CREDENTIALS.telegram;
+  if (n.type !== 'n8n-nodes-base.httpRequest') return null;
+  const url = String(n.parameters.url || '');
+  if (url.includes('anthropic.com')) return CREDENTIALS.anthropic;
+  if (url.includes('wablas.com')) return CREDENTIALS.wablas;
+  if (url.includes('/public/analytics/')) return CREDENTIALS.storefront;
+  if (url.includes('scalev.com')) return CREDENTIALS.scalev;
+  return null;
+}
+
+// Tanam credential & ID tabel ke semua node sebelum ditulis.
+function finalize(wf) {
+  for (const n of wf.nodes) {
+    const cred = credentialFor(n);
+    if (cred) n.credentials = cred;
+    const t = n.parameters.dataTableId;
+    if (t && TABLE_IDS[t.cachedResultName]) n.parameters.dataTableId = tableRef(t.cachedResultName);
+  }
+  return wf;
+}
 const ORDERS_TABLE = tableRef('aics_orders');
 const ATTRIBUTION_TABLE = tableRef('lp_attribution');
 const TELEGRAM_CHAT_ID = '-5439732568';
@@ -427,7 +465,7 @@ const workflow = {
 };
 
 const out = path.join(__dirname, 'ai-agent-cs.workflow.json');
-fs.writeFileSync(out, JSON.stringify(workflow, null, 2) + '\n');
+fs.writeFileSync(out, JSON.stringify(finalize(workflow), null, 2) + '\n');
 console.log('Wrote', path.relative(process.cwd(), out));
 
 // Workflow kedua: terima atribusi dari LP (lp/wa-redirect.js) → Data Table lp_attribution.
@@ -483,7 +521,7 @@ const attrWorkflow = {
 };
 
 const attrOut = path.join(__dirname, 'lp-attribution.workflow.json');
-fs.writeFileSync(attrOut, JSON.stringify(attrWorkflow, null, 2) + '\n');
+fs.writeFileSync(attrOut, JSON.stringify(finalize(attrWorkflow), null, 2) + '\n');
 console.log('Wrote', path.relative(process.cwd(), attrOut));
 
 // Workflow ketiga: jalankan manual sekali untuk melihat ID store & varian Scalev
@@ -531,7 +569,7 @@ const setupWorkflow = {
 };
 
 const setupOut = path.join(__dirname, 'scalev-setup.workflow.json');
-fs.writeFileSync(setupOut, JSON.stringify(setupWorkflow, null, 2) + '\n');
+fs.writeFileSync(setupOut, JSON.stringify(finalize(setupWorkflow), null, 2) + '\n');
 console.log('Wrote', path.relative(process.cwd(), setupOut));
 
 // Workflow keempat: tes cek ongkir ke Scalev asli tanpa membuat order.
@@ -572,7 +610,7 @@ return [{ json: startTool({ id: 'tes', name: 'cek_ongkir', input }, $('Siapkan K
   tags: [],
 };
 const testOut = path.join(__dirname, 'tes-ongkir.workflow.json');
-fs.writeFileSync(testOut, JSON.stringify(ongkirTestWorkflow, null, 2) + '\n');
+fs.writeFileSync(testOut, JSON.stringify(finalize(ongkirTestWorkflow), null, 2) + '\n');
 console.log('Wrote', path.relative(process.cwd(), testOut));
 
 // Workflow kelima: salinan TEST dari bot utama. Webhook, nama, dan store Scalev terpisah
@@ -593,7 +631,7 @@ for (const n of testWorkflow.nodes) {
   if (n.name === 'Telegram Admin') n.parameters.text = n.parameters.text.replace('={{ ', "=🧪 *[TES]* {{ ");
 }
 const testOutMain = path.join(__dirname, 'ai-agent-cs.test.workflow.json');
-fs.writeFileSync(testOutMain, JSON.stringify(testWorkflow, null, 2) + '\n');
+fs.writeFileSync(testOutMain, JSON.stringify(finalize(testWorkflow), null, 2) + '\n');
 console.log('Wrote', path.relative(process.cwd(), testOutMain));
 
 // Workflow keenam: rekap harian ke Telegram (23:55 WIB) + tombol tes manual.
@@ -638,5 +676,5 @@ const recapWorkflow = {
   tags: [],
 };
 const recapOut = path.join(__dirname, 'rekap-harian.workflow.json');
-fs.writeFileSync(recapOut, JSON.stringify(recapWorkflow, null, 2) + '\n');
+fs.writeFileSync(recapOut, JSON.stringify(finalize(recapWorkflow), null, 2) + '\n');
 console.log('Wrote', path.relative(process.cwd(), recapOut));

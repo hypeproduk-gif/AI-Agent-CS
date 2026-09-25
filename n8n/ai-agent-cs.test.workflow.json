@@ -246,7 +246,13 @@
       "onError": "continueRegularOutput",
       "retryOnFail": true,
       "maxTries": 2,
-      "id": "aics-test-07"
+      "id": "aics-test-07",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Rg3kLQlwRT919UB4",
+          "name": "Anthropic API"
+        }
+      }
     },
     {
       "parameters": {
@@ -354,7 +360,13 @@
       ],
       "name": "Scalev Lokasi",
       "onError": "continueRegularOutput",
-      "id": "aics-test-11"
+      "id": "aics-test-11",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3Sg0yQwmYbm9uLyp",
+          "name": "Scalev"
+        }
+      }
     },
     {
       "parameters": {
@@ -427,7 +439,13 @@
       ],
       "name": "Scalev Kode Pos",
       "onError": "continueRegularOutput",
-      "id": "aics-test-14"
+      "id": "aics-test-14",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3Sg0yQwmYbm9uLyp",
+          "name": "Scalev"
+        }
+      }
     },
     {
       "parameters": {
@@ -468,7 +486,13 @@
       ],
       "name": "Scalev Gudang",
       "onError": "continueRegularOutput",
-      "id": "aics-test-16"
+      "id": "aics-test-16",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3Sg0yQwmYbm9uLyp",
+          "name": "Scalev"
+        }
+      }
     },
     {
       "parameters": {
@@ -509,7 +533,13 @@
       ],
       "name": "Scalev Kurir",
       "onError": "continueRegularOutput",
-      "id": "aics-test-18"
+      "id": "aics-test-18",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3Sg0yQwmYbm9uLyp",
+          "name": "Scalev"
+        }
+      }
     },
     {
       "parameters": {
@@ -585,7 +615,13 @@
       ],
       "name": "Scalev Buat Order",
       "onError": "continueRegularOutput",
-      "id": "aics-test-21"
+      "id": "aics-test-21",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3Sg0yQwmYbm9uLyp",
+          "name": "Scalev"
+        }
+      }
     },
     {
       "parameters": {
@@ -637,7 +673,13 @@
       "onError": "continueRegularOutput",
       "retryOnFail": true,
       "maxTries": 2,
-      "id": "aics-test-23"
+      "id": "aics-test-23",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Rg3kLQlwRT919UB4",
+          "name": "Anthropic API"
+        }
+      }
     },
     {
       "parameters": {
@@ -701,7 +743,13 @@
       ],
       "name": "Telegram Admin",
       "onError": "continueRegularOutput",
-      "id": "aics-test-26"
+      "id": "aics-test-26",
+      "credentials": {
+        "telegramApi": {
+          "id": "GvWCKSvWULLSOTrP",
+          "name": "Telegram account"
+        }
+      }
     },
     {
       "parameters": {
@@ -731,7 +779,13 @@
         0
       ],
       "name": "Kirim WhatsApp",
-      "id": "aics-test-27"
+      "id": "aics-test-27",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "nACcE3iy140ThXzw",
+          "name": "Wablas"
+        }
+      }
     },
     {
       "parameters": {
@@ -773,9 +827,10 @@
         "operation": "insert",
         "dataTableId": {
           "__rl": true,
-          "value": "",
+          "value": "JigJfYz6uPh04oCK",
           "mode": "list",
-          "cachedResultName": "aics_orders"
+          "cachedResultName": "aics_orders",
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/JigJfYz6uPh04oCK"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -892,9 +947,10 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "",
+          "value": "ZKK35xdmV3H3E2A4",
           "mode": "list",
-          "cachedResultName": "lp_attribution"
+          "cachedResultName": "lp_attribution",
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ZKK35xdmV3H3E2A4"
         },
         "filters": {
           "conditions": [
@@ -965,7 +1021,13 @@
       ],
       "name": "Meta Purchase (CAPI)",
       "onError": "continueRegularOutput",
-      "id": "aics-test-32"
+      "id": "aics-test-32",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "tZrolZtseWagvc2W",
+          "name": "Scalev Storefront"
+        }
+      }
     },
     {
       "parameters": {
@@ -1055,7 +1117,13 @@
       ],
       "name": "Kirim Gambar",
       "onError": "continueRegularOutput",
-      "id": "aics-test-35"
+      "id": "aics-test-35",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "nACcE3iy140ThXzw",
+          "name": "Wablas"
+        }
+      }
     },
     {
       "parameters": {

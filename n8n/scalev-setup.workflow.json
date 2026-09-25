@@ -35,7 +35,13 @@
       ],
       "name": "Ambil Store",
       "onError": "continueRegularOutput",
-      "id": "aics-setup-2"
+      "id": "aics-setup-2",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3Sg0yQwmYbm9uLyp",
+          "name": "Scalev"
+        }
+      }
     },
     {
       "parameters": {
@@ -74,7 +80,13 @@
       ],
       "name": "Ambil Produk",
       "onError": "continueRegularOutput",
-      "id": "aics-setup-4"
+      "id": "aics-setup-4",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3Sg0yQwmYbm9uLyp",
+          "name": "Scalev"
+        }
+      }
     },
     {
       "parameters": {

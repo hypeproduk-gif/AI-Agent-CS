@@ -37,9 +37,10 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "",
+          "value": "ZKK35xdmV3H3E2A4",
           "mode": "list",
-          "cachedResultName": "lp_attribution"
+          "cachedResultName": "lp_attribution",
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ZKK35xdmV3H3E2A4"
         },
         "returnAll": true
       },
@@ -82,9 +83,10 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "",
+          "value": "JigJfYz6uPh04oCK",
           "mode": "list",
-          "cachedResultName": "aics_orders"
+          "cachedResultName": "aics_orders",
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/JigJfYz6uPh04oCK"
         },
         "returnAll": true
       },
@@ -128,7 +130,13 @@
         0
       ],
       "name": "Kirim Rekap",
-      "id": "aics-recap-7"
+      "id": "aics-recap-7",
+      "credentials": {
+        "telegramApi": {
+          "id": "GvWCKSvWULLSOTrP",
+          "name": "Telegram account"
+        }
+      }
     }
   ],
   "pinData": {},

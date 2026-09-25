@@ -96,7 +96,13 @@
       ],
       "name": "Scalev Lokasi",
       "onError": "continueRegularOutput",
-      "id": "aics-tes-5"
+      "id": "aics-tes-5",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3Sg0yQwmYbm9uLyp",
+          "name": "Scalev"
+        }
+      }
     },
     {
       "parameters": {
@@ -169,7 +175,13 @@
       ],
       "name": "Scalev Kode Pos",
       "onError": "continueRegularOutput",
-      "id": "aics-tes-8"
+      "id": "aics-tes-8",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3Sg0yQwmYbm9uLyp",
+          "name": "Scalev"
+        }
+      }
     },
     {
       "parameters": {
@@ -210,7 +222,13 @@
       ],
       "name": "Scalev Gudang",
       "onError": "continueRegularOutput",
-      "id": "aics-tes-10"
+      "id": "aics-tes-10",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3Sg0yQwmYbm9uLyp",
+          "name": "Scalev"
+        }
+      }
     },
     {
       "parameters": {
@@ -251,7 +269,13 @@
       ],
       "name": "Scalev Kurir",
       "onError": "continueRegularOutput",
-      "id": "aics-tes-12"
+      "id": "aics-tes-12",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3Sg0yQwmYbm9uLyp",
+          "name": "Scalev"
+        }
+      }
     },
     {
       "parameters": {

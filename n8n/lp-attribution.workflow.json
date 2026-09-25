@@ -39,9 +39,10 @@
         "operation": "insert",
         "dataTableId": {
           "__rl": true,
-          "value": "",
+          "value": "ZKK35xdmV3H3E2A4",
           "mode": "list",
-          "cachedResultName": "lp_attribution"
+          "cachedResultName": "lp_attribution",
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ZKK35xdmV3H3E2A4"
         },
         "columns": {
           "mappingMode": "autoMapInputData",
