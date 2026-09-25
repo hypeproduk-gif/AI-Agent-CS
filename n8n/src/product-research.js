@@ -4,9 +4,11 @@
 
 const RESEARCH = {
   keywords: [
-    'pembersih kerak', 'penghilang noda sofa', 'coating motor', 'bantal ortopedi',
-    'alat pijat leher', 'serum ketiak', 'busy board', 'sisir bulu kucing',
-    'alat potong sayur', 'celana korset',
+    // Lolos cek Ad Library 25 Sep 2026: banyak toko COD jualan produk fisik.
+    'pembersih kerak', 'pengusir tikus', 'penghilang baret', 'alat pijat leher',
+    'noda kasur', 'jamur kaca mobil',
+    // Kompetisi rendah, masih perlu cek permintaan di Shopee.
+    'korektor postur', 'kaos kaki anti bau', 'dispenser air kucing', 'sisir kucing',
   ],
   country: 'ID',
   priceMin: 79000,
