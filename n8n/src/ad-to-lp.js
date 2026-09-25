@@ -309,3 +309,14 @@ function winnerList(picked, brief) {
   }
   return L.join('\n').trim();
 }
+
+// URL Ad Library untuk brief: keyword biasa, atau semua iklan satu halaman
+// ("page 535195099685688", ID angka saja, atau link facebook.com/<halaman>).
+function adLibraryUrl(brief, country = 'ID') {
+  const base = `https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=${country}`;
+  const kw = String(brief.keyword || '').trim();
+  const id = (kw.match(/^(?:page[:\s]+)?(\d{6,})$/i) || kw.match(/view_all_page_id=(\d+)/) || [])[1];
+  if (id) return { url: `${base}&view_all_page_id=${id}&search_type=page`, mode: 'page' };
+  if (/^https?:\/\/(www\.|m\.)?facebook\.com\//i.test(kw)) return { url: kw, mode: 'page' };
+  return { url: `${base}&q=${encodeURIComponent(kw)}&search_type=keyword_unordered`, mode: 'keyword' };
+}

@@ -109,9 +109,10 @@ if (f.message) {
 } else {
   brief = { limit: DEFAULT_LIMIT, keyword: f.keyword, product: f.produk || '', price: f.harga || '', wa: f.whatsapp || DEFAULT_WA, code: f.kode || 'LP' };
 }
-const q = encodeURIComponent(brief.keyword);
+const target = adLibraryUrl(brief);
+brief.mode = target.mode;
 return [{ json: { brief, actor: ${JSON.stringify(ACTORS.ads)},
-  input: { startUrls: [{ url: \`https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ID&q=\${q}&search_type=keyword_unordered\` }], resultsLimit: brief.limit, activeStatus: 'active' } } }];`;
+  input: { startUrls: [{ url: target.url }], resultsLimit: brief.limit, activeStatus: 'active' } } }];`;
 
 const winnerCode = `${adToLp}
 const brief = $('Siapkan Query').first().json.brief;
