@@ -111,13 +111,27 @@ if (f.message) {
 }
 const q = encodeURIComponent(brief.keyword);
 return [{ json: { brief, actor: ${JSON.stringify(ACTORS.ads)},
-  input: { startUrls: [{ url: \`https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ID&q=\${q}&search_type=keyword_exact_phrase\` }], resultsLimit: brief.limit, activeStatus: 'active' } } }];`;
+  input: { startUrls: [{ url: \`https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ID&q=\${q}&search_type=keyword_unordered\` }], resultsLimit: brief.limit, activeStatus: 'active' } } }];`;
 
 const winnerCode = `${adToLp}
 const brief = $('Siapkan Query').first().json.brief;
 const items = $input.all().map((i) => i.json).filter((j) => !j.error);
 const picked = pickWinners(items, Date.now(), LIST_LIMIT);
-const text = picked.winners.length ? winnerList(picked, brief) : 'Tidak ada iklan aktif untuk "' + brief.keyword + '". Coba sinonim lain.';
+const raw = $input.all().map((i) => i.json);
+let text;
+if (picked.winners.length) text = winnerList(picked, brief);
+else if (!items.length) {
+  const err = raw.find((j) => j.error);
+  text = 'Apify tidak mengembalikan iklan untuk "' + brief.keyword + '".' +
+    (err ? '\nError: ' + JSON.stringify(err.error).slice(0, 300) : '\nCoba sinonim lain / cek saldo Apify.');
+} else {
+  // Ada data tapi tidak terbaca → kirim nama field untuk diagnosa.
+  const sample = items[0];
+  text = 'Apify mengembalikan ' + items.length + ' data untuk "' + brief.keyword + '" tapi tidak terbaca.\n' +
+    'Field: ' + Object.keys(sample).slice(0, 40).join(', ') + '\n' +
+    'snapshot: ' + Object.keys(sample.snapshot || {}).slice(0, 40).join(', ') + '\n' +
+    'Contoh: ' + JSON.stringify(sample).slice(0, 1200);
+}
 return chunkText(text).map((t) => ({ json: { text: t } }));`;
 
 
