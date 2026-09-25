@@ -67,7 +67,7 @@ di Meta Ad Library (Apify) → pilih iklan pesaing yang paling lama jalan (≥30
 `lp-<kode>.html` dan naskah iklannya.
 
 1. Pakai credential `Apify` dan `Anthropic API` yang sama dengan workflow riset.
-   Pemicu lain tanpa form: ketik `/riset pengusir tikus` (opsional `| harga | kode`) di grup Telegram rekap.
+   Pemicu lain tanpa form: ketik `/riset pengusir tikus` (opsional `| harga | kode`) di grup Telegram "RISET PRODUK".
 2. Import, aktifkan, buka URL **Brief Produk** (Form) lalu isi.
 3. Edit LP: ganti `PIXEL_ID`, placeholder foto/testimoni ([ISI TESTIMONI ASLI]); upload bersama
    `lp/wa-redirect.js` (atau tempel ke Custom HTML Scalev). Kode ref di form jadi `window.AICS.product`,

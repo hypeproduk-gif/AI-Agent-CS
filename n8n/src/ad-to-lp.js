@@ -195,7 +195,7 @@ function chunkText(text, size = 3900) {
 // Perintah Telegram: "/riset pengusir tikus | Rp99.000 3 pcs | PT"
 // (harga & kode opsional). Balikan null kalau bukan perintah riset.
 const DEFAULT_WA = '6285180108370';
-const ALLOWED_CHATS = ['-5439732568']; // hanya chat ini yang boleh memicu (biaya Apify/Claude)
+const ALLOWED_CHATS = ['-5440720207']; // grup RISET PRODUK; hanya grup ini yang boleh memicu (biaya Apify/Claude)
 
 function parseRisetCommand(text) {
   const m = String(text || '').trim().match(/^\/?riset(?:@\w+)?\s+(.+)$/i);

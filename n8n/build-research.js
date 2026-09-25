@@ -7,6 +7,9 @@ const path = require('path');
 const research = fs.readFileSync(path.join(__dirname, 'src', 'product-research.js'), 'utf8');
 
 // Actor Apify (ganti kalau pakai actor lain; sesuaikan input-nya juga).
+// Grup Telegram "RISET PRODUK" (terpisah dari grup closing & rekap).
+const RISET_CHAT = '-5440720207';
+
 const ACTORS = {
   shopee: 'REPLACE_WITH_SHOPEE_ACTOR', // cari "Shopee" di apify.com/store, pilih yang support shopee.co.id
   tiktok: 'REPLACE_WITH_TIKTOK_CC_ACTOR', // cari "TikTok Creative Center top products"
@@ -70,7 +73,7 @@ const nodes = [
   }, { more: { onError: 'continueRegularOutput', retryOnFail: true, maxTries: 2 } }),
   node('Skor Produk', 'n8n-nodes-base.code', 2, 750, { jsCode: scoreCode }),
   node('Kirim Laporan', 'n8n-nodes-base.telegram', 1.2, 1000, {
-    chatId: '-5439732568',
+    chatId: RISET_CHAT,
     text: '={{ $json.text }}',
     additionalFields: { appendAttribution: false, disable_web_page_preview: true },
   }, { more: { credentials: { telegramApi: { id: 'GvWCKSvWULLSOTrP', name: 'Telegram account' } } } }),
@@ -148,7 +151,7 @@ const lpNodes = [
     { y: 200, more: { webhookId: 'aics-riset-telegram', ...telegram } }),
   node('Siapkan Query', 'n8n-nodes-base.code', 2, 250, { jsCode: queryCode }),
   node('Konfirmasi', 'n8n-nodes-base.telegram', 1.2, 500, {
-    chatId: '-5439732568',
+    chatId: RISET_CHAT,
     text: '=⏳ Riset Ad Library "{{ $json.brief.keyword }}" dimulai… hasil LP + naskah iklan ±3–5 menit lagi.',
     additionalFields: { appendAttribution: false },
   }, { y: 200, more: telegram }),
@@ -179,14 +182,14 @@ const lpNodes = [
   node('Susun LP & Konten', 'n8n-nodes-base.code', 2, 1250, { jsCode: buildLpCode }),
   node('Kirim File LP', 'n8n-nodes-base.telegram', 1.2, 1500, {
     operation: 'sendDocument',
-    chatId: '-5439732568',
+    chatId: RISET_CHAT,
     binaryData: true,
     binaryPropertyName: 'data',
     additionalFields: { caption: '=LP siap edit: {{ $json.fileName }} — ganti PIXEL_ID & placeholder foto/testimoni, upload bareng wa-redirect.js' },
   }, { more: telegram }),
   node('Pecah Pesan', 'n8n-nodes-base.code', 2, 1500, { jsCode: splitCode }, { y: 200 }),
   node('Kirim Konten', 'n8n-nodes-base.telegram', 1.2, 1750, {
-    chatId: '-5439732568',
+    chatId: RISET_CHAT,
     text: '={{ $json.text }}',
     additionalFields: { appendAttribution: false, disable_web_page_preview: true },
   }, { y: 200, more: telegram }),
