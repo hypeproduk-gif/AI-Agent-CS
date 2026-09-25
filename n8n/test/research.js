@@ -128,6 +128,20 @@ test('laporan konten dipecah ≤ 4096 karakter', () => {
 test('workflow LP ter-build', () => {
   const wf = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'ad-to-lp.workflow.json'), 'utf8'));
   for (const n of wf.nodes.filter((n) => n.type.endsWith('.code'))) new Function('$', '$input', '$json', n.parameters.jsCode);
-  assert.strictEqual(wf.nodes.length, 9);
+  assert.strictEqual(wf.nodes.length, 11);
+  assert.ok(wf.nodes.some((n) => n.type === 'n8n-nodes-base.telegramTrigger'));
+});
+test('perintah /riset dari Telegram', () => {
+  const parse = vm.runInContext('parseRisetCommand', ctx);
+  const a = parse('/riset pengusir tikus');
+  assert.strictEqual(a.keyword, 'pengusir tikus');
+  assert.strictEqual(a.code, 'PT');
+  assert.strictEqual(a.wa, '6285180108370');
+  const b = parse('riset foam toilet | Rp99.000 3 pcs | ft2');
+  assert.strictEqual(b.price, 'Rp99.000 3 pcs');
+  assert.strictEqual(b.code, 'FT2');
+  assert.strictEqual(parse('/riset@HypeBot sisir kucing').keyword, 'sisir kucing');
+  assert.strictEqual(parse('halo'), null);
+  assert.strictEqual(parse('/riset'), null);
 });
 console.log(`${passed} tes lulus`);

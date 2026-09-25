@@ -191,3 +191,17 @@ function chunkText(text, size = 3900) {
   if (buf) out.push(buf);
   return out;
 }
+
+// Perintah Telegram: "/riset pengusir tikus | Rp99.000 3 pcs | PT"
+// (harga & kode opsional). Balikan null kalau bukan perintah riset.
+const DEFAULT_WA = '6285180108370';
+const ALLOWED_CHATS = ['-5439732568']; // hanya chat ini yang boleh memicu (biaya Apify/Claude)
+
+function parseRisetCommand(text) {
+  const m = String(text || '').trim().match(/^\/?riset(?:@\w+)?\s+(.+)$/i);
+  if (!m) return null;
+  const [keyword, price = '', code = ''] = m[1].split('|').map((s) => s.trim());
+  if (!keyword) return null;
+  const auto = keyword.split(/\s+/).map((w) => w[0]).join('').toUpperCase().slice(0, 4);
+  return { keyword, product: '', price, wa: DEFAULT_WA, code: (code || auto).toUpperCase() };
+}

@@ -96,8 +96,16 @@ console.log('wrote product-research.workflow.json');
 // ---------- Workflow 2: Ad Library → LP & konten ----------
 const adToLp = research + '\n' + fs.readFileSync(path.join(__dirname, 'src', 'ad-to-lp.js'), 'utf8');
 
-const queryCode = `const f = $json;
-const brief = { keyword: f.keyword, product: f.produk || '', price: f.harga || '', wa: f.whatsapp, code: f.kode || 'LP' };
+const queryCode = `${fs.readFileSync(path.join(__dirname, 'src', 'ad-to-lp.js'), 'utf8')}
+const f = $json;
+let brief;
+if (f.message) {
+  if (!ALLOWED_CHATS.includes(String(f.message.chat.id))) return [];
+  brief = parseRisetCommand(f.message.text);
+  if (!brief) return [];
+} else {
+  brief = { keyword: f.keyword, product: f.produk || '', price: f.harga || '', wa: f.whatsapp || DEFAULT_WA, code: f.kode || 'LP' };
+}
 const q = encodeURIComponent(brief.keyword);
 return [{ json: { brief, actor: ${JSON.stringify(ACTORS.ads)},
   input: { startUrls: [{ url: \`https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ID&q=\${q}&search_type=keyword_unordered\` }], resultsLimit: 100, activeStatus: 'active' } } }];`;
@@ -136,7 +144,14 @@ const lpNodes = [
     ] },
     options: {},
   }, { more: { webhookId: 'aics-ad-to-lp' } }),
+  node('Perintah Telegram', 'n8n-nodes-base.telegramTrigger', 1.2, 0, { updates: ['message'], additionalFields: {} },
+    { y: 200, more: { webhookId: 'aics-riset-telegram', ...telegram } }),
   node('Siapkan Query', 'n8n-nodes-base.code', 2, 250, { jsCode: queryCode }),
+  node('Konfirmasi', 'n8n-nodes-base.telegram', 1.2, 500, {
+    chatId: '-5439732568',
+    text: '=⏳ Riset Ad Library "{{ $json.brief.keyword }}" dimulai… hasil LP + naskah iklan ±3–5 menit lagi.',
+    additionalFields: { appendAttribution: false },
+  }, { y: 200, more: telegram }),
   node('Ad Library (Apify)', 'n8n-nodes-base.httpRequest', 4.2, 500, {
     method: 'POST',
     url: '=https://api.apify.com/v2/acts/{{ $json.actor }}/run-sync-get-dataset-items?timeout=280',
@@ -182,7 +197,8 @@ const lpWf = {
   nodes: lpNodes,
   connections: {
     'Brief Produk': link('Siapkan Query'),
-    'Siapkan Query': link('Ad Library (Apify)'),
+    'Perintah Telegram': link('Siapkan Query'),
+    'Siapkan Query': { main: [[{ node: 'Ad Library (Apify)', type: 'main', index: 0 }, { node: 'Konfirmasi', type: 'main', index: 0 }]] },
     'Ad Library (Apify)': link('Pilih Winner'),
     'Pilih Winner': link('Claude Copywriter'),
     'Claude Copywriter': link('Susun LP & Konten'),
