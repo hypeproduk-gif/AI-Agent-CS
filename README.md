@@ -61,7 +61,7 @@ hanya memuat iklan politik untuk Indonesia, jadi iklan komersial perlu scraper.
 
 ## Ad Library → LP & Konten
 
-`n8n/ad-to-lp.workflow.json`: isi form (keyword, produk, harga, nomor WA, kode ref) → ambil ±200 iklan aktif
+`n8n/ad-to-lp.workflow.json`: isi form (keyword, produk, harga, nomor WA, kode ref) → ambil ±100 iklan aktif
 di Meta Ad Library (Apify) → pilih iklan pesaing yang paling lama jalan (≥30 hari, digabung per variasi)
 → Claude membedah angle-nya dan menulis LP + 5 naskah iklan + ide gambar → Telegram menerima file
 `lp-<kode>.html` dan naskah iklannya.
