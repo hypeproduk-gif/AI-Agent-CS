@@ -29,17 +29,64 @@ function adBody(it) {
 }
 
 // items: output actor Ad Library. Satu "creative" bisa punya banyak duplikat → gabung per page+teks.
+// Tebakan tujuan/optimasi iklan. Ad Library TIDAK membuka objective/optimasi asli,
+// jadi disimpulkan dari tombol CTA, link tujuan, dan format iklan.
+function adGoal(it) {
+  const s = it.snapshot || {};
+  const cta = String(s.cta_type || s.ctaType || it.cta_type || '').toUpperCase();
+  const link = String(adLandingUrl(it)).toLowerCase();
+  const fmt = String(s.display_format || s.displayFormat || '').toUpperCase();
+  if (/WHATSAPP/.test(cta) || /wa\.me|api\.whatsapp|whatsapp\.com/.test(link)) return 'Pesan WhatsApp (optimasi percakapan)';
+  if (/MESSAGE_PAGE|MESSENGER/.test(cta) || /m\.me\//.test(link)) return 'Pesan Messenger (optimasi percakapan)';
+  if (/INSTAGRAM_MESSAGE/.test(cta) || /ig\.me\//.test(link)) return 'DM Instagram (optimasi percakapan)';
+  if (fmt === 'DPA' || (fmt === 'DCO' && /SHOP_NOW/.test(cta))) return 'Katalog (Advantage+ penjualan katalog)';
+  if (/SIGN_UP|APPLY_NOW|GET_QUOTE|SUBSCRIBE/.test(cta) && (!link || /facebook\.com|fb\.com/.test(link))) return 'Formulir prospek (optimasi leads)';
+  if (/INSTALL|PLAY_GAME|USE_APP/.test(cta)) return 'Install aplikasi';
+  if (/shopee|tokopedia|tiktok\.com|lazada/.test(link)) return 'Marketplace (kemungkinan traffic/penjualan marketplace)';
+  if (/SHOP_NOW|ORDER_NOW|BUY_NOW|GET_OFFER/.test(cta)) return 'Website (kemungkinan optimasi penjualan/purchase)';
+  if (link) return 'Website (' + (cta ? cta.toLowerCase().replace(/_/g, ' ') : 'traffic/penjualan') + ')';
+  return cta ? cta.toLowerCase().replace(/_/g, ' ') : '-';
+}
+
+const RISING_DAYS = 7;
+const RISING_MIN_NEW = 3;
+
+// Pemenang baru: produk yang iklannya belum 30 hari tapi advertiser menambah banyak iklan dalam 7 hari terakhir.
+function pickRising(items, now = Date.now(), limit = 8) {
+  const groups = new Map();
+  for (const it of items || []) {
+    const ad = normAd(it);
+    if (!Number.isFinite(ad.start) || !ad.active) continue;
+    const product = adProduct(it);
+    const key = (ad.page + '|' + (product || adBody(it).slice(0, 60))).toLowerCase();
+    const age = (now - ad.start) / 864e5;
+    const g = groups.get(key) || { page: ad.page, product, url: ad.url, lpUrl: '', goal: '', ads: 0, fresh: 0, oldest: 0, variants: 0 };
+    g.ads += 1;
+    g.variants += Number(it.collation_count || it.collationCount || 1);
+    if (age <= RISING_DAYS) g.fresh += 1;
+    if (age > g.oldest) { g.oldest = age; g.url = ad.url; }
+    g.lpUrl = g.lpUrl || adLandingUrl(it);
+    g.goal = g.goal || adGoal(it);
+    groups.set(key, g);
+  }
+  return [...groups.values()]
+    .filter((g) => g.oldest < PROVEN_DAYS && (g.fresh >= RISING_MIN_NEW || g.variants >= 5))
+    .map((g) => ({ ...g, oldest: Math.round(g.oldest) }))
+    .sort((a, b) => b.fresh - a.fresh || b.variants - a.variants)
+    .slice(0, limit);
+}
+
 function pickWinners(items, now = Date.now(), limit = WINNER_LIMIT) {
   const groups = new Map();
   for (const it of items || []) {
     const ad = normAd(it);
-    const body = adBody(it);
+    const body = adBody(it) || adProduct(it);
     if (!body || !Number.isFinite(ad.start)) continue;
     const key = ad.page + '|' + body.slice(0, 120).toLowerCase();
     const days = ((Number.isFinite(ad.stop) ? ad.stop : now) - ad.start) / 864e5;
     const variants = Number(it.collation_count || it.collationCount || 1);
     const g = groups.get(key);
-    if (!g) groups.set(key, { page: ad.page, body, title: ad.title, url: ad.url, days, variants, product: adProduct(it), lpUrl: adLandingUrl(it) });
+    if (!g) groups.set(key, { page: ad.page, body, title: ad.title, url: ad.url, days, variants, product: adProduct(it), lpUrl: adLandingUrl(it), goal: adGoal(it) });
     else {
       g.days = Math.max(g.days, days); g.variants += variants;
       g.product = g.product || adProduct(it); g.lpUrl = g.lpUrl || adLandingUrl(it);
@@ -51,6 +98,7 @@ function pickWinners(items, now = Date.now(), limit = WINNER_LIMIT) {
   return {
     proven: proven.length,
     winners: pool.sort((a, b) => b.days - a.days || b.variants - a.variants).slice(0, limit),
+    rising: pickRising(items, now),
   };
 }
 
@@ -237,11 +285,24 @@ function winnerList(picked, brief) {
   picked.winners.forEach((w, i) => {
     L.push(`${i + 1}. ${w.product || '(nama produk tidak ada di iklan)'}`);
     L.push(`   ${w.page} · ${w.days} hari · ${w.variants} variasi`);
+    L.push(`   Tujuan: ${w.goal || '-'}`);
     L.push(`   Iklan: ${w.url}`);
     L.push(`   LP: ${w.lpUrl || '-'}`);
     L.push('');
   });
-  const names = [...new Set(picked.winners.map((w) => w.product).filter(Boolean))];
+  const rising = picked.rising || [];
+  if (rising.length) {
+    L.push(`🚀 Pemenang baru (belum ${PROVEN_DAYS} hari, iklan terus ditambah):`, '');
+    rising.forEach((r, i) => {
+      L.push(`${i + 1}. ${r.product || '(nama produk tidak ada di iklan)'}`);
+      L.push(`   ${r.page} · ${r.ads} iklan aktif, ${r.fresh} baru dalam ${RISING_DAYS} hari · tertua ${r.oldest} hari`);
+      L.push(`   Tujuan: ${r.goal || '-'}`);
+      L.push(`   Iklan: ${r.url}`);
+      L.push(`   LP: ${r.lpUrl || '-'}`);
+      L.push('');
+    });
+  }
+  const names = [...new Set([...picked.winners, ...rising].map((w) => w.product).filter(Boolean))];
   if (names.length) {
     L.push('📦 Produk:');
     for (const n of names) L.push('• ' + n);

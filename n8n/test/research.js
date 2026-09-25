@@ -149,6 +149,25 @@ test('daftar winning: nama produk, URL iklan & LP', () => {
   assert.ok(text.includes('• Kamper Anti Tikus'));
 });
 
+test('pemenang baru & tebakan tujuan iklan', () => {
+  const winnerList = vm.runInContext('winnerList', ctx);
+  const fresh = (id, d, extra = {}) => ({ adArchiveID: id, pageName: 'Parenting Reset', startDate: daysAgo(d), isActive: true,
+    snapshot: { title: 'Toolkit Anak Tantrum', link_url: 'https://wa.me/628123', cta_type: 'WHATSAPP_MESSAGE', body: { text: 'v' + id } }, ...extra });
+  const ads = [fresh('1', 1), fresh('2', 2), fresh('3', 5), fresh('4', 12),
+    { adArchiveID: '9', pageName: 'Lama', startDate: daysAgo(45), isActive: true,
+      snapshot: { title: 'Ebook Resep', link_url: 'https://toko.id/resep', cta_type: 'SHOP_NOW', body: { text: 'resep' } } }];
+  const p = pickWinners(ads, now);
+  assert.strictEqual(p.rising.length, 1);
+  assert.strictEqual(p.rising[0].fresh, 3);
+  assert.strictEqual(p.rising[0].oldest, 12);
+  assert.ok(p.rising[0].goal.includes('WhatsApp'));
+  assert.ok(p.winners[0].goal.includes('penjualan'));
+  const text = winnerList(p, { keyword: 'x' });
+  assert.ok(text.includes('🚀 Pemenang baru'));
+  assert.ok(text.includes('3 baru dalam 7 hari'));
+  assert.ok(text.includes('Tujuan: Pesan WhatsApp'));
+});
+
 test('perintah /riset dari Telegram', () => {
   const parse = vm.runInContext('parseRisetCommand', ctx);
   const a = parse('/riset pengusir tikus');
