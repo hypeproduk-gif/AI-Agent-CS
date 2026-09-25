@@ -39,3 +39,22 @@ node n8n/test/run.js   # tes + build ulang workflow
 5. Nonaktifkan workflow lama, aktifkan v2 (path webhook sama).
 
 Jangan pernah commit API key. Simpan hanya di n8n Credentials.
+
+## Riset Produk Mingguan (Shopee × TikTok × Meta Ad Library)
+
+`n8n/product-research.workflow.json` jalan tiap Senin 07:00 WIB: ambil data per keyword lewat Apify,
+beri skor potensi convert di Meta (0–100), kirim top 10 ke Telegram.
+
+Skor = permintaan Shopee (terjual/bln) + tren TikTok + bukti iklan Meta yang aktif ≥30 hari
++ harga pas (Rp79–249rb) + pasar tidak dikuasai 1–2 toko − penalti kalau advertiser terlalu padat.
+
+1. Daftar di apify.com, ambil API token. Buat credential **Header Auth** `Apify` →
+   Name `Authorization`, Value `Bearer apify_api_...`.
+2. Pilih actor Shopee (shopee.co.id) & TikTok Creative Center Top Products di Apify Store, isi ID-nya
+   di `ACTORS` (`n8n/build-research.js`) dan sesuaikan `input`-nya dengan schema actor tersebut.
+3. Ubah keyword/ambang di `RESEARCH` (`n8n/src/product-research.js`), lalu
+   `node n8n/test/research.js` (tes + build ulang).
+4. Import workflow, pilih credential Apify di node **Apify Run**, klik **Tes Sekarang**, lalu aktifkan.
+
+Kenapa Apify: API resmi Shopee/TikTok Shop hanya untuk data toko sendiri, dan Ad Library API resmi Meta
+hanya memuat iklan politik untuk Indonesia, jadi iklan komersial perlu scraper.
