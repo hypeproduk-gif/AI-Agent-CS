@@ -58,3 +58,19 @@ Skor = permintaan Shopee (terjual/bln) + tren TikTok + bukti iklan Meta yang akt
 
 Kenapa Apify: API resmi Shopee/TikTok Shop hanya untuk data toko sendiri, dan Ad Library API resmi Meta
 hanya memuat iklan politik untuk Indonesia, jadi iklan komersial perlu scraper.
+
+## Ad Library → LP & Konten
+
+`n8n/ad-to-lp.workflow.json`: isi form (keyword, produk, harga, nomor WA, kode ref) → ambil ±200 iklan aktif
+di Meta Ad Library (Apify) → pilih iklan pesaing yang paling lama jalan (≥30 hari, digabung per variasi)
+→ Claude membedah angle-nya dan menulis LP + 5 naskah iklan + ide gambar → Telegram menerima file
+`lp-<kode>.html` dan naskah iklannya.
+
+1. Pakai credential `Apify` dan `Anthropic API` yang sama dengan workflow riset.
+2. Import, aktifkan, buka URL **Brief Produk** (Form) lalu isi.
+3. Edit LP: ganti `PIXEL_ID`, placeholder foto/testimoni ([ISI TESTIMONI ASLI]); upload bersama
+   `lp/wa-redirect.js` (atau tempel ke Custom HTML Scalev). Kode ref di form jadi `window.AICS.product`,
+   jadi chat dari LP ini otomatis tercatat atribusinya.
+4. Tambahkan kode ref baru ke deteksi produk bot CS kalau produknya baru.
+
+Claude diberi aturan: tidak menyalin copy pesaing, patuh kebijakan iklan Meta, dan tidak mengarang testimoni/angka terjual.

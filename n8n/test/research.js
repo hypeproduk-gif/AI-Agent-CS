@@ -65,4 +65,69 @@ test('workflow ter-build', () => {
   for (const n of wf.nodes.filter((n) => n.type.endsWith('.code'))) new Function('$', '$input', n.parameters.jsCode);
   assert.deepStrictEqual(Object.keys(wf.connections).length, 5);
 });
+
+// ---------- Ad Library → LP ----------
+vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'src', 'ad-to-lp.js'), 'utf8'), ctx);
+const { pickWinners, lpRequest, parseLpReply, renderLp, contentReport, chunkText } =
+  vm.runInContext('({ pickWinners, lpRequest, parseLpReply, renderLp, contentReport, chunkText })', ctx);
+
+const apifyAds = [
+  { ad_archive_id: '1', page_name: 'Brand Store', start_date: daysAgo(60), collation_count: 12, snapshot: { body: { text: 'Tikus kabur dalam 3 hari! COD 99rb dapat 3 pcs' } } },
+  { ad_archive_id: '2', page_name: 'Brand Store', start_date: daysAgo(45), collation_count: 3, snapshot: { body: { text: 'Tikus kabur dalam 3 hari! COD 99rb dapat 3 pcs' } } },
+  { ad_archive_id: '3', page_name: 'Amanah', start_date: daysAgo(35), snapshot: { cards: [{ body: 'Usir tikus tanpa racun' }] } },
+  { ad_archive_id: '4', page_name: 'Baru', start_date: daysAgo(2), snapshot: { body: { text: 'Promo baru' } } },
+  { ad_archive_id: '5', page_name: 'Kosong', start_date: daysAgo(90), snapshot: {} },
+];
+
+test('pilih winner: gabung duplikat, urut paling lama', () => {
+  const p = pickWinners(apifyAds, now);
+  assert.strictEqual(p.proven, 2);
+  assert.strictEqual(p.winners[0].page, 'Brand Store');
+  assert.strictEqual(p.winners[0].days, 60);
+  assert.strictEqual(p.winners[0].variants, 15);
+  assert.strictEqual(p.winners[1].body, 'Usir tikus tanpa racun');
+});
+
+test('fallback ke iklan terlama kalau belum ada yang ≥30 hari', () => {
+  const p = pickWinners([apifyAds[3]], now);
+  assert.strictEqual(p.proven, 0);
+  assert.strictEqual(p.winners.length, 1);
+});
+
+const brief = { keyword: 'pengusir tikus', price: 'Rp99.000 / 3 pcs', wa: '085180108370', code: 'PT' };
+const copy = {
+  product: 'Pengusir Tikus Herbal', angle: 'tanpa racun, aman untuk anak',
+  insights: ['penawaran 3 pcs'],
+  lp: { headline: 'Tikus <pergi>', problems: ['berisik malam'], benefits: ['aman'], how_to_use: ['taruh'],
+    offer: { title: 'Paket Hemat', price_text: 'Rp99.000' }, faq: [{ q: 'COD?', a: 'Bisa' }], cta: 'Pesan Sekarang' },
+  ads: [{ angle: 'anak', hook: 'Ada suara di plafon?', script: 's', visual: 'v', primary_text: 'p', headline: 'h' }],
+};
+
+test('request Claude memuat iklan pesaing', () => {
+  const r = lpRequest(brief, pickWinners(apifyAds, now));
+  assert.ok(r.messages[0].content.includes('jalan 60 hari, 15 variasi'));
+  assert.ok(r.system.includes('Jangan mengarang testimoni'));
+});
+
+test('parse balasan Claude & render LP', () => {
+  const parsed = parseLpReply({ content: [{ type: 'text', text: 'Berikut:\n' + JSON.stringify(copy) }] });
+  const html = renderLp(parsed, brief);
+  assert.ok(html.includes('https://wa.me/6285180108370?text='));
+  assert.ok(html.includes('Tikus &lt;pergi&gt;'));
+  assert.ok(html.includes("product: 'PT'"));
+  assert.ok(html.includes('[ISI TESTIMONI ASLI'));
+});
+
+test('laporan konten dipecah ≤ 4096 karakter', () => {
+  const text = contentReport(copy, brief, pickWinners(apifyAds, now)) + '\n' + 'x'.repeat(5000);
+  const parts = chunkText(text);
+  assert.ok(parts.length >= 2 && parts.every((p) => p.length <= 4096));
+  assert.ok(parts[0].includes('Hook: Ada suara di plafon?'));
+});
+
+test('workflow LP ter-build', () => {
+  const wf = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'ad-to-lp.workflow.json'), 'utf8'));
+  for (const n of wf.nodes.filter((n) => n.type.endsWith('.code'))) new Function('$', '$input', '$json', n.parameters.jsCode);
+  assert.strictEqual(wf.nodes.length, 9);
+});
 console.log(`${passed} tes lulus`);
