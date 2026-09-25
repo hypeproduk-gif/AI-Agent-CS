@@ -678,3 +678,86 @@ const recapWorkflow = {
 const recapOut = path.join(__dirname, 'rekap-harian.workflow.json');
 fs.writeFileSync(recapOut, JSON.stringify(finalize(recapWorkflow), null, 2) + '\n');
 console.log('Wrote', path.relative(process.cwd(), recapOut));
+
+// Workflow ketujuh: follow-up otomatis lead yang tidak membalas (cek tiap 5 menit).
+const fuLib = ['product-facts.js', 'prompts.js', 'order-config.js', 'tools.js', 'prepare-context.js', 'parse-reply.js', 'follow-up.js'].map(src).join('\n');
+const fuPickCode = fuLib + `
+const now = Date.now();
+return $input.all().map((i) => i.json).filter((r) => r && r.phone).map((row) => {
+  const due = dueFollowUp(row, now);
+  return due ? { json: { phone: row.phone, stage: due.stage, history: row.history, requestBody: followUpRequest(row, due) } } : null;
+}).filter(Boolean);`;
+const fuParseCode = fuLib + `
+const leads = $('Pilih Lead FU').all();
+return $input.all().map((item, i) => {
+  const lead = leads[i].json;
+  const text = followUpText(item.json);
+  return text ? { json: { phone: lead.phone, reply: text, history: appendFollowUp(lead.history, text, lead.stage) } } : null;
+}).filter(Boolean);`;
+
+const followUpWorkflow = {
+  name: 'AI Agent CS - Follow Up',
+  nodes: [
+    node('Tiap 5 Menit', 'n8n-nodes-base.scheduleTrigger', 1.2, 0, {
+      rule: { interval: [{ field: 'minutes', minutesInterval: 5 }] },
+    }),
+    getAll('Ambil Leads', 220, DATA_TABLE),
+    node('Pilih Lead FU', 'n8n-nodes-base.code', 2, 440, { jsCode: fuPickCode }),
+    node('Claude FU', 'n8n-nodes-base.httpRequest', 4.5, 660, {
+      method: 'POST',
+      url: 'https://api.anthropic.com/v1/messages',
+      authentication: 'genericCredentialType',
+      genericAuthType: 'httpHeaderAuth',
+      sendHeaders: true,
+      headerParameters: { parameters: [{ name: 'anthropic-version', value: '2023-06-01' }] },
+      sendBody: true,
+      specifyBody: 'json',
+      jsonBody: '={{ JSON.stringify($json.requestBody) }}',
+      options: { response: { response: { neverError: true } }, timeout: 30000 },
+    }, { onError: 'continueRegularOutput' }),
+    node('Olah FU', 'n8n-nodes-base.code', 2, 880, { jsCode: fuParseCode }),
+    node('Kirim FU', 'n8n-nodes-base.httpRequest', 4.5, 1100, {
+      method: 'POST',
+      url: 'https://jkt.wablas.com/api/send-message',
+      authentication: 'genericCredentialType',
+      genericAuthType: 'httpHeaderAuth',
+      sendBody: true,
+      bodyParameters: {
+        parameters: [
+          { name: 'phone', value: '={{ $json.phone }}' },
+          { name: 'message', value: '={{ $json.reply }}' },
+        ],
+      },
+      options: { batching: { batch: { batchSize: 1, batchInterval: 2000 } } },
+    }),
+    node('Simpan FU', 'n8n-nodes-base.dataTable', 1.1, 1320, {
+      operation: 'upsert',
+      dataTableId: DATA_TABLE,
+      filters: { conditions: [{ keyName: 'phone', keyValue: "={{ $('Olah FU').item.json.phone }}" }] },
+      columns: {
+        mappingMode: 'defineBelow',
+        value: { phone: "={{ $('Olah FU').item.json.phone }}", history: "={{ $('Olah FU').item.json.history }}" },
+        matchingColumns: [],
+        schema: ['phone', 'history'].map(column),
+        attemptToConvertTypes: false,
+        convertFieldsToString: false,
+      },
+      options: {},
+    }),
+  ].map((n, i) => ({ ...n, id: `aics-fu-${i + 1}` })),
+  pinData: {},
+  connections: {
+    'Tiap 5 Menit': link('Ambil Leads'),
+    'Ambil Leads': link('Pilih Lead FU'),
+    'Pilih Lead FU': link('Claude FU'),
+    'Claude FU': link('Olah FU'),
+    'Olah FU': link('Kirim FU'),
+    'Kirim FU': link('Simpan FU'),
+  },
+  active: false,
+  settings: { executionOrder: 'v1', timezone: 'Asia/Jakarta' },
+  tags: [],
+};
+const fuOut = path.join(__dirname, 'follow-up.workflow.json');
+fs.writeFileSync(fuOut, JSON.stringify(finalize(followUpWorkflow), null, 2) + '\n');
+console.log('Wrote', path.relative(process.cwd(), fuOut));

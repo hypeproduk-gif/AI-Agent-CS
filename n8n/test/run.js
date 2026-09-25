@@ -7,11 +7,11 @@ const assert = require('assert');
 
 const ctx = {};
 vm.createContext(ctx);
-for (const f of ['capi.js', 'recap.js', 'product-facts.js', 'prompts.js', 'order-config.js', 'tools.js', 'prepare-context.js', 'parse-reply.js']) {
+for (const f of ['capi.js', 'recap.js', 'product-facts.js', 'prompts.js', 'order-config.js', 'tools.js', 'prepare-context.js', 'parse-reply.js', 'follow-up.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'src', f), 'utf8'), ctx);
 }
-const { prepareContext, parseReply, detectProduct, isClosingMessage, trimHistory, dailyRecap } =
-  vm.runInContext('({ prepareContext, parseReply, detectProduct, isClosingMessage, trimHistory, dailyRecap })', ctx);
+const { prepareContext, parseReply, detectProduct, isClosingMessage, trimHistory, dailyRecap, dueFollowUp, followUpRequest, followUpText, appendFollowUp } =
+  vm.runInContext('({ prepareContext, parseReply, detectProduct, isClosingMessage, trimHistory, dailyRecap, dueFollowUp, followUpRequest, followUpText, appendFollowUp })', ctx);
 
 let passed = 0;
 const test = (name, fn) => { fn(); passed++; console.log('ok -', name); };
@@ -340,7 +340,7 @@ test('kata closing tanpa order TIDAK kirim notif Telegram', () => {
 
 test('prompt jualan: alur, larangan klaim palsu, hitungan hemat benar', () => {
   const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
-  for (const k of ['PERTANYAAN/KEBERATAN', 'Mau yang mana kak?', 'Ada lagi yang mau ditanyakan sebelum order', 'JANGAN jualan lagi', 'BPOM', 'Rp54.750/pcs', 'Rp69.500/pcs']) assert.ok(sys.includes(k), k);
+  for (const k of ['PERTANYAAN/KEBERATAN', 'Mau yang mana kak?', 'SINYAL BELI', 'BIAYA COD', 'Ada lagi yang mau ditanyakan sebelum order', 'JANGAN jualan lagi', 'BPOM', 'Rp54.750/pcs', 'Rp69.500/pcs']) assert.ok(sys.includes(k), k);
   assert.strictEqual(219000 / 4, 54750);
   assert.strictEqual(139000 / 2, 69500);
 });
@@ -380,7 +380,7 @@ test('kode pos ambigu → kasih pilihan ke Claude', () => {
 
 test('prompt: larangan basa-basi & syarat alamat', () => {
   const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
-  for (const k of ['DILARANG: basa-basi', "'Mantap'", "'Yeay'", 'Baik kak, saya proses ya', 'patokan', 'kecamatan', 'supaya paket tidak nyasar di ekspedisi', 'sudah saya prioritaskan untuk pengiriman', 'Jangan tanya kode pos/provinsi']) assert.ok(sys.includes(k), k);
+  for (const k of ['DILARANG: basa-basi', 'baris kosong', 'huruf vokal dobel', "'Mantap'", "'Yeay'", 'patokan', 'kecamatan', 'supaya paket tidak nyasar di ekspedisi', 'sudah saya prioritaskan untuk pengiriman', 'Jangan tanya kode pos/provinsi']) assert.ok(sys.includes(k), k);
 });
 // Workflow dengan fakta produk terisi (BPOM + testimoni) untuk tes.
 function withFacts(wf) {
@@ -592,5 +592,52 @@ test('kode #promo dari LP dikenali sebagai ref, produk tetap SalGlow', () => {
   const code = wf.nodes.find((n) => n.name === 'Validasi').parameters.jsCode;
   const out = new Function('$input', code)({ first: () => ({ json: { body: { ref: 'PROMO7Q2MX' }, headers: {} } }) });
   assert.strictEqual(out[0].json.ref, 'PROMO7Q2MX');
+});
+
+test('follow-up: jadwal 5m/1j/.../36j, jam tenang, stop saat order/jeda/lead bicara', () => {
+  const noon = Date.parse('2026-09-25T05:00:00Z'); // 12:00 WIB
+  const hist = JSON.stringify([{ role: 'user', content: 'harganya?' }, { role: 'assistant', content: 'Rp139rb kak' }]);
+  const row = (mins, extra = {}) => ({ phone: '1', history: hist, last_chat_at: new Date(noon - mins * 60000).toISOString(), ...extra });
+  assert.strictEqual(dueFollowUp(row(3), noon), null);
+  assert.strictEqual(dueFollowUp(row(6), noon).stage, 0);
+  assert.strictEqual(dueFollowUp(row(200), noon).stage, 2); // tahap terlewat -> kirim satu, tahap terakhir yang lewat
+  assert.strictEqual(dueFollowUp(row(60 * 50), noon), null); // lead lama tidak di-FU
+  assert.strictEqual(dueFollowUp(row(6, { handoff: new Date(noon).toISOString() }), noon), null);
+  assert.strictEqual(dueFollowUp(row(6, { last_order_at: new Date(noon - 3600000).toISOString() }), noon), null);
+  assert.strictEqual(dueFollowUp(row(6, { history: JSON.stringify([{ role: 'user', content: 'halo' }]) }), noon), null);
+  assert.strictEqual(dueFollowUp(row(6), Date.parse('2026-09-25T15:00:00Z')), null); // 22:00 WIB
+  // FU ke-1 sudah terkirim -> tunggu sampai 1 jam
+  const after1 = appendFollowUp(hist, 'kak, gimana?', 0, noon);
+  assert.strictEqual(dueFollowUp(row(30, { history: after1 }), noon), null);
+  assert.strictEqual(dueFollowUp(row(61, { history: after1 }), noon).stage, 1);
+  const done = JSON.parse(hist).concat([{ role: 'assistant', content: 'x', fu: 6 }]);
+  assert.strictEqual(dueFollowUp(row(60 * 40, { history: JSON.stringify(done) }), noon), null);
+});
+
+test('follow-up: request Claude diakhiri pesan user + SKIP tidak dikirim', () => {
+  const hist = JSON.stringify([{ role: 'user', content: 'mahal ya' }, { role: 'assistant', content: 'ada paket hemat kak' }]);
+  const req = followUpRequest({ phone: '1', history: hist }, { stage: 1, elapsedMinutes: 61 });
+  assert.strictEqual(req.messages[req.messages.length - 1].role, 'user');
+  assert.ok(req.messages[req.messages.length - 1].content.includes('1 jam'));
+  assert.ok(req.system.includes('FOLLOW-UP') && req.system.includes('3-4 benefit'));
+  assert.strictEqual(followUpText({ content: [{ type: 'text', text: 'SKIP' }] }), null);
+  assert.strictEqual(followUpText({ error: { message: 'x' } }), null);
+  assert.strictEqual(followUpText({ content: [{ type: 'text', text: 'Kak, masih kepikiran? 😊' }] }), 'Kak, masih kepikiran? 😊');
+});
+
+test('workflow follow-up: kode node jalan end-to-end', () => {
+  const wf = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'follow-up.workflow.json'), 'utf8'));
+  const code = (name) => wf.nodes.find((n) => n.name === name).parameters.jsCode;
+  const hist = JSON.stringify([{ role: 'user', content: 'halo' }, { role: 'assistant', content: 'halo kak' }]);
+  const rows = [{ phone: '62811', history: hist, last_chat_at: new Date(Date.now() - 10 * 60000).toISOString() }, {}];
+  const picked = new Function('$input', code('Pilih Lead FU'))({ all: () => rows.map((json) => ({ json })) });
+  const h = (Date.now() / 3600000 + 7) % 24;
+  if (h >= 21 || h < 7) { assert.strictEqual(picked.length, 0); return; }
+  assert.strictEqual(picked.length, 1);
+  const $ = () => ({ all: () => picked });
+  const out = new Function('$', '$input', code('Olah FU'))($, { all: () => [{ json: { content: [{ type: 'text', text: 'Kak, ada yang bisa saya bantu lagi? 😊' }] } }] });
+  assert.strictEqual(out[0].json.phone, '62811');
+  assert.strictEqual(JSON.parse(out[0].json.history).pop().fu, 0);
+  assert.strictEqual(wf.nodes.find((n) => n.name === 'Kirim FU').credentials.httpHeaderAuth.name, 'Wablas');
 });
 console.log(`${passed} tes lulus (final)`);
