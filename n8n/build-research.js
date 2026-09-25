@@ -107,11 +107,11 @@ if (f.message) {
   brief = parseRisetCommand(f.message.text);
   if (!brief) return [];
 } else {
-  brief = { keyword: f.keyword, product: f.produk || '', price: f.harga || '', wa: f.whatsapp || DEFAULT_WA, code: f.kode || 'LP' };
+  brief = { limit: DEFAULT_LIMIT, keyword: f.keyword, product: f.produk || '', price: f.harga || '', wa: f.whatsapp || DEFAULT_WA, code: f.kode || 'LP' };
 }
 const q = encodeURIComponent(brief.keyword);
 return [{ json: { brief, actor: ${JSON.stringify(ACTORS.ads)},
-  input: { startUrls: [{ url: \`https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ID&q=\${q}&search_type=keyword_unordered\` }], resultsLimit: 100, activeStatus: 'active' } } }];`;
+  input: { startUrls: [{ url: \`https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ID&q=\${q}&search_type=keyword_exact_phrase\` }], resultsLimit: brief.limit, activeStatus: 'active' } } }];`;
 
 const winnerCode = `${adToLp}
 const brief = $('Siapkan Query').first().json.brief;
@@ -137,7 +137,7 @@ const lpNodes = [
   node('Siapkan Query', 'n8n-nodes-base.code', 2, 250, { jsCode: queryCode }),
   node('Konfirmasi', 'n8n-nodes-base.telegram', 1.2, 500, {
     chatId: RISET_CHAT,
-    text: '=⏳ Riset Ad Library "{{ $json.brief.keyword }}" dimulai… daftar iklan winning ±2–3 menit lagi.',
+    text: '=⏳ Riset Ad Library "{{ $json.brief.keyword }}" ({{ $json.brief.limit }} iklan) dimulai… daftar iklan winning ±2–3 menit lagi.',
     additionalFields: { appendAttribution: false },
   }, { y: 200, more: telegram }),
   node('Ad Library (Apify)', 'n8n-nodes-base.httpRequest', 4.2, 500, {

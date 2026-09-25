@@ -159,6 +159,10 @@ test('perintah /riset dari Telegram', () => {
   assert.strictEqual(b.price, 'Rp99.000 3 pcs');
   assert.strictEqual(b.code, 'FT2');
   assert.strictEqual(parse('/riset@HypeBot sisir kucing').keyword, 'sisir kucing');
+  assert.strictEqual(a.limit, 50);
+  assert.strictEqual(parse('/riset template cv | 30').limit, 30);
+  assert.strictEqual(parse('/riset template cv | 30').price, '');
+  assert.strictEqual(parse('/riset template cv | 5000').limit, 200);
   assert.strictEqual(parse('halo'), null);
   assert.strictEqual(parse('/riset'), null);
 });

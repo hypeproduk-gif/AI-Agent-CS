@@ -213,15 +213,21 @@ function chunkText(text, size = 3900) {
 // Perintah Telegram: "/riset pengusir tikus | Rp99.000 3 pcs | PT"
 // (harga & kode opsional). Balikan null kalau bukan perintah riset.
 const DEFAULT_WA = '6285180108370';
+const DEFAULT_LIMIT = 50;
 const ALLOWED_CHATS = ['-5440720207']; // grup RISET PRODUK; hanya grup ini yang boleh memicu (biaya Apify/Claude)
 
 function parseRisetCommand(text) {
   const m = String(text || '').trim().match(/^\/?riset(?:@\w+)?\s+(.+)$/i);
   if (!m) return null;
-  const [keyword, price = '', code = ''] = m[1].split('|').map((s) => s.trim());
+  const parts = m[1].split('|').map((s) => s.trim());
+  const keyword = parts.shift();
   if (!keyword) return null;
+  // Angka = jumlah iklan yang diambil (biaya Apify per iklan). Default 50, batas 10–200.
+  const n = parts.find((p) => /^\d+$/.test(p));
+  const limit = n ? Math.min(200, Math.max(10, Number(n))) : DEFAULT_LIMIT;
+  const [price = '', code = ''] = parts.filter((p) => p !== n);
   const auto = keyword.split(/\s+/).map((w) => w[0]).join('').toUpperCase().slice(0, 4);
-  return { keyword, product: '', price, wa: DEFAULT_WA, code: (code || auto).toUpperCase() };
+  return { keyword, product: '', price, wa: DEFAULT_WA, code: (code || auto).toUpperCase(), limit };
 }
 
 // Daftar iklan winning untuk Telegram (tanpa Claude).
