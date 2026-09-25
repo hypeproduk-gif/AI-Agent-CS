@@ -679,7 +679,7 @@ const recapOut = path.join(__dirname, 'rekap-harian.workflow.json');
 fs.writeFileSync(recapOut, JSON.stringify(finalize(recapWorkflow), null, 2) + '\n');
 console.log('Wrote', path.relative(process.cwd(), recapOut));
 
-// Workflow ketujuh: follow-up otomatis lead yang tidak membalas (cek tiap 5 menit).
+// Workflow ketujuh: follow-up otomatis lead yang tidak membalas (cek tiap 1 jam).
 const fuLib = ['product-facts.js', 'prompts.js', 'order-config.js', 'tools.js', 'prepare-context.js', 'parse-reply.js', 'follow-up.js'].map(src).join('\n');
 const fuPickCode = fuLib + `
 const now = Date.now();
@@ -698,8 +698,8 @@ return $input.all().map((item, i) => {
 const followUpWorkflow = {
   name: 'AI Agent CS - Follow Up',
   nodes: [
-    node('Tiap 5 Menit', 'n8n-nodes-base.scheduleTrigger', 1.2, 0, {
-      rule: { interval: [{ field: 'minutes', minutesInterval: 5 }] },
+    node('Tiap 1 Jam', 'n8n-nodes-base.scheduleTrigger', 1.2, 0, {
+      rule: { interval: [{ field: 'hours', hoursInterval: 1 }] },
     }),
     getAll('Ambil Leads', 220, DATA_TABLE),
     node('Pilih Lead FU', 'n8n-nodes-base.code', 2, 440, { jsCode: fuPickCode }),
@@ -747,7 +747,7 @@ const followUpWorkflow = {
   ].map((n, i) => ({ ...n, id: `aics-fu-${i + 1}` })),
   pinData: {},
   connections: {
-    'Tiap 5 Menit': link('Ambil Leads'),
+    'Tiap 1 Jam': link('Ambil Leads'),
     'Ambil Leads': link('Pilih Lead FU'),
     'Pilih Lead FU': link('Claude FU'),
     'Claude FU': link('Olah FU'),

@@ -594,23 +594,23 @@ test('kode #promo dari LP dikenali sebagai ref, produk tetap SalGlow', () => {
   assert.strictEqual(out[0].json.ref, 'PROMO7Q2MX');
 });
 
-test('follow-up: jadwal 5m/1j/.../36j, jam tenang, stop saat order/jeda/lead bicara', () => {
+test('follow-up: jadwal 1j/3j/.../36j, jam tenang, stop saat order/jeda/lead bicara', () => {
   const noon = Date.parse('2026-09-25T05:00:00Z'); // 12:00 WIB
   const hist = JSON.stringify([{ role: 'user', content: 'harganya?' }, { role: 'assistant', content: 'Rp139rb kak' }]);
   const row = (mins, extra = {}) => ({ phone: '1', history: hist, last_chat_at: new Date(noon - mins * 60000).toISOString(), ...extra });
-  assert.strictEqual(dueFollowUp(row(3), noon), null);
-  assert.strictEqual(dueFollowUp(row(6), noon).stage, 0);
-  assert.strictEqual(dueFollowUp(row(200), noon).stage, 2); // tahap terlewat -> kirim satu, tahap terakhir yang lewat
+  assert.strictEqual(dueFollowUp(row(30), noon), null);
+  assert.strictEqual(dueFollowUp(row(61), noon).stage, 0);
+  assert.strictEqual(dueFollowUp(row(400), noon).stage, 2); // tahap terlewat -> kirim satu, tahap terakhir yang lewat
   assert.strictEqual(dueFollowUp(row(60 * 50), noon), null); // lead lama tidak di-FU
-  assert.strictEqual(dueFollowUp(row(6, { handoff: new Date(noon).toISOString() }), noon), null);
-  assert.strictEqual(dueFollowUp(row(6, { last_order_at: new Date(noon - 3600000).toISOString() }), noon), null);
-  assert.strictEqual(dueFollowUp(row(6, { history: JSON.stringify([{ role: 'user', content: 'halo' }]) }), noon), null);
-  assert.strictEqual(dueFollowUp(row(6), Date.parse('2026-09-25T15:00:00Z')), null); // 22:00 WIB
+  assert.strictEqual(dueFollowUp(row(61, { handoff: new Date(noon).toISOString() }), noon), null);
+  assert.strictEqual(dueFollowUp(row(61, { last_order_at: new Date(noon - 3600000).toISOString() }), noon), null);
+  assert.strictEqual(dueFollowUp(row(61, { history: JSON.stringify([{ role: 'user', content: 'halo' }]) }), noon), null);
+  assert.strictEqual(dueFollowUp(row(61), Date.parse('2026-09-25T15:00:00Z')), null); // 22:00 WIB
   // FU ke-1 sudah terkirim -> tunggu sampai 1 jam
   const after1 = appendFollowUp(hist, 'kak, gimana?', 0, noon);
-  assert.strictEqual(dueFollowUp(row(30, { history: after1 }), noon), null);
-  assert.strictEqual(dueFollowUp(row(61, { history: after1 }), noon).stage, 1);
-  const done = JSON.parse(hist).concat([{ role: 'assistant', content: 'x', fu: 6 }]);
+  assert.strictEqual(dueFollowUp(row(120, { history: after1 }), noon), null);
+  assert.strictEqual(dueFollowUp(row(181, { history: after1 }), noon).stage, 1);
+  const done = JSON.parse(hist).concat([{ role: 'assistant', content: 'x', fu: 5 }]);
   assert.strictEqual(dueFollowUp(row(60 * 40, { history: JSON.stringify(done) }), noon), null);
 });
 
@@ -629,7 +629,7 @@ test('workflow follow-up: kode node jalan end-to-end', () => {
   const wf = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'follow-up.workflow.json'), 'utf8'));
   const code = (name) => wf.nodes.find((n) => n.name === name).parameters.jsCode;
   const hist = JSON.stringify([{ role: 'user', content: 'halo' }, { role: 'assistant', content: 'halo kak' }]);
-  const rows = [{ phone: '62811', history: hist, last_chat_at: new Date(Date.now() - 10 * 60000).toISOString() }, {}];
+  const rows = [{ phone: '62811', history: hist, last_chat_at: new Date(Date.now() - 70 * 60000).toISOString() }, {}];
   const picked = new Function('$input', code('Pilih Lead FU'))({ all: () => rows.map((json) => ({ json })) });
   const h = (Date.now() / 3600000 + 7) % 24;
   if (h >= 21 || h < 7) { assert.strictEqual(picked.length, 0); return; }

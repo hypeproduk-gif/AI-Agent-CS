@@ -1,7 +1,7 @@
 // Follow-up otomatis untuk lead yang tidak membalas.
 // Tahap FU dicatat di entri histori ({ role: 'assistant', fu: <tahap>, at: <ISO> }), tanpa kolom baru.
 
-const FU_MINUTES = [5, 60, 180, 360, 720, 1440, 2160]; // 5m, 1j, 3j, 6j, 12j, 24j, 36j
+const FU_MINUTES = [60, 180, 360, 720, 1440, 2160]; // 1j, 3j, 6j, 12j, 24j, 36j
 const FU_MAX_AGE_MINUTES = 48 * 60; // lead lebih lama dari ini tidak di-FU (juga saat pertama aktif)
 const FU_QUIET_HOURS = [21, 7]; // jam WIB tanpa FU (21:00-06:59)
 const FU_ORDER_DAYS = 14; // sudah order dalam 14 hari -> tidak di-FU
