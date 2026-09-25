@@ -45,7 +45,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const f = $json;\nconst brief = { keyword: f.keyword, product: f.produk || '', price: f.harga || '', wa: f.whatsapp, code: f.kode || 'LP' };\nconst q = encodeURIComponent(brief.keyword);\nreturn [{ json: { brief, actor: \"curious_coder~facebook-ads-library-scraper\",\n  input: { urls: [{ url: `https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ID&q=${q}&search_type=keyword_unordered` }], count: 200 } } }];"
+        "jsCode": "const f = $json;\nconst brief = { keyword: f.keyword, product: f.produk || '', price: f.harga || '', wa: f.whatsapp, code: f.kode || 'LP' };\nconst q = encodeURIComponent(brief.keyword);\nreturn [{ json: { brief, actor: \"apify~facebook-ads-scraper\",\n  input: { startUrls: [{ url: `https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ID&q=${q}&search_type=keyword_unordered` }], resultsLimit: 200, activeStatus: 'active' } } }];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,

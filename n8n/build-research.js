@@ -10,7 +10,7 @@ const research = fs.readFileSync(path.join(__dirname, 'src', 'product-research.j
 const ACTORS = {
   shopee: 'REPLACE_WITH_SHOPEE_ACTOR', // cari "Shopee" di apify.com/store, pilih yang support shopee.co.id
   tiktok: 'REPLACE_WITH_TIKTOK_CC_ACTOR', // cari "TikTok Creative Center top products"
-  ads: 'curious_coder~facebook-ads-library-scraper',
+  ads: 'apify~facebook-ads-scraper',
 };
 
 const buildQueries = `${research}
@@ -21,7 +21,7 @@ for (const kw of RESEARCH.keywords) {
     input: { keyword: kw, country: 'id', sortBy: 'sales', maxItems: 40 } } });
   const q = encodeURIComponent(kw);
   out.push({ json: { source: 'ads', kw, actor: ACTORS.ads,
-    input: { urls: [{ url: \`https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=\${RESEARCH.country}&q=\${q}&search_type=keyword_unordered\` }], count: 100 } } });
+    input: { startUrls: [{ url: \`https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=\${RESEARCH.country}&q=\${q}&search_type=keyword_unordered\` }], resultsLimit: 100, activeStatus: 'active' } } });
 }
 out.push({ json: { source: 'tiktok', kw: '', actor: ACTORS.tiktok,
   input: { country: RESEARCH.country, period: 7, maxItems: 200 } } });
@@ -100,7 +100,7 @@ const queryCode = `const f = $json;
 const brief = { keyword: f.keyword, product: f.produk || '', price: f.harga || '', wa: f.whatsapp, code: f.kode || 'LP' };
 const q = encodeURIComponent(brief.keyword);
 return [{ json: { brief, actor: ${JSON.stringify(ACTORS.ads)},
-  input: { urls: [{ url: \`https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ID&q=\${q}&search_type=keyword_unordered\` }], count: 200 } } }];`;
+  input: { startUrls: [{ url: \`https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ID&q=\${q}&search_type=keyword_unordered\` }], resultsLimit: 200, activeStatus: 'active' } } }];`;
 
 const winnerCode = `${adToLp}
 const brief = $('Siapkan Query').first().json.brief;
