@@ -152,7 +152,7 @@ const lpNodes = [
   node('Siapkan Query', 'n8n-nodes-base.code', 2, 250, { jsCode: queryCode }),
   node('Konfirmasi', 'n8n-nodes-base.telegram', 1.2, 500, {
     chatId: RISET_CHAT,
-    text: '=⏳ Riset Ad Library "{{ $json.brief.keyword }}" ({{ $json.brief.limit }} iklan) dimulai… daftar iklan winning ±2–3 menit lagi.',
+    text: '=⏳ Riset Ad Library "{{ $json.brief.keyword }}" ({{ $json.brief.limit }} iklan, {{ $json.brief.fresh ? "mulai tayang <30 hari" : "aktif ≥30 hari" }}) dimulai… hasil ±2–3 menit lagi.',
     additionalFields: { appendAttribution: false },
   }, { y: 200, more: telegram }),
   node('Ad Library (Apify)', 'n8n-nodes-base.httpRequest', 4.2, 500, {

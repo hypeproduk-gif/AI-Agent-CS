@@ -173,6 +173,12 @@ test('riset per halaman vs keyword', () => {
   assert.ok(u({ keyword: 'page 535195099685688' }).url.includes('view_all_page_id=535195099685688'));
   assert.strictEqual(u({ keyword: '535195099685688' }).mode, 'page');
   assert.strictEqual(u({ keyword: 'https://www.facebook.com/sajianbunda' }).url, 'https://www.facebook.com/sajianbunda');
+  const now2 = Date.parse('2026-09-26T00:00:00Z');
+  const w = u({ keyword: 'pengusir tikus' }, 'ID', now2).url;
+  assert.ok(w.includes('start_date[max]=2026-08-27'), w);
+  assert.ok(w.includes('sort_data[mode]=total_impressions'));
+  assert.ok(u({ keyword: 'x', fresh: true }, 'ID', now2).url.includes('start_date[min]=2026-08-27'));
+  assert.ok(vm.runInContext('parseRisetCommand', ctx)('/riset daster | baru | 30').fresh);
   const k = u({ keyword: 'template rkas' });
   assert.strictEqual(k.mode, 'keyword');
   assert.ok(k.url.includes('q=template%20rkas&search_type=keyword_unordered'));

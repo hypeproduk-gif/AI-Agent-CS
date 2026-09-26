@@ -273,9 +273,11 @@ function parseRisetCommand(text) {
   // Angka = jumlah iklan yang diambil (biaya Apify per iklan). Default 50, batas 10–200.
   const n = parts.find((p) => /^\d+$/.test(p));
   const limit = n ? Math.min(200, Math.max(10, Number(n))) : DEFAULT_LIMIT;
-  const [price = '', code = ''] = parts.filter((p) => p !== n);
+  // "baru" = cari pemenang baru (iklan mulai < 30 hari); default: hanya iklan yang mulai ≥ 30 hari lalu.
+  const fresh = parts.some((p) => /^baru$/i.test(p));
+  const [price = '', code = ''] = parts.filter((p) => p !== n && !/^baru$/i.test(p));
   const auto = keyword.split(/\s+/).map((w) => w[0]).join('').toUpperCase().slice(0, 4);
-  return { keyword, product: '', price, wa: DEFAULT_WA, code: (code || auto).toUpperCase(), limit };
+  return { keyword, product: '', price, wa: DEFAULT_WA, code: (code || auto).toUpperCase(), limit, fresh };
 }
 
 // Daftar iklan winning untuk Telegram (tanpa Claude).
@@ -312,8 +314,16 @@ function winnerList(picked, brief) {
 
 // URL Ad Library untuk brief: keyword biasa, atau semua iklan satu halaman
 // ("page 535195099685688", ID angka saja, atau link facebook.com/<halaman>).
-function adLibraryUrl(brief, country = 'ID') {
-  const base = `https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=${country}`;
+// Filter tanggal mulai tayang (fitur website Ad Library):
+// default → iklan AKTIF yang mulai tayang ≥ PROVEN_DAYS hari lalu (langsung kandidat winning),
+// brief.fresh → iklan yang mulai dalam PROVEN_DAYS hari terakhir. Urut impresi tertinggi.
+function adLibraryUrl(brief, country = 'ID', now = Date.now()) {
+  const day = (d) => new Date(now - d * 864e5).toISOString().slice(0, 10);
+  const range = brief.fresh
+    ? `&start_date[min]=${day(PROVEN_DAYS)}`
+    : `&start_date[min]=${day(365)}&start_date[max]=${day(PROVEN_DAYS)}`;
+  const base = `https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=${country}` +
+    `${range}&sort_data[mode]=total_impressions&sort_data[direction]=desc`;
   const kw = String(brief.keyword || '').trim();
   const id = (kw.match(/^(?:page[:\s]+)?(\d{6,})$/i) || kw.match(/view_all_page_id=(\d+)/) || [])[1];
   if (id) return { url: `${base}&view_all_page_id=${id}&search_type=page`, mode: 'page' };
