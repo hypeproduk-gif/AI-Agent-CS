@@ -133,7 +133,9 @@ else if (!items.length) {
     'snapshot: ' + Object.keys(sample.snapshot || {}).slice(0, 40).join(', ') + '\\n' +
     'Contoh: ' + JSON.stringify(sample).slice(0, 1200);
 }
-return chunkText(text).map((t) => ({ json: { text: t } }));`;
+// Telegram dikirim dengan parse_mode HTML → escape & < > supaya link LP tidak bikin 'Bad request'.
+const escHtml = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+return chunkText(text, 3500).map((t) => ({ json: { text: escHtml(t) } }));`;
 
 
 id = 0;
@@ -152,8 +154,8 @@ const lpNodes = [
   node('Siapkan Query', 'n8n-nodes-base.code', 2, 250, { jsCode: queryCode }),
   node('Konfirmasi', 'n8n-nodes-base.telegram', 1.2, 500, {
     chatId: RISET_CHAT,
-    text: '=⏳ Riset Ad Library "{{ $json.brief.keyword }}" ({{ $json.brief.limit }} iklan, {{ $json.brief.fresh ? "mulai tayang <30 hari" : "aktif ≥30 hari" }}) dimulai… hasil ±2–3 menit lagi.',
-    additionalFields: { appendAttribution: false },
+    text: '=⏳ Riset Ad Library "{{ $json.brief.keyword }}" ({{ $json.brief.limit }} iklan, {{ $json.brief.fresh ? "mulai tayang kurang dari 30 hari" : "aktif ≥30 hari" }}) dimulai… hasil ±2–3 menit lagi.',
+    additionalFields: { appendAttribution: false, parse_mode: 'HTML' },
   }, { y: 200, more: telegram }),
   node('Ad Library (Apify)', 'n8n-nodes-base.httpRequest', 4.2, 500, {
     method: 'POST',
@@ -169,7 +171,7 @@ const lpNodes = [
   node('Kirim Konten', 'n8n-nodes-base.telegram', 1.2, 1000, {
     chatId: RISET_CHAT,
     text: '={{ $json.text }}',
-    additionalFields: { appendAttribution: false, disable_web_page_preview: true },
+    additionalFields: { appendAttribution: false, disable_web_page_preview: true, parse_mode: 'HTML' },
   }, { y: 200, more: telegram }),
 ];
 
@@ -179,7 +181,8 @@ const lpWf = {
   connections: {
     'Brief Produk': link('Siapkan Query'),
     'Perintah Telegram': link('Siapkan Query'),
-    'Siapkan Query': { main: [[{ node: 'Ad Library (Apify)', type: 'main', index: 0 }, { node: 'Konfirmasi', type: 'main', index: 0 }]] },
+    // Konfirmasi dulu supaya pesan "dimulai" terkirim sebelum hasil.
+    'Siapkan Query': { main: [[{ node: 'Konfirmasi', type: 'main', index: 0 }, { node: 'Ad Library (Apify)', type: 'main', index: 0 }]] },
     'Ad Library (Apify)': link('Pilih Winner'),
     'Pilih Winner': link('Kirim Konten'),
   },
