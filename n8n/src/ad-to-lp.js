@@ -8,32 +8,45 @@ const WINNER_LIMIT = 8;
 const LIST_LIMIT = 15;
 
 // Nama produk & URL LP pesaing dari snapshot iklan.
+// Nama field beda-beda antar versi actor Apify (snake_case / camelCase) → cek semua alias.
+const first = (...vals) => vals.find((v) => typeof v === 'string' && v.trim()) || '';
+const cardsOf = (s) => s.cards || s.carousel || [];
+
+function adBody(it) {
+  const s = it.snapshot || {};
+  const b = s.body || {};
+  const card = cardsOf(s).find((c) => c.body || c.title) || {};
+  const text = typeof b === 'string' ? b : first(b.text, b.markup && b.markup.__html);
+  return first(text, it.ad_creative_body, it.adCreativeBody, it.body, card.body, card.title)
+    .replace(/<[^>]+>/g, ' ').trim();
+}
+
 function adProduct(it) {
   const s = it.snapshot || {};
-  const card = (s.cards || [])[0] || {};
-  const name = s.title || card.title || s.link_description || card.link_description || it.ad_creative_link_title || '';
-  return String(name).split(' | ')[0].replace(/\{\{.*?\}\}/g, '').trim().slice(0, 100);
+  const card = cardsOf(s)[0] || {};
+  let name = first(s.title, card.title, s.link_description, s.linkDescription, card.link_description,
+    card.linkDescription, it.ad_creative_link_title, it.adCreativeLinkTitle, it.title);
+  // Tidak ada judul → pakai kalimat pertama teks iklan.
+  if (!name || /^\{\{.*\}\}$/.test(name)) name = adBody(it).split(/[\n.!?]/).find((x) => x.trim().length > 8) || '';
+  return String(name).split(' | ')[0].replace(/\{\{.*?\}\}/g, '').replace(/\s+/g, ' ').trim().slice(0, 90);
 }
 
 function adLandingUrl(it) {
   const s = it.snapshot || {};
-  const card = (s.cards || []).find((c) => c.link_url) || {};
-  return s.link_url || card.link_url || it.link_url || '';
+  const card = cardsOf(s).find((c) => c.link_url || c.linkUrl) || {};
+  return first(s.link_url, s.linkUrl, card.link_url, card.linkUrl, it.link_url, it.linkUrl,
+    it.ad_creative_link_url, it.adCreativeLinkUrl);
 }
 
-function adBody(it) {
-  const s = it.snapshot || {};
-  const cards = (s.cards || []).map((c) => c.body || c.title || '').filter(Boolean);
-  const body = (s.body && (s.body.text || s.body)) || it.ad_creative_body || it.body || cards[0] || '';
-  return String(typeof body === 'string' ? body : '').trim();
-}
+// Marketplace & brand besar tidak berguna untuk riset produk → disaring.
+const SKIP_PAGES = /^(shopee|tokopedia|lazada|blibli|tiktok|bukalapak|zalora|jd\.id|the body shop)\b/i;
 
 // items: output actor Ad Library. Satu "creative" bisa punya banyak duplikat → gabung per page+teks.
 // Tebakan tujuan/optimasi iklan. Ad Library TIDAK membuka objective/optimasi asli,
 // jadi disimpulkan dari tombol CTA, link tujuan, dan format iklan.
 function adGoal(it) {
   const s = it.snapshot || {};
-  const cta = String(s.cta_type || s.ctaType || it.cta_type || '').toUpperCase();
+  const cta = String(s.cta_type || s.ctaType || it.cta_type || it.ctaType || '').toUpperCase();
   const link = String(adLandingUrl(it)).toLowerCase();
   const fmt = String(s.display_format || s.displayFormat || '').toUpperCase();
   if (/WHATSAPP/.test(cta) || /wa\.me|api\.whatsapp|whatsapp\.com/.test(link)) return 'Pesan WhatsApp (optimasi percakapan)';
@@ -56,7 +69,7 @@ function pickRising(items, now = Date.now(), limit = 8) {
   const groups = new Map();
   for (const it of items || []) {
     const ad = normAd(it);
-    if (!Number.isFinite(ad.start) || !ad.active) continue;
+    if (!Number.isFinite(ad.start) || !ad.active || SKIP_PAGES.test(ad.page)) continue;
     const product = adProduct(it);
     const key = (ad.page + '|' + (product || adBody(it).slice(0, 60))).toLowerCase();
     const age = (now - ad.start) / 864e5;
@@ -81,7 +94,7 @@ function pickWinners(items, now = Date.now(), limit = WINNER_LIMIT) {
   for (const it of items || []) {
     const ad = normAd(it);
     const body = adBody(it) || adProduct(it);
-    if (!body || !Number.isFinite(ad.start)) continue;
+    if (!body || !Number.isFinite(ad.start) || SKIP_PAGES.test(ad.page)) continue;
     const key = ad.page + '|' + body.slice(0, 120).toLowerCase();
     const days = ((Number.isFinite(ad.stop) ? ad.stop : now) - ad.start) / 864e5;
     const variants = Number(it.collation_count || it.collationCount || 1);

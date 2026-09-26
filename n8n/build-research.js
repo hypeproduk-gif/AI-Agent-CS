@@ -120,7 +120,17 @@ const items = $input.all().map((i) => i.json).filter((j) => !j.error);
 const picked = pickWinners(items, Date.now(), LIST_LIMIT);
 const raw = $input.all().map((i) => i.json);
 let text;
-if (picked.winners.length) text = winnerList(picked, brief);
+if (picked.winners.length) {
+  text = winnerList(picked, brief);
+  // LP banyak kosong → kirim nama field supaya parser bisa disesuaikan.
+  const noLp = picked.winners.filter((w) => !w.lpUrl).length;
+  if (noLp > picked.winners.length / 2 && items[0]) {
+    const snap = items[0].snapshot || {};
+    const card = (snap.cards || [])[0] || {};
+    text += '\\n\\n🔧 Diagnosa (kirim ke Claude): field=' + Object.keys(items[0]).slice(0, 30).join(',') +
+      ' | snapshot=' + Object.keys(snap).slice(0, 40).join(',') + ' | card=' + Object.keys(card).join(',');
+  }
+}
 else if (!items.length) {
   const err = raw.find((j) => j.error);
   text = 'Apify tidak mengembalikan iklan untuk "' + brief.keyword + '".' +

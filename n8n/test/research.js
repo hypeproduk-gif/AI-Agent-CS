@@ -184,6 +184,18 @@ test('riset per halaman vs keyword', () => {
   assert.ok(k.url.includes('q=template%20rkas&search_type=keyword_unordered'));
 });
 
+test('alias camelCase, fallback nama dari teks, skip marketplace', () => {
+  const ads = [
+    { adArchiveID: '1', pageName: 'Toko A', startDate: daysAgo(40), isActive: true,
+      snapshot: { linkUrl: 'https://a.id/lp', ctaType: 'SHOP_NOW', body: { text: 'Kerak toilet hilang dalam 5 menit! COD' } } },
+    { adArchiveID: '2', pageName: 'Shopee', startDate: daysAgo(90), isActive: true, snapshot: { title: 'Promo', body: { text: 'x' } } },
+  ];
+  const p = pickWinners(ads, now);
+  assert.strictEqual(p.winners.length, 1);
+  assert.strictEqual(p.winners[0].lpUrl, 'https://a.id/lp');
+  assert.strictEqual(p.winners[0].product, 'Kerak toilet hilang dalam 5 menit');
+});
+
 test('perintah /riset dari Telegram', () => {
   const parse = vm.runInContext('parseRisetCommand', ctx);
   const a = parse('/riset pengusir tikus');
