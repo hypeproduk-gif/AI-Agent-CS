@@ -133,8 +133,13 @@ if (picked.winners.length) {
 }
 else if (!items.length) {
   const err = raw.find((j) => j.error);
-  text = 'Apify tidak mengembalikan iklan untuk "' + brief.keyword + '".' +
-    (err ? '\\nError: ' + JSON.stringify(err.error).slice(0, 300) : '\\nCoba sinonim lain / cek saldo Apify.');
+  const msg = err ? JSON.stringify(err.error).slice(0, 300) : '';
+  const hint = /timeout|408|ETIMEDOUT|ECONNABORTED/i.test(msg)
+    ? 'Apify terlalu lama (antre karena riset lain masih jalan). Tunggu 2 menit lalu kirim ulang perintahnya.'
+    : /402|403|credit|usage|limit/i.test(msg) ? 'Saldo/kuota Apify habis. Cek Billing di apify.com.'
+    : /401|token|auth/i.test(msg) ? 'Token Apify salah. Cek credential Apify di n8n.'
+    : 'Coba sinonim lain atau kirim ulang perintahnya.';
+  text = '⚠️ Riset "' + brief.keyword + '" belum dapat hasil.\\n' + hint + (msg ? '\\n(Detail: ' + msg + ')' : '');
 } else {
   // Ada data tapi tidak terbaca → kirim nama field untuk diagnosa.
   const sample = items[0];
@@ -176,8 +181,8 @@ const lpNodes = [
     specifyBody: 'json',
     jsonBody: '={{ JSON.stringify($json.input) }}',
     options: { timeout: 300000 },
-  }, { more: { retryOnFail: true, maxTries: 2, alwaysOutputData: true } }),
-  node('Pilih Winner', 'n8n-nodes-base.code', 2, 750, { jsCode: winnerCode }),
+  }, { more: { retryOnFail: true, maxTries: 2, waitBetweenTries: 5000, alwaysOutputData: true, onError: 'continueRegularOutput' } }),
+  node('Pilih Winner', 'n8n-nodes-base.code', 2, 750, { jsCode: winnerCode }, { more: { alwaysOutputData: true } }),
   node('Kirim Konten', 'n8n-nodes-base.telegram', 1.2, 1000, {
     chatId: RISET_CHAT,
     text: '={{ $json.text }}',
