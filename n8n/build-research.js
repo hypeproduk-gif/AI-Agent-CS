@@ -117,7 +117,7 @@ return [{ json: { brief, actor: ${JSON.stringify(ACTORS.ads)},
 const winnerCode = `${adToLp}
 const brief = $('Siapkan Query').first().json.brief;
 const items = $input.all().map((i) => i.json).filter((j) => !j.error);
-const picked = pickWinners(items, Date.now(), LIST_LIMIT);
+const picked = pickWinners(items, Date.now(), brief.mode === 'page' ? 30 : LIST_LIMIT);
 const raw = $input.all().map((i) => i.json);
 let text;
 if (picked.winners.length) {
