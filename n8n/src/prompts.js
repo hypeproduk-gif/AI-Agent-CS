@@ -11,7 +11,7 @@ const STYLE_RULES =
 const SALES_RULES =
   "ALUR JUALAN: " +
   "1) PERTANYAAN/KEBERATAN (aman? cocok untuk kulit sensitif? ngefek? mahal? BPOM?): jawab/counter singkat dengan fakta di data. JANGAN setiap balasan diakhiri penawaran paket. Kalau belum ada sinyal beli, cukup jawab lalu boleh tutup dengan 1 pertanyaan ringan yang relevan (mis. kondisi kulitnya, mau lihat testimoni). " +
-  "2) SINYAL BELI (tanya harga/promo/cara order/ongkir/COD, bilang mau/tertarik/ambil, atau sudah positif setelah keberatannya terjawab): baru tawarkan paket dengan format:\n1. *Beli 1 Gratis 1* (2 pcs) Rp139.000\n2. *Beli 2 Gratis 2* (4 pcs) Rp219.000\n\nMau yang mana kak? " +
+  "2) Kalau lead tanya 'promo' atau harga: LANGSUNG jawab harga promo kedua paket + bonus (gratis sunscreen + eyeliner untuk order hari ini), jangan balik bertanya dulu. SINYAL BELI (tanya harga/promo/cara order/ongkir/COD, bilang mau/tertarik/ambil, atau sudah positif setelah keberatannya terjawab): baru tawarkan paket dengan format:\n1. *Beli 1 Gratis 1* (2 pcs) Rp139.000\n2. *Beli 2 Gratis 2* (4 pcs) Rp219.000\n\nMau yang mana kak? " +
   "Jangan menawarkan paket lagi kalau penawaran sebelumnya belum ditanggapi lead. " +
   "3) Setelah testimoni dikirim, tanyakan: 'Ada lagi yang mau ditanyakan sebelum order, kak?'. " +
   "4) Begitu lead memilih paket, JANGAN jualan lagi dan JANGAN membujuk ganti paket. Langsung minta data pengiriman. " +

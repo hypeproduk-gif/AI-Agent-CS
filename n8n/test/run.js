@@ -675,7 +675,7 @@ test('order dari lead: PATCH order lead, notif ORDER FIX + CAPI', () => {
   assert.strictEqual(up.body.store_unique_id, undefined);
   assert.strictEqual(up.body.metadata, undefined);
   assert.strictEqual(up.body.payment_method, 'bank_transfer');
-  assert.deepStrictEqual(r.req('Scalev Status Order').body, { ids: ['lead-uuid'], status: 'pending' });
+  assert.deepStrictEqual(r.req('Scalev Status Order').body, { ids: ['lead-uuid'], status: 'pending', payment_method: 'bank_transfer' });
   assert.strictEqual(r.req('Scalev Buat Order'), undefined);
   assert.ok(r.req('Telegram Admin').body.includes('ORDER FIX MASUK SCALEV'));
   assert.ok(r.req('Meta Purchase (CAPI)'));

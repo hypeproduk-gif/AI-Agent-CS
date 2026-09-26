@@ -276,7 +276,7 @@ const nodes = [
   scalevHttp('Scalev Batal Resi', 2800, 'POST', '/orders/cancel-awb', "={{ JSON.stringify({ ids: [$json.patchId] }) }}"),
   scalevHttp('Scalev Update Order', 2800, 'PATCH', "/orders/{{ $('Hitung Ongkir').first().json.patchId }}", "={{ JSON.stringify($('Hitung Ongkir').first().json.next) }}"),
   // Order lead (draft) yang sudah lengkap: COD -> confirmed (siap resi), transfer -> pending (menunggu pembayaran).
-  scalevHttp('Scalev Status Order', 2900, 'POST', '/orders/change-status', "={{ JSON.stringify({ ids: [$('Hitung Ongkir').first().json.patchId], status: $('Hitung Ongkir').first().json.input.pembayaran === 'cod' ? 'confirmed' : 'pending' }) }}"),
+  scalevHttp('Scalev Status Order', 2900, 'POST', '/orders/change-status', "={{ JSON.stringify({ ids: [$('Hitung Ongkir').first().json.patchId], status: $('Hitung Ongkir').first().json.input.pembayaran === 'cod' ? 'confirmed' : 'pending', payment_method: $('Hitung Ongkir').first().json.input.pembayaran === 'cod' ? 'cod' : 'bank_transfer' }) }}"),
   scalevHttp('Scalev Buat Order', 2800, 'POST', '/orders', '={{ JSON.stringify($json.next) }}'),
   node('Hasil Tool', 'n8n-nodes-base.code', 2, 3000, { jsCode: resultCode }, { y: 300 }),
   node('Claude Lanjutan', 'n8n-nodes-base.httpRequest', 4.5, 3200, {
