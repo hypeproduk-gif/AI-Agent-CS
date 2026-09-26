@@ -296,14 +296,19 @@ test('workflow tes ongkir jalan dengan API tiruan & tidak membuat order', () => 
   assert.ok(!r.requests.some((q) => q.url && q.url.endsWith('/orders')));
   assert.deepStrictEqual(r.outputs['Hitung Ongkir'][0].totals, { price: 139000, shipping: 12000, codFee: 4530, total: 155530 });
 });
-test('bot tidak pernah request pickup / generate AWB', () => {
+test('COD: generate resi (AWB) sekali + notif resi; transfer tidak; tidak pernah request pickup', () => {
   const r = scenario({ message: 'oke',
     first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'cod', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'Sa', alamat: 'Jl. Anggrek 7', kelurahan: 'Jagir', patokan: 'depan masjid' }) });
-  const scalevCalls = r.requests.filter((q) => q.url && q.url.includes('scalev.com'));
-  assert.ok(scalevCalls.length >= 4);
-  assert.ok(scalevCalls.every((q) => !/awb|pickup/i.test(q.url)));
+  const awb = r.requests.filter((q) => q.url && /generate-awb/.test(q.url));
+  assert.strictEqual(awb.length, 1);
+  assert.deepStrictEqual(awb[0].body, { ids: ['uuid-1'] });
+  assert.ok(r.req('Notif Resi'));
+  assert.ok(r.requests.every((q) => !q.url || !/pickup/i.test(q.url)));
   const urls = mainWf().nodes.map((n) => n.parameters.url).filter(Boolean);
-  assert.ok(urls.every((u) => !/awb|pickup/i.test(u)));
+  assert.ok(urls.every((u) => !/pickup/i.test(u)));
+  const t = scenario({ message: 'oke',
+    first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'transfer', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'Sa', alamat: 'Jl. Anggrek 7', kelurahan: 'Jagir', patokan: 'depan masjid' }) });
+  assert.ok(t.requests.every((q) => !q.url || !/generate-awb/.test(q.url)));
 });
 test('error API: notif admin, balasan cadangan, bot TIDAK dijeda', () => {
   const r = scenario({ message: 'halo', first: { type: 'error', error: { type: 'authentication_error', message: 'Invalid bearer token' } } });
@@ -680,6 +685,7 @@ test('revisi transfer -> COD: PATCH order yang sama, notif REVISI, tanpa CAPI do
   const r = scenario({ message: 'kak ganti cod aja', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod' }) });
   const up = r.req('Scalev Update Order');
   assert.strictEqual(up.url, 'https://api.scalev.com/v3/orders/uuid-1');
+  assert.deepStrictEqual(r.req('Scalev Batal Resi').body, { ids: ['uuid-1'] }); // resi lama dibatalkan dulu
   assert.strictEqual(up.body.payment_method, 'cod');
   assert.ok(up.body.other_income > 0);
   assert.strictEqual(r.toolResults[0].revisi, true);
@@ -701,6 +707,6 @@ test('order lama (> 6 jam) -> order baru, bukan PATCH', () => {
 
 test('prompt: kandungan & rekening transfer', () => {
   const sys = prepareContext({ phone: '1', message: 'isinya apa' }, null).requestBody.system;
-  for (const k of ['Niacinamide', 'Alpha Arbutin', 'Vitamin C', 'BCA 3890171132', 'Mandiri 1780000592416', 'BRI 657301021749531', 'BNI 0903702142', 'a.n N Hamidah', 'REVISI ORDER']) assert.ok(sys.includes(k), k);
+  for (const k of ['Niacinamide', 'Alpha Arbutin', 'Vitamin A', 'BCA 3890171132', 'Mandiri 1780000592416', 'BRI 657301021749531', 'BNI 0903702142', 'a.n N Hamidah', 'REVISI ORDER']) assert.ok(sys.includes(k), k);
 });
 console.log(`${passed} tes lulus (final)`);

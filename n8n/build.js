@@ -270,7 +270,9 @@ const nodes = [
   node('Hitung Ongkir', 'n8n-nodes-base.code', 2, 2400, { jsCode: courierCode }, { y: 300 }),
   ifNode('Buat Order?', 2600, 300, '={{ $json.createOrder }}'),
   ifNode('Revisi Order?', 2700, 300, "={{ Boolean($json.patchId) }}"),
-  scalevHttp('Scalev Update Order', 2800, 'PATCH', '/orders/{{ $json.patchId }}', '={{ JSON.stringify($json.next) }}'),
+  // Resi lama dibatalkan dulu sebelum order direvisi (gagal = belum ada resi, lanjut saja).
+  scalevHttp('Scalev Batal Resi', 2800, 'POST', '/orders/cancel-awb', "={{ JSON.stringify({ ids: [$json.patchId] }) }}"),
+  scalevHttp('Scalev Update Order', 2800, 'PATCH', "/orders/{{ $('Hitung Ongkir').first().json.patchId }}", "={{ JSON.stringify($('Hitung Ongkir').first().json.next) }}"),
   scalevHttp('Scalev Buat Order', 2800, 'POST', '/orders', '={{ JSON.stringify($json.next) }}'),
   node('Hasil Tool', 'n8n-nodes-base.code', 2, 3000, { jsCode: resultCode }, { y: 300 }),
   node('Claude Lanjutan', 'n8n-nodes-base.httpRequest', 4.5, 3200, {
@@ -338,6 +340,15 @@ const nodes = [
       convertFieldsToString: true,
     },
     options: {},
+  }, { onError: 'continueRegularOutput' }),
+  // COD: langsung generate resi (AWB) di Mengantar lewat Scalev. Transfer: resi dibuat admin setelah pembayaran masuk.
+  // Bot tetap TIDAK request pickup (sudah ada langganan pickup).
+  ifNode('COD?', 0, 0, "={{ $('Olah Balasan').item.json.order.method === 'cod' }}"),
+  scalevHttp('Scalev Generate Resi', 0, 'POST', '/orders/generate-awb', "={{ JSON.stringify({ ids: [$('Olah Balasan').item.json.order.id] }) }}"),
+  node('Notif Resi', 'n8n-nodes-base.telegram', 1.2, 0, {
+    chatId: TELEGRAM_CHAT_ID,
+    text: "={{ (() => { const o = $('Olah Balasan').item.json.order; const r = $json || {}; const d = r.data || r; const ok = d.successes && Object.values(d.successes)[0]; const fail = d.failures && Object.values(d.failures)[0]; return ok ? '🧾 *RESI TERBIT*\\nOrder: ' + o.orderId + '\\nResi: ' + ok + '\\n\\nLabel PDF 100x150: cetak dari Scalev/Mengantar.' : '⚠️ *RESI GAGAL DIBUAT*\\nOrder: ' + o.orderId + '\\nAlasan: ' + (fail || r.message || JSON.stringify(r).slice(0, 300)) + '\\nBuat resi manual di Scalev.'; })() }}",
+    additionalFields: { appendAttribution: false },
   }, { onError: 'continueRegularOutput' }),
   ifNode('Order Pertama?', 0, 0, '={{ $json.order.revision !== true }}'),
   node('Cari Atribusi', 'n8n-nodes-base.dataTable', 1.1, 0, {
@@ -417,10 +428,12 @@ place(TOP, 0, 0);
 nodes.find((n) => n.name === 'Simpan Saat Jeda').position = [880, -200];
 place(['Kirim Testimoni?', 'Pecah Testimoni', 'Kirim Gambar'], 1100 + (BOTTOM.length + 3) * 220, -200);
 place(['Order Baru?', 'Catat Order'], 1100 + (BOTTOM.length + 1) * 220, -400);
+place(['COD?', 'Scalev Generate Resi', 'Notif Resi'], 1100 + (BOTTOM.length + 2) * 220, -800);
+nodes.find((n) => n.name === 'Scalev Batal Resi').position = [1100 + 12 * 220, 480];
 place(['Order Pertama?', 'Cari Atribusi', 'Siapkan CAPI', 'Meta Purchase (CAPI)'], 1100 + (BOTTOM.length + 2) * 220, -600);
 place(BOTTOM, 1100, 300);
 nodes.find((n) => n.name === 'Scalev Lead Order').position = [1320, -200];
-nodes.find((n) => n.name === 'Scalev Update Order').position = [1100 + 12 * 220, 480];
+nodes.find((n) => n.name === 'Scalev Update Order').position = [1100 + 13 * 220, 480];
 place(TAIL, 1100 + BOTTOM.length * 220, 0);
 
 nodes.forEach((n, i) => { n.id = `aics-${String(i + 1).padStart(2, '0')}`; });
@@ -453,7 +466,8 @@ const workflow = {
     'Scalev Kurir': link('Hitung Ongkir'),
     'Hitung Ongkir': link('Buat Order?'),
     'Buat Order?': link('Revisi Order?', 'Hasil Tool'),
-    'Revisi Order?': link('Scalev Update Order', 'Scalev Buat Order'),
+    'Revisi Order?': link('Scalev Batal Resi', 'Scalev Buat Order'),
+    'Scalev Batal Resi': link('Scalev Update Order'),
     'Scalev Update Order': link('Hasil Tool'),
     'Scalev Buat Order': link('Hasil Tool'),
     'Hasil Tool': link('Claude Lanjutan'),
@@ -465,7 +479,10 @@ const workflow = {
     'Order Baru?': { main: [[
       { node: 'Catat Order', type: 'main', index: 0 },
       { node: 'Order Pertama?', type: 'main', index: 0 },
+      { node: 'COD?', type: 'main', index: 0 },
     ], []] },
+    'COD?': link('Scalev Generate Resi'),
+    'Scalev Generate Resi': link('Notif Resi'),
     'Order Pertama?': link('Cari Atribusi'),
     'Cari Atribusi': link('Siapkan CAPI'),
     'Siapkan CAPI': link('Meta Purchase (CAPI)'),
