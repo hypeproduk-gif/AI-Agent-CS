@@ -655,6 +655,7 @@ test('lead baru: order Scalev berisi nama + nomor WA, id disimpan', () => {
   assert.deepStrictEqual(Object.keys(lead.body).sort(), ['customer_name', 'customer_phone', 'notes', 'store_unique_id']);
   assert.strictEqual(lead.body.customer_name, '[TEST AI] Sari');
   assert.strictEqual(lead.body.customer_phone, '6281');
+  assert.deepStrictEqual(r.req('Scalev Status Draft').body, { ids: ['lead-uuid'], status: 'draft' });
   assert.ok(r.req('Claude').body.messages, 'Claude tetap dapat requestBody');
   assert.strictEqual(r.req('Simpan Histori').body.scalev_id, 'lead-uuid');
   assert.strictEqual(r.req('Simpan Histori').body.last_order_id, 'SV-LEAD');
@@ -674,6 +675,7 @@ test('order dari lead: PATCH order lead, notif ORDER FIX + CAPI', () => {
   assert.strictEqual(up.body.store_unique_id, undefined);
   assert.strictEqual(up.body.metadata, undefined);
   assert.strictEqual(up.body.payment_method, 'bank_transfer');
+  assert.deepStrictEqual(r.req('Scalev Status Order').body, { ids: ['lead-uuid'], status: 'pending' });
   assert.strictEqual(r.req('Scalev Buat Order'), undefined);
   assert.ok(r.req('Telegram Admin').body.includes('ORDER FIX MASUK SCALEV'));
   assert.ok(r.req('Meta Purchase (CAPI)'));
@@ -687,6 +689,8 @@ test('revisi transfer -> COD: PATCH order yang sama, notif REVISI, tanpa CAPI do
   assert.strictEqual(up.url, 'https://api.scalev.com/v3/orders/uuid-1');
   assert.deepStrictEqual(r.req('Scalev Batal Resi').body, { ids: ['uuid-1'] }); // resi lama dibatalkan dulu
   assert.strictEqual(up.body.payment_method, 'cod');
+  assert.strictEqual(r.req('Scalev Status Order').body.status, 'confirmed');
+  assert.strictEqual(r.requests.findIndex((q) => q.node === 'Scalev Status Order') < r.requests.findIndex((q) => q.node === 'Scalev Generate Resi'), true);
   assert.ok(up.body.other_income > 0);
   assert.strictEqual(r.toolResults[0].revisi, true);
   assert.ok(r.req('Telegram Admin').body.includes('ORDER DIREVISI'));

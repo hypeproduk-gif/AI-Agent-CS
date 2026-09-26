@@ -255,6 +255,8 @@ const nodes = [
 
   ifNode('Lead Baru?', 900, -150, '={{ $json.newLead === true }}'),
   scalevHttp('Scalev Lead Order', 1000, 'POST', '/orders', '={{ JSON.stringify($json.leadOrder) }}'),
+  // Order lead berstatus draft (Created), bukan pending/confirmed.
+  scalevHttp('Scalev Status Draft', 1100, 'POST', '/orders/change-status', "={{ JSON.stringify({ ids: [($json.data || $json).id], status: 'draft' }) }}"),
 
   ifNode('Pakai Tool?', 1000, 0, "={{ $json.stop_reason === 'tool_use' }}"),
   node('Mulai Tool', 'n8n-nodes-base.code', 2, 1000, { jsCode: startCode }, { y: 300 }),
@@ -273,6 +275,8 @@ const nodes = [
   // Resi lama dibatalkan dulu sebelum order direvisi (gagal = belum ada resi, lanjut saja).
   scalevHttp('Scalev Batal Resi', 2800, 'POST', '/orders/cancel-awb', "={{ JSON.stringify({ ids: [$json.patchId] }) }}"),
   scalevHttp('Scalev Update Order', 2800, 'PATCH', "/orders/{{ $('Hitung Ongkir').first().json.patchId }}", "={{ JSON.stringify($('Hitung Ongkir').first().json.next) }}"),
+  // Order lead (draft) yang sudah lengkap: COD -> confirmed (siap resi), transfer -> pending (menunggu pembayaran).
+  scalevHttp('Scalev Status Order', 2900, 'POST', '/orders/change-status', "={{ JSON.stringify({ ids: [$('Hitung Ongkir').first().json.patchId], status: $('Hitung Ongkir').first().json.input.pembayaran === 'cod' ? 'confirmed' : 'pending' }) }}"),
   scalevHttp('Scalev Buat Order', 2800, 'POST', '/orders', '={{ JSON.stringify($json.next) }}'),
   node('Hasil Tool', 'n8n-nodes-base.code', 2, 3000, { jsCode: resultCode }, { y: 300 }),
   node('Claude Lanjutan', 'n8n-nodes-base.httpRequest', 4.5, 3200, {
@@ -433,6 +437,8 @@ nodes.find((n) => n.name === 'Scalev Batal Resi').position = [1100 + 12 * 220, 4
 place(['Order Pertama?', 'Cari Atribusi', 'Siapkan CAPI', 'Meta Purchase (CAPI)'], 1100 + (BOTTOM.length + 2) * 220, -600);
 place(BOTTOM, 1100, 300);
 nodes.find((n) => n.name === 'Scalev Lead Order').position = [1320, -200];
+nodes.find((n) => n.name === 'Scalev Status Draft').position = [1540, -200];
+nodes.find((n) => n.name === 'Scalev Status Order').position = [1100 + 14 * 220, 480];
 nodes.find((n) => n.name === 'Scalev Update Order').position = [1100 + 13 * 220, 480];
 place(TAIL, 1100 + BOTTOM.length * 220, 0);
 
@@ -451,7 +457,8 @@ const workflow = {
     'Siapkan Konteks': link('Bot Dijeda?'),
     'Bot Dijeda?': link('Simpan Saat Jeda', 'Lead Baru?'),
     'Lead Baru?': link('Scalev Lead Order', 'Claude'),
-    'Scalev Lead Order': link('Claude'),
+    'Scalev Lead Order': link('Scalev Status Draft'),
+    'Scalev Status Draft': link('Claude'),
     Claude: link('Pakai Tool?'),
     'Pakai Tool?': link('Mulai Tool', 'Olah Balasan'),
     'Mulai Tool': link('Tool OK?'),
@@ -468,7 +475,8 @@ const workflow = {
     'Buat Order?': link('Revisi Order?', 'Hasil Tool'),
     'Revisi Order?': link('Scalev Batal Resi', 'Scalev Buat Order'),
     'Scalev Batal Resi': link('Scalev Update Order'),
-    'Scalev Update Order': link('Hasil Tool'),
+    'Scalev Update Order': link('Scalev Status Order'),
+    'Scalev Status Order': link('Hasil Tool'),
     'Scalev Buat Order': link('Hasil Tool'),
     'Hasil Tool': link('Claude Lanjutan'),
     'Claude Lanjutan': link('Olah Balasan'),

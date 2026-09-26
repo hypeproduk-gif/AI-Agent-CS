@@ -325,6 +325,40 @@
     },
     {
       "parameters": {
+        "method": "POST",
+        "url": "https://api.scalev.com/v3/orders/change-status",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ ids: [($json.data || $json).id], status: 'draft' }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1540,
+        -200
+      ],
+      "name": "Scalev Status Draft",
+      "onError": "continueRegularOutput",
+      "id": "aics-test-10",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3Sg0yQwmYbm9uLyp",
+          "name": "Scalev"
+        }
+      }
+    },
+    {
+      "parameters": {
         "conditions": {
           "options": {
             "caseSensitive": true,
@@ -356,7 +390,7 @@
         0
       ],
       "name": "Pakai Tool?",
-      "id": "aics-test-10"
+      "id": "aics-test-11"
     },
     {
       "parameters": {
@@ -369,7 +403,7 @@
         300
       ],
       "name": "Mulai Tool",
-      "id": "aics-test-11"
+      "id": "aics-test-12"
     },
     {
       "parameters": {
@@ -404,7 +438,7 @@
         300
       ],
       "name": "Tool OK?",
-      "id": "aics-test-12"
+      "id": "aics-test-13"
     },
     {
       "parameters": {
@@ -429,7 +463,7 @@
       ],
       "name": "Scalev Lokasi",
       "onError": "continueRegularOutput",
-      "id": "aics-test-13",
+      "id": "aics-test-14",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3Sg0yQwmYbm9uLyp",
@@ -448,7 +482,7 @@
         300
       ],
       "name": "Pilih Lokasi",
-      "id": "aics-test-14"
+      "id": "aics-test-15"
     },
     {
       "parameters": {
@@ -483,7 +517,7 @@
         300
       ],
       "name": "Lokasi OK?",
-      "id": "aics-test-15"
+      "id": "aics-test-16"
     },
     {
       "parameters": {
@@ -508,7 +542,7 @@
       ],
       "name": "Scalev Kode Pos",
       "onError": "continueRegularOutput",
-      "id": "aics-test-16",
+      "id": "aics-test-17",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3Sg0yQwmYbm9uLyp",
@@ -527,7 +561,7 @@
         300
       ],
       "name": "Pilih Kode Pos",
-      "id": "aics-test-17"
+      "id": "aics-test-18"
     },
     {
       "parameters": {
@@ -555,7 +589,7 @@
       ],
       "name": "Scalev Gudang",
       "onError": "continueRegularOutput",
-      "id": "aics-test-18",
+      "id": "aics-test-19",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3Sg0yQwmYbm9uLyp",
@@ -574,7 +608,7 @@
         300
       ],
       "name": "Pilih Gudang",
-      "id": "aics-test-19"
+      "id": "aics-test-20"
     },
     {
       "parameters": {
@@ -602,7 +636,7 @@
       ],
       "name": "Scalev Kurir",
       "onError": "continueRegularOutput",
-      "id": "aics-test-20",
+      "id": "aics-test-21",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3Sg0yQwmYbm9uLyp",
@@ -621,7 +655,7 @@
         300
       ],
       "name": "Hitung Ongkir",
-      "id": "aics-test-21"
+      "id": "aics-test-22"
     },
     {
       "parameters": {
@@ -656,7 +690,7 @@
         300
       ],
       "name": "Buat Order?",
-      "id": "aics-test-22"
+      "id": "aics-test-23"
     },
     {
       "parameters": {
@@ -691,7 +725,7 @@
         300
       ],
       "name": "Revisi Order?",
-      "id": "aics-test-23"
+      "id": "aics-test-24"
     },
     {
       "parameters": {
@@ -719,7 +753,7 @@
       ],
       "name": "Scalev Batal Resi",
       "onError": "continueRegularOutput",
-      "id": "aics-test-24",
+      "id": "aics-test-25",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3Sg0yQwmYbm9uLyp",
@@ -753,7 +787,41 @@
       ],
       "name": "Scalev Update Order",
       "onError": "continueRegularOutput",
-      "id": "aics-test-25",
+      "id": "aics-test-26",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3Sg0yQwmYbm9uLyp",
+          "name": "Scalev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.scalev.com/v3/orders/change-status",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ ids: [$('Hitung Ongkir').first().json.patchId], status: $('Hitung Ongkir').first().json.input.pembayaran === 'cod' ? 'confirmed' : 'pending' }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        4180,
+        480
+      ],
+      "name": "Scalev Status Order",
+      "onError": "continueRegularOutput",
+      "id": "aics-test-27",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3Sg0yQwmYbm9uLyp",
@@ -787,7 +855,7 @@
       ],
       "name": "Scalev Buat Order",
       "onError": "continueRegularOutput",
-      "id": "aics-test-26",
+      "id": "aics-test-28",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3Sg0yQwmYbm9uLyp",
@@ -806,7 +874,7 @@
         300
       ],
       "name": "Hasil Tool",
-      "id": "aics-test-27"
+      "id": "aics-test-29"
     },
     {
       "parameters": {
@@ -845,7 +913,7 @@
       "onError": "continueRegularOutput",
       "retryOnFail": true,
       "maxTries": 2,
-      "id": "aics-test-28",
+      "id": "aics-test-30",
       "credentials": {
         "httpHeaderAuth": {
           "id": "Rg3kLQlwRT919UB4",
@@ -864,7 +932,7 @@
         0
       ],
       "name": "Olah Balasan",
-      "id": "aics-test-29"
+      "id": "aics-test-31"
     },
     {
       "parameters": {
@@ -899,7 +967,7 @@
         0
       ],
       "name": "Perlu Notif?",
-      "id": "aics-test-30"
+      "id": "aics-test-32"
     },
     {
       "parameters": {
@@ -915,7 +983,7 @@
       ],
       "name": "Telegram Admin",
       "onError": "continueRegularOutput",
-      "id": "aics-test-31",
+      "id": "aics-test-33",
       "credentials": {
         "telegramApi": {
           "id": "GvWCKSvWULLSOTrP",
@@ -951,7 +1019,7 @@
         0
       ],
       "name": "Kirim WhatsApp",
-      "id": "aics-test-32",
+      "id": "aics-test-34",
       "credentials": {
         "httpHeaderAuth": {
           "id": "nACcE3iy140ThXzw",
@@ -992,7 +1060,7 @@
         -400
       ],
       "name": "Order Baru?",
-      "id": "aics-test-33"
+      "id": "aics-test-35"
     },
     {
       "parameters": {
@@ -1120,7 +1188,7 @@
       ],
       "name": "Catat Order",
       "onError": "continueRegularOutput",
-      "id": "aics-test-34"
+      "id": "aics-test-36"
     },
     {
       "parameters": {
@@ -1155,7 +1223,7 @@
         -800
       ],
       "name": "COD?",
-      "id": "aics-test-35"
+      "id": "aics-test-37"
     },
     {
       "parameters": {
@@ -1183,7 +1251,7 @@
       ],
       "name": "Scalev Generate Resi",
       "onError": "continueRegularOutput",
-      "id": "aics-test-36",
+      "id": "aics-test-38",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3Sg0yQwmYbm9uLyp",
@@ -1207,7 +1275,7 @@
       ],
       "name": "Notif Resi",
       "onError": "continueRegularOutput",
-      "id": "aics-test-37",
+      "id": "aics-test-39",
       "credentials": {
         "telegramApi": {
           "id": "GvWCKSvWULLSOTrP",
@@ -1248,7 +1316,7 @@
         -600
       ],
       "name": "Order Pertama?",
-      "id": "aics-test-38"
+      "id": "aics-test-40"
     },
     {
       "parameters": {
@@ -1278,7 +1346,7 @@
       "name": "Cari Atribusi",
       "alwaysOutputData": true,
       "onError": "continueRegularOutput",
-      "id": "aics-test-39"
+      "id": "aics-test-41"
     },
     {
       "parameters": {
@@ -1291,7 +1359,7 @@
         -600
       ],
       "name": "Siapkan CAPI",
-      "id": "aics-test-40"
+      "id": "aics-test-42"
     },
     {
       "parameters": {
@@ -1329,7 +1397,7 @@
       ],
       "name": "Meta Purchase (CAPI)",
       "onError": "continueRegularOutput",
-      "id": "aics-test-41",
+      "id": "aics-test-43",
       "credentials": {
         "httpHeaderAuth": {
           "id": "tZrolZtseWagvc2W",
@@ -1370,7 +1438,7 @@
         -200
       ],
       "name": "Kirim Testimoni?",
-      "id": "aics-test-42"
+      "id": "aics-test-44"
     },
     {
       "parameters": {
@@ -1383,7 +1451,7 @@
         -200
       ],
       "name": "Pecah Testimoni",
-      "id": "aics-test-43"
+      "id": "aics-test-45"
     },
     {
       "parameters": {
@@ -1425,7 +1493,7 @@
       ],
       "name": "Kirim Gambar",
       "onError": "continueRegularOutput",
-      "id": "aics-test-44",
+      "id": "aics-test-46",
       "credentials": {
         "httpHeaderAuth": {
           "id": "nACcE3iy140ThXzw",
@@ -1580,7 +1648,7 @@
         0
       ],
       "name": "Simpan Histori",
-      "id": "aics-test-45"
+      "id": "aics-test-47"
     }
   ],
   "pinData": {},
@@ -1666,6 +1734,17 @@
       ]
     },
     "Scalev Lead Order": {
+      "main": [
+        [
+          {
+            "node": "Scalev Status Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scalev Status Draft": {
       "main": [
         [
           {
@@ -1888,6 +1967,17 @@
       ]
     },
     "Scalev Update Order": {
+      "main": [
+        [
+          {
+            "node": "Scalev Status Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scalev Status Order": {
       "main": [
         [
           {
