@@ -124,6 +124,11 @@ function prepareContext(body, row) {
   history.push({ role: 'user', content: incoming });
   const messages = trimHistory(history);
 
+  // Order Scalev yang bisa di-update (PATCH): order lead (belum lengkap) atau order yang baru dibuat (revisi).
+  const lastOrder = recentOrder(row);
+  const scalevId = (row && row.scalev_id) || '';
+  const patchId = scalevId && (!row.last_order_at || lastOrder) ? scalevId : '';
+
   const tools = orderTools(product);
   let system = buildSystemPrompt(product);
   if (tools) system += ' ' + ORDER_RULE;
@@ -139,7 +144,18 @@ function prepareContext(body, row) {
     switchedFrom,
     ref: ref || (row && row.ref) || '',
     isClosing: isClosingMessage(incoming),
-    lastOrder: recentOrder(row),
+    lastOrder,
+    lastOrderId: (row && row.last_order_id) || '',
+    patchId,
+    isRevision: Boolean(patchId && lastOrder),
+    // Lead baru: langsung dicatat di Scalev sebagai order berisi nama + nomor WA.
+    newLead: !row,
+    leadOrder: row ? null : {
+      store_unique_id: SCALEV.storeUniqueId,
+      customer_name: `${SCALEV.namePrefix || ''}${body.pushName || body.phone}`,
+      customer_phone: body.phone,
+      notes: 'Lead WA baru (belum order)',
+    },
     messages,
     requestBody: {
       model: MODEL,

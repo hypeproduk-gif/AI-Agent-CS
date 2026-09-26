@@ -40,10 +40,13 @@ function startTool(toolUse, ctx) {
       return { ...base, ok: false, error: `Alamat belum lengkap: ${missing.join(', ')}. Minta lead melengkapi dulu, JANGAN buat order.` };
     }
   }
-  if (toolUse.name === 'buat_order' && ctx.lastOrder) {
+  // Order baru-baru ini tanpa id Scalev (data lama) tidak bisa direvisi otomatis -> cegah order dobel.
+  if (toolUse.name === 'buat_order' && ctx.lastOrder && !ctx.patchId) {
     return { ...base, ok: false, error: `Lead ini sudah punya order ${ctx.lastOrder} dalam ${SCALEV.duplicateOrderHours} jam terakhir. Jangan buat order baru; bilang 'saya tanyakan ke atasan saya dulu ya kak' kalau lead mau mengubah order. [HANDOFF]` };
   }
-  return { ...base, ok: true, pkg, search: normalize(input.kecamatan) };
+  // patchId: order Scalev yang sudah ada (order lead / order yang direvisi) -> di-update, bukan dibuat baru.
+  const orderRef = { patchId: ctx.patchId || '', isRevision: Boolean(ctx.isRevision), knownOrderId: ctx.lastOrderId || '' };
+  return { ...base, ...orderRef, ok: true, pkg, search: normalize(input.kecamatan) };
 }
 
 // Pilih lokasi dari GET /v3/locations?search=<kecamatan>.
@@ -170,6 +173,13 @@ function orderRequest(state, ctx) {
   if (state.totals.codFee) {
     body.other_income = state.totals.codFee;
     body.other_income_name = SCALEV.codFeeName;
+  } else if (state.patchId) {
+    body.other_income = 0; // revisi COD -> transfer: hapus biaya COD
+  }
+  if (state.patchId) {
+    // PATCH /v3/orders/{id} tidak menerima store_unique_id & metadata.
+    delete body.store_unique_id;
+    delete body.metadata;
   }
   return body;
 }
@@ -196,10 +206,13 @@ function toolResult(state, orderResponse) {
       total: rupiah(t.total),
     };
     if (state.tool === 'buat_order') {
-      if (orderResponse && orderResponse.order_id) {
+      const r = orderResponse && orderResponse.data && (orderResponse.data.order_id || orderResponse.data.id) ? orderResponse.data : orderResponse;
+      const orderId = r && (r.order_id || (state.patchId && r.id ? state.knownOrderId || r.id : ''));
+      if (orderId) {
         order = {
-          id: orderResponse.id,
-          orderId: orderResponse.order_id,
+          id: r.id || state.patchId,
+          orderId,
+          revision: Boolean(state.isRevision),
           total: t.total,
           price: t.price,
           shipping: t.shipping,
@@ -212,8 +225,8 @@ function toolResult(state, orderResponse) {
           city: state.location.city_name || '',
           province: state.location.province_name || '',
         };
-        content.order_id = orderResponse.order_id;
-        if (state.input.pembayaran !== 'cod') content.link_pembayaran = orderResponse.public_order_url || orderResponse.payment_url;
+        content.order_id = orderId;
+        if (state.isRevision) content.revisi = true;
       } else {
         const msg = (orderResponse && (orderResponse.message || (orderResponse.error && orderResponse.error.message))) || 'gagal';
         content = { ok: false, error: `Order gagal dibuat (${msg}). Bilang 'saya cek dulu ke atasan saya ya kak', jangan sebut sistem/error. [HANDOFF]` };

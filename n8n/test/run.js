@@ -183,6 +183,8 @@ function scenario({ message, row = SALGLOW_ROW, first, order }) {
         case 'Scalev Gudang': return WAREHOUSES;
         case 'Scalev Kurir': return COURIERS;
         case 'Scalev Buat Order': return order || { id: 'uuid-1', order_id: 'SV123', public_order_url: 'https://pay.example/SV123' };
+        case 'Scalev Update Order': return { data: { id: row && row.scalev_id } }; // respons PATCH tanpa order_id
+        case 'Scalev Lead Order': return { id: 'lead-uuid', order_id: 'SV-LEAD' };
         default: return { status: true };
       }
     },
@@ -227,7 +229,7 @@ test('simulasi: buat order transfer → payload Scalev benar & tersimpan', () =>
   assert.strictEqual(body.notes, 'Beli 2 Gratis 2 (4 pcs) + bonus sunscreen + eyeliner');
   assert.strictEqual(body.customer_name, '[TEST AI] Sari');
   assert.strictEqual(body.metadata.ref, 'SG-ABCDE');
-  assert.strictEqual(r.toolResults[0].link_pembayaran, 'https://pay.example/SV123');
+  assert.strictEqual(r.toolResults[0].link_pembayaran, undefined); // transfer pakai template rekening
   assert.strictEqual(r.req('Simpan Histori').body.last_order_id, 'SV123');
   assert.ok(r.req('Telegram Admin').body.includes('ORDER FIX MASUK SCALEV'));
   assert.ok(r.req('Telegram Admin').body.includes('SV123 (Transfer, Rp231.000)'));
@@ -639,5 +641,66 @@ test('workflow follow-up: kode node jalan end-to-end', () => {
   assert.strictEqual(out[0].json.phone, '62811');
   assert.strictEqual(JSON.parse(out[0].json.history).pop().fu, 0);
   assert.strictEqual(wf.nodes.find((n) => n.name === 'Kirim FU').credentials.httpHeaderAuth.name, 'Wablas');
+});
+
+test('lead baru: order Scalev berisi nama + nomor WA, id disimpan', () => {
+  const r = scenario({ message: 'halo kak', row: null, first: text('Halo juga kaak 😊') });
+  const lead = r.req('Scalev Lead Order');
+  assert.strictEqual(lead.url, 'https://api.scalev.com/v3/orders');
+  assert.deepStrictEqual(Object.keys(lead.body).sort(), ['customer_name', 'customer_phone', 'notes', 'store_unique_id']);
+  assert.strictEqual(lead.body.customer_name, '[TEST AI] Sari');
+  assert.strictEqual(lead.body.customer_phone, '6281');
+  assert.ok(r.req('Claude').body.messages, 'Claude tetap dapat requestBody');
+  assert.strictEqual(r.req('Simpan Histori').body.scalev_id, 'lead-uuid');
+  assert.strictEqual(r.req('Simpan Histori').body.last_order_id, 'SV-LEAD');
+  assert.strictEqual(r.req('Telegram Admin'), undefined);
+  const again = scenario({ message: 'harganya?', row: SALGLOW_ROW, first: text('ok') });
+  assert.strictEqual(again.req('Scalev Lead Order'), undefined);
+});
+
+const ORDER_INPUT = { paket: 'B1G1', kecamatan: 'Wonokromo', kota: 'Kota Surabaya', nama: 'Sari', alamat: 'Jl. Mawar 5 RT 1/2', kelurahan: 'Jagir', patokan: 'depan masjid' };
+
+test('order dari lead: PATCH order lead, notif ORDER FIX + CAPI', () => {
+  const row = { ...SALGLOW_ROW, scalev_id: 'lead-uuid', last_order_id: 'SV-LEAD' };
+  const r = scenario({ message: 'oke proses', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'transfer' }) });
+  const up = r.req('Scalev Update Order');
+  assert.strictEqual(up.method, 'PATCH');
+  assert.strictEqual(up.url, 'https://api.scalev.com/v3/orders/lead-uuid');
+  assert.strictEqual(up.body.store_unique_id, undefined);
+  assert.strictEqual(up.body.metadata, undefined);
+  assert.strictEqual(up.body.payment_method, 'bank_transfer');
+  assert.strictEqual(r.req('Scalev Buat Order'), undefined);
+  assert.ok(r.req('Telegram Admin').body.includes('ORDER FIX MASUK SCALEV'));
+  assert.ok(r.req('Meta Purchase (CAPI)'));
+  assert.strictEqual(r.req('Simpan Histori').body.last_order_id, 'SV-LEAD');
+});
+
+test('revisi transfer -> COD: PATCH order yang sama, notif REVISI, tanpa CAPI dobel', () => {
+  const row = { ...SALGLOW_ROW, scalev_id: 'uuid-1', last_order_id: 'SV123', last_order_at: new Date(Date.now() - 3600000).toISOString() };
+  const r = scenario({ message: 'kak ganti cod aja', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod' }) });
+  const up = r.req('Scalev Update Order');
+  assert.strictEqual(up.url, 'https://api.scalev.com/v3/orders/uuid-1');
+  assert.strictEqual(up.body.payment_method, 'cod');
+  assert.ok(up.body.other_income > 0);
+  assert.strictEqual(r.toolResults[0].revisi, true);
+  assert.ok(r.req('Telegram Admin').body.includes('ORDER DIREVISI'));
+  assert.ok(r.req('Telegram Admin').body.includes('REVISI SV123 (COD'));
+  assert.strictEqual(r.req('Catat Order').body.order_id, 'SV123');
+  assert.strictEqual(r.req('Meta Purchase (CAPI)'), undefined);
+  // COD -> transfer: biaya COD dihapus
+  const back = scenario({ message: 'transfer aja deh', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'transfer' }) });
+  assert.strictEqual(back.req('Scalev Update Order').body.other_income, 0);
+});
+
+test('order lama (> 6 jam) -> order baru, bukan PATCH', () => {
+  const row = { ...SALGLOW_ROW, scalev_id: 'uuid-old', last_order_id: 'SV001', last_order_at: new Date(Date.now() - 24 * 3600000).toISOString() };
+  const r = scenario({ message: 'mau order lagi', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod' }) });
+  assert.strictEqual(r.req('Scalev Update Order'), undefined);
+  assert.ok(r.req('Scalev Buat Order'));
+});
+
+test('prompt: kandungan & rekening transfer', () => {
+  const sys = prepareContext({ phone: '1', message: 'isinya apa' }, null).requestBody.system;
+  for (const k of ['Niacinamide', 'Alpha Arbutin', 'Vitamin C', 'BCA 3890171132', 'Mandiri 1780000592416', 'BRI 657301021749531', 'BNI 0903702142', 'a.n N Hamidah', 'REVISI ORDER']) assert.ok(sys.includes(k), k);
 });
 console.log(`${passed} tes lulus (final)`);

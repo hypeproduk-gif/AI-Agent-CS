@@ -100,7 +100,8 @@ return [{ json: { ...state, createOrder: wantsOrder, next: wantsOrder ? orderReq
 const resultCode = toolCode(`const ctx = $('Siapkan Konteks').first().json;
 const first = $('Claude').first().json;
 const state = ['Hitung Ongkir', 'Pilih Lokasi', 'Mulai Tool'].map((n) => $(n)).find((n) => n.isExecuted).first().json;
-const orderResponse = $('Scalev Buat Order').isExecuted ? $('Scalev Buat Order').first().json : null;
+const sent = ['Scalev Update Order', 'Scalev Buat Order'].map((n) => $(n)).find((n) => n.isExecuted);
+const orderResponse = sent ? sent.first().json : null;
 const { block, order } = toolResult(state, orderResponse);
 const req = ctx.requestBody;
 return [{ json: {
@@ -122,6 +123,8 @@ const parseCode = [
 const parsed = parseReply($input.first().json);
 const order = $('Hasil Tool').isExecuted ? $('Hasil Tool').first().json.order : null;
 const stored = $('Get row(s)').first().json || {};
+const leadRes = $('Scalev Lead Order').isExecuted ? $('Scalev Lead Order').first().json : {};
+const lead = (leadRes && leadRes.data) || leadRes || {};
 const history = ctx.messages.concat([{ role: 'assistant', content: parsed.reply }]);
 return [{
   json: {
@@ -140,8 +143,9 @@ return [{
     reply: parsed.reply,
     history: JSON.stringify(history),
     order,
-    orderText: order ? order.orderId + ' (' + (order.method === 'cod' ? 'COD' : 'Transfer') + ', Rp' + order.total.toLocaleString('id-ID') + ')' : '',
-    last_order_id: order ? order.orderId : (stored.last_order_id || ''),
+    orderText: order ? (order.revision ? 'REVISI ' : '') + order.orderId + ' (' + (order.method === 'cod' ? 'COD' : 'Transfer') + ', Rp' + order.total.toLocaleString('id-ID') + ')' : '',
+    scalev_id: order ? order.id : (lead.id || stored.scalev_id || ''),
+    last_order_id: order ? order.orderId : (lead.order_id || stored.last_order_id || ''),
     last_order_at: order ? new Date().toISOString() : (stored.last_order_at || ''),
     first_chat_at: stored.first_chat_at || new Date().toISOString(),
     last_chat_at: new Date().toISOString(),
@@ -245,9 +249,12 @@ const nodes = [
     headerParameters: { parameters: [{ name: 'anthropic-version', value: '2023-06-01' }] },
     sendBody: true,
     specifyBody: 'json',
-    jsonBody: '={{ JSON.stringify($json.requestBody) }}',
+    jsonBody: "={{ JSON.stringify($('Siapkan Konteks').first().json.requestBody) }}",
     options: { response: { response: { neverError: true } }, timeout: 30000 },
   }, { onError: 'continueRegularOutput', retryOnFail: true, maxTries: 2 }),
+
+  ifNode('Lead Baru?', 900, -150, '={{ $json.newLead === true }}'),
+  scalevHttp('Scalev Lead Order', 1000, 'POST', '/orders', '={{ JSON.stringify($json.leadOrder) }}'),
 
   ifNode('Pakai Tool?', 1000, 0, "={{ $json.stop_reason === 'tool_use' }}"),
   node('Mulai Tool', 'n8n-nodes-base.code', 2, 1000, { jsCode: startCode }, { y: 300 }),
@@ -262,6 +269,8 @@ const nodes = [
   scalevHttp('Scalev Kurir', 2200, 'POST', '/shipping-costs/search-courier-service', '={{ JSON.stringify($json.next || {}) }}'),
   node('Hitung Ongkir', 'n8n-nodes-base.code', 2, 2400, { jsCode: courierCode }, { y: 300 }),
   ifNode('Buat Order?', 2600, 300, '={{ $json.createOrder }}'),
+  ifNode('Revisi Order?', 2700, 300, "={{ Boolean($json.patchId) }}"),
+  scalevHttp('Scalev Update Order', 2800, 'PATCH', '/orders/{{ $json.patchId }}', '={{ JSON.stringify($json.next) }}'),
   scalevHttp('Scalev Buat Order', 2800, 'POST', '/orders', '={{ JSON.stringify($json.next) }}'),
   node('Hasil Tool', 'n8n-nodes-base.code', 2, 3000, { jsCode: resultCode }, { y: 300 }),
   node('Claude Lanjutan', 'n8n-nodes-base.httpRequest', 4.5, 3200, {
@@ -282,7 +291,7 @@ const nodes = [
 
   node('Telegram Admin', 'n8n-nodes-base.telegram', 1.2, 3800, {
     chatId: TELEGRAM_CHAT_ID,
-    text: "={{ $json.order ? '🛒 *ORDER FIX MASUK SCALEV*' : ($json.apiError ? '⚠️ *BOT ERROR*' : ($json.needsHuman ? '🟠 *BUTUH CS MANUSIA*' : '🔵 *PERTANYAAN UNTUK ADMIN* (bot tetap lanjut)')) }}\n\n" +
+    text: "={{ $json.order ? ($json.order.revision ? '✏️ *ORDER DIREVISI DI SCALEV*' : '🛒 *ORDER FIX MASUK SCALEV*') : ($json.apiError ? '⚠️ *BOT ERROR*' : ($json.needsHuman ? '🟠 *BUTUH CS MANUSIA*' : '🔵 *PERTANYAAN UNTUK ADMIN* (bot tetap lanjut)')) }}\n\n" +
       "{{ $json.order ? '🧾 Order: ' + $json.orderText + '\\n' : '' }}" +
       '📱 Nomor: {{ $json.phone }}\n👤 Nama: {{ $json.name }}\n🛍️ Produk: {{ $json.active_product }}\n🔗 Ref LP: {{ $json.ref || \'-\' }}\n' +
       '💬 Chat Terakhir: {{ $json.incoming }}\n🤖 Balasan AI: {{ $json.reply }}' +
@@ -308,8 +317,9 @@ const nodes = [
 
   ifNode('Order Baru?', 0, 0, "={{ Boolean($json.order) }}"),
   node('Catat Order', 'n8n-nodes-base.dataTable', 1.1, 0, {
-    operation: 'insert',
+    operation: 'upsert',
     dataTableId: ORDERS_TABLE,
+    filters: { conditions: [{ keyName: 'order_id', keyValue: '={{ $json.order.orderId }}' }] },
     columns: {
       mappingMode: 'defineBelow',
       value: {
@@ -329,6 +339,7 @@ const nodes = [
     },
     options: {},
   }, { onError: 'continueRegularOutput' }),
+  ifNode('Order Pertama?', 0, 0, '={{ $json.order.revision !== true }}'),
   node('Cari Atribusi', 'n8n-nodes-base.dataTable', 1.1, 0, {
     operation: 'get',
     dataTableId: ATTRIBUTION_TABLE,
@@ -379,13 +390,14 @@ return d.testimoni.map((image) => ({ json: { phone: d.phone, image } }));`,
         history: "={{ $('Olah Balasan').item.json.history }}",
         handoff: "={{ $('Olah Balasan').item.json.pauseBot ? new Date().toISOString() : 'false' }}",
         ref: "={{ $('Olah Balasan').item.json.ref }}",
+        scalev_id: "={{ $('Olah Balasan').item.json.scalev_id }}",
         last_order_id: "={{ $('Olah Balasan').item.json.last_order_id }}",
         last_order_at: "={{ $('Olah Balasan').item.json.last_order_at }}",
         first_chat_at: "={{ $('Olah Balasan').item.json.first_chat_at }}",
         last_chat_at: "={{ $('Olah Balasan').item.json.last_chat_at }}",
       },
       matchingColumns: [],
-      schema: ['phone', 'active_product', 'history', 'handoff', 'ref', 'last_order_id', 'last_order_at', 'first_chat_at', 'last_chat_at'].map(column),
+      schema: ['phone', 'active_product', 'history', 'handoff', 'ref', 'scalev_id', 'last_order_id', 'last_order_at', 'first_chat_at', 'last_chat_at'].map(column),
       attemptToConvertTypes: false,
       convertFieldsToString: false,
     },
@@ -394,9 +406,9 @@ return d.testimoni.map((image) => ({ json: { phone: d.phone, image } }));`,
 ];
 
 // Tata letak: baris atas alur chat, baris bawah alur tool Scalev.
-const TOP = ['Webhook', 'Hanya Chat Lead', 'Get row(s)', 'Siapkan Konteks', 'Bot Dijeda?', 'Claude', 'Pakai Tool?'];
+const TOP = ['Webhook', 'Hanya Chat Lead', 'Get row(s)', 'Siapkan Konteks', 'Bot Dijeda?', 'Lead Baru?', 'Claude', 'Pakai Tool?'];
 const BOTTOM = ['Mulai Tool', 'Tool OK?', 'Scalev Lokasi', 'Pilih Lokasi', 'Lokasi OK?', 'Scalev Kode Pos', 'Pilih Kode Pos',
-  'Scalev Gudang', 'Pilih Gudang', 'Scalev Kurir', 'Hitung Ongkir', 'Buat Order?', 'Scalev Buat Order', 'Hasil Tool', 'Claude Lanjutan'];
+  'Scalev Gudang', 'Pilih Gudang', 'Scalev Kurir', 'Hitung Ongkir', 'Buat Order?', 'Revisi Order?', 'Scalev Buat Order', 'Hasil Tool', 'Claude Lanjutan'];
 const TAIL = ['Olah Balasan', 'Perlu Notif?', 'Telegram Admin', 'Kirim WhatsApp', 'Simpan Histori'];
 const place = (names, x0, y) => names.forEach((name, i) => {
   nodes.find((n) => n.name === name).position = [x0 + i * 220, y];
@@ -405,8 +417,10 @@ place(TOP, 0, 0);
 nodes.find((n) => n.name === 'Simpan Saat Jeda').position = [880, -200];
 place(['Kirim Testimoni?', 'Pecah Testimoni', 'Kirim Gambar'], 1100 + (BOTTOM.length + 3) * 220, -200);
 place(['Order Baru?', 'Catat Order'], 1100 + (BOTTOM.length + 1) * 220, -400);
-place(['Cari Atribusi', 'Siapkan CAPI', 'Meta Purchase (CAPI)'], 1100 + (BOTTOM.length + 2) * 220, -600);
+place(['Order Pertama?', 'Cari Atribusi', 'Siapkan CAPI', 'Meta Purchase (CAPI)'], 1100 + (BOTTOM.length + 2) * 220, -600);
 place(BOTTOM, 1100, 300);
+nodes.find((n) => n.name === 'Scalev Lead Order').position = [1320, -200];
+nodes.find((n) => n.name === 'Scalev Update Order').position = [1100 + 12 * 220, 480];
 place(TAIL, 1100 + BOTTOM.length * 220, 0);
 
 nodes.forEach((n, i) => { n.id = `aics-${String(i + 1).padStart(2, '0')}`; });
@@ -422,7 +436,9 @@ const workflow = {
     'Hanya Chat Lead': link('Get row(s)'),
     'Get row(s)': link('Siapkan Konteks'),
     'Siapkan Konteks': link('Bot Dijeda?'),
-    'Bot Dijeda?': link('Simpan Saat Jeda', 'Claude'),
+    'Bot Dijeda?': link('Simpan Saat Jeda', 'Lead Baru?'),
+    'Lead Baru?': link('Scalev Lead Order', 'Claude'),
+    'Scalev Lead Order': link('Claude'),
     Claude: link('Pakai Tool?'),
     'Pakai Tool?': link('Mulai Tool', 'Olah Balasan'),
     'Mulai Tool': link('Tool OK?'),
@@ -436,7 +452,9 @@ const workflow = {
     'Pilih Gudang': link('Scalev Kurir'),
     'Scalev Kurir': link('Hitung Ongkir'),
     'Hitung Ongkir': link('Buat Order?'),
-    'Buat Order?': link('Scalev Buat Order', 'Hasil Tool'),
+    'Buat Order?': link('Revisi Order?', 'Hasil Tool'),
+    'Revisi Order?': link('Scalev Update Order', 'Scalev Buat Order'),
+    'Scalev Update Order': link('Hasil Tool'),
     'Scalev Buat Order': link('Hasil Tool'),
     'Hasil Tool': link('Claude Lanjutan'),
     'Claude Lanjutan': link('Olah Balasan'),
@@ -446,8 +464,9 @@ const workflow = {
     ]] },
     'Order Baru?': { main: [[
       { node: 'Catat Order', type: 'main', index: 0 },
-      { node: 'Cari Atribusi', type: 'main', index: 0 },
+      { node: 'Order Pertama?', type: 'main', index: 0 },
     ], []] },
+    'Order Pertama?': link('Cari Atribusi'),
     'Cari Atribusi': link('Siapkan CAPI'),
     'Siapkan CAPI': link('Meta Purchase (CAPI)'),
     'Perlu Notif?': link('Telegram Admin', 'Kirim WhatsApp'),
