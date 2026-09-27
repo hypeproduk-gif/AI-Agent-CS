@@ -348,6 +348,8 @@ const nodes = [
   // COD: langsung generate resi (AWB) di Mengantar lewat Scalev. Transfer: resi dibuat admin setelah pembayaran masuk.
   // Bot tetap TIDAK request pickup (sudah ada langganan pickup).
   ifNode('COD?', 0, 0, "={{ $('Olah Balasan').item.json.order.method === 'cod' }}"),
+  // Isi paket + nominal COD sebagai info tambahan kurir (kemungkinan tampil sebagai Delivery Instruction di Mengantar).
+  scalevHttp('Scalev Info Kurir', 0, 'PATCH', "/orders/{{ $('Olah Balasan').item.json.order.id }}/shipment", "={{ JSON.stringify({ courier_additional_info: $('Olah Balasan').item.json.order.packing }) }}"),
   scalevHttp('Scalev Generate Resi', 0, 'POST', '/orders/generate-awb', "={{ JSON.stringify({ ids: [$('Olah Balasan').item.json.order.id] }) }}"),
   node('Notif Resi', 'n8n-nodes-base.telegram', 1.2, 0, {
     chatId: TELEGRAM_CHAT_ID,
@@ -432,7 +434,7 @@ place(TOP, 0, 0);
 nodes.find((n) => n.name === 'Simpan Saat Jeda').position = [880, -200];
 place(['Kirim Testimoni?', 'Pecah Testimoni', 'Kirim Gambar'], 1100 + (BOTTOM.length + 3) * 220, -200);
 place(['Order Baru?', 'Catat Order'], 1100 + (BOTTOM.length + 1) * 220, -400);
-place(['COD?', 'Scalev Generate Resi', 'Notif Resi'], 1100 + (BOTTOM.length + 2) * 220, -800);
+place(['COD?', 'Scalev Info Kurir', 'Scalev Generate Resi', 'Notif Resi'], 1100 + (BOTTOM.length + 2) * 220, -800);
 nodes.find((n) => n.name === 'Scalev Batal Resi').position = [1100 + 12 * 220, 480];
 place(['Order Pertama?', 'Cari Atribusi', 'Siapkan CAPI', 'Meta Purchase (CAPI)'], 1100 + (BOTTOM.length + 2) * 220, -600);
 place(BOTTOM, 1100, 300);
@@ -489,7 +491,8 @@ const workflow = {
       { node: 'Order Pertama?', type: 'main', index: 0 },
       { node: 'COD?', type: 'main', index: 0 },
     ], []] },
-    'COD?': link('Scalev Generate Resi'),
+    'COD?': link('Scalev Info Kurir'),
+    'Scalev Info Kurir': link('Scalev Generate Resi'),
     'Scalev Generate Resi': link('Notif Resi'),
     'Order Pertama?': link('Cari Atribusi'),
     'Cari Atribusi': link('Siapkan CAPI'),

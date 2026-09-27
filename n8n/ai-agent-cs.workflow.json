@@ -1227,6 +1227,40 @@
     },
     {
       "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.scalev.com/v3/orders/{{ $('Olah Balasan').item.json.order.id }}/shipment",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ courier_additional_info: $('Olah Balasan').item.json.order.packing }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        5280,
+        -800
+      ],
+      "name": "Scalev Info Kurir",
+      "onError": "continueRegularOutput",
+      "id": "aics-38",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3Sg0yQwmYbm9uLyp",
+          "name": "Scalev"
+        }
+      }
+    },
+    {
+      "parameters": {
         "method": "POST",
         "url": "https://api.scalev.com/v3/orders/generate-awb",
         "authentication": "genericCredentialType",
@@ -1246,12 +1280,12 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        5280,
+        5500,
         -800
       ],
       "name": "Scalev Generate Resi",
       "onError": "continueRegularOutput",
-      "id": "aics-38",
+      "id": "aics-39",
       "credentials": {
         "httpHeaderAuth": {
           "id": "3Sg0yQwmYbm9uLyp",
@@ -1270,12 +1304,12 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        5500,
+        5720,
         -800
       ],
       "name": "Notif Resi",
       "onError": "continueRegularOutput",
-      "id": "aics-39",
+      "id": "aics-40",
       "credentials": {
         "telegramApi": {
           "id": "GvWCKSvWULLSOTrP",
@@ -1316,7 +1350,7 @@
         -600
       ],
       "name": "Order Pertama?",
-      "id": "aics-40"
+      "id": "aics-41"
     },
     {
       "parameters": {
@@ -1346,7 +1380,7 @@
       "name": "Cari Atribusi",
       "alwaysOutputData": true,
       "onError": "continueRegularOutput",
-      "id": "aics-41"
+      "id": "aics-42"
     },
     {
       "parameters": {
@@ -1359,7 +1393,7 @@
         -600
       ],
       "name": "Siapkan CAPI",
-      "id": "aics-42"
+      "id": "aics-43"
     },
     {
       "parameters": {
@@ -1397,7 +1431,7 @@
       ],
       "name": "Meta Purchase (CAPI)",
       "onError": "continueRegularOutput",
-      "id": "aics-43",
+      "id": "aics-44",
       "credentials": {
         "httpHeaderAuth": {
           "id": "tZrolZtseWagvc2W",
@@ -1438,7 +1472,7 @@
         -200
       ],
       "name": "Kirim Testimoni?",
-      "id": "aics-44"
+      "id": "aics-45"
     },
     {
       "parameters": {
@@ -1451,7 +1485,7 @@
         -200
       ],
       "name": "Pecah Testimoni",
-      "id": "aics-45"
+      "id": "aics-46"
     },
     {
       "parameters": {
@@ -1493,7 +1527,7 @@
       ],
       "name": "Kirim Gambar",
       "onError": "continueRegularOutput",
-      "id": "aics-46",
+      "id": "aics-47",
       "credentials": {
         "httpHeaderAuth": {
           "id": "nACcE3iy140ThXzw",
@@ -1648,7 +1682,7 @@
         0
       ],
       "name": "Simpan Histori",
-      "id": "aics-47"
+      "id": "aics-48"
     }
   ],
   "pinData": {},
@@ -2060,6 +2094,17 @@
       ]
     },
     "COD?": {
+      "main": [
+        [
+          {
+            "node": "Scalev Info Kurir",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scalev Info Kurir": {
       "main": [
         [
           {

@@ -304,6 +304,8 @@ test('COD: generate resi (AWB) sekali + notif resi; transfer tidak; tidak pernah
   assert.strictEqual(awb.length, 1);
   assert.deepStrictEqual(awb[0].body, { ids: ['uuid-1'] });
   assert.ok(r.req('Notif Resi'));
+  assert.strictEqual(r.req('Scalev Info Kurir').url, 'https://api.scalev.com/v3/orders/uuid-1/shipment');
+  assert.strictEqual(r.req('Scalev Info Kurir').body.courier_additional_info, '2 salepglowing, sunscreen, eyeliner, COD, 155.530');
   assert.ok(r.requests.every((q) => !q.url || !/pickup/i.test(q.url)));
   const urls = mainWf().nodes.map((n) => n.parameters.url).filter(Boolean);
   assert.ok(urls.every((u) => !/pickup/i.test(u)));
