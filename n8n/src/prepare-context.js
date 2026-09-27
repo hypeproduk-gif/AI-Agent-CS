@@ -109,6 +109,14 @@ function isPaused(row, now = Date.now()) {
   return !Number.isNaN(at) && now - at < HANDOFF_PAUSE_MINUTES * 60000;
 }
 
+// Pesan bot terakhir (sebelum pesan lead ini) berisi ringkasan order.
+function summaryWasSent(history) {
+  for (let i = history.length - 2; i >= 0; i--) {
+    if (history[i].role === 'assistant') return /ringkasan order|total bayar/i.test(history[i].content);
+  }
+  return false;
+}
+
 function prepareContext(body, row) {
   const incoming = normalizeIncoming(body);
 
@@ -146,6 +154,8 @@ function prepareContext(body, row) {
     isClosing: isClosingMessage(incoming),
     lastOrder,
     lastOrderId: (row && row.last_order_id) || '',
+    // Order hanya boleh dibuat setelah bot mengirim ringkasan dan lead membalasnya.
+    summarySent: summaryWasSent(history),
     patchId,
     isRevision: Boolean(patchId && lastOrder),
     // Lead baru: langsung dicatat di Scalev sebagai order berisi nama + nomor WA.

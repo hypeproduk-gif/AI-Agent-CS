@@ -138,7 +138,7 @@ test('LP attribution workflow: validasi ref & ambil IP', () => {
 const { simulate } = require('./simulate');
 const mainWf = () => JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'ai-agent-cs.workflow.json'), 'utf8'));
 
-const SALGLOW_ROW = { phone: '6281', active_product: 'SalGlow', history: '[]' };
+const SALGLOW_ROW = { phone: '6281', active_product: 'SalGlow', history: JSON.stringify([{ role: 'user', content: 'data saya ...' }, { role: 'assistant', content: 'Baik kak, berikut ringkasan ordernya ya ... Total bayar: Rp145.000. Sudah benar kak? saya proses ya' }]) };
 const LOCATIONS = { data: [
   { id: 11, subdistrict_name: 'Wonokromo', city_name: 'Kota Surabaya', province_name: 'Jawa Timur', display: 'Wonokromo, Kota Surabaya, Jawa Timur' },
   { id: 12, subdistrict_name: 'Wonokromo', city_name: 'Kab. Bantul', province_name: 'DIY', display: 'Wonokromo, Kab. Bantul, DIY' },
@@ -713,5 +713,12 @@ test('order lama (> 6 jam) -> order baru, bukan PATCH', () => {
 test('prompt: kandungan & rekening transfer', () => {
   const sys = prepareContext({ phone: '1', message: 'isinya apa' }, null).requestBody.system;
   for (const k of ['Niacinamide', 'Alpha Arbutin', 'Vitamin A', 'BCA 3890171132', 'Mandiri 1780000592416', 'BRI 657301021749531', 'BNI 0903702142', 'a.n N Hamidah', 'REVISI ORDER']) assert.ok(sys.includes(k), k);
+});
+test('buat_order tanpa ringkasan sebelumnya ditolak (lead harus konfirmasi dulu)', () => {
+  const row = { ...SALGLOW_ROW, history: JSON.stringify([{ role: 'user', content: 'mau B1G1' }, { role: 'assistant', content: 'Lengkapi data order dulu ya kak' }]) };
+  const r = scenario({ message: 'midha, modern 129, rumah pojok, gununganyar tambak, gununganyar, 60293, surabaya, transfer', row,
+    first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'transfer', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'Midha', alamat: 'Modern 129', kelurahan: 'Jagir', patokan: 'rumah pojok' }) });
+  assert.strictEqual(r.req('Scalev Buat Order'), undefined);
+  assert.ok(r.toolResults[0].error.includes('ringkasan order'));
 });
 console.log(`${passed} tes lulus (final)`);

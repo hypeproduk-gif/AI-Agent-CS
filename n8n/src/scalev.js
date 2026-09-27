@@ -40,6 +40,9 @@ function startTool(toolUse, ctx) {
       return { ...base, ok: false, error: `Alamat belum lengkap: ${missing.join(', ')}. Minta lead melengkapi dulu, JANGAN buat order.` };
     }
   }
+  if (toolUse.name === 'buat_order' && ctx.summarySent === false) {
+    return { ...base, ok: false, error: 'JANGAN buat order dulu. Panggil cek_ongkir, lalu kirim ringkasan order lengkap (paket, nama, alamat, kel/kec/kota + kode pos, pembayaran, ongkir, total bayar) dan tunggu lead konfirmasi.' };
+  }
   // Order baru-baru ini tanpa id Scalev (data lama) tidak bisa direvisi otomatis -> cegah order dobel.
   if (toolUse.name === 'buat_order' && ctx.lastOrder && !ctx.patchId) {
     return { ...base, ok: false, error: `Lead ini sudah punya order ${ctx.lastOrder} dalam ${SCALEV.duplicateOrderHours} jam terakhir. Jangan buat order baru; bilang 'saya tanyakan ke atasan saya dulu ya kak' kalau lead mau mengubah order. [HANDOFF]` };
