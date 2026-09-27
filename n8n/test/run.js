@@ -227,7 +227,7 @@ test('simulasi: buat order transfer → payload Scalev benar & tersimpan', () =>
   assert.strictEqual(body.customer_phone, '6281');
   assert.strictEqual(body.other_income, undefined);
   assert.strictEqual(body.notes, '4 salepglowing, sunscreen, eyeliner, TRANSFER, 231.000');
-  assert.strictEqual(body.customer_name, '[TEST AI] Sari');
+  assert.strictEqual(body.customer_name, 'Sari');
   assert.strictEqual(body.metadata.ref, 'SG-ABCDE');
   assert.strictEqual(r.toolResults[0].link_pembayaran, undefined); // transfer pakai template rekening
   assert.strictEqual(r.req('Simpan Histori').body.last_order_id, 'SV123');
@@ -656,7 +656,7 @@ test('lead baru: order Scalev berisi nama + nomor WA, id disimpan', () => {
   const lead = r.req('Scalev Lead Order');
   assert.strictEqual(lead.url, 'https://api.scalev.com/v3/orders');
   assert.deepStrictEqual(Object.keys(lead.body).sort(), ['customer_name', 'customer_phone', 'notes', 'store_unique_id']);
-  assert.strictEqual(lead.body.customer_name, '[TEST AI] Sari');
+  assert.strictEqual(lead.body.customer_name, 'Sari');
   assert.strictEqual(lead.body.customer_phone, '6281');
   assert.deepStrictEqual(r.req('Scalev Status Draft').body, { ids: ['lead-uuid'], status: 'draft' });
   assert.ok(r.req('Claude').body.messages, 'Claude tetap dapat requestBody');
