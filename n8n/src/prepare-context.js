@@ -117,6 +117,16 @@ function summaryWasSent(history) {
   return false;
 }
 
+// "Total bayar: Rp149.500" di ringkasan terakhir bot -> 149500 (untuk dicocokkan dengan hitungan sistem).
+function summaryTotal(history) {
+  for (let i = history.length - 2; i >= 0; i--) {
+    if (history[i].role !== 'assistant') continue;
+    const m = String(history[i].content).match(/total bayar\W*rp\s*([\d.,]+)/i);
+    return m ? Number(m[1].replace(/[.,]/g, '')) : null;
+  }
+  return null;
+}
+
 // Lead menyetujui ringkasan order ("ok", "iya betul", "sip proses", ...).
 const AGREE_PATTERN = /^\s*(ok(e|ey|ee)?|oke+|iya+|iy|ya+|yup|sip+|siap|betul|benar|bener|lanjut|proses|gas+|boleh|setuju|deal|mantap)\b[^?]{0,40}$/i;
 
@@ -146,7 +156,7 @@ function prepareContext(body, row) {
   let system = buildSystemPrompt(product);
   if (tools) system += ' ' + ORDER_RULE;
   if (tools && lastOrder) {
-    system += ` KONTEKS ORDER: lead ini sudah punya order ${lastOrder} dalam ${SCALEV.duplicateOrderHours} jam terakhir. Kalau lead ingin order/ubah order, sebelum buat_order tanyakan dulu: 'Ini mau ganti order yang tadi, atau tambah order baru kak?' lalu isi jenis_order sesuai jawabannya.`;
+    system += ` KONTEKS ORDER: lead ini sudah punya order ${lastOrder} dalam ${SCALEV.duplicateOrderHours} jam terakhir. Kalau lead ingin order/ubah order, sebelum buat_order tanyakan dulu: 'Ini mau ganti order yang tadi, atau tambah order baru kak?' lalu isi jenis_order sesuai jawabannya. Kalau lead jelas minta mengubah order tadi (mis. 'ganti cod aja', 'ganti alamat', 'jadi 2 paket'), itu 'revisi' tanpa perlu bertanya.`;
   }
   if (switchedFrom) {
     system += ` KONTEKS: Lead baru saja pindah topik dari ${switchedFrom} ke ${product}. Jawab tentang ${product}; jangan lanjut menawarkan ${switchedFrom} kecuali lead menanyakannya lagi.`;
@@ -164,6 +174,7 @@ function prepareContext(body, row) {
     lastOrderId: (row && row.last_order_id) || '',
     // Order hanya boleh dibuat setelah bot mengirim ringkasan dan lead membalasnya.
     summarySent: summaryWasSent(history),
+    summaryTotal: summaryTotal(history),
     patchId,
     isRevision: Boolean(patchId && !leadOrderId),
     // Lead baru: langsung dicatat di Scalev sebagai order berisi nama + nomor WA.

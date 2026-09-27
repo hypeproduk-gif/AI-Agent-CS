@@ -138,7 +138,7 @@ test('LP attribution workflow: validasi ref & ambil IP', () => {
 const { simulate } = require('./simulate');
 const mainWf = () => JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'ai-agent-cs.workflow.json'), 'utf8'));
 
-const SALGLOW_ROW = { phone: '6281', active_product: 'SalGlow', history: JSON.stringify([{ role: 'user', content: 'data saya ...' }, { role: 'assistant', content: 'Baik kak, berikut ringkasan ordernya ya ... Total bayar: Rp145.000. Sudah benar kak? saya proses ya' }]) };
+const SALGLOW_ROW = { phone: '6281', active_product: 'SalGlow', history: JSON.stringify([{ role: 'user', content: 'data saya ...' }, { role: 'assistant', content: 'Baik kak, berikut ringkasan ordernya ya ... Total bayar sesuai di atas. Sudah benar kak? saya proses ya' }]) };
 const LOCATIONS = { data: [
   { id: 11, subdistrict_name: 'Wonokromo', city_name: 'Kota Surabaya', province_name: 'Jawa Timur', display: 'Wonokromo, Kota Surabaya, Jawa Timur' },
   { id: 12, subdistrict_name: 'Wonokromo', city_name: 'Kab. Bantul', province_name: 'DIY', display: 'Wonokromo, Kab. Bantul, DIY' },
@@ -770,5 +770,15 @@ test('setelah ringkasan + lead bilang ok: tool_choice any; klaim order tanpa too
   const r = scenario({ message: 'ok', first: text('Siap kak.. orderan kakak sudah saya masukkan ke prioritas pengiriman hari ini..') });
   assert.ok(r.req('Kirim WhatsApp').body.message.startsWith('Bentar ya kak'));
   assert.ok(r.req('Telegram Admin').body.includes('BOT ERROR'));
+});
+test('total di ringkasan beda dengan hitungan sistem -> order tidak dibuat, minta ringkasan ulang', () => {
+  const row = { ...SALGLOW_ROW, history: JSON.stringify([{ role: 'user', content: 'ganti cod' }, { role: 'assistant', content: 'Berikut ringkasan ordernya ...\nTotal bayar: Rp145.000\n\nSudah benar kak?' }]) };
+  const r = scenario({ message: 'ok', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod' }) });
+  assert.strictEqual(r.req('Scalev Buat Order'), undefined);
+  assert.ok(r.toolResults[0].error.includes('Rp145.000'));
+  const good = { ...SALGLOW_ROW, history: JSON.stringify([{ role: 'user', content: 'cod' }, { role: 'assistant', content: 'ringkasan order\nTotal bayar: Rp156.000\nSudah benar kak?' }]) };
+  const ok = scenario({ message: 'ok', row: good, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod' }) });
+  assert.ok(ok.req('Scalev Buat Order'));
+  assert.ok(ok.req('Telegram Admin').body.includes('Nama: Sari'));
 });
 console.log(`${passed} tes lulus (final)`);

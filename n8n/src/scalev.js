@@ -162,6 +162,13 @@ function pickCourier(state, response) {
   };
 }
 
+// Total di ringkasan yang disetujui lead harus sama dengan hitungan sistem (mis. ganti transfer -> COD menambah biaya COD).
+function checkSummaryTotal(state, ctx) {
+  if (!state.ok || state.tool !== 'buat_order' || !ctx.summaryTotal) return state;
+  if (ctx.summaryTotal === state.totals.total) return state;
+  return { ...state, ok: false, error: `Total di ringkasan (${rupiah(ctx.summaryTotal)}) tidak sama dengan total sebenarnya ${rupiah(state.totals.total)} (ongkir ${rupiah(state.totals.shipping)}). JANGAN buat order. Kirim ulang ringkasan dengan Total bayar ${rupiah(state.totals.total)} dan minta lead konfirmasi lagi.` };
+}
+
 // Catatan order Scalev (dipakai juga sebagai instruksi pengiriman), contoh: "2 salepglowing, sunscreen, eyeliner, COD, 149.350".
 function orderNotes(state) {
   const method = state.input.pembayaran === 'cod' ? 'COD' : 'TRANSFER';

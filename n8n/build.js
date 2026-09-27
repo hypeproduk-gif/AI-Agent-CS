@@ -93,7 +93,7 @@ const warehouseCode = toolCode(`const state = pickWarehouse($('Pilih Kode Pos').
 return [{ json: { ...state, next: state.ok ? courierRequest(state) : null } }];`);
 
 const courierCode = toolCode(`const ctx = $('Siapkan Konteks').first().json;
-const state = pickCourier($('Pilih Gudang').first().json, $input.first().json);
+const state = checkSummaryTotal(pickCourier($('Pilih Gudang').first().json, $input.first().json), ctx);
 const wantsOrder = state.ok && state.tool === 'buat_order';
 return [{ json: { ...state, createOrder: wantsOrder, next: wantsOrder ? orderRequest(state, ctx) : null } }];`);
 
@@ -306,7 +306,7 @@ const nodes = [
     chatId: TELEGRAM_CHAT_ID,
     text: "={{ $json.order ? ($json.order.revision ? '✏️ *ORDER DIREVISI DI SCALEV*' : '🛒 *ORDER FIX MASUK SCALEV*') : ($json.apiError ? '⚠️ *BOT ERROR*' : ($json.needsHuman ? '🟠 *BUTUH CS MANUSIA*' : '🔵 *PERTANYAAN UNTUK ADMIN* (bot tetap lanjut)')) }}\n\n" +
       "{{ $json.order ? '🧾 Order: ' + $json.orderText + '\\n📦 Packing: ' + $json.order.packing + '\\n' : '' }}" +
-      '📱 Nomor: {{ $json.phone }}\n👤 Nama: {{ $json.name }}\n🛍️ Produk: {{ $json.active_product }}\n🔗 Ref LP: {{ $json.ref || \'-\' }}\n' +
+      '📱 Nomor: {{ $json.phone }}\n👤 Nama: {{ $json.order ? $json.order.name : $json.name }}\n🛍️ Produk: {{ $json.active_product }}\n🔗 Ref LP: {{ $json.ref || \'-\' }}\n' +
       '💬 Chat Terakhir: {{ $json.incoming }}\n🤖 Balasan AI: {{ $json.reply }}' +
       "{{ $json.apiError ? '\\n⚠️ Error API: ' + $json.apiError : '' }}" +
       "{{ $json.pauseBot ? '\\n\\nBot dijeda 30 menit untuk nomor ini, lalu aktif lagi otomatis. Untuk aktifkan lebih cepat: set kolom handoff = false di leads_context.' : '' }}",
