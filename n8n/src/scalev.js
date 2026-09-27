@@ -44,7 +44,10 @@ function startTool(toolUse, ctx) {
     return { ...base, ok: false, error: 'JANGAN buat order dulu. Panggil cek_ongkir, lalu kirim ringkasan order lengkap (paket, nama, alamat, kel/kec/kota + kode pos, pembayaran, ongkir, total bayar) dan tunggu lead konfirmasi.' };
   }
   // Sudah ada order < 6 jam: lead harus memilih revisi order itu atau order baru.
-  const jenis = input.jenis_order;
+  let jenis = input.jenis_order;
+  // Lead bilang "ganti/ubah ..." tanpa menyebut order baru/tambah -> pasti revisi, apa pun tebakan Claude.
+  const said = String(ctx.recentUserText || '').toLowerCase();
+  if (ctx.lastOrder && /\b(ganti|ubah|revisi|diganti|diubah)\b/.test(said) && !/\b(tambah|order baru|pesan lagi|order lagi|beli lagi)\b/.test(said)) jenis = 'revisi';
   if (toolUse.name === 'buat_order' && ctx.lastOrder && jenis !== 'baru' && jenis !== 'revisi') {
     return { ...base, ok: false, error: `Lead sudah punya order ${ctx.lastOrder} beberapa jam lalu. JANGAN buat order dulu. Tanyakan: 'Ini mau ganti order yang tadi, atau tambah order baru kak?' lalu panggil buat_order lagi dengan jenis_order 'revisi' atau 'baru'.` };
   }

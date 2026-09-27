@@ -175,6 +175,7 @@ function prepareContext(body, row) {
     // Order hanya boleh dibuat setelah bot mengirim ringkasan dan lead membalasnya.
     summarySent: summaryWasSent(history),
     summaryTotal: summaryTotal(history),
+    recentUserText: history.filter((m) => m.role === 'user').slice(-3).map((m) => m.content).join(' \n '),
     patchId,
     isRevision: Boolean(patchId && !leadOrderId),
     // Lead baru: langsung dicatat di Scalev sebagai order berisi nama + nomor WA.

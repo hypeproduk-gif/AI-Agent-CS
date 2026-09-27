@@ -781,4 +781,12 @@ test('total di ringkasan beda dengan hitungan sistem -> order tidak dibuat, mint
   assert.ok(ok.req('Scalev Buat Order'));
   assert.ok(ok.req('Telegram Admin').body.includes('Nama: Sari'));
 });
+test('lead bilang "ganti cod aja" -> revisi walau Claude isi jenis_order baru', () => {
+  const row = { ...SALGLOW_ROW, scalev_id: 'uuid-1', last_order_id: 'SV123', last_order_at: new Date(Date.now() - 120000).toISOString(),
+    history: JSON.stringify([{ role: 'user', content: 'eh ganti cod aja deh' }, { role: 'assistant', content: 'ringkasan order\nTotal bayar sesuai\nSudah benar kak?' }]) };
+  const r = scenario({ message: 'ok', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod', jenis_order: 'baru' }) });
+  assert.strictEqual(r.req('Scalev Buat Order'), undefined);
+  assert.strictEqual(r.req('Scalev Update Order').url, 'https://api.scalev.com/v3/orders/uuid-1');
+  assert.ok(r.req('Telegram Admin').body.includes('ORDER DIREVISI'));
+});
 console.log(`${passed} tes lulus (final)`);
