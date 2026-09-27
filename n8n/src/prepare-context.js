@@ -5,6 +5,8 @@ const MAX_HISTORY = 20;
 const MODEL = 'claude-haiku-4-5-20251001';
 const MAX_TOKENS = 500;
 const HANDOFF_PAUSE_MINUTES = 30; // setelah ini bot aktif lagi otomatis
+// Nomor yang tidak pernah dibalas bot (mis. nomor notifikasi Scalev).
+const BLOCKED_PHONES = ['6282125784683'];
 
 const PRODUCT_PATTERNS = [
   ['KitJelangNikah', /\b(nikah|menikah|pernikahan|wedding|kit jelang nikah|kitjelangnikah)\b/i],
@@ -131,6 +133,8 @@ function summaryTotal(history) {
 const AGREE_PATTERN = /^\s*(ok(e|ey|ee)?|oke+|iya+|iy|ya+|yup|sip+|siap|betul|benar|bener|lanjut|proses|gas+|boleh|setuju|deal|mantap)\b[^?]{0,40}$/i;
 
 function prepareContext(body, row) {
+  const digits = String(body.phone || '').replace(/\D/g, '').replace(/^0/, '62');
+  if (BLOCKED_PHONES.includes(digits)) return null;
   const incoming = normalizeIncoming(body);
 
   // Saat dijeda bot tidak membalas, tapi pesan lead tetap dicatat supaya

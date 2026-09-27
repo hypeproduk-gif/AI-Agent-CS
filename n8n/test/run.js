@@ -856,4 +856,10 @@ test('laporan singkat 9/13/18: lead, closing, pending + alasan', () => {
   assert.strictEqual(wf.nodes.find((n) => n.name === 'Jam 9, 13, 18').parameters.rule.interval[0].expression, '0 9,13,18 * * *');
   assert.strictEqual(wf.nodes.find((n) => n.name === 'Alasan Pending').credentials.httpHeaderAuth.name, 'Anthropic API');
 });
+test('nomor diblokir (Scalev FU) tidak dibalas & tidak disimpan', () => {
+  assert.strictEqual(prepareContext({ phone: '6282125784683', message: 'Halo, pesanan Anda...' }, null), null);
+  assert.strictEqual(prepareContext({ phone: '082125784683', message: 'x' }, null), null);
+  const r = scenario({ message: 'x', row: null, first: text('Halo') });
+  assert.ok(r.req('Kirim WhatsApp'));
+});
 console.log(`${passed} tes lulus (final)`);
