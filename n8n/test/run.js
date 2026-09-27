@@ -560,7 +560,7 @@ test('closing: order dicatat & Purchase CAPI dikirim dengan fbc/fbp/IP/UA dari L
   assert.strictEqual(log.price, '139000');
   assert.strictEqual(log.method, 'cod');
   const capi = find('Meta Purchase (CAPI)');
-  assert.strictEqual(capi.url, 'https://graph.facebook.com/v21.0/ISI_PIXEL_ID/events');
+  assert.strictEqual(capi.url, 'https://graph.facebook.com/v21.0/995011355669071/events');
   const ev = capi.body.data[0];
   const sha = (v) => require('crypto').createHash('sha256').update(v).digest('hex');
   assert.strictEqual(ev.event_name, 'Purchase');

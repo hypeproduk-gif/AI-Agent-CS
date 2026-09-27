@@ -1,7 +1,7 @@
 // Event Purchase langsung ke Meta Conversions API (graph.facebook.com/{pixel}/events),
 // tidak tergantung domain/store Scalev. Token disimpan di credential n8n "Meta CAPI" (query access_token).
 
-const META_PIXEL_ID = 'ISI_PIXEL_ID'; // ganti dengan Pixel/Dataset ID Meta
+const META_PIXEL_ID = '995011355669071'; // ganti dengan Pixel/Dataset ID Meta
 const META_API_VERSION = 'v21.0';
 
 function normalizePhone(phone) {
