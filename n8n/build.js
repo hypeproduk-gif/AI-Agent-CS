@@ -298,7 +298,7 @@ const nodes = [
   node('Telegram Admin', 'n8n-nodes-base.telegram', 1.2, 3800, {
     chatId: TELEGRAM_CHAT_ID,
     text: "={{ $json.order ? ($json.order.revision ? '✏️ *ORDER DIREVISI DI SCALEV*' : '🛒 *ORDER FIX MASUK SCALEV*') : ($json.apiError ? '⚠️ *BOT ERROR*' : ($json.needsHuman ? '🟠 *BUTUH CS MANUSIA*' : '🔵 *PERTANYAAN UNTUK ADMIN* (bot tetap lanjut)')) }}\n\n" +
-      "{{ $json.order ? '🧾 Order: ' + $json.orderText + '\\n' : '' }}" +
+      "{{ $json.order ? '🧾 Order: ' + $json.orderText + '\\n📦 Packing: ' + $json.order.packing + '\\n' : '' }}" +
       '📱 Nomor: {{ $json.phone }}\n👤 Nama: {{ $json.name }}\n🛍️ Produk: {{ $json.active_product }}\n🔗 Ref LP: {{ $json.ref || \'-\' }}\n' +
       '💬 Chat Terakhir: {{ $json.incoming }}\n🤖 Balasan AI: {{ $json.reply }}' +
       "{{ $json.apiError ? '\\n⚠️ Error API: ' + $json.apiError : '' }}" +

@@ -233,6 +233,7 @@ test('simulasi: buat order transfer → payload Scalev benar & tersimpan', () =>
   assert.strictEqual(r.req('Simpan Histori').body.last_order_id, 'SV123');
   assert.ok(r.req('Telegram Admin').body.includes('ORDER FIX MASUK SCALEV'));
   assert.ok(r.req('Telegram Admin').body.includes('SV123 (Transfer, Rp231.000)'));
+  assert.ok(r.req('Telegram Admin').body.includes('📦 Packing: 4 salepglowing, sunscreen, eyeliner, TRANSFER, 231.000'));
 });
 
 test('simulasi: order COD menambah other_income 3%', () => {

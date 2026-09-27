@@ -226,6 +226,7 @@ function toolResult(state, orderResponse) {
           method: state.input.pembayaran,
           paket: state.input.paket,
           note: state.pkg.note || state.pkg.label,
+          packing: orderNotes(state),
           variants: state.pkg.items.map((it) => ({ variant_unique_id: it.variantUniqueId, quantity: it.qty })),
           name: state.input.nama,
           city: state.location.city_name || '',
