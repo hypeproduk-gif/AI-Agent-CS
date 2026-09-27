@@ -31,6 +31,7 @@ function orderTools(product) {
           nama: { type: 'string', description: 'Nama penerima' },
           alamat: { type: 'string', description: 'Nama jalan/gang/dusun + nomor rumah + RT/RW, contoh "Jl. Jagir Sidomukti Gg. 3 No. 12 RT 02/RW 05"' },
           patokan: { type: 'string', description: 'Patokan/ancer-ancer rumah, contoh "depan masjid Al Ikhlas, pagar hijau"' },
+          jenis_order: { type: 'string', enum: ['baru', 'revisi'], description: "Hanya kalau lead sudah punya order beberapa jam terakhir: 'revisi' = ganti order sebelumnya, 'baru' = tambah order baru. Tanyakan ke lead dulu." },
         },
         required: ['paket', 'pembayaran', 'kelurahan', 'kecamatan', 'kota', 'nama', 'alamat', 'patokan'],
       },

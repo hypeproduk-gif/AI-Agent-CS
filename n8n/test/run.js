@@ -709,7 +709,7 @@ test('order dari lead: PATCH order lead, notif ORDER FIX + CAPI', () => {
 
 test('revisi transfer -> COD: PATCH order yang sama, notif REVISI, tanpa CAPI dobel', () => {
   const row = { ...SALGLOW_ROW, scalev_id: 'uuid-1', last_order_id: 'SV123', last_order_at: new Date(Date.now() - 3600000).toISOString() };
-  const r = scenario({ message: 'kak ganti cod aja', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod' }) });
+  const r = scenario({ message: 'kak ganti cod aja', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod', jenis_order: 'revisi' }) });
   const up = r.req('Scalev Update Order');
   assert.strictEqual(up.url, 'https://api.scalev.com/v3/orders/uuid-1');
   assert.deepStrictEqual(r.req('Scalev Batal Resi').body, { ids: ['uuid-1'] }); // resi lama dibatalkan dulu
@@ -722,7 +722,18 @@ test('revisi transfer -> COD: PATCH order yang sama, notif REVISI, tanpa CAPI do
   assert.strictEqual(r.req('Catat Order').body.order_id, 'SV123');
   assert.strictEqual(r.req('Meta Purchase (CAPI)'), undefined);
   // COD -> transfer: biaya COD dihapus
-  const back = scenario({ message: 'transfer aja deh', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'transfer' }) });
+  const back = scenario({ message: 'transfer aja deh', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'transfer', jenis_order: 'revisi' }) });
+  // Belum jelas revisi/baru -> AI wajib tanya dulu
+  const ask = scenario({ message: 'mau order 2 paket', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod' }) });
+  assert.strictEqual(ask.req('Scalev Update Order'), undefined);
+  assert.strictEqual(ask.req('Scalev Buat Order'), undefined);
+  assert.ok(ask.toolResults[0].error.includes('tambah order baru'));
+  assert.ok(ask.req('Claude').body.system.includes('KONTEKS ORDER'));
+  // Order baru -> POST, order lama tidak diubah
+  const baru = scenario({ message: 'order baru kak', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod', jenis_order: 'baru' }) });
+  assert.strictEqual(baru.req('Scalev Update Order'), undefined);
+  assert.ok(baru.req('Scalev Buat Order'));
+  assert.ok(baru.req('Telegram Admin').body.includes('ORDER FIX MASUK SCALEV'));
   assert.strictEqual(back.req('Scalev Update Order').body.other_income, 0);
 });
 
