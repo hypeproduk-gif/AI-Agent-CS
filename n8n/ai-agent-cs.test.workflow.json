@@ -1090,7 +1090,8 @@
             "price": "={{ String($json.order.price) }}",
             "total": "={{ String($json.order.total) }}",
             "ref": "={{ $json.ref }}",
-            "created_at": "={{ new Date().toISOString() }}"
+            "created_at": "={{ new Date().toISOString() }}",
+            "scalev_id": "={{ $json.order.id }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -1173,6 +1174,16 @@
               "type": "string",
               "readOnly": false,
               "removed": false
+            },
+            {
+              "id": "scalev_id",
+              "displayName": "scalev_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
             }
           ],
           "attemptToConvertTypes": false,
@@ -1189,133 +1200,6 @@
       "name": "Catat Order",
       "onError": "continueRegularOutput",
       "id": "aics-test-36"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "COD?",
-              "leftValue": "={{ $('Olah Balasan').item.json.order.method === 'cod' }}",
-              "rightValue": true,
-              "operator": {
-                "type": "boolean",
-                "operation": "true",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "looseTypeValidation": true,
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        5060,
-        -800
-      ],
-      "name": "COD?",
-      "id": "aics-test-37"
-    },
-    {
-      "parameters": {
-        "method": "PATCH",
-        "url": "=https://api.scalev.com/v3/orders/{{ $('Olah Balasan').item.json.order.id }}/shipment",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ courier_additional_info: $('Olah Balasan').item.json.order.packing }) }}",
-        "options": {
-          "response": {
-            "response": {
-              "neverError": true
-            }
-          },
-          "timeout": 20000
-        }
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.5,
-      "position": [
-        5280,
-        -800
-      ],
-      "name": "Scalev Info Kurir",
-      "onError": "continueRegularOutput",
-      "id": "aics-test-38",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
-          "name": "Scalev"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.scalev.com/v3/orders/generate-awb",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ ids: [$('Olah Balasan').item.json.order.id] }) }}",
-        "options": {
-          "response": {
-            "response": {
-              "neverError": true
-            }
-          },
-          "timeout": 20000
-        }
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.5,
-      "position": [
-        5500,
-        -800
-      ],
-      "name": "Scalev Generate Resi",
-      "onError": "continueRegularOutput",
-      "id": "aics-test-39",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
-          "name": "Scalev"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "chatId": "-5439732568",
-        "text": "={{ (() => { const o = $('Olah Balasan').item.json.order; const r = $json || {}; const d = r.data || r; const ok = d.successes && Object.values(d.successes)[0]; const fail = d.failures && Object.values(d.failures)[0]; return ok ? '🧾 *RESI TERBIT*\\nOrder: ' + o.orderId + '\\nResi: ' + ok + '\\n\\nLabel PDF 100x150: cetak dari Scalev/Mengantar.' : '⚠️ *RESI GAGAL DIBUAT*\\nOrder: ' + o.orderId + '\\nAlasan: ' + (fail || r.message || JSON.stringify(r).slice(0, 300)) + '\\nBuat resi manual di Scalev.'; })() }}",
-        "additionalFields": {
-          "appendAttribution": false
-        }
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        5720,
-        -800
-      ],
-      "name": "Notif Resi",
-      "onError": "continueRegularOutput",
-      "id": "aics-test-40",
-      "credentials": {
-        "telegramApi": {
-          "id": "GvWCKSvWULLSOTrP",
-          "name": "Telegram account"
-        }
-      }
     },
     {
       "parameters": {
@@ -1350,7 +1234,7 @@
         -600
       ],
       "name": "Order Pertama?",
-      "id": "aics-test-41"
+      "id": "aics-test-37"
     },
     {
       "parameters": {
@@ -1380,7 +1264,7 @@
       "name": "Cari Atribusi",
       "alwaysOutputData": true,
       "onError": "continueRegularOutput",
-      "id": "aics-test-42"
+      "id": "aics-test-38"
     },
     {
       "parameters": {
@@ -1393,7 +1277,7 @@
         -600
       ],
       "name": "Siapkan CAPI",
-      "id": "aics-test-43"
+      "id": "aics-test-39"
     },
     {
       "parameters": {
@@ -1431,7 +1315,7 @@
       ],
       "name": "Meta Purchase (CAPI)",
       "onError": "continueRegularOutput",
-      "id": "aics-test-44",
+      "id": "aics-test-40",
       "credentials": {
         "httpHeaderAuth": {
           "id": "tZrolZtseWagvc2W",
@@ -1472,7 +1356,7 @@
         -200
       ],
       "name": "Kirim Testimoni?",
-      "id": "aics-test-45"
+      "id": "aics-test-41"
     },
     {
       "parameters": {
@@ -1485,7 +1369,7 @@
         -200
       ],
       "name": "Pecah Testimoni",
-      "id": "aics-test-46"
+      "id": "aics-test-42"
     },
     {
       "parameters": {
@@ -1527,7 +1411,7 @@
       ],
       "name": "Kirim Gambar",
       "onError": "continueRegularOutput",
-      "id": "aics-test-47",
+      "id": "aics-test-43",
       "credentials": {
         "httpHeaderAuth": {
           "id": "nACcE3iy140ThXzw",
@@ -1682,7 +1566,7 @@
         0
       ],
       "name": "Simpan Histori",
-      "id": "aics-test-48"
+      "id": "aics-test-44"
     }
   ],
   "pinData": {},
@@ -2083,47 +1967,9 @@
             "node": "Order Pertama?",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "COD?",
-            "type": "main",
-            "index": 0
           }
         ],
         []
-      ]
-    },
-    "COD?": {
-      "main": [
-        [
-          {
-            "node": "Scalev Info Kurir",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Scalev Info Kurir": {
-      "main": [
-        [
-          {
-            "node": "Scalev Generate Resi",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Scalev Generate Resi": {
-      "main": [
-        [
-          {
-            "node": "Notif Resi",
-            "type": "main",
-            "index": 0
-          }
-        ]
       ]
     },
     "Order Pertama?": {

@@ -297,21 +297,43 @@ test('workflow tes ongkir jalan dengan API tiruan & tidak membuat order', () => 
   assert.ok(!r.requests.some((q) => q.url && q.url.endsWith('/orders')));
   assert.deepStrictEqual(r.outputs['Hitung Ongkir'][0].totals, { price: 139000, shipping: 12000, codFee: 5000, total: 156000 });
 });
-test('COD: generate resi (AWB) sekali + notif resi; transfer tidak; tidak pernah request pickup', () => {
+test('order COD: tidak generate resi saat closing (batch harian), tidak pernah request pickup, scalev_id dicatat', () => {
   const r = scenario({ message: 'oke',
     first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'cod', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'Sa', alamat: 'Jl. Anggrek 7', kelurahan: 'Jagir', patokan: 'depan masjid' }) });
-  const awb = r.requests.filter((q) => q.url && /generate-awb/.test(q.url));
-  assert.strictEqual(awb.length, 1);
-  assert.deepStrictEqual(awb[0].body, { ids: ['uuid-1'] });
-  assert.ok(r.req('Notif Resi'));
-  assert.strictEqual(r.req('Scalev Info Kurir').url, 'https://api.scalev.com/v3/orders/uuid-1/shipment');
-  assert.strictEqual(r.req('Scalev Info Kurir').body.courier_additional_info, '2 salepglowing, sunscreen, eyeliner, COD, 156.000');
-  assert.ok(r.requests.every((q) => !q.url || !/pickup/i.test(q.url)));
+  assert.ok(r.requests.every((q) => !q.url || !/generate-awb|pickup/i.test(q.url)));
+  assert.strictEqual(r.req('Catat Order').body.scalev_id, 'uuid-1');
   const urls = mainWf().nodes.map((n) => n.parameters.url).filter(Boolean);
-  assert.ok(urls.every((u) => !/pickup/i.test(u)));
-  const t = scenario({ message: 'oke',
-    first: toolUse('buat_order', { paket: 'B1G1', pembayaran: 'transfer', kecamatan: 'Wonokromo', kota: 'Surabaya', nama: 'Sa', alamat: 'Jl. Anggrek 7', kelurahan: 'Jagir', patokan: 'depan masjid' }) });
-  assert.ok(t.requests.every((q) => !q.url || !/generate-awb/.test(q.url)));
+  assert.ok(urls.every((u) => !/pickup|generate-awb/i.test(u)));
+});
+
+test('batch resi harian: hanya order confirmed tanpa resi, isi paket di info kurir, 1 request generate', () => {
+  const wf = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'rekap-harian.workflow.json'), 'utf8'));
+  const code = (name) => wf.nodes.find((n) => n.name === name).parameters.jsCode;
+  const now = new Date().toISOString();
+  const rows = [
+    { order_id: 'A1', scalev_id: 'u1', paket: 'B1G1', method: 'cod', total: '149500', created_at: now },
+    { order_id: 'A2', scalev_id: 'u2', paket: 'B2G2', method: 'transfer', total: '225000', created_at: now },
+    { order_id: 'A3', scalev_id: 'u3', paket: 'B1G1', method: 'transfer', total: '145000', created_at: now },
+    { order_id: 'OLD', scalev_id: 'u4', paket: 'B1G1', method: 'cod', total: '1', created_at: '2020-01-01T00:00:00Z' },
+    { order_id: 'NOID', paket: 'B1G1', method: 'cod', total: '1', created_at: now },
+  ];
+  const outs = {};
+  const $ = (n) => ({ all: () => outs[n].map((json) => ({ json })) });
+  outs['Ambil Order'] = rows;
+  outs['Pilih Order Resi'] = new Function('$', code('Pilih Order Resi'))($).map((i) => i.json);
+  assert.deepStrictEqual(outs['Pilih Order Resi'].map((o) => o.order_id), ['A1', 'A2', 'A3']);
+  const cek = [{ data: { status: 'confirmed' } }, { status: 'confirmed', shipment_receipt: null }, { data: { status: 'pending' } }];
+  outs['Siap Resi'] = new Function('$', '$input', code('Siap Resi'))($, { all: () => cek.map((json) => ({ json })) }).map((i) => i.json);
+  assert.deepStrictEqual(outs['Siap Resi'].map((o) => o.order_id), ['A1', 'A2']);
+  assert.strictEqual(outs['Siap Resi'][0].packing, '2 salepglowing, sunscreen, eyeliner, COD, 149.500');
+  assert.strictEqual(outs['Siap Resi'][1].packing, '4 salepglowing, sunscreen, eyeliner, TRANSFER, 225.000');
+  const batch = new Function('$', code('Gabung Batch'))($);
+  assert.deepStrictEqual(batch[0].json.ids, ['u1', 'u2']);
+  const rep = new Function('$', '$input', code('Susun Laporan Resi'))($, { first: () => ({ json: { successes: { u1: 'JT001' }, failures: { u2: 'saldo kurang' } } }) });
+  assert.ok(rep[0].json.text.includes('A1: JT001') && rep[0].json.text.includes('A2: saldo kurang'));
+  const gen = wf.nodes.find((n) => n.name === 'Generate Resi Batch');
+  assert.strictEqual(gen.parameters.url, 'https://api.scalev.com/v3/orders/generate-awb');
+  assert.strictEqual(gen.credentials.httpHeaderAuth.name, 'Scalev');
 });
 test('error API: notif admin, balasan cadangan, bot TIDAK dijeda', () => {
   const r = scenario({ message: 'halo', first: { type: 'error', error: { type: 'authentication_error', message: 'Invalid bearer token' } } });
@@ -693,7 +715,6 @@ test('revisi transfer -> COD: PATCH order yang sama, notif REVISI, tanpa CAPI do
   assert.deepStrictEqual(r.req('Scalev Batal Resi').body, { ids: ['uuid-1'] }); // resi lama dibatalkan dulu
   assert.strictEqual(up.body.payment_method, 'cod');
   assert.strictEqual(r.req('Scalev Status Order').body.status, 'confirmed');
-  assert.strictEqual(r.requests.findIndex((q) => q.node === 'Scalev Status Order') < r.requests.findIndex((q) => q.node === 'Scalev Generate Resi'), true);
   assert.ok(up.body.other_income > 0);
   assert.strictEqual(r.toolResults[0].revisi, true);
   assert.ok(r.req('Telegram Admin').body.includes('ORDER DIREVISI'));
