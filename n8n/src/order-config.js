@@ -35,6 +35,7 @@ const SCALEV = {
   courierPattern: /j\s*&?\s*t|jnt/i, // JNT (J&T Express)
   codFeeRate: 0.03, // 3% dari (harga produk + ongkir)
   codFeeName: 'Biaya COD 3%',
+  codRoundTo: 500, // total COD dibulatkan ke atas (Mengantar: 149.350 -> 149.500)
   duplicateOrderHours: 6, // cegah order dobel dari nomor yang sama
 };
 

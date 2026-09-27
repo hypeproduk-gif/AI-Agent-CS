@@ -206,7 +206,7 @@ test('simulasi: cek ongkir COD pilih JNT Mengantar + fee 3%', () => {
   assert.strictEqual(res.ok, true);
   assert.strictEqual(res.ongkir, 'Rp12.000');
   assert.strictEqual(res.biaya_cod, 'Rp4.530'); // 3% x 151.000
-  assert.strictEqual(res.total, 'Rp155.530');
+  assert.strictEqual(res.total, 'Rp156.000');
   assert.ok(!r.req('Scalev Buat Order'));
   assert.strictEqual(r.req('Kirim WhatsApp').body.message, 'Balasan akhir ke lead');
   const claude2 = r.req('Claude Lanjutan').body;
@@ -242,7 +242,7 @@ test('simulasi: order COD menambah other_income 3%', () => {
   const body = r.req('Scalev Buat Order').body;
   assert.strictEqual(body.payment_method, 'cod');
   assert.strictEqual(body.courier_service_id, 3);
-  assert.strictEqual(body.other_income, 4530);
+  assert.strictEqual(body.other_income, 5000);
   assert.strictEqual(body.other_income_name, 'Biaya COD 3%');
 });
 
@@ -295,7 +295,7 @@ test('workflow tes ongkir jalan dengan API tiruan & tidak membuat order', () => 
   wf.nodes.push({ name: 'Webhook', type: 'n8n-nodes-base.webhook', parameters: {} });
   const r = simulate(wf, { webhookBody: {}, row: null, http: (name) => ({ 'Scalev Lokasi': LOCATIONS, 'Scalev Gudang': WAREHOUSES, 'Scalev Kurir': COURIERS })[name] });
   assert.ok(!r.requests.some((q) => q.url && q.url.endsWith('/orders')));
-  assert.deepStrictEqual(r.outputs['Hitung Ongkir'][0].totals, { price: 139000, shipping: 12000, codFee: 4530, total: 155530 });
+  assert.deepStrictEqual(r.outputs['Hitung Ongkir'][0].totals, { price: 139000, shipping: 12000, codFee: 5000, total: 156000 });
 });
 test('COD: generate resi (AWB) sekali + notif resi; transfer tidak; tidak pernah request pickup', () => {
   const r = scenario({ message: 'oke',
@@ -305,7 +305,7 @@ test('COD: generate resi (AWB) sekali + notif resi; transfer tidak; tidak pernah
   assert.deepStrictEqual(awb[0].body, { ids: ['uuid-1'] });
   assert.ok(r.req('Notif Resi'));
   assert.strictEqual(r.req('Scalev Info Kurir').url, 'https://api.scalev.com/v3/orders/uuid-1/shipment');
-  assert.strictEqual(r.req('Scalev Info Kurir').body.courier_additional_info, '2 salepglowing, sunscreen, eyeliner, COD, 155.530');
+  assert.strictEqual(r.req('Scalev Info Kurir').body.courier_additional_info, '2 salepglowing, sunscreen, eyeliner, COD, 156.000');
   assert.ok(r.requests.every((q) => !q.url || !/pickup/i.test(q.url)));
   const urls = mainWf().nodes.map((n) => n.parameters.url).filter(Boolean);
   assert.ok(urls.every((u) => !/pickup/i.test(u)));
@@ -511,7 +511,7 @@ test('workflow TEST: webhook & store terpisah dari produksi', () => {
   const body = r.requests.find((q) => q.node === 'Scalev Buat Order').body;
   assert.strictEqual(body.store_unique_id, 'ISI_STORE_UNIQUE_ID_TES');
   assert.strictEqual(body.customer_name, '[TES BOT] Sa');
-  assert.strictEqual(body.notes, '2 salepglowing, sunscreen, eyeliner, COD, 155.530');
+  assert.strictEqual(body.notes, '2 salepglowing, sunscreen, eyeliner, COD, 156.000');
   assert.ok(r.requests.find((q) => q.node === 'Telegram Admin').body.startsWith('🧪 *[TES]*'));
 });
 const ATTR = { ref: 'SG-ABCDE', fbc: 'fb.1.1.abc', fbp: 'fb.1.2.xyz', client_ip: '1.2.3.4', user_agent: 'UA', landing_url: 'https://filomallbeauty.myscalev.com/salglow-test-ai?fbclid=abc' };
@@ -532,7 +532,7 @@ test('closing: order dicatat & Purchase CAPI dikirim dengan fbc/fbp/IP/UA dari L
   const find = (n) => r.requests.find((q) => q.node === n);
   const log = find('Catat Order').body;
   assert.strictEqual(log.order_id, 'SV900');
-  assert.strictEqual(log.total, '155530');
+  assert.strictEqual(log.total, '156000');
   assert.strictEqual(log.price, '139000');
   assert.strictEqual(log.method, 'cod');
   const capi = find('Meta Purchase (CAPI)');

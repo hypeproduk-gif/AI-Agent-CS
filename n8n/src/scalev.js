@@ -145,7 +145,8 @@ function pickCourier(state, response) {
   const svc = services[0];
   const price = state.pkg.price;
   const shipping = svc.cost;
-  const codFee = isCod ? Math.ceil((price + shipping) * SCALEV.codFeeRate) : 0;
+  // Nilai COD di ekspedisi dibulatkan ke atas kelipatan Rp500 -> total ke lead disamakan.
+  const codFee = isCod ? Math.ceil((price + shipping) * (1 + SCALEV.codFeeRate) / SCALEV.codRoundTo) * SCALEV.codRoundTo - (price + shipping) : 0;
   return {
     ...state,
     courier: { id: svc.courier_service.id, name: `${svc.courier_service.courier.name} ${svc.courier_service.name}`, etd: svc.etd },
