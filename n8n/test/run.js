@@ -231,7 +231,8 @@ test('simulasi: buat order transfer → payload Scalev benar & tersimpan', () =>
   assert.strictEqual(body.metadata.ref, 'SG-ABCDE');
   assert.strictEqual(r.toolResults[0].link_pembayaran, undefined); // transfer pakai template rekening
   assert.strictEqual(r.req('Simpan Histori').body.last_order_id, 'SV123');
-  assert.ok(r.req('Telegram Admin').body.includes('ORDER FIX MASUK SCALEV'));
+  assert.ok(r.req('Telegram Admin').body.includes('MENUNGGU PEMBAYARAN'));
+  assert.strictEqual(r.req('Meta Purchase (CAPI)'), undefined); // transfer belum dibayar: bukan Purchase
   assert.ok(r.req('Telegram Admin').body.includes('SV123 (Transfer, Rp231.000)'));
   assert.ok(r.req('Telegram Admin').body.includes('📦 Packing: 4 salepglowing, sunscreen, eyeliner, TRANSFER, 231.000'));
 });
@@ -323,7 +324,8 @@ test('batch resi harian: hanya order confirmed tanpa resi, isi paket di info kur
   outs['Pilih Order Resi'] = new Function('$', code('Pilih Order Resi'))($).map((i) => i.json);
   assert.deepStrictEqual(outs['Pilih Order Resi'].map((o) => o.order_id), ['A1', 'A2', 'A3']);
   const cek = [{ data: { status: 'confirmed' } }, { status: 'confirmed', shipment_receipt: null }, { data: { status: 'pending' } }];
-  outs['Siap Resi'] = new Function('$', '$input', code('Siap Resi'))($, { all: () => cek.map((json) => ({ json })) }).map((i) => i.json);
+  outs['Cek Order'] = cek;
+  outs['Siap Resi'] = new Function('$', code('Siap Resi'))($).map((i) => i.json);
   assert.deepStrictEqual(outs['Siap Resi'].map((o) => o.order_id), ['A1', 'A2']);
   assert.strictEqual(outs['Siap Resi'][0].packing, '2 salepglowing, sunscreen, eyeliner, COD, 149.500');
   assert.strictEqual(outs['Siap Resi'][1].packing, '4 salepglowing, sunscreen, eyeliner, TRANSFER, 225.000');
@@ -399,7 +401,7 @@ test('lead cuma sebut kelurahan → kode pos & alamat resmi terisi, masuk ke ord
   const body = order.req('Scalev Buat Order').body;
   assert.strictEqual(body.address, 'Jl. Jagir Sidomukti Gg. 3 No. 12, Jagir (Patokan: depan masjid Al Ikhlas)');
   assert.strictEqual(body.postal_code, '60243');
-  assert.ok(order.req('Telegram Admin').body.includes('ORDER FIX'));
+  assert.ok(order.req('Telegram Admin').body.includes('ORDER TRANSFER'));
 });
 
 test('kode pos ambigu → kasih pilihan ke Claude', () => {
@@ -599,7 +601,7 @@ test('rekap harian: hitung klik, chat, closing, rasio, omzet (zona WIB)', () => 
     ],
     orders: [
       { phone: '1', created_at: '2026-09-24T05:00:00Z', method: 'cod', total: '155530', price: '139000', ref: 'SG-A' },
-      { phone: '2', created_at: '2026-09-24T09:00:00Z', method: 'transfer', total: '225000', price: '219000', ref: '' },
+      { phone: '2', status: 'confirmed', created_at: '2026-09-24T09:00:00Z', method: 'transfer', total: '225000', price: '219000', ref: '' },
       { created_at: '2026-09-22T09:00:00Z', method: 'cod', total: '999', price: '999' },
     ],
   }, now);
@@ -607,10 +609,10 @@ test('rekap harian: hitung klik, chat, closing, rasio, omzet (zona WIB)', () => 
   assert.ok(r.text.includes('Rasio closing / chat aktif: 66,7%'));
   assert.ok(r.text.includes('Closing: 2 pembeli • 2 order'));
   const dup = dailyRecap({ leads: [{ first_chat_at: now.toISOString(), last_chat_at: now.toISOString() }], orders: [
-    { phone: '9', created_at: now.toISOString(), method: 'cod', total: '1' }, { phone: '9', created_at: now.toISOString(), method: 'transfer', total: '1' }] }, now);
+    { phone: '9', created_at: now.toISOString(), method: 'cod', total: '1' }, { phone: '9', status: 'confirmed', created_at: now.toISOString(), method: 'transfer', total: '1' }] }, now);
   assert.ok(dup.text.includes('Closing: 1 pembeli • 2 order') && dup.text.includes('Rasio closing / chat aktif: 100%'));
   assert.ok(r.text.includes('Omzet (total bayar): Rp380.530'));
-  assert.ok(r.text.includes('COD 1 • Transfer 1'));
+  assert.ok(r.text.includes('COD 1 • Transfer lunas 1'));
   assert.ok(r.text.includes('Closing dari iklan (ada kode ref): 1'));
 });
 
@@ -618,7 +620,28 @@ test('workflow rekap: jadwal 23:55 WIB, urutan node benar', () => {
   const wf = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'rekap-harian.workflow.json'), 'utf8'));
   assert.strictEqual(wf.settings.timezone, 'Asia/Jakarta');
   assert.strictEqual(wf.nodes.find((n) => n.name === 'Tiap Malam 23:55').parameters.rule.interval[0].expression, '55 23 * * *');
-  new Function('$', wf.nodes.find((n) => n.name === 'Hitung Rekap').parameters.jsCode);
+  const code = (n) => wf.nodes.find((x) => x.name === n).parameters.jsCode;
+  const now = new Date().toISOString();
+  const outs = {
+    'Ambil Klik LP': [], 'Ambil Leads': [{ first_chat_at: now, last_chat_at: now }],
+    'Ambil Order': [
+      { order_id: 'C1', phone: '1', scalev_id: 'u1', method: 'cod', total: '149500', price: '139000', created_at: now },
+      { order_id: 'T1', phone: '2', scalev_id: 'u2', method: 'transfer', total: '145000', price: '139000', created_at: now },
+      { order_id: 'T2', phone: '3', scalev_id: 'u3', method: 'transfer', total: '145000', price: '139000', created_at: now },
+    ],
+  };
+  const $ = (n) => ({ all: () => outs[n].map((json) => ({ json })) });
+  outs['Pilih Order Resi'] = new Function('$', code('Pilih Order Resi'))($).map((i) => i.json);
+  outs['Cek Order'] = [{ data: { status: 'confirmed' } }, { data: { status: 'confirmed', payment_status: 'paid' } }, { data: { status: 'pending' } }];
+  const text = new Function('$', code('Hitung Rekap'))($)[0].json.text;
+  assert.ok(text.includes('Closing: 2 pembeli • 2 order (COD 1 • Transfer lunas 1)'), text);
+  assert.ok(text.includes('Transfer menunggu pembayaran: 1'));
+  // Tanpa order sama sekali: tetap 1 item placeholder supaya rekap tetap terkirim
+  outs['Ambil Order'] = [];
+  const ph = new Function('$', code('Pilih Order Resi'))($);
+  assert.strictEqual(ph.length, 1);
+  assert.strictEqual(wf.connections['Ambil Order'].main[0][0].node, 'Pilih Order Resi');
+  assert.strictEqual(wf.connections['Kirim Rekap'].main[0][0].node, 'Siap Resi');
 });
 test('kode #promo dari LP dikenali sebagai ref, produk tetap SalGlow', () => {
   const r = prepareContext({ phone: '1', message: 'Halo kak, mau tanya salep glowing filo #promo7Q2MX' }, null);
@@ -706,8 +729,8 @@ test('order dari lead: PATCH order lead, notif ORDER FIX + CAPI', () => {
   assert.strictEqual(up.body.payment_method, 'bank_transfer');
   assert.deepStrictEqual(r.req('Scalev Status Order').body, { ids: ['lead-uuid'], status: 'pending', payment_method: 'bank_transfer' });
   assert.strictEqual(r.req('Scalev Buat Order'), undefined);
-  assert.ok(r.req('Telegram Admin').body.includes('ORDER FIX MASUK SCALEV'));
-  assert.ok(r.req('Meta Purchase (CAPI)'));
+  assert.ok(r.req('Telegram Admin').body.includes('MENUNGGU PEMBAYARAN'));
+  assert.strictEqual(r.req('Meta Purchase (CAPI)'), undefined);
   assert.strictEqual(r.req('Simpan Histori').body.last_order_id, 'SV-LEAD');
 });
 

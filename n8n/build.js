@@ -304,7 +304,7 @@ const nodes = [
 
   node('Telegram Admin', 'n8n-nodes-base.telegram', 1.2, 3800, {
     chatId: TELEGRAM_CHAT_ID,
-    text: "={{ $json.order ? ($json.order.revision ? '✏️ *ORDER DIREVISI DI SCALEV*' : '🛒 *ORDER FIX MASUK SCALEV*') : ($json.apiError ? '⚠️ *BOT ERROR*' : ($json.needsHuman ? '🟠 *BUTUH CS MANUSIA*' : '🔵 *PERTANYAAN UNTUK ADMIN* (bot tetap lanjut)')) }}\n\n" +
+    text: "={{ $json.order ? ($json.order.revision ? '✏️ *ORDER DIREVISI DI SCALEV*' : ($json.order.method === 'cod' ? '🛒 *ORDER FIX MASUK SCALEV* (COD)' : '⏳ *ORDER TRANSFER — MENUNGGU PEMBAYARAN*\\nBelum closing. Ubah ke confirmed di Scalev setelah bukti transfer masuk.')) : ($json.apiError ? '⚠️ *BOT ERROR*' : ($json.needsHuman ? '🟠 *BUTUH CS MANUSIA*' : '🔵 *PERTANYAAN UNTUK ADMIN* (bot tetap lanjut)')) }}\n\n" +
       "{{ $json.order ? '🧾 Order: ' + $json.orderText + '\\n📦 Packing: ' + $json.order.packing + '\\n' : '' }}" +
       '📱 Nomor: {{ $json.phone }}\n👤 Nama: {{ $json.order ? $json.order.name : $json.name }}\n🛍️ Produk: {{ $json.active_product }}\n🔗 Ref LP: {{ $json.ref || \'-\' }}\n' +
       '💬 Chat Terakhir: {{ $json.incoming }}\n🤖 Balasan AI: {{ $json.reply }}' +
@@ -353,7 +353,8 @@ const nodes = [
     },
     options: {},
   }, { onError: 'continueRegularOutput' }),
-  ifNode('Order Pertama?', 0, 0, '={{ $json.order.revision !== true }}'),
+  // Purchase ke Meta hanya untuk COD (transfer belum dibayar = belum closing).
+  ifNode('Order Pertama?', 0, 0, "={{ $json.order.revision !== true && $json.order.method === 'cod' }}"),
   node('Cari Atribusi', 'n8n-nodes-base.dataTable', 1.1, 0, {
     operation: 'get',
     dataTableId: ATTRIBUTION_TABLE,
@@ -675,7 +676,15 @@ console.log('Wrote', path.relative(process.cwd(), testOutMain));
 
 // Workflow keenam: rekap harian ke Telegram (23:55 WIB) + tombol tes manual.
 const recapCode = [src('recap.js'), `const rows = (name) => $(name).all().map((i) => i.json).filter((r) => r && Object.keys(r).length);
-const recap = dailyRecap({ clicks: rows('Ambil Klik LP'), leads: rows('Ambil Leads'), orders: rows('Ambil Order') });
+// Status terbaru dari Scalev (hasil node Cek Order) -> transfer baru dihitung closing kalau sudah dibayar/confirmed.
+const cands = $('Pilih Order Resi').all().map((i) => i.json);
+const status = {};
+$('Cek Order').all().forEach((item, i) => {
+  const o = (item.json && item.json.data) || item.json || {};
+  if (cands[i] && cands[i].scalev_id) status[cands[i].scalev_id] = { status: o.status, payment_status: o.payment_status };
+});
+const orders = rows('Ambil Order').map((o) => ({ ...o, ...(status[o.scalev_id] || {}) }));
+const recap = dailyRecap({ clicks: rows('Ambil Klik LP'), leads: rows('Ambil Leads'), orders });
 return [{ json: recap }];`].join('\n');
 
 const getAll = (name, x, table) => node(name, 'n8n-nodes-base.dataTable', 1.1, x, {
@@ -687,10 +696,12 @@ const getAll = (name, x, table) => node(name, 'n8n-nodes-base.dataTable', 1.1, x
 const resiLib = [src('order-config.js'), src('resi.js')].join('\n');
 const resiPickCode = resiLib + `
 const rows = $('Ambil Order').all().map((i) => i.json);
-return resiCandidates(rows).map((r) => ({ json: r }));`;
+const list = resiCandidates(rows).map((r) => ({ json: r }));
+// Tetap 1 item supaya rekap tetap terkirim walau tidak ada order (Cek Order -> 404, diabaikan).
+return list.length ? list : [{ json: { scalev_id: '', placeholder: true } }];`;
 const resiReadyCode = resiLib + `
 const cands = $('Pilih Order Resi').all().map((i) => i.json);
-return $input.all().map((item, i) => (readyForResi(item.json) ? { json: { ...cands[i], packing: packingText(cands[i]) } } : null)).filter(Boolean);`;
+return $('Cek Order').all().map((item, i) => (cands[i] && cands[i].scalev_id && readyForResi(item.json) ? { json: { ...cands[i], packing: packingText(cands[i]) } } : null)).filter(Boolean);`;
 const resiBatchCode = `const orders = $('Siap Resi').all().map((i) => i.json);
 return [{ json: { ids: orders.map((o) => o.scalev_id) } }];`;
 const resiReportCode = resiLib + `
@@ -706,15 +717,15 @@ const recapWorkflow = {
     getAll('Ambil Klik LP', 220, ATTRIBUTION_TABLE),
     getAll('Ambil Leads', 440, DATA_TABLE),
     getAll('Ambil Order', 660, ORDERS_TABLE),
-    node('Hitung Rekap', 'n8n-nodes-base.code', 2, 880, { jsCode: recapCode }),
-    node('Kirim Rekap', 'n8n-nodes-base.telegram', 1.2, 1100, {
+    node('Hitung Rekap', 'n8n-nodes-base.code', 2, 1320, { jsCode: recapCode }),
+    node('Kirim Rekap', 'n8n-nodes-base.telegram', 1.2, 1540, {
       chatId: TELEGRAM_CHAT_ID,
       text: '={{ $json.text }}',
       additionalFields: { parse_mode: 'Markdown', appendAttribution: false },
     }),
     // Batch resi: semua order confirmed tanpa resi (COD + transfer yang sudah dikonfirmasi admin).
-    node('Pilih Order Resi', 'n8n-nodes-base.code', 2, 1320, { jsCode: resiPickCode }),
-    { ...scalevHttp('Cek Order', 1540, 'GET', "/orders/{{ $json.scalev_id }}"), position: [1540, 0] },
+    node('Pilih Order Resi', 'n8n-nodes-base.code', 2, 880, { jsCode: resiPickCode }),
+    { ...scalevHttp('Cek Order', 1540, 'GET', "/orders/{{ $json.scalev_id || 'none' }}"), position: [1100, 0] },
     node('Siap Resi', 'n8n-nodes-base.code', 2, 1760, { jsCode: resiReadyCode }),
     { ...scalevHttp('Info Kurir', 1980, 'PATCH', "/orders/{{ $json.scalev_id }}/shipment", '={{ JSON.stringify({ courier_additional_info: $json.packing }) }}'), position: [1980, 0] },
     node('Gabung Batch', 'n8n-nodes-base.code', 2, 2200, { jsCode: resiBatchCode }),
@@ -732,11 +743,11 @@ const recapWorkflow = {
     'Tes Sekarang': link('Ambil Klik LP'),
     'Ambil Klik LP': link('Ambil Leads'),
     'Ambil Leads': link('Ambil Order'),
-    'Ambil Order': link('Hitung Rekap'),
-    'Hitung Rekap': link('Kirim Rekap'),
-    'Kirim Rekap': link('Pilih Order Resi'),
+    'Ambil Order': link('Pilih Order Resi'),
     'Pilih Order Resi': link('Cek Order'),
-    'Cek Order': link('Siap Resi'),
+    'Cek Order': link('Hitung Rekap'),
+    'Hitung Rekap': link('Kirim Rekap'),
+    'Kirim Rekap': link('Siap Resi'),
     'Siap Resi': link('Info Kurir'),
     'Info Kurir': link('Gabung Batch'),
     'Gabung Batch': link('Generate Resi Batch'),
