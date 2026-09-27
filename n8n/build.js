@@ -9,6 +9,7 @@ const src = (name) => fs.readFileSync(path.join(__dirname, 'src', name), 'utf8')
 // Baca profil store dari order-config.js (dipakai untuk URL yang butuh ID store).
 const vm = require('vm');
 const STORES = vm.runInNewContext(src('order-config.js') + '\nSTORES');
+const META = vm.runInNewContext(src('capi.js') + '\n({ pixel: META_PIXEL_ID, version: META_API_VERSION })');
 
 const DATA_TABLE = {
   __rl: true,
@@ -30,6 +31,7 @@ const CREDENTIALS = {
   scalev: { httpHeaderAuth: { id: '3Sg0yQwmYbm9uLyp', name: 'Scalev' } },
   storefront: { httpHeaderAuth: { id: 'tZrolZtseWagvc2W', name: 'Scalev Storefront' } },
   telegram: { telegramApi: { id: 'GvWCKSvWULLSOTrP', name: 'Telegram account' } },
+  meta: { httpQueryAuth: { id: 'ISI_ID_CREDENTIAL_META', name: 'Meta CAPI' } }, // Query Auth: name access_token
 };
 const tableRef = (name) => ({
   __rl: true, value: TABLE_IDS[name], mode: 'list', cachedResultName: name,
@@ -41,6 +43,7 @@ function credentialFor(n) {
   if (n.type !== 'n8n-nodes-base.httpRequest') return null;
   const url = String(n.parameters.url || '');
   if (url.includes('anthropic.com')) return CREDENTIALS.anthropic;
+  if (url.includes('graph.facebook.com')) return CREDENTIALS.meta;
   if (url.includes('wablas.com')) return CREDENTIALS.wablas;
   if (url.includes('/public/analytics/')) return CREDENTIALS.storefront;
   if (url.includes('scalev.com')) return CREDENTIALS.scalev;
@@ -363,11 +366,9 @@ const nodes = [
   node('Siapkan CAPI', 'n8n-nodes-base.code', 2, 0, { jsCode: capiCode }),
   node('Meta Purchase (CAPI)', 'n8n-nodes-base.httpRequest', 4.5, 0, {
     method: 'POST',
-    url: `https://api.scalev.com/v3/stores/${STORES.prod.storeUniqueId}/public/analytics/meta/events`,
+    url: `https://graph.facebook.com/${META.version}/${META.pixel}/events`,
     authentication: 'genericCredentialType',
-    genericAuthType: 'httpHeaderAuth',
-    sendHeaders: true,
-    headerParameters: { parameters: [{ name: 'Accept', value: 'application/json' }] },
+    genericAuthType: 'httpQueryAuth',
     sendBody: true,
     specifyBody: 'json',
     jsonBody: '={{ JSON.stringify($json.body) }}',
@@ -667,7 +668,6 @@ for (const n of testWorkflow.nodes) {
   if (typeof n.parameters.jsCode === 'string') {
     n.parameters.jsCode = n.parameters.jsCode.replace("const STORE_PROFILE = 'prod';", "const STORE_PROFILE = 'test';");
   }
-  if (n.name === 'Meta Purchase (CAPI)') n.parameters.url = n.parameters.url.replace(STORES.prod.storeUniqueId, STORES.test.storeUniqueId);
   if (n.name === 'Telegram Admin') n.parameters.text = n.parameters.text.replace('={{ ', "=🧪 *[TES]* {{ ");
 }
 const testOutMain = path.join(__dirname, 'ai-agent-cs.test.workflow.json');

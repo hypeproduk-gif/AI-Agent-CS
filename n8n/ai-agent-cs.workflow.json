@@ -1268,7 +1268,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Event Purchase ke Meta lewat relay Conversion API Scalev\n// (POST /v3/stores/{store}/public/analytics/meta/events, header X-Scalev-Storefront-Api-Key).\n\nfunction normalizePhone(phone) {\n  const d = String(phone || '').replace(/\\D/g, '');\n  return d.startsWith('0') ? '62' + d.slice(1) : d;\n}\n\nfunction purchaseEvent(order, phone, attribution) {\n  const a = attribution || {};\n  const userData = {\n    country: 'id',\n    ph: normalizePhone(phone),\n    external_id: normalizePhone(phone),\n    fn: String(order.name || '').replace(/^\\[[^\\]]*\\]\\s*/, '').split(' ')[0].toLowerCase() || undefined,\n    ct: String(order.city || '').replace(/^(kota|kab\\.?|kabupaten)\\s+/i, '').toLowerCase() || undefined,\n    st: String(order.province || '').toLowerCase() || undefined,\n    fbc: a.fbc || undefined,\n    fbp: a.fbp || undefined,\n    client_ip_address: a.client_ip || undefined,\n    client_user_agent: a.user_agent || undefined,\n  };\n  Object.keys(userData).forEach((k) => userData[k] === undefined && delete userData[k]);\n  return {\n    event_source_url: a.landing_url || undefined,\n    user_data: userData,\n    events: [{\n      event_id: `${order.orderId}-Purchase`,\n      event_name: 'Purchase',\n      parameters: {\n        value: order.price,\n        currency: 'IDR',\n        content_type: 'product',\n        content_ids: order.variants.map((v) => v.variant_unique_id),\n        content_name: order.note,\n        num_items: order.variants.reduce((n, v) => n + v.quantity, 0),\n      },\n    }],\n    variants: order.variants,\n  };\n}\n\nconst d = $('Olah Balasan').first().json;\nconst rows = $input.all().map((i) => i.json).filter((r) => r && r.ref);\nconst attribution = rows.find((r) => r.ref === d.ref) || null;\nreturn [{ json: { body: purchaseEvent(d.order, d.phone, attribution), matched: Boolean(attribution) } }];"
+        "jsCode": "// Event Purchase langsung ke Meta Conversions API (graph.facebook.com/{pixel}/events),\n// tidak tergantung domain/store Scalev. Token disimpan di credential n8n \"Meta CAPI\" (query access_token).\n\nconst META_PIXEL_ID = 'ISI_PIXEL_ID'; // ganti dengan Pixel/Dataset ID Meta\nconst META_API_VERSION = 'v21.0';\n\nfunction normalizePhone(phone) {\n  const d = String(phone || '').replace(/\\D/g, '');\n  return d.startsWith('0') ? '62' + d.slice(1) : d;\n}\n\n// SHA-256 (hex) murni JS: Code node n8n cloud tidak selalu boleh require('crypto').\nfunction sha256(ascii) {\n  const bytes = unescape(encodeURIComponent(String(ascii)));\n  const K = [];\n  const H = [];\n  let n = 2;\n  for (let found = 0; found < 64; n++) {\n    let prime = true;\n    for (let d = 2; d * d <= n; d++) if (n % d === 0) { prime = false; break; }\n    if (!prime) continue;\n    if (found < 8) H[found] = (Math.pow(n, 1 / 2) * 4294967296) | 0;\n    K[found++] = (Math.pow(n, 1 / 3) * 4294967296) | 0;\n  }\n  const words = [];\n  const bitLen = bytes.length * 8;\n  for (let i = 0; i < bytes.length; i++) words[i >> 2] |= bytes.charCodeAt(i) << ((3 - i) % 4) * 8;\n  words[bitLen >> 5] |= 0x80 << (24 - bitLen % 32);\n  words[(((bitLen + 64) >> 9) << 4) + 15] = bitLen;\n  const rotr = (x, r) => (x >>> r) | (x << (32 - r));\n  for (let j = 0; j < words.length; j += 16) {\n    const w = Array.from({ length: 16 }, (_, i) => words[j + i] | 0);\n    const old = H.slice(0);\n    for (let i = 0; i < 64; i++) {\n      if (i >= 16) {\n        const w15 = w[i - 15], w2 = w[i - 2];\n        const s0 = rotr(w15, 7) ^ rotr(w15, 18) ^ (w15 >>> 3);\n        const s1 = rotr(w2, 17) ^ rotr(w2, 19) ^ (w2 >>> 10);\n        w[i] = (w[i - 16] + s0 + w[i - 7] + s1) | 0;\n      }\n      const [a, b, c, d, e, f, g, h] = H;\n      const t1 = (h + (rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25)) + ((e & f) ^ (~e & g)) + K[i] + w[i]) | 0;\n      const t2 = ((rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) | 0;\n      H.unshift((t1 + t2) | 0);\n      H.length = 8;\n      H[4] = (H[4] + t1) | 0;\n    }\n    for (let i = 0; i < 8; i++) H[i] = (H[i] + old[i]) | 0;\n  }\n  return H.map((x) => (x >>> 0).toString(16).padStart(8, '0')).join('');\n}\n\nconst hashed = (v) => (v ? [sha256(String(v).trim().toLowerCase())] : undefined);\n\nfunction purchaseEvent(order, phone, attribution, now = Date.now()) {\n  const a = attribution || {};\n  const userData = {\n    ph: hashed(normalizePhone(phone)),\n    external_id: hashed(normalizePhone(phone)),\n    fn: hashed(String(order.name || '').replace(/^\\[[^\\]]*\\]\\s*/, '').split(' ')[0]),\n    ct: hashed(String(order.city || '').replace(/^(kota|kab\\.?|kabupaten)\\s+/i, '').replace(/\\s+/g, '')),\n    st: hashed(String(order.province || '').replace(/\\s+/g, '')),\n    country: hashed('id'),\n    fbc: a.fbc || undefined,\n    fbp: a.fbp || undefined,\n    client_ip_address: a.client_ip || undefined,\n    client_user_agent: a.user_agent || undefined,\n  };\n  Object.keys(userData).forEach((k) => userData[k] === undefined && delete userData[k]);\n  // Dari LP (ada user agent) = website; tanpa data LP = konversi dari chat.\n  const fromWeb = Boolean(a.user_agent);\n  return {\n    data: [{\n      event_name: 'Purchase',\n      event_time: Math.floor(now / 1000),\n      event_id: `${order.orderId}-Purchase`,\n      action_source: fromWeb ? 'website' : 'chat',\n      ...(fromWeb && a.landing_url ? { event_source_url: a.landing_url } : {}),\n      user_data: userData,\n      custom_data: {\n        value: order.price,\n        currency: 'IDR',\n        content_type: 'product',\n        content_ids: order.variants.map((v) => v.variant_unique_id),\n        content_name: order.note,\n        num_items: order.variants.reduce((n, v) => n + v.quantity, 0),\n      },\n    }],\n  };\n}\n\nconst d = $('Olah Balasan').first().json;\nconst rows = $input.all().map((i) => i.json).filter((r) => r && r.ref);\nconst attribution = rows.find((r) => r.ref === d.ref) || null;\nreturn [{ json: { body: purchaseEvent(d.order, d.phone, attribution), matched: Boolean(attribution) } }];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1282,18 +1282,9 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://api.scalev.com/v3/stores/store_WQ9th267cKN4103Qini2iUW5/public/analytics/meta/events",
+        "url": "https://graph.facebook.com/v21.0/ISI_PIXEL_ID/events",
         "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Accept",
-              "value": "application/json"
-            }
-          ]
-        },
+        "genericAuthType": "httpQueryAuth",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify($json.body) }}",
@@ -1317,9 +1308,9 @@
       "onError": "continueRegularOutput",
       "id": "aics-40",
       "credentials": {
-        "httpHeaderAuth": {
-          "id": "tZrolZtseWagvc2W",
-          "name": "Scalev Storefront"
+        "httpQueryAuth": {
+          "id": "ISI_ID_CREDENTIAL_META",
+          "name": "Meta CAPI"
         }
       }
     },

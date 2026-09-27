@@ -560,28 +560,33 @@ test('closing: order dicatat & Purchase CAPI dikirim dengan fbc/fbp/IP/UA dari L
   assert.strictEqual(log.price, '139000');
   assert.strictEqual(log.method, 'cod');
   const capi = find('Meta Purchase (CAPI)');
-  assert.strictEqual(capi.url, 'https://api.scalev.com/v3/stores/store_WQ9th267cKN4103Qini2iUW5/public/analytics/meta/events');
-  const ev = capi.body.events[0];
+  assert.strictEqual(capi.url, 'https://graph.facebook.com/v21.0/ISI_PIXEL_ID/events');
+  const ev = capi.body.data[0];
+  const sha = (v) => require('crypto').createHash('sha256').update(v).digest('hex');
   assert.strictEqual(ev.event_name, 'Purchase');
   assert.strictEqual(ev.event_id, 'SV900-Purchase');
-  assert.strictEqual(ev.parameters.value, 139000);
-  assert.strictEqual(ev.parameters.currency, 'IDR');
-  const u = capi.body.user_data;
+  assert.strictEqual(ev.action_source, 'website');
+  assert.strictEqual(ev.event_source_url, ATTR.landing_url);
+  assert.strictEqual(ev.custom_data.value, 139000);
+  assert.strictEqual(ev.custom_data.currency, 'IDR');
+  const u = ev.user_data;
   assert.strictEqual(u.fbc, 'fb.1.1.abc');
   assert.strictEqual(u.fbp, 'fb.1.2.xyz');
   assert.strictEqual(u.client_ip_address, '1.2.3.4');
-  assert.strictEqual(u.ph, '6281');
-  assert.strictEqual(u.fn, 'sari');
-  assert.strictEqual(capi.body.event_source_url, ATTR.landing_url);
+  assert.strictEqual(u.ph[0], sha('6281'));
+  assert.strictEqual(u.fn[0], sha('sari'));
+  assert.strictEqual(u.country[0], sha('id'));
+  assert.strictEqual(mainWf().nodes.find((n) => n.name === 'Meta Purchase (CAPI)').credentials.httpQueryAuth.name, 'Meta CAPI');
   const leadsRow = find('Simpan Histori').body;
   assert.ok(leadsRow.first_chat_at && leadsRow.last_chat_at);
 });
 
 test('closing tanpa klik LP: Purchase tetap dikirim (pakai nomor HP), tanpa fbc', () => {
   const r = orderScenario(SALGLOW_ROW, { lp_attribution: [], aics_orders: [] });
-  const capi = r.requests.find((q) => q.node === 'Meta Purchase (CAPI)').body;
-  assert.strictEqual(capi.user_data.fbc, undefined);
-  assert.strictEqual(capi.user_data.ph, '6281');
+  const ev = r.requests.find((q) => q.node === 'Meta Purchase (CAPI)').body.data[0];
+  assert.strictEqual(ev.user_data.fbc, undefined);
+  assert.strictEqual(ev.action_source, 'chat');
+  assert.strictEqual(ev.user_data.ph[0], require('crypto').createHash('sha256').update('6281').digest('hex'));
 });
 
 test('chat biasa: tidak ada Purchase & tidak dicatat sebagai order', () => {
