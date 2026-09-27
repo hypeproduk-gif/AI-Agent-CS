@@ -844,3 +844,46 @@ const followUpWorkflow = {
 const fuOut = path.join(__dirname, 'follow-up.workflow.json');
 fs.writeFileSync(fuOut, JSON.stringify(finalize(followUpWorkflow), null, 2) + '\n');
 console.log('Wrote', path.relative(process.cwd(), fuOut));
+
+// Workflow kedelapan: hapus order tes di Scalev (manual). Isi daftar ORDER_ID di node "Daftar Order".
+const TEST_ORDER_IDS = ['260927GXFGSJS', '260927ZAEKENZ', '260927LWLMRCX', '260927CECGRKR'];
+const cleanupWorkflow = {
+  name: 'AI Agent CS - Hapus Order Tes',
+  nodes: [
+    node('Jalankan', 'n8n-nodes-base.manualTrigger', 1, 0, {}),
+    node('Daftar Order', 'n8n-nodes-base.code', 2, 220, {
+      jsCode: `// Order ID Scalev (bukan UUID) yang mau dibatalkan lalu dihapus.
+const ORDER_IDS = ${JSON.stringify(TEST_ORDER_IDS)};
+return ORDER_IDS.map((order_id) => ({ json: { order_id } }));`,
+    }),
+    { ...scalevHttp('Cari Order', 440, 'GET', "/orders?search={{ $json.order_id }}&page_size=5"), position: [440, 0] },
+    node('Ambil ID', 'n8n-nodes-base.code', 2, 660, {
+      jsCode: `const wanted = $('Daftar Order').all().map((i) => i.json.order_id);
+const ids = [];
+const found = [];
+for (const item of $input.all()) {
+  const list = (item.json && (item.json.data && (item.json.data.results || item.json.data))) || [];
+  for (const o of Array.isArray(list) ? list : []) {
+    if (wanted.includes(o.order_id) && !ids.includes(o.id)) { ids.push(o.id); found.push(o.order_id); }
+  }
+}
+return [{ json: { ids, found, missing: wanted.filter((w) => !found.includes(w)) } }];`,
+    }),
+    { ...scalevHttp('Batalkan', 880, 'POST', '/orders/change-status', "={{ JSON.stringify({ ids: $json.ids, status: 'canceled' }) }}"), position: [880, 0] },
+    { ...scalevHttp('Hapus', 1100, 'POST', '/orders/delete', "={{ JSON.stringify({ ids: $('Ambil ID').first().json.ids }) }}"), position: [1100, 0] },
+  ].map((n, i) => ({ ...n, id: `aics-clean-${i + 1}` })),
+  pinData: {},
+  connections: {
+    Jalankan: link('Daftar Order'),
+    'Daftar Order': link('Cari Order'),
+    'Cari Order': link('Ambil ID'),
+    'Ambil ID': link('Batalkan'),
+    Batalkan: link('Hapus'),
+  },
+  active: false,
+  settings: { executionOrder: 'v1' },
+  tags: [],
+};
+const cleanupOut = path.join(__dirname, 'hapus-order-tes.workflow.json');
+fs.writeFileSync(cleanupOut, JSON.stringify(finalize(cleanupWorkflow), null, 2) + '\n');
+console.log('Wrote', path.relative(process.cwd(), cleanupOut));

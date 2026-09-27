@@ -1,0 +1,204 @@
+{
+  "name": "AI Agent CS - Hapus Order Tes",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "name": "Jalankan",
+      "id": "aics-clean-1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Order ID Scalev (bukan UUID) yang mau dibatalkan lalu dihapus.\nconst ORDER_IDS = [\"260927GXFGSJS\",\"260927ZAEKENZ\",\"260927LWLMRCX\",\"260927CECGRKR\"];\nreturn ORDER_IDS.map((order_id) => ({ json: { order_id } }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "name": "Daftar Order",
+      "id": "aics-clean-2"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.scalev.com/v3/orders?search={{ $json.order_id }}&page_size=5",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        440,
+        0
+      ],
+      "name": "Cari Order",
+      "onError": "continueRegularOutput",
+      "id": "aics-clean-3",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3Sg0yQwmYbm9uLyp",
+          "name": "Scalev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const wanted = $('Daftar Order').all().map((i) => i.json.order_id);\nconst ids = [];\nconst found = [];\nfor (const item of $input.all()) {\n  const list = (item.json && (item.json.data && (item.json.data.results || item.json.data))) || [];\n  for (const o of Array.isArray(list) ? list : []) {\n    if (wanted.includes(o.order_id) && !ids.includes(o.id)) { ids.push(o.id); found.push(o.order_id); }\n  }\n}\nreturn [{ json: { ids, found, missing: wanted.filter((w) => !found.includes(w)) } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "name": "Ambil ID",
+      "id": "aics-clean-4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.scalev.com/v3/orders/change-status",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ ids: $json.ids, status: 'canceled' }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        880,
+        0
+      ],
+      "name": "Batalkan",
+      "onError": "continueRegularOutput",
+      "id": "aics-clean-5",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3Sg0yQwmYbm9uLyp",
+          "name": "Scalev"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.scalev.com/v3/orders/delete",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ ids: $('Ambil ID').first().json.ids }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 20000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1100,
+        0
+      ],
+      "name": "Hapus",
+      "onError": "continueRegularOutput",
+      "id": "aics-clean-6",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3Sg0yQwmYbm9uLyp",
+          "name": "Scalev"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Jalankan": {
+      "main": [
+        [
+          {
+            "node": "Daftar Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daftar Order": {
+      "main": [
+        [
+          {
+            "node": "Cari Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cari Order": {
+      "main": [
+        [
+          {
+            "node": "Ambil ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil ID": {
+      "main": [
+        [
+          {
+            "node": "Batalkan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Batalkan": {
+      "main": [
+        [
+          {
+            "node": "Hapus",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}
