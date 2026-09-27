@@ -5,8 +5,8 @@ const STORE_PROFILE = 'prod';
 
 const STORES = {
   prod: {
-    storeId: 2709, // Filomall Beauty
-    storeUniqueId: 'store_WQ9th267cKN4103Qini2iUW5',
+    storeId: 99062, // MODERN STORE (khusus order AI; dulu Filomall Beauty 2709)
+    storeUniqueId: 'store_4iBGfe6BvEtOt3L6Jgji8Xzx',
     variants: {
       B1G1: { variantId: 8419, variantUniqueId: 'variant_T2ffVOfNELb6rwSTNTf9xw8A' }, // 2 Salep Glowing Filo (139.000)
       B2G2: { variantId: 8421, variantUniqueId: 'variant_EWWpG6ef8GdXo617vHyFEyP6' }, // 4 Salep Glowing Filo (219.000)
