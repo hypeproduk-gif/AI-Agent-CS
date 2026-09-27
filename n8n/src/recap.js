@@ -22,6 +22,8 @@ function dailyRecap({ clicks = [], leads = [], orders = [] }, now = new Date()) 
   const newChats = leads.filter((l) => dayKey(l.first_chat_at) === today);
   const activeChats = leads.filter((l) => dayKey(l.last_chat_at) === today);
   const ordersToday = orders.filter((o) => dayKey(o.created_at) === today);
+  // Closing = pembeli unik (1 nomor = 1 closing; order dobel/tes dari nomor yang sama tidak menggelembungkan rasio).
+  const buyers = new Set(ordersToday.map((o) => o.phone || o.order_id)).size;
   const cod = ordersToday.filter((o) => o.method === 'cod');
   const omzet = ordersToday.reduce((s, o) => s + Number(o.total || 0), 0);
   const produk = ordersToday.reduce((s, o) => s + Number(o.price || 0), 0);
@@ -34,9 +36,9 @@ function dailyRecap({ clicks = [], leads = [], orders = [] }, now = new Date()) 
     `🖱️ Klik tombol WA (LP): ${clickToday.length}`,
     `💬 Chat masuk (lead baru): ${newChats.length}`,
     `🗨️ Chat aktif hari ini: ${activeChats.length}`,
-    `🛒 Closing: ${ordersToday.length} (COD ${cod.length} • Transfer ${ordersToday.length - cod.length})`,
+    `🛒 Closing: ${buyers} pembeli • ${ordersToday.length} order (COD ${cod.length} • Transfer ${ordersToday.length - cod.length})`,
     '',
-    `📈 Rasio closing / chat masuk: ${pct(ordersToday.length, newChats.length)}`,
+    `📈 Rasio closing / chat aktif: ${pct(buyers, activeChats.length)}`,
     `📈 Rasio chat masuk / klik LP: ${pct(newChats.length, clickToday.length)}`,
     '',
     `💰 Omzet (total bayar): ${idr(omzet)}`,

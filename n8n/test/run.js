@@ -598,13 +598,17 @@ test('rekap harian: hitung klik, chat, closing, rasio, omzet (zona WIB)', () => 
       { first_chat_at: '2026-09-24T17:30:00Z', last_chat_at: '2026-09-24T17:30:00Z' }, // 00:30 WIB besok
     ],
     orders: [
-      { created_at: '2026-09-24T05:00:00Z', method: 'cod', total: '155530', price: '139000', ref: 'SG-A' },
-      { created_at: '2026-09-24T09:00:00Z', method: 'transfer', total: '225000', price: '219000', ref: '' },
+      { phone: '1', created_at: '2026-09-24T05:00:00Z', method: 'cod', total: '155530', price: '139000', ref: 'SG-A' },
+      { phone: '2', created_at: '2026-09-24T09:00:00Z', method: 'transfer', total: '225000', price: '219000', ref: '' },
       { created_at: '2026-09-22T09:00:00Z', method: 'cod', total: '999', price: '999' },
     ],
   }, now);
   assert.deepStrictEqual(JSON.parse(JSON.stringify(r.counts)), { clicks: 3, newChats: 2, activeChats: 3, orders: 2, omzet: 380530, produk: 358000 });
-  assert.ok(r.text.includes('Rasio closing / chat masuk: 100%'));
+  assert.ok(r.text.includes('Rasio closing / chat aktif: 66,7%'));
+  assert.ok(r.text.includes('Closing: 2 pembeli • 2 order'));
+  const dup = dailyRecap({ leads: [{ first_chat_at: now.toISOString(), last_chat_at: now.toISOString() }], orders: [
+    { phone: '9', created_at: now.toISOString(), method: 'cod', total: '1' }, { phone: '9', created_at: now.toISOString(), method: 'transfer', total: '1' }] }, now);
+  assert.ok(dup.text.includes('Closing: 1 pembeli • 2 order') && dup.text.includes('Rasio closing / chat aktif: 100%'));
   assert.ok(r.text.includes('Omzet (total bayar): Rp380.530'));
   assert.ok(r.text.includes('COD 1 • Transfer 1'));
   assert.ok(r.text.includes('Closing dari iklan (ada kode ref): 1'));
