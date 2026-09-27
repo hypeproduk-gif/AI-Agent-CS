@@ -134,8 +134,10 @@ function prepareContext(body, row) {
 
   // Order Scalev yang bisa di-update (PATCH): order lead (belum lengkap) atau order yang baru dibuat (revisi).
   const lastOrder = recentOrder(row);
-  const scalevId = (row && row.scalev_id) || '';
-  const patchId = scalevId && (!row.last_order_at || lastOrder) ? scalevId : '';
+  // scalev_id "lead:<id>" = order lead (nama + nomor saja) yang belum pernah jadi order.
+  const scalevId = String((row && row.scalev_id) || '');
+  const leadOrderId = scalevId.startsWith('lead:') ? scalevId.slice(5) : '';
+  const patchId = leadOrderId || (scalevId && lastOrder ? scalevId : '');
 
   const tools = orderTools(product);
   let system = buildSystemPrompt(product);
@@ -157,7 +159,7 @@ function prepareContext(body, row) {
     // Order hanya boleh dibuat setelah bot mengirim ringkasan dan lead membalasnya.
     summarySent: summaryWasSent(history),
     patchId,
-    isRevision: Boolean(patchId && lastOrder),
+    isRevision: Boolean(patchId && !leadOrderId),
     // Lead baru: langsung dicatat di Scalev sebagai order berisi nama + nomor WA.
     newLead: !row,
     leadOrder: row ? null : {

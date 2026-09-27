@@ -183,7 +183,7 @@ function scenario({ message, row = SALGLOW_ROW, first, order }) {
         case 'Scalev Gudang': return WAREHOUSES;
         case 'Scalev Kurir': return COURIERS;
         case 'Scalev Buat Order': return order || { id: 'uuid-1', order_id: 'SV123', public_order_url: 'https://pay.example/SV123' };
-        case 'Scalev Update Order': return { data: { id: row && row.scalev_id } }; // respons PATCH tanpa order_id
+        case 'Scalev Update Order': return { data: { id: 'patched' } }; // respons PATCH tanpa order_id
         case 'Scalev Lead Order': return { id: 'lead-uuid', order_id: 'SV-LEAD' };
         default: return { status: true };
       }
@@ -682,7 +682,7 @@ test('lead baru: order Scalev berisi nama + nomor WA, id disimpan', () => {
   assert.strictEqual(lead.body.customer_phone, '6281');
   assert.deepStrictEqual(r.req('Scalev Status Draft').body, { ids: ['lead-uuid'], status: 'draft' });
   assert.ok(r.req('Claude').body.messages, 'Claude tetap dapat requestBody');
-  assert.strictEqual(r.req('Simpan Histori').body.scalev_id, 'lead-uuid');
+  assert.strictEqual(r.req('Simpan Histori').body.scalev_id, 'lead:lead-uuid');
   assert.strictEqual(r.req('Simpan Histori').body.last_order_id, 'SV-LEAD');
   assert.strictEqual(r.req('Telegram Admin'), undefined);
   const again = scenario({ message: 'harganya?', row: SALGLOW_ROW, first: text('ok') });
@@ -692,7 +692,7 @@ test('lead baru: order Scalev berisi nama + nomor WA, id disimpan', () => {
 const ORDER_INPUT = { paket: 'B1G1', kecamatan: 'Wonokromo', kota: 'Kota Surabaya', nama: 'Sari', alamat: 'Jl. Mawar 5 RT 1/2', kelurahan: 'Jagir', patokan: 'depan masjid' };
 
 test('order dari lead: PATCH order lead, notif ORDER FIX + CAPI', () => {
-  const row = { ...SALGLOW_ROW, scalev_id: 'lead-uuid', last_order_id: 'SV-LEAD' };
+  const row = { ...SALGLOW_ROW, scalev_id: 'lead:lead-uuid', last_order_id: 'SV-LEAD' };
   const r = scenario({ message: 'oke proses', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'transfer' }) });
   const up = r.req('Scalev Update Order');
   assert.strictEqual(up.method, 'PATCH');
@@ -724,6 +724,13 @@ test('revisi transfer -> COD: PATCH order yang sama, notif REVISI, tanpa CAPI do
   // COD -> transfer: biaya COD dihapus
   const back = scenario({ message: 'transfer aja deh', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'transfer' }) });
   assert.strictEqual(back.req('Scalev Update Order').body.other_income, 0);
+});
+
+test('order lama tanpa last_order_at tetap order baru (bukan PATCH order lama)', () => {
+  const row = { ...SALGLOW_ROW, scalev_id: 'uuid-old', last_order_id: 'SV001', last_order_at: '' };
+  const r = scenario({ message: 'mau order lagi', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod' }) });
+  assert.strictEqual(r.req('Scalev Update Order'), undefined);
+  assert.ok(r.req('Scalev Buat Order'));
 });
 
 test('order lama (> 6 jam) -> order baru, bukan PATCH', () => {

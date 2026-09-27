@@ -144,7 +144,7 @@ return [{
     history: JSON.stringify(history),
     order,
     orderText: order ? (order.revision ? 'REVISI ' : '') + order.orderId + ' (' + (order.method === 'cod' ? 'COD' : 'Transfer') + ', Rp' + order.total.toLocaleString('id-ID') + ')' : '',
-    scalev_id: order ? order.id : (lead.id || stored.scalev_id || ''),
+    scalev_id: order ? order.id : (lead.id ? 'lead:' + lead.id : (stored.scalev_id || '')),
     last_order_id: order ? order.orderId : (lead.order_id || stored.last_order_id || ''),
     last_order_at: order ? new Date().toISOString() : (stored.last_order_at || ''),
     first_chat_at: stored.first_chat_at || new Date().toISOString(),

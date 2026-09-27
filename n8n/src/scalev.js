@@ -220,7 +220,7 @@ function toolResult(state, orderResponse) {
       const orderId = r && (r.order_id || (state.patchId && r.id ? state.knownOrderId || r.id : ''));
       if (orderId) {
         order = {
-          id: r.id || state.patchId,
+          id: state.patchId || r.id,
           orderId,
           revision: Boolean(state.isRevision),
           total: t.total,
