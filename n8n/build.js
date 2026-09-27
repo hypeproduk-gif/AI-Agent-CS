@@ -307,10 +307,10 @@ const nodes = [
 
   node('Telegram Admin', 'n8n-nodes-base.telegram', 1.2, 3800, {
     chatId: TELEGRAM_CHAT_ID,
-    text: "={{ $json.order ? ($json.order.revision ? '✏️ *ORDER DIREVISI DI SCALEV*' : ($json.order.method === 'cod' ? '🛒 *ORDER FIX MASUK SCALEV* (COD)' : '⏳ *ORDER TRANSFER — MENUNGGU PEMBAYARAN*\\nBelum closing. Ubah ke confirmed di Scalev setelah bukti transfer masuk.')) : ($json.apiError ? '⚠️ *BOT ERROR*' : ($json.needsHuman ? '🟠 *BUTUH CS MANUSIA*' : '🔵 *PERTANYAAN UNTUK ADMIN* (bot tetap lanjut)')) }}\n\n" +
+    text: "={{ $json.order ? ($json.order.revision ? '✏️ *ORDER DIREVISI DI MODERN STORE*' : ($json.order.method === 'cod' ? '🛒 *ORDER FIX MASUK MODERN STORE* (COD)' : '⏳ *ORDER TRANSFER — MENUNGGU PEMBAYARAN*\\nBelum closing. Ubah ke confirmed di Scalev setelah bukti transfer masuk.')) : ($json.apiError ? '⚠️ *BOT ERROR*' : ($json.needsHuman ? '🟠 *BUTUH CS MANUSIA*' : '🔵 *PERTANYAAN UNTUK ADMIN* (bot tetap lanjut)')) }}\n\n" +
       "{{ $json.order ? '🧾 Order: ' + $json.orderText + '\\n📦 Packing: ' + $json.order.packing + '\\n' : '' }}" +
       '📱 Nomor: {{ $json.phone }}\n👤 Nama: {{ $json.order ? $json.order.name : $json.name }}\n🛍️ Produk: {{ $json.active_product }}\n🔗 Ref LP: {{ $json.ref || \'-\' }}\n' +
-      '💬 Chat Terakhir: {{ $json.incoming }}\n🤖 Balasan AI: {{ $json.reply }}' +
+      "💬 Chat Terakhir: {{ $json.incoming }}\n🤖 Balasan AI: {{ $json.order ? 'template ' + ($json.order.method === 'cod' ? 'COD, nominal COD Rp' : 'transfer, total Rp') + $json.order.total.toLocaleString('id-ID') : $json.reply }}" +
       "{{ $json.apiError ? '\\n⚠️ Error API: ' + $json.apiError : '' }}" +
       "{{ $json.pauseBot ? '\\n\\nBot dijeda 30 menit untuk nomor ini, lalu aktif lagi otomatis. Untuk aktifkan lebih cepat: set kolom handoff = false di leads_context.' : '' }}",
     additionalFields: {},

@@ -765,7 +765,7 @@ test('revisi transfer -> COD: PATCH order yang sama, notif REVISI, tanpa CAPI do
   const baru = scenario({ message: 'order baru kak', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod', jenis_order: 'baru' }) });
   assert.strictEqual(baru.req('Scalev Update Order'), undefined);
   assert.ok(baru.req('Scalev Buat Order'));
-  assert.ok(baru.req('Telegram Admin').body.includes('ORDER FIX MASUK SCALEV'));
+  assert.ok(baru.req('Telegram Admin').body.includes('ORDER FIX MASUK MODERN STORE'));
   assert.strictEqual(back.req('Scalev Update Order').body.other_income, 0);
 });
 
@@ -812,6 +812,7 @@ test('total di ringkasan beda dengan hitungan sistem -> order tidak dibuat, mint
   const ok = scenario({ message: 'ok', row: good, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod' }) });
   assert.ok(ok.req('Scalev Buat Order'));
   assert.ok(ok.req('Telegram Admin').body.includes('Nama: Sari'));
+  assert.ok(ok.req('Telegram Admin').body.includes('Balasan AI: template COD, nominal COD Rp156.000'), ok.req('Telegram Admin').body);
 });
 test('lead bilang "ganti cod aja" -> revisi walau Claude isi jenis_order baru', () => {
   const row = { ...SALGLOW_ROW, scalev_id: 'uuid-1', last_order_id: 'SV123', last_order_at: new Date(Date.now() - 120000).toISOString(),
