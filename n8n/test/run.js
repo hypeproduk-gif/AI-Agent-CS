@@ -762,4 +762,13 @@ test('buat_order tanpa ringkasan sebelumnya ditolak (lead harus konfirmasi dulu)
   assert.strictEqual(r.req('Scalev Buat Order'), undefined);
   assert.ok(r.toolResults[0].error.includes('ringkasan order'));
 });
+test('setelah ringkasan + lead bilang ok: tool_choice any; klaim order tanpa tool diblokir', () => {
+  const ctx = prepareContext({ phone: '6281', message: 'ok' }, SALGLOW_ROW);
+  assert.strictEqual(JSON.stringify(ctx.requestBody.tool_choice), '{"type":"any"}');
+  assert.strictEqual(prepareContext({ phone: '6281', message: 'ok tapi ongkirnya berapa?' }, SALGLOW_ROW).requestBody.tool_choice, undefined);
+  assert.strictEqual(prepareContext({ phone: '6281', message: 'ok' }, { ...SALGLOW_ROW, history: '[]' }).requestBody.tool_choice, undefined);
+  const r = scenario({ message: 'ok', first: text('Siap kak.. orderan kakak sudah saya masukkan ke prioritas pengiriman hari ini..') });
+  assert.ok(r.req('Kirim WhatsApp').body.message.startsWith('Bentar ya kak'));
+  assert.ok(r.req('Telegram Admin').body.includes('BOT ERROR'));
+});
 console.log(`${passed} tes lulus (final)`);

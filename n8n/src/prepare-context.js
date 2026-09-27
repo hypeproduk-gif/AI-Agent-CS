@@ -117,6 +117,9 @@ function summaryWasSent(history) {
   return false;
 }
 
+// Lead menyetujui ringkasan order ("ok", "iya betul", "sip proses", ...).
+const AGREE_PATTERN = /^\s*(ok(e|ey|ee)?|oke+|iya+|iy|ya+|yup|sip+|siap|betul|benar|bener|lanjut|proses|gas+|boleh|setuju|deal|mantap)\b[^?]{0,40}$/i;
+
 function prepareContext(body, row) {
   const incoming = normalizeIncoming(body);
 
@@ -178,6 +181,8 @@ function prepareContext(body, row) {
       system,
       messages,
       ...(tools ? { tools } : {}),
+      // Setelah ringkasan disetujui, Claude WAJIB memanggil tool (tidak boleh cuma bilang order sudah masuk).
+      ...(tools && summaryWasSent(history) && AGREE_PATTERN.test(incoming) ? { tool_choice: { type: 'any' } } : {}),
     },
   };
 }

@@ -121,6 +121,13 @@ const parseCode = [
   src('parse-reply.js'),
   `const ctx = $('Siapkan Konteks').first().json;
 const parsed = parseReply($input.first().json);
+const orderMade = $('Hasil Tool').isExecuted && $('Hasil Tool').first().json.order;
+if (!orderMade && /prioritas pengiriman|orderan kakak sudah saya (catat|masukkan)|data order sudah masuk/i.test(parsed.reply)) {
+  // Claude mengaku order sudah masuk padahal tidak ada order dibuat -> jangan kirim, minta admin cek.
+  parsed.reply = 'Bentar ya kak, saya cek dulu ke atasan saya 🙏';
+  parsed.needsHuman = true;
+  parsed.apiError = 'Bot mengklaim order masuk tanpa membuat order di Scalev';
+}
 const order = $('Hasil Tool').isExecuted ? $('Hasil Tool').first().json.order : null;
 const stored = $('Get row(s)').first().json || {};
 const leadRes = $('Scalev Lead Order').isExecuted ? $('Scalev Lead Order').first().json : {};
