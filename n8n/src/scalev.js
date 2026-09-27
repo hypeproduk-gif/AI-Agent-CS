@@ -150,6 +150,12 @@ function pickCourier(state, response) {
   };
 }
 
+// Catatan order Scalev (dipakai juga sebagai instruksi pengiriman), contoh: "2 salepglowing, sunscreen, eyeliner, COD, 149.350".
+function orderNotes(state) {
+  const method = state.input.pembayaran === 'cod' ? 'COD' : 'TRANSFER';
+  return `${state.pkg.pcs} salepglowing, sunscreen, eyeliner, ${method}, ${Math.round(state.totals.total).toLocaleString('id-ID')}`;
+}
+
 // Hanya membuat order. Bot sengaja TIDAK memanggil generate-awb / Request Pickup:
 // pickup ditangani langganan pickup sendiri di Mengantar.
 function orderRequest(state, ctx) {
@@ -166,7 +172,7 @@ function orderRequest(state, ctx) {
     shipment_provider_code: SCALEV.providerCode,
     payment_method: paymentMethod(i.pembayaran),
     ordervariants: state.pkg.items.map((it) => ({ variant_unique_id: it.variantUniqueId, quantity: it.qty })),
-    notes: state.pkg.note || state.pkg.label,
+    notes: orderNotes(state),
     metadata: { source: 'ai-agent-cs', ref: ctx.ref || '' },
   };
   if (state.postal) body.postal_code = state.postal;

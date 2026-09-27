@@ -43,13 +43,15 @@ const PACKAGES = {
   SalGlow: {
     B1G1: {
       label: 'SalGlow Beli 1 Gratis 1',
-      note: 'Beli 1 Gratis 1 (2 pcs) + bonus sunscreen + eyeliner', // catatan order di Scalev
+      pcs: 2, // jumlah salep untuk catatan order
+      note: 'Beli 1 Gratis 1 (2 pcs) + bonus sunscreen + eyeliner',
       price: 139000,
       weight: 200, // gram, total paket
       items: [{ ...ACTIVE_STORE.variants.B1G1, qty: 1 }],
     },
     B2G2: {
       label: 'SalGlow Beli 2 Gratis 2',
+      pcs: 4,
       note: 'Beli 2 Gratis 2 (4 pcs) + bonus sunscreen + eyeliner',
       price: 219000,
       weight: 400,

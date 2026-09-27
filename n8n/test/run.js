@@ -226,7 +226,7 @@ test('simulasi: buat order transfer → payload Scalev benar & tersimpan', () =>
   assert.strictEqual(body.location_id, 11);
   assert.strictEqual(body.customer_phone, '6281');
   assert.strictEqual(body.other_income, undefined);
-  assert.strictEqual(body.notes, 'Beli 2 Gratis 2 (4 pcs) + bonus sunscreen + eyeliner');
+  assert.strictEqual(body.notes, '4 salepglowing, sunscreen, eyeliner, TRANSFER, 231.000');
   assert.strictEqual(body.customer_name, '[TEST AI] Sari');
   assert.strictEqual(body.metadata.ref, 'SG-ABCDE');
   assert.strictEqual(r.toolResults[0].link_pembayaran, undefined); // transfer pakai template rekening
@@ -387,7 +387,7 @@ test('kode pos ambigu → kasih pilihan ke Claude', () => {
 
 test('prompt: larangan basa-basi & syarat alamat', () => {
   const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
-  for (const k of ['DILARANG: basa-basi', 'baris kosong', 'huruf vokal dobel', "'Mantap'", "'Yeay'", 'patokan', 'kecamatan', 'supaya paket tidak nyasar di ekspedisi', 'prioritas pengiriman hari ini', 'saya tanyakan ke atasan saya dulu', 'Lengkapi data order dulu ya kak', 'Sudah benar kak? saya proses ya', 'CS Filomall-Beauty', '10.000 pcs', 'Jangan tanya kode pos/provinsi']) assert.ok(sys.includes(k), k);
+  for (const k of ['DILARANG: basa-basi', 'baris kosong', 'huruf vokal dobel', "'Mantap'", "'Yeay'", 'patokan', 'kecamatan', 'supaya paket tidak nyasar di ekspedisi', 'prioritas pengiriman hari ini', 'saya tanyakan ke atasan saya dulu', 'Lengkapi data order dulu ya kak', 'Sudah benar kak? saya proses ya', 'CS Filomall-Beauty', '10.000 pcs', 'Jangan tanya provinsi', 'Kode pos:', 'dipisah koma']) assert.ok(sys.includes(k), k);
 });
 // Workflow dengan fakta produk terisi (BPOM + testimoni) untuk tes.
 function withFacts(wf) {
@@ -508,7 +508,7 @@ test('workflow TEST: webhook & store terpisah dari produksi', () => {
   const body = r.requests.find((q) => q.node === 'Scalev Buat Order').body;
   assert.strictEqual(body.store_unique_id, 'ISI_STORE_UNIQUE_ID_TES');
   assert.strictEqual(body.customer_name, '[TES BOT] Sa');
-  assert.strictEqual(body.notes, 'Beli 1 Gratis 1 (2 pcs) + bonus sunscreen + eyeliner');
+  assert.strictEqual(body.notes, '2 salepglowing, sunscreen, eyeliner, COD, 155.530');
   assert.ok(r.requests.find((q) => q.node === 'Telegram Admin').body.startsWith('🧪 *[TES]*'));
 });
 const ATTR = { ref: 'SG-ABCDE', fbc: 'fb.1.1.abc', fbp: 'fb.1.2.xyz', client_ip: '1.2.3.4', user_agent: 'UA', landing_url: 'https://filomallbeauty.myscalev.com/salglow-test-ai?fbclid=abc' };
