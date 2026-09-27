@@ -31,7 +31,7 @@ const CREDENTIALS = {
   scalev: { httpHeaderAuth: { id: '3Sg0yQwmYbm9uLyp', name: 'Scalev' } },
   storefront: { httpHeaderAuth: { id: 'tZrolZtseWagvc2W', name: 'Scalev Storefront' } },
   telegram: { telegramApi: { id: 'GvWCKSvWULLSOTrP', name: 'Telegram account' } },
-  meta: { httpQueryAuth: { id: 'ISI_ID_CREDENTIAL_META', name: 'Meta CAPI' } }, // Query Auth: name access_token
+  meta: { httpQueryAuth: { id: 'M4RZB8EN2hhcr2yn', name: 'Meta CAPI' } }, // Query Auth: name access_token
 };
 const tableRef = (name) => ({
   __rl: true, value: TABLE_IDS[name], mode: 'list', cachedResultName: name,
