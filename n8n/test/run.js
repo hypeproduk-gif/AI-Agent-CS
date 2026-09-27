@@ -205,7 +205,7 @@ test('simulasi: cek ongkir COD pilih JNT Mengantar + fee 3%', () => {
   const res = r.toolResults[0];
   assert.strictEqual(res.ok, true);
   assert.strictEqual(res.ongkir, 'Rp12.000');
-  assert.strictEqual(res.biaya_cod, 'Rp4.530'); // 3% x 151.000
+  assert.strictEqual(res.biaya_cod, 'Rp5.000'); // 3% x 151.000
   assert.strictEqual(res.total, 'Rp156.000');
   assert.ok(!r.req('Scalev Buat Order'));
   assert.strictEqual(r.req('Kirim WhatsApp').body.message, 'Balasan akhir ke lead');
