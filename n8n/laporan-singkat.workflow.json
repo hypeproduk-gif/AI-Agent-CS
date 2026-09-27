@@ -1,0 +1,313 @@
+{
+  "name": "AI Agent CS - Laporan Singkat",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9,13,18 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "name": "Jam 9, 13, 18",
+      "id": "aics-report-1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        200
+      ],
+      "name": "Tes Laporan",
+      "id": "aics-report-2"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "qZYFr5OtcUD8F8Co",
+          "mode": "list",
+          "cachedResultName": "leads_context",
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/qZYFr5OtcUD8F8Co"
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        0
+      ],
+      "name": "Ambil Leads",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "id": "aics-report-3"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "JigJfYz6uPh04oCK",
+          "mode": "list",
+          "cachedResultName": "aics_orders",
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/JigJfYz6uPh04oCK"
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        440,
+        0
+      ],
+      "name": "Ambil Order",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "id": "aics-report-4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Rekap harian untuk Telegram: klik LP, chat masuk, closing, rasio, omzet.\n\nconst TZ = 'Asia/Jakarta';\n\nfunction dayKey(value) {\n  const t = Date.parse(value);\n  if (Number.isNaN(t)) return '';\n  return new Date(t).toLocaleDateString('en-CA', { timeZone: TZ }); // YYYY-MM-DD\n}\n\nfunction pct(a, b) {\n  return b ? (Math.round((a / b) * 1000) / 10).toString().replace('.', ',') + '%' : '-';\n}\n\nfunction idr(n) {\n  return 'Rp' + Math.round(n || 0).toLocaleString('id-ID');\n}\n\nconst PAID_STATUSES = ['confirmed', 'in_process', 'ready', 'shipped', 'completed'];\n\n// Closing: COD (tidak dibatalkan) atau transfer yang sudah dibayar/confirmed di Scalev.\nfunction isClosing(o) {\n  if (o.status === 'canceled' || o.status === 'closed') return false;\n  if (o.method === 'cod') return true;\n  return o.payment_status === 'paid' || o.payment_status === 'settled' || PAID_STATUSES.includes(o.status);\n}\n\nfunction dailyRecap({ clicks = [], leads = [], orders = [] }, now = new Date()) {\n  const today = dayKey(now.toISOString());\n  const clickToday = clicks.filter((c) => dayKey(c.clicked_at) === today);\n  const newChats = leads.filter((l) => dayKey(l.first_chat_at) === today);\n  const activeChats = leads.filter((l) => dayKey(l.last_chat_at) === today);\n  const allToday = orders.filter((o) => dayKey(o.created_at) === today);\n  const ordersToday = allToday.filter(isClosing);\n  const waitingTransfer = allToday.filter((o) => !isClosing(o) && o.method !== 'cod' && o.status !== 'canceled');\n  // Closing = pembeli unik (1 nomor = 1 closing; order dobel/tes dari nomor yang sama tidak menggelembungkan rasio).\n  const buyers = new Set(ordersToday.map((o) => o.phone || o.order_id)).size;\n  const cod = ordersToday.filter((o) => o.method === 'cod');\n  const omzet = ordersToday.reduce((s, o) => s + Number(o.total || 0), 0);\n  const produk = ordersToday.reduce((s, o) => s + Number(o.price || 0), 0);\n  const fromAds = ordersToday.filter((o) => o.ref).length;\n  const tanggal = new Date(now).toLocaleDateString('id-ID', { timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });\n\n  const text = [\n    `📊 *REKAP AI CS* — ${tanggal}`,\n    '',\n    `🖱️ Klik tombol WA (LP): ${clickToday.length}`,\n    `💬 Chat masuk (lead baru): ${newChats.length}`,\n    `🗨️ Chat aktif hari ini: ${activeChats.length}`,\n    `🛒 Closing: ${buyers} pembeli • ${ordersToday.length} order (COD ${cod.length} • Transfer lunas ${ordersToday.length - cod.length})`,\n    `⏳ Transfer menunggu pembayaran: ${waitingTransfer.length}`,\n    '',\n    `📈 Rasio closing / chat aktif: ${pct(buyers, activeChats.length)}`,\n    `📈 Rasio chat masuk / klik LP: ${pct(newChats.length, clickToday.length)}`,\n    '',\n    `💰 Omzet (total bayar): ${idr(omzet)}`,\n    `🧴 Nilai produk: ${idr(produk)}`,\n    `🎯 Closing dari iklan (ada kode ref): ${fromAds}`,\n  ].join('\\n');\n\n  return { text, today, counts: { clicks: clickToday.length, newChats: newChats.length, activeChats: activeChats.length, orders: ordersToday.length, omzet, produk } };\n}\n\n// Laporan singkat 3x sehari (09:00, 13:00, 18:00 WIB): lead, closing, pending + alasan singkat.\n// Memakai dayKey() dari recap.js.\n\nconst REPORT_MAX_PENDING = 25;\n\nfunction lastMessages(raw, n = 4) {\n  let list = [];\n  try { list = JSON.parse(raw || '[]'); } catch (e) { list = []; }\n  return (Array.isArray(list) ? list : []).slice(-n)\n    .map((m) => `${m.role === 'user' ? 'Lead' : 'CS'}: ${String(m.content || '').replace(/\\s+/g, ' ').slice(0, 160)}`)\n    .join(' | ');\n}\n\nfunction shortReportData({ leads = [], orders = [] }, now = new Date()) {\n  const today = dayKey(now.toISOString());\n  const newLeads = leads.filter((l) => dayKey(l.first_chat_at) === today);\n  const ordersToday = orders.filter((o) => dayKey(o.created_at) === today);\n  const buyers = new Set(ordersToday.map((o) => o.phone));\n  const cod = ordersToday.filter((o) => o.method === 'cod');\n  const transfer = ordersToday.filter((o) => o.method !== 'cod');\n  // Pending: chat aktif hari ini tapi belum order hari ini.\n  const pending = leads\n    .filter((l) => l.phone && dayKey(l.last_chat_at) === today && !buyers.has(l.phone))\n    .slice(0, REPORT_MAX_PENDING)\n    .map((l) => ({ phone: l.phone, chat: lastMessages(l.history) }));\n  const hour = Number(new Date(now).toLocaleString('en-US', { timeZone: TZ, hour: '2-digit', hour12: false })) % 24;\n  return { hour, newLeads: newLeads.length, closing: buyers.size, cod: cod.length, transfer: transfer.length, pending };\n}\n\n// Request ke Claude: 1 alasan singkat per lead pending.\nfunction pendingReasonRequest(data) {\n  const list = data.pending.map((p, i) => `${i + 1}. ${p.phone}: ${p.chat}`).join('\\n');\n  return {\n    model: 'claude-haiku-4-5-20251001',\n    max_tokens: 600,\n    system: 'Kamu merangkum chat CS jualan salep. Untuk setiap lead, tulis alasan singkat (maks 6 kata) kenapa belum closing, berdasarkan chat terakhir. Contoh: \"tanya BPOM, belum balas\", \"ragu harga\", \"belum isi alamat\", \"baru tanya harga\". Jawab hanya dengan baris berformat: nomor|alasan',\n    messages: [{ role: 'user', content: list }],\n  };\n}\n\nfunction shortReportText(data, response) {\n  const text = ((response && response.content) || []).filter((c) => c.type === 'text').map((c) => c.text).join('\\n');\n  const reasons = {};\n  text.split('\\n').forEach((line) => {\n    const [phone, ...rest] = line.split('|');\n    if (phone && rest.length) reasons[phone.replace(/\\D/g, '')] = rest.join('|').trim();\n  });\n  const label = { 9: '9 pagi', 13: '1 siang', 18: '6 sore' }[data.hour] || `jam ${data.hour}`;\n  const lines = [\n    `📋 LAPORAN ${label.toUpperCase()}`,\n    '',\n    `💬 Lead baru: ${data.newLeads}`,\n    `✅ Closing: ${data.closing} (COD ${data.cod} • Transfer ${data.transfer})`,\n    `⏳ Pending: ${data.pending.length}`,\n  ];\n  data.pending.forEach((p) => lines.push(`• ${p.phone}: ${reasons[p.phone] || '-'}`));\n  return lines.join('\\n');\n}\n\nconst rows = (name) => $(name).all().map((i) => i.json).filter((r) => r && Object.keys(r).length);\nconst data = shortReportData({ leads: rows('Ambil Leads'), orders: rows('Ambil Order') });\nreturn [{ json: { data, requestBody: pendingReasonRequest(data) } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "name": "Siapkan Laporan",
+      "id": "aics-report-5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "Ada Pending?",
+              "leftValue": "={{ $json.data.pending.length > 0 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        0
+      ],
+      "name": "Ada Pending?",
+      "id": "aics-report-6"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.requestBody) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1100,
+        0
+      ],
+      "name": "Alasan Pending",
+      "onError": "continueRegularOutput",
+      "id": "aics-report-7",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Rg3kLQlwRT919UB4",
+          "name": "Anthropic API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Rekap harian untuk Telegram: klik LP, chat masuk, closing, rasio, omzet.\n\nconst TZ = 'Asia/Jakarta';\n\nfunction dayKey(value) {\n  const t = Date.parse(value);\n  if (Number.isNaN(t)) return '';\n  return new Date(t).toLocaleDateString('en-CA', { timeZone: TZ }); // YYYY-MM-DD\n}\n\nfunction pct(a, b) {\n  return b ? (Math.round((a / b) * 1000) / 10).toString().replace('.', ',') + '%' : '-';\n}\n\nfunction idr(n) {\n  return 'Rp' + Math.round(n || 0).toLocaleString('id-ID');\n}\n\nconst PAID_STATUSES = ['confirmed', 'in_process', 'ready', 'shipped', 'completed'];\n\n// Closing: COD (tidak dibatalkan) atau transfer yang sudah dibayar/confirmed di Scalev.\nfunction isClosing(o) {\n  if (o.status === 'canceled' || o.status === 'closed') return false;\n  if (o.method === 'cod') return true;\n  return o.payment_status === 'paid' || o.payment_status === 'settled' || PAID_STATUSES.includes(o.status);\n}\n\nfunction dailyRecap({ clicks = [], leads = [], orders = [] }, now = new Date()) {\n  const today = dayKey(now.toISOString());\n  const clickToday = clicks.filter((c) => dayKey(c.clicked_at) === today);\n  const newChats = leads.filter((l) => dayKey(l.first_chat_at) === today);\n  const activeChats = leads.filter((l) => dayKey(l.last_chat_at) === today);\n  const allToday = orders.filter((o) => dayKey(o.created_at) === today);\n  const ordersToday = allToday.filter(isClosing);\n  const waitingTransfer = allToday.filter((o) => !isClosing(o) && o.method !== 'cod' && o.status !== 'canceled');\n  // Closing = pembeli unik (1 nomor = 1 closing; order dobel/tes dari nomor yang sama tidak menggelembungkan rasio).\n  const buyers = new Set(ordersToday.map((o) => o.phone || o.order_id)).size;\n  const cod = ordersToday.filter((o) => o.method === 'cod');\n  const omzet = ordersToday.reduce((s, o) => s + Number(o.total || 0), 0);\n  const produk = ordersToday.reduce((s, o) => s + Number(o.price || 0), 0);\n  const fromAds = ordersToday.filter((o) => o.ref).length;\n  const tanggal = new Date(now).toLocaleDateString('id-ID', { timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });\n\n  const text = [\n    `📊 *REKAP AI CS* — ${tanggal}`,\n    '',\n    `🖱️ Klik tombol WA (LP): ${clickToday.length}`,\n    `💬 Chat masuk (lead baru): ${newChats.length}`,\n    `🗨️ Chat aktif hari ini: ${activeChats.length}`,\n    `🛒 Closing: ${buyers} pembeli • ${ordersToday.length} order (COD ${cod.length} • Transfer lunas ${ordersToday.length - cod.length})`,\n    `⏳ Transfer menunggu pembayaran: ${waitingTransfer.length}`,\n    '',\n    `📈 Rasio closing / chat aktif: ${pct(buyers, activeChats.length)}`,\n    `📈 Rasio chat masuk / klik LP: ${pct(newChats.length, clickToday.length)}`,\n    '',\n    `💰 Omzet (total bayar): ${idr(omzet)}`,\n    `🧴 Nilai produk: ${idr(produk)}`,\n    `🎯 Closing dari iklan (ada kode ref): ${fromAds}`,\n  ].join('\\n');\n\n  return { text, today, counts: { clicks: clickToday.length, newChats: newChats.length, activeChats: activeChats.length, orders: ordersToday.length, omzet, produk } };\n}\n\n// Laporan singkat 3x sehari (09:00, 13:00, 18:00 WIB): lead, closing, pending + alasan singkat.\n// Memakai dayKey() dari recap.js.\n\nconst REPORT_MAX_PENDING = 25;\n\nfunction lastMessages(raw, n = 4) {\n  let list = [];\n  try { list = JSON.parse(raw || '[]'); } catch (e) { list = []; }\n  return (Array.isArray(list) ? list : []).slice(-n)\n    .map((m) => `${m.role === 'user' ? 'Lead' : 'CS'}: ${String(m.content || '').replace(/\\s+/g, ' ').slice(0, 160)}`)\n    .join(' | ');\n}\n\nfunction shortReportData({ leads = [], orders = [] }, now = new Date()) {\n  const today = dayKey(now.toISOString());\n  const newLeads = leads.filter((l) => dayKey(l.first_chat_at) === today);\n  const ordersToday = orders.filter((o) => dayKey(o.created_at) === today);\n  const buyers = new Set(ordersToday.map((o) => o.phone));\n  const cod = ordersToday.filter((o) => o.method === 'cod');\n  const transfer = ordersToday.filter((o) => o.method !== 'cod');\n  // Pending: chat aktif hari ini tapi belum order hari ini.\n  const pending = leads\n    .filter((l) => l.phone && dayKey(l.last_chat_at) === today && !buyers.has(l.phone))\n    .slice(0, REPORT_MAX_PENDING)\n    .map((l) => ({ phone: l.phone, chat: lastMessages(l.history) }));\n  const hour = Number(new Date(now).toLocaleString('en-US', { timeZone: TZ, hour: '2-digit', hour12: false })) % 24;\n  return { hour, newLeads: newLeads.length, closing: buyers.size, cod: cod.length, transfer: transfer.length, pending };\n}\n\n// Request ke Claude: 1 alasan singkat per lead pending.\nfunction pendingReasonRequest(data) {\n  const list = data.pending.map((p, i) => `${i + 1}. ${p.phone}: ${p.chat}`).join('\\n');\n  return {\n    model: 'claude-haiku-4-5-20251001',\n    max_tokens: 600,\n    system: 'Kamu merangkum chat CS jualan salep. Untuk setiap lead, tulis alasan singkat (maks 6 kata) kenapa belum closing, berdasarkan chat terakhir. Contoh: \"tanya BPOM, belum balas\", \"ragu harga\", \"belum isi alamat\", \"baru tanya harga\". Jawab hanya dengan baris berformat: nomor|alasan',\n    messages: [{ role: 'user', content: list }],\n  };\n}\n\nfunction shortReportText(data, response) {\n  const text = ((response && response.content) || []).filter((c) => c.type === 'text').map((c) => c.text).join('\\n');\n  const reasons = {};\n  text.split('\\n').forEach((line) => {\n    const [phone, ...rest] = line.split('|');\n    if (phone && rest.length) reasons[phone.replace(/\\D/g, '')] = rest.join('|').trim();\n  });\n  const label = { 9: '9 pagi', 13: '1 siang', 18: '6 sore' }[data.hour] || `jam ${data.hour}`;\n  const lines = [\n    `📋 LAPORAN ${label.toUpperCase()}`,\n    '',\n    `💬 Lead baru: ${data.newLeads}`,\n    `✅ Closing: ${data.closing} (COD ${data.cod} • Transfer ${data.transfer})`,\n    `⏳ Pending: ${data.pending.length}`,\n  ];\n  data.pending.forEach((p) => lines.push(`• ${p.phone}: ${reasons[p.phone] || '-'}`));\n  return lines.join('\\n');\n}\n\nconst d = $('Siapkan Laporan').first().json.data;\nconst res = $('Alasan Pending').isExecuted ? $('Alasan Pending').first().json : null;\nreturn [{ json: { text: shortReportText(d, res) } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        0
+      ],
+      "name": "Susun Laporan",
+      "id": "aics-report-8"
+    },
+    {
+      "parameters": {
+        "chatId": "-5439732568",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1540,
+        0
+      ],
+      "name": "Kirim Laporan",
+      "id": "aics-report-9",
+      "credentials": {
+        "telegramApi": {
+          "id": "GvWCKSvWULLSOTrP",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Jam 9, 13, 18": {
+      "main": [
+        [
+          {
+            "node": "Ambil Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tes Laporan": {
+      "main": [
+        [
+          {
+            "node": "Ambil Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Leads": {
+      "main": [
+        [
+          {
+            "node": "Ambil Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Order": {
+      "main": [
+        [
+          {
+            "node": "Siapkan Laporan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Siapkan Laporan": {
+      "main": [
+        [
+          {
+            "node": "Ada Pending?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ada Pending?": {
+      "main": [
+        [
+          {
+            "node": "Alasan Pending",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Susun Laporan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alasan Pending": {
+      "main": [
+        [
+          {
+            "node": "Susun Laporan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Susun Laporan": {
+      "main": [
+        [
+          {
+            "node": "Kirim Laporan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Jakarta"
+  },
+  "tags": []
+}

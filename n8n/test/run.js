@@ -7,7 +7,7 @@ const assert = require('assert');
 
 const ctx = {};
 vm.createContext(ctx);
-for (const f of ['capi.js', 'recap.js', 'product-facts.js', 'prompts.js', 'order-config.js', 'tools.js', 'prepare-context.js', 'parse-reply.js', 'follow-up.js']) {
+for (const f of ['capi.js', 'recap.js', 'report.js', 'product-facts.js', 'prompts.js', 'order-config.js', 'tools.js', 'prepare-context.js', 'parse-reply.js', 'follow-up.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'src', f), 'utf8'), ctx);
 }
 const { prepareContext, parseReply, detectProduct, isClosingMessage, trimHistory, dailyRecap, dueFollowUp, followUpRequest, followUpText, appendFollowUp } =
@@ -308,7 +308,7 @@ test('order COD: tidak generate resi saat closing (batch harian), tidak pernah r
 });
 
 test('batch resi harian: hanya order confirmed tanpa resi, isi paket di info kurir, 1 request generate', () => {
-  const wf = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'rekap-harian.workflow.json'), 'utf8'));
+  const wf = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'batch-resi.workflow.json'), 'utf8'));
   const code = (name) => wf.nodes.find((n) => n.name === name).parameters.jsCode;
   const now = new Date().toISOString();
   const rows = [
@@ -641,7 +641,7 @@ test('workflow rekap: jadwal 23:55 WIB, urutan node benar', () => {
   const ph = new Function('$', code('Pilih Order Resi'))($);
   assert.strictEqual(ph.length, 1);
   assert.strictEqual(wf.connections['Ambil Order'].main[0][0].node, 'Pilih Order Resi');
-  assert.strictEqual(wf.connections['Kirim Rekap'].main[0][0].node, 'Siap Resi');
+  assert.strictEqual(wf.connections['Cek Order'].main[0][0].node, 'Hitung Rekap');
 });
 test('kode #promo dari LP dikenali sebagai ref, produk tetap SalGlow', () => {
   const r = prepareContext({ phone: '1', message: 'Halo kak, mau tanya salep glowing filo #promo7Q2MX' }, null);
@@ -815,5 +815,40 @@ test('lead bilang "ganti cod aja" -> revisi walau Claude isi jenis_order baru', 
   assert.strictEqual(r.req('Scalev Buat Order'), undefined);
   assert.strictEqual(r.req('Scalev Update Order').url, 'https://api.scalev.com/v3/orders/uuid-1');
   assert.ok(r.req('Telegram Admin').body.includes('ORDER DIREVISI'));
+});
+test('batch resi: jadwal 12 & 24, tidak ada order siap -> tetap kirim laporan', () => {
+  const wf = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'batch-resi.workflow.json'), 'utf8'));
+  assert.strictEqual(wf.nodes.find((n) => n.name === 'Jam 12 & 24').parameters.rule.interval[0].expression, '0 0,12 * * *');
+  const code = (n) => wf.nodes.find((x) => x.name === n).parameters.jsCode;
+  const outs = { 'Pilih Order Resi': [{ order_id: 'A1', scalev_id: 'u1', method: 'transfer' }], 'Cek Order': [{ data: { status: 'pending' } }] };
+  const $ = (n) => ({ all: () => outs[n].map((json) => ({ json })) });
+  const r = new Function('$', code('Siap Resi'))($);
+  assert.strictEqual(r[0].json.none, true);
+  assert.ok(r[0].json.text.includes('A1 (transfer): pending'));
+  assert.deepStrictEqual(wf.connections['Ada Order Siap?'].main[1][0].node, 'Kirim Laporan Resi');
+});
+
+test('laporan singkat 9/13/18: lead, closing, pending + alasan', () => {
+  const now = new Date('2026-09-28T06:00:00Z'); // 13:00 WIB
+  const today = '2026-09-28T02:00:00Z';
+  const d = vm.runInContext('shortReportData', ctx)({
+    leads: [
+      { phone: '1', first_chat_at: today, last_chat_at: today, history: JSON.stringify([{ role: 'user', content: 'udah bpom?' }]) },
+      { phone: '2', first_chat_at: today, last_chat_at: today, history: '[]' },
+      { phone: '3', first_chat_at: '2026-09-27T02:00:00Z', last_chat_at: today, history: '[]' },
+    ],
+    orders: [{ phone: '2', method: 'cod', created_at: today }],
+  }, now);
+  assert.strictEqual(d.hour, 13);
+  assert.strictEqual(d.newLeads, 2);
+  assert.strictEqual(d.closing, 1);
+  assert.deepStrictEqual(d.pending.map((p) => p.phone), ['1', '3']);
+  const text = vm.runInContext('shortReportText', ctx)(d, { content: [{ type: 'text', text: '1|tanya BPOM, belum balas\n3|ragu harga' }] });
+  assert.ok(text.includes('LAPORAN 1 SIANG'));
+  assert.ok(text.includes('Lead baru: 2') && text.includes('Closing: 1 (COD 1'));
+  assert.ok(text.includes('• 1: tanya BPOM, belum balas') && text.includes('• 3: ragu harga'));
+  const wf = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'laporan-singkat.workflow.json'), 'utf8'));
+  assert.strictEqual(wf.nodes.find((n) => n.name === 'Jam 9, 13, 18').parameters.rule.interval[0].expression, '0 9,13,18 * * *');
+  assert.strictEqual(wf.nodes.find((n) => n.name === 'Alasan Pending').credentials.httpHeaderAuth.name, 'Anthropic API');
 });
 console.log(`${passed} tes lulus (final)`);

@@ -41,3 +41,17 @@ function resiReport(response, orders) {
   lines.push('', 'Silakan print semua label di Mengantar/Scalev.');
   return lines.join('\n');
 }
+
+// Laporan saat tidak ada order yang siap dibuatkan resi (tetap dikirim supaya admin tahu batch jalan).
+function resiEmptyReport(cands, checks) {
+  const lines = ['🧾 BATCH RESI', '', 'Tidak ada order siap resi (confirmed & belum ada resi).'];
+  const real = cands.filter((c) => c && c.scalev_id);
+  if (real.length) {
+    lines.push('', 'Order AI 3 hari terakhir:');
+    real.forEach((c, i) => {
+      const o = (checks[i] && (checks[i].data || checks[i])) || {};
+      lines.push(`• ${c.order_id} (${c.method}): ${o.status || '?'}${o.shipment_receipt ? ', resi ' + o.shipment_receipt : ''}`);
+    });
+  }
+  return lines.join('\n');
+}

@@ -140,7 +140,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Konfigurasi Scalev per store. ID diambil dari output workflow \"AI Agent CS - Scalev Setup\".\n// Workflow produksi memakai profil 'prod'; workflow TEST memakai profil 'test' (diganti saat build).\n\nconst STORE_PROFILE = 'prod';\n\nconst STORES = {\n  prod: {\n    storeId: 2709, // Filomall Beauty\n    storeUniqueId: 'store_WQ9th267cKN4103Qini2iUW5',\n    variants: {\n      B1G1: { variantId: 8419, variantUniqueId: 'variant_T2ffVOfNELb6rwSTNTf9xw8A' }, // 2 Salep Glowing Filo (139.000)\n      B2G2: { variantId: 8421, variantUniqueId: 'variant_EWWpG6ef8GdXo617vHyFEyP6' }, // 4 Salep Glowing Filo (219.000)\n    },\n    namePrefix: '', // contoh '[TEST AI] ' untuk menandai order tes\n  },\n  test: {\n    storeId: 0, // ISI: store_id store tes\n    storeUniqueId: 'ISI_STORE_UNIQUE_ID_TES',\n    variants: {\n      B1G1: { variantId: 0, variantUniqueId: 'ISI_VARIANT_B1G1_TES' },\n      B2G2: { variantId: 0, variantUniqueId: 'ISI_VARIANT_B2G2_TES' },\n    },\n    namePrefix: '[TES BOT] ',\n  },\n};\n\nconst ACTIVE_STORE = STORES[STORE_PROFILE];\n\nconst SCALEV = {\n  storeId: ACTIVE_STORE.storeId,\n  storeUniqueId: ACTIVE_STORE.storeUniqueId,\n  namePrefix: ACTIVE_STORE.namePrefix,\n  warehouseCity: 'Surabaya', // gudang asal\n  providerCode: 'mengantar',\n  courierPattern: /j\\s*&?\\s*t|jnt/i, // JNT (J&T Express)\n  codFeeRate: 0.03, // 3% dari (harga produk + ongkir)\n  codFeeName: 'Biaya COD 3%',\n  codRoundTo: 500, // total COD dibulatkan ke atas (Mengantar: 149.350 -> 149.500)\n  duplicateOrderHours: 6, // cegah order dobel dari nomor yang sama\n};\n\n// Paket yang bisa di-order lewat bot.\nconst PACKAGES = {\n  SalGlow: {\n    B1G1: {\n      label: 'SalGlow Beli 1 Gratis 1',\n      pcs: 2, // jumlah salep untuk catatan order\n      note: 'Beli 1 Gratis 1 (2 pcs) + bonus sunscreen + eyeliner',\n      price: 139000,\n      weight: 200, // gram, total paket\n      items: [{ ...ACTIVE_STORE.variants.B1G1, qty: 1 }],\n    },\n    B2G2: {\n      label: 'SalGlow Beli 2 Gratis 2',\n      pcs: 4,\n      note: 'Beli 2 Gratis 2 (4 pcs) + bonus sunscreen + eyeliner',\n      price: 219000,\n      weight: 400,\n      items: [{ ...ACTIVE_STORE.variants.B2G2, qty: 1 }],\n    },\n  },\n};\n\n// Batch resi harian: order yang sudah confirmed & belum punya resi -> generate AWB sekaligus.\n\nconst RESI_LOOKBACK_DAYS = 3; // transfer yang baru dibayar 1-2 hari kemudian tetap ikut\n\n// Kandidat dari tabel aics_orders (baris lama tanpa scalev_id dilewati).\nfunction resiCandidates(rows, now = Date.now()) {\n  const seen = new Set();\n  return rows.filter((r) => {\n    if (!r || !r.scalev_id || seen.has(r.scalev_id)) return false;\n    seen.add(r.scalev_id);\n    const at = Date.parse(r.created_at);\n    return !Number.isNaN(at) && now - at < RESI_LOOKBACK_DAYS * 86400000;\n  });\n}\n\n// Isi paket + pembayaran + nominal, contoh \"2 salepglowing, sunscreen, eyeliner, COD, 149.500\".\nfunction packingText(row) {\n  const pkg = (PACKAGES.SalGlow || {})[row.paket] || {};\n  const method = row.method === 'cod' ? 'COD' : 'TRANSFER';\n  return `${pkg.pcs || '?'} salepglowing, sunscreen, eyeliner, ${method}, ${Number(row.total || 0).toLocaleString('id-ID')}`;\n}\n\n// Siap resi: status confirmed (COD otomatis; transfer setelah admin konfirmasi pembayaran) dan belum ada resi.\nfunction readyForResi(order) {\n  const o = (order && order.data) || order || {};\n  return o.status === 'confirmed' && !o.shipment_receipt;\n}\n\nfunction resiReport(response, orders) {\n  const r = (response && response.data) || response || {};\n  const ok = Object.entries(r.successes || {});\n  const fail = Object.entries(r.failures || {});\n  const name = (id) => (orders.find((o) => o.scalev_id === id || o.order_id === id) || {}).order_id || id;\n  const lines = ['🧾 BATCH RESI HARIAN', '', `✅ Resi terbit: ${ok.length}`];\n  ok.forEach(([id, resi]) => lines.push(`• ${name(id)}: ${resi}`));\n  if (fail.length) {\n    lines.push('', `⚠️ Gagal: ${fail.length}`);\n    fail.forEach(([id, msg]) => lines.push(`• ${name(id)}: ${msg}`));\n  }\n  if (!ok.length && !fail.length) lines.push('', `Respons Scalev: ${JSON.stringify(response).slice(0, 300)}`);\n  lines.push('', 'Silakan print semua label di Mengantar/Scalev.');\n  return lines.join('\\n');\n}\n\nconst rows = $('Ambil Order').all().map((i) => i.json);\nconst list = resiCandidates(rows).map((r) => ({ json: r }));\n// Tetap 1 item supaya rekap tetap terkirim walau tidak ada order (Cek Order -> 404, diabaikan).\nreturn list.length ? list : [{ json: { scalev_id: '', placeholder: true } }];"
+        "jsCode": "// Konfigurasi Scalev per store. ID diambil dari output workflow \"AI Agent CS - Scalev Setup\".\n// Workflow produksi memakai profil 'prod'; workflow TEST memakai profil 'test' (diganti saat build).\n\nconst STORE_PROFILE = 'prod';\n\nconst STORES = {\n  prod: {\n    storeId: 2709, // Filomall Beauty\n    storeUniqueId: 'store_WQ9th267cKN4103Qini2iUW5',\n    variants: {\n      B1G1: { variantId: 8419, variantUniqueId: 'variant_T2ffVOfNELb6rwSTNTf9xw8A' }, // 2 Salep Glowing Filo (139.000)\n      B2G2: { variantId: 8421, variantUniqueId: 'variant_EWWpG6ef8GdXo617vHyFEyP6' }, // 4 Salep Glowing Filo (219.000)\n    },\n    namePrefix: '', // contoh '[TEST AI] ' untuk menandai order tes\n  },\n  test: {\n    storeId: 0, // ISI: store_id store tes\n    storeUniqueId: 'ISI_STORE_UNIQUE_ID_TES',\n    variants: {\n      B1G1: { variantId: 0, variantUniqueId: 'ISI_VARIANT_B1G1_TES' },\n      B2G2: { variantId: 0, variantUniqueId: 'ISI_VARIANT_B2G2_TES' },\n    },\n    namePrefix: '[TES BOT] ',\n  },\n};\n\nconst ACTIVE_STORE = STORES[STORE_PROFILE];\n\nconst SCALEV = {\n  storeId: ACTIVE_STORE.storeId,\n  storeUniqueId: ACTIVE_STORE.storeUniqueId,\n  namePrefix: ACTIVE_STORE.namePrefix,\n  warehouseCity: 'Surabaya', // gudang asal\n  providerCode: 'mengantar',\n  courierPattern: /j\\s*&?\\s*t|jnt/i, // JNT (J&T Express)\n  codFeeRate: 0.03, // 3% dari (harga produk + ongkir)\n  codFeeName: 'Biaya COD 3%',\n  codRoundTo: 500, // total COD dibulatkan ke atas (Mengantar: 149.350 -> 149.500)\n  duplicateOrderHours: 6, // cegah order dobel dari nomor yang sama\n};\n\n// Paket yang bisa di-order lewat bot.\nconst PACKAGES = {\n  SalGlow: {\n    B1G1: {\n      label: 'SalGlow Beli 1 Gratis 1',\n      pcs: 2, // jumlah salep untuk catatan order\n      note: 'Beli 1 Gratis 1 (2 pcs) + bonus sunscreen + eyeliner',\n      price: 139000,\n      weight: 200, // gram, total paket\n      items: [{ ...ACTIVE_STORE.variants.B1G1, qty: 1 }],\n    },\n    B2G2: {\n      label: 'SalGlow Beli 2 Gratis 2',\n      pcs: 4,\n      note: 'Beli 2 Gratis 2 (4 pcs) + bonus sunscreen + eyeliner',\n      price: 219000,\n      weight: 400,\n      items: [{ ...ACTIVE_STORE.variants.B2G2, qty: 1 }],\n    },\n  },\n};\n\n// Batch resi harian: order yang sudah confirmed & belum punya resi -> generate AWB sekaligus.\n\nconst RESI_LOOKBACK_DAYS = 3; // transfer yang baru dibayar 1-2 hari kemudian tetap ikut\n\n// Kandidat dari tabel aics_orders (baris lama tanpa scalev_id dilewati).\nfunction resiCandidates(rows, now = Date.now()) {\n  const seen = new Set();\n  return rows.filter((r) => {\n    if (!r || !r.scalev_id || seen.has(r.scalev_id)) return false;\n    seen.add(r.scalev_id);\n    const at = Date.parse(r.created_at);\n    return !Number.isNaN(at) && now - at < RESI_LOOKBACK_DAYS * 86400000;\n  });\n}\n\n// Isi paket + pembayaran + nominal, contoh \"2 salepglowing, sunscreen, eyeliner, COD, 149.500\".\nfunction packingText(row) {\n  const pkg = (PACKAGES.SalGlow || {})[row.paket] || {};\n  const method = row.method === 'cod' ? 'COD' : 'TRANSFER';\n  return `${pkg.pcs || '?'} salepglowing, sunscreen, eyeliner, ${method}, ${Number(row.total || 0).toLocaleString('id-ID')}`;\n}\n\n// Siap resi: status confirmed (COD otomatis; transfer setelah admin konfirmasi pembayaran) dan belum ada resi.\nfunction readyForResi(order) {\n  const o = (order && order.data) || order || {};\n  return o.status === 'confirmed' && !o.shipment_receipt;\n}\n\nfunction resiReport(response, orders) {\n  const r = (response && response.data) || response || {};\n  const ok = Object.entries(r.successes || {});\n  const fail = Object.entries(r.failures || {});\n  const name = (id) => (orders.find((o) => o.scalev_id === id || o.order_id === id) || {}).order_id || id;\n  const lines = ['🧾 BATCH RESI HARIAN', '', `✅ Resi terbit: ${ok.length}`];\n  ok.forEach(([id, resi]) => lines.push(`• ${name(id)}: ${resi}`));\n  if (fail.length) {\n    lines.push('', `⚠️ Gagal: ${fail.length}`);\n    fail.forEach(([id, msg]) => lines.push(`• ${name(id)}: ${msg}`));\n  }\n  if (!ok.length && !fail.length) lines.push('', `Respons Scalev: ${JSON.stringify(response).slice(0, 300)}`);\n  lines.push('', 'Silakan print semua label di Mengantar/Scalev.');\n  return lines.join('\\n');\n}\n\n// Laporan saat tidak ada order yang siap dibuatkan resi (tetap dikirim supaya admin tahu batch jalan).\nfunction resiEmptyReport(cands, checks) {\n  const lines = ['🧾 BATCH RESI', '', 'Tidak ada order siap resi (confirmed & belum ada resi).'];\n  const real = cands.filter((c) => c && c.scalev_id);\n  if (real.length) {\n    lines.push('', 'Order AI 3 hari terakhir:');\n    real.forEach((c, i) => {\n      const o = (checks[i] && (checks[i].data || checks[i])) || {};\n      lines.push(`• ${c.order_id} (${c.method}): ${o.status || '?'}${o.shipment_receipt ? ', resi ' + o.shipment_receipt : ''}`);\n    });\n  }\n  return lines.join('\\n');\n}\n\nconst rows = $('Ambil Order').all().map((i) => i.json);\nconst list = resiCandidates(rows).map((r) => ({ json: r }));\n// Tetap 1 item supaya rekap tetap terkirim walau tidak ada order (Cek Order -> 404, diabaikan).\nreturn list.length ? list : [{ json: { scalev_id: '', placeholder: true } }];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -179,137 +179,6 @@
         "httpHeaderAuth": {
           "id": "3Sg0yQwmYbm9uLyp",
           "name": "Scalev"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "// Konfigurasi Scalev per store. ID diambil dari output workflow \"AI Agent CS - Scalev Setup\".\n// Workflow produksi memakai profil 'prod'; workflow TEST memakai profil 'test' (diganti saat build).\n\nconst STORE_PROFILE = 'prod';\n\nconst STORES = {\n  prod: {\n    storeId: 2709, // Filomall Beauty\n    storeUniqueId: 'store_WQ9th267cKN4103Qini2iUW5',\n    variants: {\n      B1G1: { variantId: 8419, variantUniqueId: 'variant_T2ffVOfNELb6rwSTNTf9xw8A' }, // 2 Salep Glowing Filo (139.000)\n      B2G2: { variantId: 8421, variantUniqueId: 'variant_EWWpG6ef8GdXo617vHyFEyP6' }, // 4 Salep Glowing Filo (219.000)\n    },\n    namePrefix: '', // contoh '[TEST AI] ' untuk menandai order tes\n  },\n  test: {\n    storeId: 0, // ISI: store_id store tes\n    storeUniqueId: 'ISI_STORE_UNIQUE_ID_TES',\n    variants: {\n      B1G1: { variantId: 0, variantUniqueId: 'ISI_VARIANT_B1G1_TES' },\n      B2G2: { variantId: 0, variantUniqueId: 'ISI_VARIANT_B2G2_TES' },\n    },\n    namePrefix: '[TES BOT] ',\n  },\n};\n\nconst ACTIVE_STORE = STORES[STORE_PROFILE];\n\nconst SCALEV = {\n  storeId: ACTIVE_STORE.storeId,\n  storeUniqueId: ACTIVE_STORE.storeUniqueId,\n  namePrefix: ACTIVE_STORE.namePrefix,\n  warehouseCity: 'Surabaya', // gudang asal\n  providerCode: 'mengantar',\n  courierPattern: /j\\s*&?\\s*t|jnt/i, // JNT (J&T Express)\n  codFeeRate: 0.03, // 3% dari (harga produk + ongkir)\n  codFeeName: 'Biaya COD 3%',\n  codRoundTo: 500, // total COD dibulatkan ke atas (Mengantar: 149.350 -> 149.500)\n  duplicateOrderHours: 6, // cegah order dobel dari nomor yang sama\n};\n\n// Paket yang bisa di-order lewat bot.\nconst PACKAGES = {\n  SalGlow: {\n    B1G1: {\n      label: 'SalGlow Beli 1 Gratis 1',\n      pcs: 2, // jumlah salep untuk catatan order\n      note: 'Beli 1 Gratis 1 (2 pcs) + bonus sunscreen + eyeliner',\n      price: 139000,\n      weight: 200, // gram, total paket\n      items: [{ ...ACTIVE_STORE.variants.B1G1, qty: 1 }],\n    },\n    B2G2: {\n      label: 'SalGlow Beli 2 Gratis 2',\n      pcs: 4,\n      note: 'Beli 2 Gratis 2 (4 pcs) + bonus sunscreen + eyeliner',\n      price: 219000,\n      weight: 400,\n      items: [{ ...ACTIVE_STORE.variants.B2G2, qty: 1 }],\n    },\n  },\n};\n\n// Batch resi harian: order yang sudah confirmed & belum punya resi -> generate AWB sekaligus.\n\nconst RESI_LOOKBACK_DAYS = 3; // transfer yang baru dibayar 1-2 hari kemudian tetap ikut\n\n// Kandidat dari tabel aics_orders (baris lama tanpa scalev_id dilewati).\nfunction resiCandidates(rows, now = Date.now()) {\n  const seen = new Set();\n  return rows.filter((r) => {\n    if (!r || !r.scalev_id || seen.has(r.scalev_id)) return false;\n    seen.add(r.scalev_id);\n    const at = Date.parse(r.created_at);\n    return !Number.isNaN(at) && now - at < RESI_LOOKBACK_DAYS * 86400000;\n  });\n}\n\n// Isi paket + pembayaran + nominal, contoh \"2 salepglowing, sunscreen, eyeliner, COD, 149.500\".\nfunction packingText(row) {\n  const pkg = (PACKAGES.SalGlow || {})[row.paket] || {};\n  const method = row.method === 'cod' ? 'COD' : 'TRANSFER';\n  return `${pkg.pcs || '?'} salepglowing, sunscreen, eyeliner, ${method}, ${Number(row.total || 0).toLocaleString('id-ID')}`;\n}\n\n// Siap resi: status confirmed (COD otomatis; transfer setelah admin konfirmasi pembayaran) dan belum ada resi.\nfunction readyForResi(order) {\n  const o = (order && order.data) || order || {};\n  return o.status === 'confirmed' && !o.shipment_receipt;\n}\n\nfunction resiReport(response, orders) {\n  const r = (response && response.data) || response || {};\n  const ok = Object.entries(r.successes || {});\n  const fail = Object.entries(r.failures || {});\n  const name = (id) => (orders.find((o) => o.scalev_id === id || o.order_id === id) || {}).order_id || id;\n  const lines = ['🧾 BATCH RESI HARIAN', '', `✅ Resi terbit: ${ok.length}`];\n  ok.forEach(([id, resi]) => lines.push(`• ${name(id)}: ${resi}`));\n  if (fail.length) {\n    lines.push('', `⚠️ Gagal: ${fail.length}`);\n    fail.forEach(([id, msg]) => lines.push(`• ${name(id)}: ${msg}`));\n  }\n  if (!ok.length && !fail.length) lines.push('', `Respons Scalev: ${JSON.stringify(response).slice(0, 300)}`);\n  lines.push('', 'Silakan print semua label di Mengantar/Scalev.');\n  return lines.join('\\n');\n}\n\nconst cands = $('Pilih Order Resi').all().map((i) => i.json);\nreturn $('Cek Order').all().map((item, i) => (cands[i] && cands[i].scalev_id && readyForResi(item.json) ? { json: { ...cands[i], packing: packingText(cands[i]) } } : null)).filter(Boolean);"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1760,
-        0
-      ],
-      "name": "Siap Resi",
-      "id": "aics-recap-10"
-    },
-    {
-      "parameters": {
-        "method": "PATCH",
-        "url": "=https://api.scalev.com/v3/orders/{{ $json.scalev_id }}/shipment",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ courier_additional_info: $json.packing }) }}",
-        "options": {
-          "response": {
-            "response": {
-              "neverError": true
-            }
-          },
-          "timeout": 20000
-        }
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.5,
-      "position": [
-        1980,
-        0
-      ],
-      "name": "Info Kurir",
-      "onError": "continueRegularOutput",
-      "id": "aics-recap-11",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
-          "name": "Scalev"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "const orders = $('Siap Resi').all().map((i) => i.json);\nreturn [{ json: { ids: orders.map((o) => o.scalev_id) } }];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        2200,
-        0
-      ],
-      "name": "Gabung Batch",
-      "id": "aics-recap-12"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.scalev.com/v3/orders/generate-awb",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify($json) }}",
-        "options": {
-          "response": {
-            "response": {
-              "neverError": true
-            }
-          },
-          "timeout": 20000
-        }
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.5,
-      "position": [
-        2420,
-        0
-      ],
-      "name": "Generate Resi Batch",
-      "onError": "continueRegularOutput",
-      "id": "aics-recap-13",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
-          "name": "Scalev"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "// Konfigurasi Scalev per store. ID diambil dari output workflow \"AI Agent CS - Scalev Setup\".\n// Workflow produksi memakai profil 'prod'; workflow TEST memakai profil 'test' (diganti saat build).\n\nconst STORE_PROFILE = 'prod';\n\nconst STORES = {\n  prod: {\n    storeId: 2709, // Filomall Beauty\n    storeUniqueId: 'store_WQ9th267cKN4103Qini2iUW5',\n    variants: {\n      B1G1: { variantId: 8419, variantUniqueId: 'variant_T2ffVOfNELb6rwSTNTf9xw8A' }, // 2 Salep Glowing Filo (139.000)\n      B2G2: { variantId: 8421, variantUniqueId: 'variant_EWWpG6ef8GdXo617vHyFEyP6' }, // 4 Salep Glowing Filo (219.000)\n    },\n    namePrefix: '', // contoh '[TEST AI] ' untuk menandai order tes\n  },\n  test: {\n    storeId: 0, // ISI: store_id store tes\n    storeUniqueId: 'ISI_STORE_UNIQUE_ID_TES',\n    variants: {\n      B1G1: { variantId: 0, variantUniqueId: 'ISI_VARIANT_B1G1_TES' },\n      B2G2: { variantId: 0, variantUniqueId: 'ISI_VARIANT_B2G2_TES' },\n    },\n    namePrefix: '[TES BOT] ',\n  },\n};\n\nconst ACTIVE_STORE = STORES[STORE_PROFILE];\n\nconst SCALEV = {\n  storeId: ACTIVE_STORE.storeId,\n  storeUniqueId: ACTIVE_STORE.storeUniqueId,\n  namePrefix: ACTIVE_STORE.namePrefix,\n  warehouseCity: 'Surabaya', // gudang asal\n  providerCode: 'mengantar',\n  courierPattern: /j\\s*&?\\s*t|jnt/i, // JNT (J&T Express)\n  codFeeRate: 0.03, // 3% dari (harga produk + ongkir)\n  codFeeName: 'Biaya COD 3%',\n  codRoundTo: 500, // total COD dibulatkan ke atas (Mengantar: 149.350 -> 149.500)\n  duplicateOrderHours: 6, // cegah order dobel dari nomor yang sama\n};\n\n// Paket yang bisa di-order lewat bot.\nconst PACKAGES = {\n  SalGlow: {\n    B1G1: {\n      label: 'SalGlow Beli 1 Gratis 1',\n      pcs: 2, // jumlah salep untuk catatan order\n      note: 'Beli 1 Gratis 1 (2 pcs) + bonus sunscreen + eyeliner',\n      price: 139000,\n      weight: 200, // gram, total paket\n      items: [{ ...ACTIVE_STORE.variants.B1G1, qty: 1 }],\n    },\n    B2G2: {\n      label: 'SalGlow Beli 2 Gratis 2',\n      pcs: 4,\n      note: 'Beli 2 Gratis 2 (4 pcs) + bonus sunscreen + eyeliner',\n      price: 219000,\n      weight: 400,\n      items: [{ ...ACTIVE_STORE.variants.B2G2, qty: 1 }],\n    },\n  },\n};\n\n// Batch resi harian: order yang sudah confirmed & belum punya resi -> generate AWB sekaligus.\n\nconst RESI_LOOKBACK_DAYS = 3; // transfer yang baru dibayar 1-2 hari kemudian tetap ikut\n\n// Kandidat dari tabel aics_orders (baris lama tanpa scalev_id dilewati).\nfunction resiCandidates(rows, now = Date.now()) {\n  const seen = new Set();\n  return rows.filter((r) => {\n    if (!r || !r.scalev_id || seen.has(r.scalev_id)) return false;\n    seen.add(r.scalev_id);\n    const at = Date.parse(r.created_at);\n    return !Number.isNaN(at) && now - at < RESI_LOOKBACK_DAYS * 86400000;\n  });\n}\n\n// Isi paket + pembayaran + nominal, contoh \"2 salepglowing, sunscreen, eyeliner, COD, 149.500\".\nfunction packingText(row) {\n  const pkg = (PACKAGES.SalGlow || {})[row.paket] || {};\n  const method = row.method === 'cod' ? 'COD' : 'TRANSFER';\n  return `${pkg.pcs || '?'} salepglowing, sunscreen, eyeliner, ${method}, ${Number(row.total || 0).toLocaleString('id-ID')}`;\n}\n\n// Siap resi: status confirmed (COD otomatis; transfer setelah admin konfirmasi pembayaran) dan belum ada resi.\nfunction readyForResi(order) {\n  const o = (order && order.data) || order || {};\n  return o.status === 'confirmed' && !o.shipment_receipt;\n}\n\nfunction resiReport(response, orders) {\n  const r = (response && response.data) || response || {};\n  const ok = Object.entries(r.successes || {});\n  const fail = Object.entries(r.failures || {});\n  const name = (id) => (orders.find((o) => o.scalev_id === id || o.order_id === id) || {}).order_id || id;\n  const lines = ['🧾 BATCH RESI HARIAN', '', `✅ Resi terbit: ${ok.length}`];\n  ok.forEach(([id, resi]) => lines.push(`• ${name(id)}: ${resi}`));\n  if (fail.length) {\n    lines.push('', `⚠️ Gagal: ${fail.length}`);\n    fail.forEach(([id, msg]) => lines.push(`• ${name(id)}: ${msg}`));\n  }\n  if (!ok.length && !fail.length) lines.push('', `Respons Scalev: ${JSON.stringify(response).slice(0, 300)}`);\n  lines.push('', 'Silakan print semua label di Mengantar/Scalev.');\n  return lines.join('\\n');\n}\n\nreturn [{ json: { text: resiReport($input.first().json, $('Siap Resi').all().map((i) => i.json)) } }];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        2640,
-        0
-      ],
-      "name": "Susun Laporan Resi",
-      "id": "aics-recap-14"
-    },
-    {
-      "parameters": {
-        "chatId": "-5439732568",
-        "text": "={{ $json.text }}",
-        "additionalFields": {
-          "appendAttribution": false
-        }
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        2860,
-        0
-      ],
-      "name": "Kirim Laporan Resi",
-      "onError": "continueRegularOutput",
-      "id": "aics-recap-15",
-      "credentials": {
-        "telegramApi": {
-          "id": "GvWCKSvWULLSOTrP",
-          "name": "Telegram account"
         }
       }
     }
@@ -398,72 +267,6 @@
         [
           {
             "node": "Kirim Rekap",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Kirim Rekap": {
-      "main": [
-        [
-          {
-            "node": "Siap Resi",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Siap Resi": {
-      "main": [
-        [
-          {
-            "node": "Info Kurir",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Info Kurir": {
-      "main": [
-        [
-          {
-            "node": "Gabung Batch",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Gabung Batch": {
-      "main": [
-        [
-          {
-            "node": "Generate Resi Batch",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Generate Resi Batch": {
-      "main": [
-        [
-          {
-            "node": "Susun Laporan Resi",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Susun Laporan Resi": {
-      "main": [
-        [
-          {
-            "node": "Kirim Laporan Resi",
             "type": "main",
             "index": 0
           }

@@ -701,11 +701,117 @@ const list = resiCandidates(rows).map((r) => ({ json: r }));
 return list.length ? list : [{ json: { scalev_id: '', placeholder: true } }];`;
 const resiReadyCode = resiLib + `
 const cands = $('Pilih Order Resi').all().map((i) => i.json);
-return $('Cek Order').all().map((item, i) => (cands[i] && cands[i].scalev_id && readyForResi(item.json) ? { json: { ...cands[i], packing: packingText(cands[i]) } } : null)).filter(Boolean);`;
+const checks = $('Cek Order').all().map((i) => i.json);
+const ready = checks.map((c, i) => (cands[i] && cands[i].scalev_id && readyForResi(c) ? { json: { ...cands[i], packing: packingText(cands[i]) } } : null)).filter(Boolean);
+return ready.length ? ready : [{ json: { none: true, text: resiEmptyReport(cands, checks) } }];`;
 const resiBatchCode = `const orders = $('Siap Resi').all().map((i) => i.json);
 return [{ json: { ids: orders.map((o) => o.scalev_id) } }];`;
 const resiReportCode = resiLib + `
 return [{ json: { text: resiReport($input.first().json, $('Siap Resi').all().map((i) => i.json)) } }];`;
+
+// Workflow laporan singkat: 09:00, 13:00, 18:00 WIB.
+const reportLib = [src('recap.js'), src('report.js')].join('\n');
+const reportDataCode = reportLib + `
+const rows = (name) => $(name).all().map((i) => i.json).filter((r) => r && Object.keys(r).length);
+const data = shortReportData({ leads: rows('Ambil Leads'), orders: rows('Ambil Order') });
+return [{ json: { data, requestBody: pendingReasonRequest(data) } }];`;
+const reportTextCode = reportLib + `
+const d = $('Siapkan Laporan').first().json.data;
+const res = $('Alasan Pending').isExecuted ? $('Alasan Pending').first().json : null;
+return [{ json: { text: shortReportText(d, res) } }];`;
+const reportWorkflow = {
+  name: 'AI Agent CS - Laporan Singkat',
+  nodes: [
+    node('Jam 9, 13, 18', 'n8n-nodes-base.scheduleTrigger', 1.2, 0, {
+      rule: { interval: [{ field: 'cronExpression', expression: '0 9,13,18 * * *' }] },
+    }),
+    { ...node('Tes Laporan', 'n8n-nodes-base.manualTrigger', 1, 0, {}), position: [0, 200] },
+    getAll('Ambil Leads', 220, DATA_TABLE),
+    getAll('Ambil Order', 440, ORDERS_TABLE),
+    node('Siapkan Laporan', 'n8n-nodes-base.code', 2, 660, { jsCode: reportDataCode }),
+    ifNode('Ada Pending?', 880, 0, '={{ $json.data.pending.length > 0 }}'),
+    node('Alasan Pending', 'n8n-nodes-base.httpRequest', 4.5, 1100, {
+      method: 'POST',
+      url: 'https://api.anthropic.com/v1/messages',
+      authentication: 'genericCredentialType',
+      genericAuthType: 'httpHeaderAuth',
+      sendHeaders: true,
+      headerParameters: { parameters: [{ name: 'anthropic-version', value: '2023-06-01' }] },
+      sendBody: true,
+      specifyBody: 'json',
+      jsonBody: '={{ JSON.stringify($json.requestBody) }}',
+      options: { response: { response: { neverError: true } }, timeout: 30000 },
+    }, { onError: 'continueRegularOutput' }),
+    node('Susun Laporan', 'n8n-nodes-base.code', 2, 1320, { jsCode: reportTextCode }),
+    node('Kirim Laporan', 'n8n-nodes-base.telegram', 1.2, 1540, {
+      chatId: TELEGRAM_CHAT_ID,
+      text: '={{ $json.text }}',
+      additionalFields: { appendAttribution: false },
+    }),
+  ].map((n, i) => ({ ...n, id: `aics-report-${i + 1}` })),
+  pinData: {},
+  connections: {
+    'Jam 9, 13, 18': link('Ambil Leads'),
+    'Tes Laporan': link('Ambil Leads'),
+    'Ambil Leads': link('Ambil Order'),
+    'Ambil Order': link('Siapkan Laporan'),
+    'Siapkan Laporan': link('Ada Pending?'),
+    'Ada Pending?': link('Alasan Pending', 'Susun Laporan'),
+    'Alasan Pending': link('Susun Laporan'),
+    'Susun Laporan': link('Kirim Laporan'),
+  },
+  active: false,
+  settings: { executionOrder: 'v1', timezone: 'Asia/Jakarta' },
+  tags: [],
+};
+const reportOut = path.join(__dirname, 'laporan-singkat.workflow.json');
+fs.writeFileSync(reportOut, JSON.stringify(finalize(reportWorkflow), null, 2) + '\n');
+console.log('Wrote', path.relative(process.cwd(), reportOut));
+
+// Workflow batch resi: jam 12 siang & 12 malam WIB.
+const resiWorkflow = {
+  name: 'AI Agent CS - Batch Resi',
+  nodes: [
+    node('Jam 12 & 24', 'n8n-nodes-base.scheduleTrigger', 1.2, 0, {
+      rule: { interval: [{ field: 'cronExpression', expression: '0 0,12 * * *' }] },
+    }),
+    { ...node('Tes Resi', 'n8n-nodes-base.manualTrigger', 1, 0, {}), position: [0, 200] },
+    getAll('Ambil Order', 220, ORDERS_TABLE),
+    node('Pilih Order Resi', 'n8n-nodes-base.code', 2, 440, { jsCode: resiPickCode }),
+    { ...scalevHttp('Cek Order', 660, 'GET', "/orders/{{ $json.scalev_id || 'none' }}"), position: [660, 0] },
+    node('Siap Resi', 'n8n-nodes-base.code', 2, 880, { jsCode: resiReadyCode }),
+    { ...ifNode('Ada Order Siap?', 1100, 0, '={{ $json.none !== true }}') },
+    { ...scalevHttp('Info Kurir', 1320, 'PATCH', "/orders/{{ $json.scalev_id }}/shipment", '={{ JSON.stringify({ courier_additional_info: $json.packing }) }}'), position: [1320, 0] },
+    node('Gabung Batch', 'n8n-nodes-base.code', 2, 1540, { jsCode: resiBatchCode }),
+    { ...scalevHttp('Generate Resi Batch', 1760, 'POST', '/orders/generate-awb', '={{ JSON.stringify($json) }}'), position: [1760, 0] },
+    node('Susun Laporan Resi', 'n8n-nodes-base.code', 2, 1980, { jsCode: resiReportCode }),
+    node('Kirim Laporan Resi', 'n8n-nodes-base.telegram', 1.2, 2200, {
+      chatId: TELEGRAM_CHAT_ID,
+      text: '={{ $json.text }}',
+      additionalFields: { appendAttribution: false },
+    }, { onError: 'continueRegularOutput' }),
+  ].map((n, i) => ({ ...n, id: `aics-resi-${i + 1}` })),
+  pinData: {},
+  connections: {
+    'Jam 12 & 24': link('Ambil Order'),
+    'Tes Resi': link('Ambil Order'),
+    'Ambil Order': link('Pilih Order Resi'),
+    'Pilih Order Resi': link('Cek Order'),
+    'Cek Order': link('Siap Resi'),
+    'Siap Resi': link('Ada Order Siap?'),
+    'Ada Order Siap?': link('Info Kurir', 'Kirim Laporan Resi'),
+    'Info Kurir': link('Gabung Batch'),
+    'Gabung Batch': link('Generate Resi Batch'),
+    'Generate Resi Batch': link('Susun Laporan Resi'),
+    'Susun Laporan Resi': link('Kirim Laporan Resi'),
+  },
+  active: false,
+  settings: { executionOrder: 'v1', timezone: 'Asia/Jakarta' },
+  tags: [],
+};
+const resiOut = path.join(__dirname, 'batch-resi.workflow.json');
+fs.writeFileSync(resiOut, JSON.stringify(finalize(resiWorkflow), null, 2) + '\n');
+console.log('Wrote', path.relative(process.cwd(), resiOut));
 
 const recapWorkflow = {
   name: 'AI Agent CS - Rekap Harian',
@@ -723,19 +829,9 @@ const recapWorkflow = {
       text: '={{ $json.text }}',
       additionalFields: { parse_mode: 'Markdown', appendAttribution: false },
     }),
-    // Batch resi: semua order confirmed tanpa resi (COD + transfer yang sudah dikonfirmasi admin).
+    // Status terbaru order dari Scalev untuk rekap (transfer lunas / dibatalkan).
     node('Pilih Order Resi', 'n8n-nodes-base.code', 2, 880, { jsCode: resiPickCode }),
     { ...scalevHttp('Cek Order', 1540, 'GET', "/orders/{{ $json.scalev_id || 'none' }}"), position: [1100, 0] },
-    node('Siap Resi', 'n8n-nodes-base.code', 2, 1760, { jsCode: resiReadyCode }),
-    { ...scalevHttp('Info Kurir', 1980, 'PATCH', "/orders/{{ $json.scalev_id }}/shipment", '={{ JSON.stringify({ courier_additional_info: $json.packing }) }}'), position: [1980, 0] },
-    node('Gabung Batch', 'n8n-nodes-base.code', 2, 2200, { jsCode: resiBatchCode }),
-    { ...scalevHttp('Generate Resi Batch', 2420, 'POST', '/orders/generate-awb', '={{ JSON.stringify($json) }}'), position: [2420, 0] },
-    node('Susun Laporan Resi', 'n8n-nodes-base.code', 2, 2640, { jsCode: resiReportCode }),
-    node('Kirim Laporan Resi', 'n8n-nodes-base.telegram', 1.2, 2860, {
-      chatId: TELEGRAM_CHAT_ID,
-      text: '={{ $json.text }}',
-      additionalFields: { appendAttribution: false },
-    }, { onError: 'continueRegularOutput' }),
   ].map((n, i) => ({ ...n, id: `aics-recap-${i + 1}` })),
   pinData: {},
   connections: {
@@ -747,12 +843,6 @@ const recapWorkflow = {
     'Pilih Order Resi': link('Cek Order'),
     'Cek Order': link('Hitung Rekap'),
     'Hitung Rekap': link('Kirim Rekap'),
-    'Kirim Rekap': link('Siap Resi'),
-    'Siap Resi': link('Info Kurir'),
-    'Info Kurir': link('Gabung Batch'),
-    'Gabung Batch': link('Generate Resi Batch'),
-    'Generate Resi Batch': link('Susun Laporan Resi'),
-    'Susun Laporan Resi': link('Kirim Laporan Resi'),
   },
   active: false,
   settings: { executionOrder: 'v1', timezone: 'Asia/Jakarta' },
