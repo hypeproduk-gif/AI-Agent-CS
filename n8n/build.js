@@ -813,6 +813,46 @@ const resiOut = path.join(__dirname, 'batch-resi.workflow.json');
 fs.writeFileSync(resiOut, JSON.stringify(finalize(resiWorkflow), null, 2) + '\n');
 console.log('Wrote', path.relative(process.cwd(), resiOut));
 
+// Workflow resi manual Filomall Beauty: dijalankan admin (Execute workflow), tidak terjadwal.
+const filoPickCode = resiLib + `
+const orders = storeResiOrders($input.all().map((i) => i.json));
+return orders.length ? orders.map((o) => ({ json: o })) : [{ json: { none: true, text: '🧾 RESI FILOMALL BEAUTY\\n\\nTidak ada order confirmed tanpa resi.' } }];`;
+const filoReportCode = resiLib + `
+return [{ json: { text: resiReport($input.first().json, $('Pilih Order Filomall').all().map((i) => i.json)).replace('BATCH RESI HARIAN', 'RESI FILOMALL BEAUTY') } }];`;
+const filoWorkflow = {
+  name: 'AI Agent CS - Resi Manual Filomall',
+  nodes: [
+    node('Jalankan Resi Filomall', 'n8n-nodes-base.manualTrigger', 1, 0, {}),
+    scalevHttp('Ambil Order Confirmed', 220, 'GET', '/orders?store_id=2709&status=confirmed&page_size=100'),
+    node('Pilih Order Filomall', 'n8n-nodes-base.code', 2, 440, { jsCode: filoPickCode }),
+    ifNode('Ada Order?', 660, 0, '={{ $json.none !== true }}'),
+    node('Gabung ID', 'n8n-nodes-base.code', 2, 880, { jsCode: `return [{ json: { ids: $('Pilih Order Filomall').all().map((i) => i.json.scalev_id) } }];` }),
+    scalevHttp('Generate Resi', 1100, 'POST', '/orders/generate-awb', '={{ JSON.stringify($json) }}'),
+    node('Susun Laporan', 'n8n-nodes-base.code', 2, 1320, { jsCode: filoReportCode }),
+    node('Kirim Laporan', 'n8n-nodes-base.telegram', 1.2, 1540, {
+      chatId: TELEGRAM_CHAT_ID,
+      text: '={{ $json.text }}',
+      additionalFields: { appendAttribution: false },
+    }, { onError: 'continueRegularOutput' }),
+  ].map((n, i) => ({ ...n, id: `aics-filo-resi-${i + 1}` })),
+  pinData: {},
+  connections: {
+    'Jalankan Resi Filomall': link('Ambil Order Confirmed'),
+    'Ambil Order Confirmed': link('Pilih Order Filomall'),
+    'Pilih Order Filomall': link('Ada Order?'),
+    'Ada Order?': link('Gabung ID', 'Kirim Laporan'),
+    'Gabung ID': link('Generate Resi'),
+    'Generate Resi': link('Susun Laporan'),
+    'Susun Laporan': link('Kirim Laporan'),
+  },
+  active: false,
+  settings: { executionOrder: 'v1', timezone: 'Asia/Jakarta' },
+  tags: [],
+};
+const filoOut = path.join(__dirname, 'resi-manual-filomall.workflow.json');
+fs.writeFileSync(filoOut, JSON.stringify(finalize(filoWorkflow), null, 2) + '\n');
+console.log('Wrote', path.relative(process.cwd(), filoOut));
+
 const recapWorkflow = {
   name: 'AI Agent CS - Rekap Harian',
   nodes: [

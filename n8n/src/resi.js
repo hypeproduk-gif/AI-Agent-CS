@@ -55,3 +55,21 @@ function resiEmptyReport(cands, checks) {
   }
   return lines.join('\n');
 }
+
+// Resi manual per store (mis. Filomall Beauty): semua order confirmed tanpa resi dari list Scalev.
+const FILOMALL_STORE_ID = 2709;
+function storeResiOrders(responses, storeId = FILOMALL_STORE_ID) {
+  const seen = new Set();
+  const out = [];
+  for (const res of responses) {
+    const d = (res && res.data) || res || {};
+    const list = Array.isArray(d.results) ? d.results : Array.isArray(d) ? d : [];
+    for (const o of list) {
+      const sid = (o.store && o.store.id) || o.store_id;
+      if (!o || !o.id || seen.has(o.id) || Number(sid) !== storeId || !readyForResi(o)) continue;
+      seen.add(o.id);
+      out.push({ scalev_id: o.id, order_id: o.order_id || o.id });
+    }
+  }
+  return out;
+}
