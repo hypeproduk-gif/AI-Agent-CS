@@ -57,6 +57,7 @@ function resiEmptyReport(cands, checks) {
 }
 
 // Resi manual per store (mis. Filomall Beauty): semua order confirmed tanpa resi dari list Scalev.
+// Isi paket diambil dari notes order Scalev -> dikirim ke kurir sebagai info tambahan.
 const FILOMALL_STORE_ID = 2709;
 function storeResiOrders(responses, storeId = FILOMALL_STORE_ID) {
   const seen = new Set();
@@ -68,7 +69,8 @@ function storeResiOrders(responses, storeId = FILOMALL_STORE_ID) {
       const sid = (o.store && o.store.id) || o.store_id;
       if (!o || !o.id || seen.has(o.id) || Number(sid) !== storeId || !readyForResi(o)) continue;
       seen.add(o.id);
-      out.push({ scalev_id: o.id, order_id: o.order_id || o.id });
+      const packing = String(o.notes || o.note || '').trim();
+      out.push({ scalev_id: o.id, order_id: o.order_id || o.id, packing });
     }
   }
   return out;

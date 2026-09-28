@@ -818,7 +818,8 @@ const filoPickCode = resiLib + `
 const orders = storeResiOrders($input.all().map((i) => i.json));
 return orders.length ? orders.map((o) => ({ json: o })) : [{ json: { none: true, text: '🧾 RESI FILOMALL BEAUTY\\n\\nTidak ada order confirmed tanpa resi.' } }];`;
 const filoReportCode = resiLib + `
-return [{ json: { text: resiReport($input.first().json, $('Pilih Order Filomall').all().map((i) => i.json)).replace('BATCH RESI HARIAN', 'RESI FILOMALL BEAUTY') } }];`;
+return [{ json: { text: resiReport($input.first().json, $('Pilih Order Filomall').all().map((i) => i.json)).replace('BATCH RESI HARIAN', 'RESI FILOMALL BEAUTY')
+  + (() => { const e = $('Pilih Order Filomall').all().map((i) => i.json).filter((o) => !o.packing); return e.length ? '\\n\\n⚠️ Notes kosong (isi paket tidak terkirim ke kurir): ' + e.map((o) => o.order_id).join(', ') : ''; })() } }];`;
 const filoWorkflow = {
   name: 'AI Agent CS - Resi Manual Filomall',
   nodes: [
@@ -826,10 +827,11 @@ const filoWorkflow = {
     scalevHttp('Ambil Order Confirmed', 220, 'GET', '/orders?store_id=2709&status=confirmed&page_size=100'),
     node('Pilih Order Filomall', 'n8n-nodes-base.code', 2, 440, { jsCode: filoPickCode }),
     ifNode('Ada Order?', 660, 0, '={{ $json.none !== true }}'),
-    node('Gabung ID', 'n8n-nodes-base.code', 2, 880, { jsCode: `return [{ json: { ids: $('Pilih Order Filomall').all().map((i) => i.json.scalev_id) } }];` }),
-    scalevHttp('Generate Resi', 1100, 'POST', '/orders/generate-awb', '={{ JSON.stringify($json) }}'),
-    node('Susun Laporan', 'n8n-nodes-base.code', 2, 1320, { jsCode: filoReportCode }),
-    node('Kirim Laporan', 'n8n-nodes-base.telegram', 1.2, 1540, {
+    scalevHttp('Info Kurir Notes', 880, 'PATCH', "/orders/{{ $json.scalev_id }}/shipment", '={{ JSON.stringify({ courier_additional_info: $json.packing }) }}'),
+    node('Gabung ID', 'n8n-nodes-base.code', 2, 1100, { jsCode: `return [{ json: { ids: $('Pilih Order Filomall').all().map((i) => i.json.scalev_id) } }];` }),
+    scalevHttp('Generate Resi', 1320, 'POST', '/orders/generate-awb', '={{ JSON.stringify($json) }}'),
+    node('Susun Laporan', 'n8n-nodes-base.code', 2, 1540, { jsCode: filoReportCode }),
+    node('Kirim Laporan', 'n8n-nodes-base.telegram', 1.2, 1760, {
       chatId: TELEGRAM_CHAT_ID,
       text: '={{ $json.text }}',
       additionalFields: { appendAttribution: false },
@@ -840,7 +842,8 @@ const filoWorkflow = {
     'Jalankan Resi Filomall': link('Ambil Order Confirmed'),
     'Ambil Order Confirmed': link('Pilih Order Filomall'),
     'Pilih Order Filomall': link('Ada Order?'),
-    'Ada Order?': link('Gabung ID', 'Kirim Laporan'),
+    'Ada Order?': link('Info Kurir Notes', 'Kirim Laporan'),
+    'Info Kurir Notes': link('Gabung ID'),
     'Gabung ID': link('Generate Resi'),
     'Generate Resi': link('Susun Laporan'),
     'Susun Laporan': link('Kirim Laporan'),
