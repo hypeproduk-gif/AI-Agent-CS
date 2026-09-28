@@ -1,0 +1,746 @@
+{
+  "name": "Bridge Crypto (LI.FI)",
+  "nodes": [
+    {
+      "id": "bridge-01",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GvWCKSvWULLSOTrP",
+          "name": "Telegram account"
+        }
+      },
+      "webhookId": "bridge-crypto-tg"
+    },
+    {
+      "id": "bridge-02",
+      "name": "Parse Perintah",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Parse perintah Telegram: /bridge <jumlah> <token> <chainAsal> <chainTujuan> [tokenTujuan]\n// contoh: /bridge 100 USDC arb base\nconst CHAINS = { eth: 1, op: 10, bsc: 56, polygon: 137, base: 8453, arb: 42161, avax: 43114, linea: 59144, scroll: 534352 };\nconst DECIMALS = { USDC: 6, USDT: 6, ETH: 18, WETH: 18, DAI: 18, WBTC: 8 };\nconst text = ($json.message?.text || '').trim();\nconst [cmd, amount, token, from, to, toToken] = text.split(/\\s+/);\nconst err = (m) => [{ json: { ok: false, chatId: $json.message.chat.id, error: m } }];\nif (String($json.message?.chat?.id) !== String($env.BRIDGE_ALLOWED_CHAT_ID)) return err('Chat tidak diizinkan');\nif (cmd !== '/bridge') return err('Format: /bridge <jumlah> <token> <chainAsal> <chainTujuan> [tokenTujuan]');\nconst t = (token || '').toUpperCase();\nif (!CHAINS[from] || !CHAINS[to]) return err('Chain tidak dikenal. Pilihan: ' + Object.keys(CHAINS).join(', '));\nif (!DECIMALS[t]) return err('Token tidak dikenal. Pilihan: ' + Object.keys(DECIMALS).join(', '));\nconst n = Number(amount);\nif (!(n > 0)) return err('Jumlah tidak valid');\nconst [i, f = ''] = amount.split('.');\nconst fromAmount = BigInt(i + f.padEnd(DECIMALS[t], '0').slice(0, DECIMALS[t])).toString();\nreturn [{ json: {\n  ok: true, chatId: $json.message.chat.id, amount: n, token: t,\n  fromChain: CHAINS[from], toChain: CHAINS[to], fromName: from, toName: to,\n  toToken: (toToken || t).toUpperCase(), fromAmount,\n  wallet: $env.BRIDGE_WALLET_ADDRESS,\n  maxFeePct: Number($env.BRIDGE_MAX_FEE_PCT || 1.5),\n} }];\n"
+      }
+    },
+    {
+      "id": "bridge-03",
+      "name": "Perintah Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "typeValidation": "loose",
+            "caseSensitive": true,
+            "leftValue": ""
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "Perintah Valid?",
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      }
+    },
+    {
+      "id": "bridge-04",
+      "name": "Balas Error",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        660,
+        200
+      ],
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "=❌ {{ $json.error }}",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GvWCKSvWULLSOTrP",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "bridge-05",
+      "name": "Ambil Quote LI.FI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        0
+      ],
+      "parameters": {
+        "url": "https://li.quest/v1/quote",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fromChain",
+              "value": "={{ $json.fromChain }}"
+            },
+            {
+              "name": "toChain",
+              "value": "={{ $json.toChain }}"
+            },
+            {
+              "name": "fromToken",
+              "value": "={{ $json.token }}"
+            },
+            {
+              "name": "toToken",
+              "value": "={{ $json.toToken }}"
+            },
+            {
+              "name": "fromAmount",
+              "value": "={{ $json.fromAmount }}"
+            },
+            {
+              "name": "fromAddress",
+              "value": "={{ $json.wallet }}"
+            },
+            {
+              "name": "slippage",
+              "value": "={{ $env.BRIDGE_SLIPPAGE || 0.005 }}"
+            },
+            {
+              "name": "order",
+              "value": "CHEAPEST"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "bridge-06",
+      "name": "Ringkas Quote",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Ringkas quote LI.FI + guard biaya.\nconst p = $('Parse Perintah').first().json;\nconst q = $json;\nconst est = q.estimate || {};\nconst usd = (arr) => (arr || []).reduce((s, x) => s + Number(x.amountUSD || 0), 0);\nconst fee = usd(est.feeCosts), gas = usd(est.gasCosts);\nconst inUsd = Number(est.fromAmountUSD || 0), outUsd = Number(est.toAmountUSD || 0);\nconst lossPct = inUsd ? ((inUsd - outUsd) / inUsd) * 100 : 100;\nconst dec = q.action?.toToken?.decimals ?? 18;\nconst recv = Number(est.toAmount || 0) / 10 ** dec;\nconst recvMin = Number(est.toAmountMin || 0) / 10 ** dec;\nconst pass = lossPct <= p.maxFeePct;\nconst msg = [\n  `🌉 *Quote Bridge*`,\n  `${p.amount} ${p.token} (${p.fromName}) → ${p.toToken} (${p.toName})`,\n  `Rute: ${q.toolDetails?.name || q.tool}`,\n  `Terima: ~${recv.toFixed(6)} (min ${recvMin.toFixed(6)})`,\n  `Fee: $${fee.toFixed(2)} | Gas: $${gas.toFixed(2)}`,\n  `Total potongan: ${lossPct.toFixed(2)}% (batas ${p.maxFeePct}%)`,\n  `Estimasi: ${Math.round((est.executionDuration || 0) / 60)} menit`,\n].join('\\n');\nreturn [{ json: { ...p, pass, lossPct, msg, tool: q.tool, approvalAddress: est.approvalAddress,\n  fromTokenAddress: q.action?.fromToken?.address, transactionRequest: q.transactionRequest } }];\n"
+      }
+    },
+    {
+      "id": "bridge-07",
+      "name": "Biaya Aman?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1540,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "typeValidation": "loose",
+            "caseSensitive": true,
+            "leftValue": ""
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "Biaya Aman?",
+              "leftValue": "={{ $json.pass }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      }
+    },
+    {
+      "id": "bridge-08",
+      "name": "Tolak Biaya Tinggi",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1540,
+        200
+      ],
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.msg }}\n\n⛔ Dibatalkan: potongan melebihi batas.",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GvWCKSvWULLSOTrP",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "bridge-09",
+      "name": "Minta Persetujuan",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1980,
+        0
+      ],
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $json.chatId }}",
+        "message": "={{ $json.msg }}\n\nEksekusi bridge ini?",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": "✅ Eksekusi",
+            "disapproveLabel": "❌ Batal"
+          }
+        },
+        "options": {
+          "limitWaitTime": {
+            "values": {
+              "limitType": "afterTimeInterval",
+              "resumeAmount": 5,
+              "resumeUnit": "minutes"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GvWCKSvWULLSOTrP",
+          "name": "Telegram account"
+        }
+      },
+      "webhookId": "bridge-crypto-approve"
+    },
+    {
+      "id": "bridge-10",
+      "name": "Disetujui?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2200,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "typeValidation": "loose",
+            "caseSensitive": true,
+            "leftValue": ""
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "Disetujui?",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      }
+    },
+    {
+      "id": "bridge-11",
+      "name": "Eksekusi via Signer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2420,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BRIDGE_SIGNER_URL }}/execute",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-signer-secret",
+              "value": "={{ $env.BRIDGE_SIGNER_SECRET }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify((q => ({ chainId: q.fromChain, approvalAddress: q.approvalAddress,\n  fromTokenAddress: q.fromTokenAddress, fromAmount: q.fromAmount, transactionRequest: q.transactionRequest }))($('Ringkas Quote').first().json)) }}",
+        "options": {
+          "timeout": 180000
+        }
+      }
+    },
+    {
+      "id": "bridge-12",
+      "name": "Siapkan Polling",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2640,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "txHash",
+              "value": "={{ $json.txHash }}",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "chatId",
+              "value": "={{ $('Ringkas Quote').first().json.chatId }}",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "tool",
+              "value": "={{ $('Ringkas Quote').first().json.tool }}",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "fromChain",
+              "value": "={{ $('Ringkas Quote').first().json.fromChain }}",
+              "type": "number"
+            },
+            {
+              "id": "a5",
+              "name": "toChain",
+              "value": "={{ $('Ringkas Quote').first().json.toChain }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "bridge-13",
+      "name": "Info Tx Terkirim",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2860,
+        0
+      ],
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "=🚀 Tx terkirim: `{{ $json.txHash }}`\nMemantau status bridge…",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GvWCKSvWULLSOTrP",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "bridge-14",
+      "name": "Tunggu 30 dtk",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3080,
+        0
+      ],
+      "parameters": {
+        "amount": 30
+      },
+      "webhookId": "bridge-crypto-wait"
+    },
+    {
+      "id": "bridge-15",
+      "name": "Cek Status LI.FI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3300,
+        0
+      ],
+      "parameters": {
+        "url": "https://li.quest/v1/status",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "txHash",
+              "value": "={{ $('Siapkan Polling').first().json.txHash }}"
+            },
+            {
+              "name": "bridge",
+              "value": "={{ $('Siapkan Polling').first().json.tool }}"
+            },
+            {
+              "name": "fromChain",
+              "value": "={{ $('Siapkan Polling').first().json.fromChain }}"
+            },
+            {
+              "name": "toChain",
+              "value": "={{ $('Siapkan Polling').first().json.toChain }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "bridge-16",
+      "name": "Evaluasi Status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3520,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Evaluasi status LI.FI dan hitung percobaan polling.\nconst prev = $('Siapkan Polling').first().json;\nconst s = $json.status || 'PENDING';\nconst attempt = ($runIndex || 0) + 1;\nreturn [{ json: { ...prev, status: s, substatus: $json.substatus, attempt,\n  receiving: $json.receiving?.txHash, done: s === 'DONE' || s === 'FAILED' || s === 'INVALID' || attempt >= 60 } }];\n"
+      }
+    },
+    {
+      "id": "bridge-17",
+      "name": "Selesai?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3740,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "typeValidation": "loose",
+            "caseSensitive": true,
+            "leftValue": ""
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "Selesai?",
+              "leftValue": "={{ $json.done }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      }
+    },
+    {
+      "id": "bridge-18",
+      "name": "Lapor Hasil",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3960,
+        0
+      ],
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.status === 'DONE' ? '✅ Bridge selesai' : '⚠️ Bridge ' + $json.status }}{{ $json.substatus ? ' (' + $json.substatus + ')' : '' }}\nTx asal: `{{ $json.txHash }}`\nTx tujuan: `{{ $json.receiving || '-' }}`",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GvWCKSvWULLSOTrP",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "bridge-19",
+      "name": "Batal",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2200,
+        200
+      ],
+      "parameters": {
+        "chatId": "={{ $('Ringkas Quote').first().json.chatId }}",
+        "text": "=🛑 Bridge dibatalkan.",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GvWCKSvWULLSOTrP",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Parse Perintah",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Perintah": {
+      "main": [
+        [
+          {
+            "node": "Perintah Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perintah Valid?": {
+      "main": [
+        [
+          {
+            "node": "Ambil Quote LI.FI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Balas Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Quote LI.FI": {
+      "main": [
+        [
+          {
+            "node": "Ringkas Quote",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ringkas Quote": {
+      "main": [
+        [
+          {
+            "node": "Biaya Aman?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Biaya Aman?": {
+      "main": [
+        [
+          {
+            "node": "Minta Persetujuan",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tolak Biaya Tinggi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Minta Persetujuan": {
+      "main": [
+        [
+          {
+            "node": "Disetujui?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Disetujui?": {
+      "main": [
+        [
+          {
+            "node": "Eksekusi via Signer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Batal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eksekusi via Signer": {
+      "main": [
+        [
+          {
+            "node": "Siapkan Polling",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Siapkan Polling": {
+      "main": [
+        [
+          {
+            "node": "Info Tx Terkirim",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Info Tx Terkirim": {
+      "main": [
+        [
+          {
+            "node": "Tunggu 30 dtk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tunggu 30 dtk": {
+      "main": [
+        [
+          {
+            "node": "Cek Status LI.FI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cek Status LI.FI": {
+      "main": [
+        [
+          {
+            "node": "Evaluasi Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluasi Status": {
+      "main": [
+        [
+          {
+            "node": "Selesai?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Selesai?": {
+      "main": [
+        [
+          {
+            "node": "Lapor Hasil",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tunggu 30 dtk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}
