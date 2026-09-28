@@ -160,7 +160,7 @@ function prepareContext(body, row) {
 
   const tools = orderTools(product);
   let system = buildSystemPrompt(product);
-  if (tools) system += ' ' + ORDER_RULE;
+  if (tools) system += ' ' + ORDER_RULE.split('{BRAND}').join(BRANDS[product] || 'Filomall-Beauty');
   if (tools && lastOrder) {
     system += ` KONTEKS ORDER: lead ini sudah punya order ${lastOrder} dalam ${SCALEV.duplicateOrderHours} jam terakhir. Kalau lead ingin order/ubah order, sebelum buat_order tanyakan dulu: 'Ini mau ganti order yang tadi, atau tambah order baru kak?' lalu isi jenis_order sesuai jawabannya. Kalau lead jelas minta mengubah order tadi (mis. 'ganti cod aja', 'ganti alamat', 'jadi 2 paket'), itu 'revisi' tanpa perlu bertanya.`;
   }

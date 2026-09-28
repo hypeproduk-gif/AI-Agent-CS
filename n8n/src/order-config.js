@@ -39,6 +39,9 @@ const SCALEV = {
   duplicateOrderHours: 6, // cegah order dobel dari nomor yang sama
 };
 
+// Nama toko yang dilihat pembeli (tanda tangan CS) per produk.
+const BRANDS = { SalGlow: 'Filomall-Beauty' };
+
 // Paket yang bisa di-order lewat bot.
 const PACKAGES = {
   SalGlow: {
