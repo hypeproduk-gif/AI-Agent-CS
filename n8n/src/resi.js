@@ -59,7 +59,8 @@ function resiEmptyReport(cands, checks) {
 // Resi manual per store (mis. Filomall Beauty): semua order confirmed tanpa resi dari list Scalev.
 // Isi paket diambil dari notes order Scalev -> dikirim ke kurir sebagai info tambahan.
 const FILOMALL_STORE_ID = 2709;
-function storeResiOrders(responses, storeId = FILOMALL_STORE_ID) {
+const STORE_RESI_MAX_DAYS = 14; // order lama yang nyangkut confirmed (mis. 2024) tidak ikut
+function storeResiOrders(responses, storeId = FILOMALL_STORE_ID, now = Date.now()) {
   const seen = new Set();
   const out = [];
   for (const res of responses) {
@@ -68,6 +69,11 @@ function storeResiOrders(responses, storeId = FILOMALL_STORE_ID) {
     for (const o of list) {
       const sid = (o.store && o.store.id) || o.store_id;
       if (!o || !o.id || seen.has(o.id) || Number(sid) !== storeId || !readyForResi(o)) continue;
+      const at = Date.parse(o.created_at || o.draft_time || '');
+      if (!Number.isNaN(at) && now - at > STORE_RESI_MAX_DAYS * 86400000) continue;
+      // Order ID Scalev diawali YYMMDD; dipakai kalau tanggal tidak ada di data.
+      const m = Number.isNaN(at) && /^(\d{2})(\d{2})(\d{2})/.exec(o.order_id || '');
+      if (m && now - Date.UTC(2000 + +m[1], m[2] - 1, +m[3]) > STORE_RESI_MAX_DAYS * 86400000) continue;
       seen.add(o.id);
       const packing = String(o.notes || o.note || '').trim();
       out.push({ scalev_id: o.id, order_id: o.order_id || o.id, packing });
