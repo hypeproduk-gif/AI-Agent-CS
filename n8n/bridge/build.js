@@ -122,10 +122,16 @@ const scanNodes = [
     sendHeaders: true, headerParameters: { parameters: [{ name: 'x-signer-secret', value: '={{ $env.BRIDGE_SIGNER_SECRET }}' }] },
     sendBody: true, specifyBody: 'json', jsonBody: '={{ JSON.stringify($json.auto) }}',
     options: { response: { response: { neverError: true } } } }),
+  node('Tiap Hari 20:00', 'n8n-nodes-base.scheduleTrigger', 1.2, { rule: { interval: [{ field: 'days', triggerAtHour: 20 }] } }),
+  node('Ringkasan Pantau', 'n8n-nodes-base.code', 2, { jsCode: code('monitor-summary.js') }),
+  node('Kirim Ringkasan', 'n8n-nodes-base.telegram', 1.2, { chatId: '={{ $json.chatId }}', text: '={{ $json.text }}',
+    additionalFields: { parse_mode: 'Markdown', appendAttribution: false } }, { credentials: TG }),
 ];
+scanNodes.slice(-3).forEach((n, i) => { n.position = [220 * (i + 1), 300]; });
 const scan = { name: 'Bridge Arb Scanner', nodes: scanNodes,
   connections: link(['Tiap 5 Menit', 'Scan Selisih Harga'], ['Scan Selisih Harga', 'Kirim Peluang'],
-    ['Scan Selisih Harga', 'Mode Auto?'], ['Mode Auto?', 'Eksekusi Otomatis', 0]),
+    ['Scan Selisih Harga', 'Mode Auto?'], ['Mode Auto?', 'Eksekusi Otomatis', 0],
+    ['Tiap Hari 20:00', 'Ringkasan Pantau'], ['Ringkasan Pantau', 'Kirim Ringkasan']),
   settings: { executionOrder: 'v1' }, active: false };
 fs.writeFileSync(path.join(__dirname, '..', 'bridge-arb-scanner.workflow.json'), JSON.stringify(scan, null, 2) + '\n');
 console.log('OK scanner:', scanNodes.length, 'nodes');

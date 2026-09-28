@@ -48,6 +48,26 @@ for (const c of cands.slice(0, maxSim)) {
     mins: Math.round(((q1.estimate.executionDuration || 0) + (q2.estimate.executionDuration || 0)) / 60) });
 }
 
+// Mode pantau: kumpulkan statistik saja, ringkasan dikirim harian oleh node terpisah
+if (env.ARB_MONITOR === 'true') {
+  const g = $getWorkflowStaticData('global');
+  const S = (g.stats ??= { scans: 0, sims: 0, win: 0, capital, pairs: {} });
+  S.scans++;
+  for (const t of tokens) for (const a of chains) for (const b of chains) {
+    const pa = price[`${t}@${a}`], pb = price[`${t}@${b}`];
+    if (a === b || !pa || !pb) continue;
+    const p = (S.pairs[`${t} ${a}→${b}`] ??= { n: 0, sumSpread: 0, maxSpread: -1e9, sims: 0, win: 0, maxProfit: -1e9 });
+    const sp = (Number(pb.priceUSD) / Number(pa.priceUSD) - 1) * 100;
+    p.n++; p.sumSpread += sp; p.maxSpread = Math.max(p.maxSpread, sp);
+  }
+  for (const o of out) {
+    const p = S.pairs[`${o.t} ${o.a}→${o.b}`];
+    p.sims++; S.sims++; p.maxProfit = Math.max(p.maxProfit, o.profit);
+    if (o.profit > 0) { p.win++; S.win++; }
+  }
+  return [];
+}
+
 // Anti-spam: peluang yang sama tidak dikirim ulang dalam 30 menit
 const seen = $getWorkflowStaticData('global');
 const now = Date.now();

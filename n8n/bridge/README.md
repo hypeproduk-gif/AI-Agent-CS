@@ -62,3 +62,15 @@ ARB_CAPITAL_USD=10
 ARB_MIN_PROFIT_USD=0.10
 ARB_CHAINS=bsc,polygon
 ```
+
+## Mode pantau (tanpa transaksi)
+Set `ARB_MONITOR=true`: tiap 5 menit selisih harga & profit simulasi dicatat diam-diam, lalu jam 20:00 dikirim ringkasan harian (selisih rata-rata/maks per pasangan, berapa kali simulasi untung). Tidak butuh signer, private key, maupun dana.
+```
+ARB_MONITOR=true
+ARB_CAPITAL_USD=10
+ARB_MIN_SPREAD_PCT=-100
+ARB_CHAINS=bsc,polygon,arb,base
+BRIDGE_WALLET_ADDRESS=<alamat wallet mana saja>
+BRIDGE_ALLOWED_CHAT_ID=<chat id Telegram>
+```
+Statistik disimpan di static data workflow, jadi hanya tercatat saat workflow **aktif** (bukan "Test workflow").
