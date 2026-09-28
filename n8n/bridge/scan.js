@@ -2,7 +2,23 @@
 // Tahap 1: harga token per chain (murah, 1 call per token/chain) → cari selisih > ARB_MIN_SPREAD_PCT.
 // Tahap 2: kandidat teratas disimulasi penuh: USDC@A → token@B (swap+bridge), lalu token@B → USDC@B.
 //          Profit dihitung dari toAmountMin (worst-case slippage) dikurangi gas kedua leg.
-const env = $env;
+// ===== PENGATURAN (edit di sini) =====
+const env = {
+  BRIDGE_ALLOWED_CHAT_ID: 'ISI_CHAT_ID_TELEGRAM', // dari @userinfobot
+  BRIDGE_WALLET_ADDRESS: '0x000000000000000000000000000000000000dEaD', // alamat apa saja untuk simulasi
+  ARB_MONITOR: 'true',        // true = hanya pantau, tanpa transaksi
+  ARB_CAPITAL_USD: '10',
+  ARB_MIN_SPREAD_PCT: '-100', // -100 = semua selisih ikut disimulasi (mode pantau)
+  ARB_MIN_PROFIT_USD: '0.10',
+  ARB_CHAINS: 'bsc,polygon,arb,base',
+  ARB_TOKENS: 'ETH,WBTC,LINK,UNI,AAVE',
+  ARB_MAX_SIMULATIONS: '6',
+  LIFI_API_KEY: '',           // opsional
+  ARB_AUTO: 'false',
+  BRIDGE_PROGRESS_URL: '',
+  ...(typeof $env === 'undefined' ? {} : (() => { try { return Object.fromEntries(Object.entries($env).filter(([k]) => /^(ARB_|BRIDGE_|LIFI_)/.test(k))); } catch { return {}; } })()),
+};
+// =====================================
 const CHAINS = { eth: 1, op: 10, bsc: 56, polygon: 137, base: 8453, arb: 42161, avax: 43114, linea: 59144, scroll: 534352 };
 const chains = (env.ARB_CHAINS || 'arb,base,op,polygon,bsc').split(',').map((s) => s.trim());
 const tokens = (env.ARB_TOKENS || 'ETH,WBTC,LINK,UNI,AAVE').split(',').map((s) => s.trim().toUpperCase());
