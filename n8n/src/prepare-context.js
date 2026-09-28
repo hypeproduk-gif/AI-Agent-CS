@@ -112,19 +112,21 @@ function isPaused(row, now = Date.now()) {
 }
 
 // Pesan bot terakhir (sebelum pesan lead ini) berisi ringkasan order.
+const SUMMARY_LOOKBACK = 6; // pesan terakhir yang diperiksa (konfirmasi revisi bisa parsial setelah ringkasan)
+
+function recentBotMessages(history) {
+  return history.slice(-(SUMMARY_LOOKBACK + 1), -1).filter((m) => m.role === 'assistant').reverse();
+}
+
 function summaryWasSent(history) {
-  for (let i = history.length - 2; i >= 0; i--) {
-    if (history[i].role === 'assistant') return /ringkasan order|total bayar/i.test(history[i].content);
-  }
-  return false;
+  return recentBotMessages(history).some((m) => /ringkasan order|total bayar/i.test(m.content));
 }
 
 // "Total bayar: Rp149.500" di ringkasan terakhir bot -> 149500 (untuk dicocokkan dengan hitungan sistem).
 function summaryTotal(history) {
-  for (let i = history.length - 2; i >= 0; i--) {
-    if (history[i].role !== 'assistant') continue;
-    const m = String(history[i].content).match(/total bayar\W*rp\s*([\d.,]+)/i);
-    return m ? Number(m[1].replace(/[.,]/g, '')) : null;
+  for (const msg of recentBotMessages(history)) {
+    const m = String(msg.content).match(/total bayar\W*rp\s*([\d.,]+)/i);
+    if (m) return Number(m[1].replace(/[.,]/g, ''));
   }
   return null;
 }

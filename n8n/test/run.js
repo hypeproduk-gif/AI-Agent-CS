@@ -863,4 +863,25 @@ test('nomor diblokir (Scalev FU) tidak dibalas & tidak disimpan', () => {
   const r = scenario({ message: 'x', row: null, first: text('Halo') });
   assert.ok(r.req('Kirim WhatsApp'));
 });
+test('order lead + jenis_order "baru" tanpa order sebelumnya -> tetap melengkapi order lead (PATCH)', () => {
+  const row = { ...SALGLOW_ROW, scalev_id: 'lead:lead-uuid', last_order_id: 'SV-LEAD' };
+  const r = scenario({ message: 'Ok', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod', jenis_order: 'baru' }) });
+  assert.strictEqual(r.req('Scalev Buat Order'), undefined);
+  assert.strictEqual(r.req('Scalev Update Order').url, 'https://api.scalev.com/v3/orders/lead-uuid');
+});
+
+test('konfirmasi revisi parsial setelah ringkasan tetap boleh order; total baru dicek', () => {
+  const hist = [
+    { role: 'assistant', content: 'Baik kak, berikut ringkasan ordernya ya\nTotal bayar: Rp145.000\nSudah benar kak?' },
+    { role: 'user', content: 'ganti cod bisa?' },
+    { role: 'assistant', content: 'Bisa kak, pembayaran jadi COD ya. Total bayar: Rp156.000. Sudah benar kak?' },
+  ];
+  const row = { ...SALGLOW_ROW, history: JSON.stringify(hist) };
+  const r = scenario({ message: 'Ok', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod' }) });
+  assert.ok(r.req('Scalev Buat Order'));
+  const hist2 = hist.slice(0, 2).concat([{ role: 'assistant', content: 'Alamat jadi Jl. Raya Modern 129A ya kak, sudah benar?' }]);
+  const r2 = scenario({ message: 'Ok', row: { ...SALGLOW_ROW, history: JSON.stringify(hist2) }, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod' }) });
+  assert.strictEqual(r2.req('Scalev Buat Order'), undefined); // total terakhir Rp145.000 != COD Rp156.000
+  assert.ok(r2.toolResults[0].error.includes('Rp156.000'));
+});
 console.log(`${passed} tes lulus (final)`);
