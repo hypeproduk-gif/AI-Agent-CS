@@ -1,0 +1,90 @@
+{
+  "name": "Bridge Arb Scanner",
+  "nodes": [
+    {
+      "id": "bridge-01",
+      "name": "Tiap 10 Menit",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 10
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "bridge-02",
+      "name": "Scan Selisih Harga",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Scanner arbitrase lintas chain via LI.FI.\n// Tahap 1: harga token per chain (murah, 1 call per token/chain) → cari selisih > ARB_MIN_SPREAD_PCT.\n// Tahap 2: kandidat teratas disimulasi penuh: USDC@A → token@B (swap+bridge), lalu token@B → USDC@B.\n//          Profit dihitung dari toAmountMin (worst-case slippage) dikurangi gas kedua leg.\nconst env = $env;\nconst CHAINS = { eth: 1, op: 10, bsc: 56, polygon: 137, base: 8453, arb: 42161, avax: 43114, linea: 59144, scroll: 534352 };\nconst chains = (env.ARB_CHAINS || 'arb,base,op,polygon,bsc').split(',').map((s) => s.trim());\nconst tokens = (env.ARB_TOKENS || 'ETH,WBTC,LINK,UNI,AAVE').split(',').map((s) => s.trim().toUpperCase());\nconst capital = Number(env.ARB_CAPITAL_USD || 1000);\nconst minSpread = Number(env.ARB_MIN_SPREAD_PCT || 0.5);\nconst minProfit = Number(env.ARB_MIN_PROFIT_USD || 5);\nconst maxSim = Number(env.ARB_MAX_SIMULATIONS || 6);\nconst wallet = env.BRIDGE_WALLET_ADDRESS;\nconst headers = env.LIFI_API_KEY ? { 'x-lifi-api-key': env.LIFI_API_KEY } : {};\nconst get = (url, qs) => this.helpers.httpRequest({ url: 'https://li.quest/v1/' + url, qs, headers, json: true }).catch(() => null);\nconst usd = (arr) => (arr || []).reduce((s, x) => s + Number(x.amountUSD || 0), 0);\n\n// Tahap 1: harga\nconst price = {};\nawait Promise.all(chains.flatMap((c) => [...tokens, 'USDC'].map(async (t) => {\n  const r = await get('token', { chain: CHAINS[c], token: t });\n  if (r && Number(r.priceUSD) > 0) price[`${t}@${c}`] = r;\n})));\nconst cands = [];\nfor (const t of tokens) for (const a of chains) for (const b of chains) {\n  const pa = price[`${t}@${a}`], pb = price[`${t}@${b}`];\n  if (a === b || !pa || !pb || !price[`USDC@${a}`] || !price[`USDC@${b}`]) continue;\n  const spread = (Number(pb.priceUSD) / Number(pa.priceUSD) - 1) * 100; // beli murah di A, jual mahal di B\n  if (spread >= minSpread) cands.push({ t, a, b, spread, pa: Number(pa.priceUSD), pb: Number(pb.priceUSD) });\n}\ncands.sort((x, y) => y.spread - x.spread);\n\n// Tahap 2: simulasi penuh\nconst out = [];\nfor (const c of cands.slice(0, maxSim)) {\n  const usdcA = price[`USDC@${c.a}`];\n  const fromAmount = BigInt(Math.round(capital * 1e6)) * 10n ** BigInt(usdcA.decimals) / 1000000n;\n  const q1 = await get('quote', { fromChain: CHAINS[c.a], toChain: CHAINS[c.b], fromToken: 'USDC', toToken: c.t,\n    fromAmount: fromAmount.toString(), fromAddress: wallet, slippage: 0.005, order: 'CHEAPEST' });\n  if (!q1?.estimate) continue;\n  const q2 = await get('quote', { fromChain: CHAINS[c.b], toChain: CHAINS[c.b], fromToken: c.t, toToken: 'USDC',\n    fromAmount: q1.estimate.toAmountMin, fromAddress: wallet, slippage: 0.005 });\n  if (!q2?.estimate) continue;\n  const outUsdc = Number(q2.estimate.toAmountMin) / 10 ** q2.action.toToken.decimals;\n  const gas = usd(q1.estimate.gasCosts) + usd(q2.estimate.gasCosts);\n  const profit = outUsdc - capital - gas;\n  out.push({ ...c, profit, pct: (profit / capital) * 100, gas, outUsdc, via: q1.toolDetails?.name || q1.tool,\n    mins: Math.round(((q1.estimate.executionDuration || 0) + (q2.estimate.executionDuration || 0)) / 60) });\n}\n\n// Anti-spam: peluang yang sama tidak dikirim ulang dalam 30 menit\nconst seen = $getWorkflowStaticData('global');\nconst now = Date.now();\nconst fresh = out.filter((o) => o.profit >= minProfit).sort((x, y) => y.profit - x.profit).filter((o) => {\n  const k = `${o.t}:${o.a}:${o.b}`;\n  if (seen[k] && now - seen[k] < 30 * 60e3) return false;\n  seen[k] = now; return true;\n});\nif (!fresh.length) return [];\nconst lines = fresh.map((o) => [\n  `*${o.t}* ${o.a} → ${o.b}  (selisih harga ${o.spread.toFixed(2)}%)`,\n  `Harga: $${o.pa.toFixed(4)} vs $${o.pb.toFixed(4)} | via ${o.via} | ~${o.mins} mnt`,\n  `Modal $${capital} → $${o.outUsdc.toFixed(2)} (min), gas $${o.gas.toFixed(2)}`,\n  `Profit bersih worst-case: *$${o.profit.toFixed(2)}* (${o.pct.toFixed(2)}%)`,\n  `\\`/arb ${o.t} ${o.a} ${o.b} ${capital}\\``,\n].join('\\n'));\nreturn [{ json: { chatId: env.BRIDGE_ALLOWED_CHAT_ID, text: `💰 *Peluang Arbitrase Bridge*\\n\\n${lines.join('\\n\\n')}\\n\\n_Profit dicek ulang saat eksekusi._` } }];\n"
+      }
+    },
+    {
+      "id": "bridge-03",
+      "name": "Kirim Peluang",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GvWCKSvWULLSOTrP",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Tiap 10 Menit": {
+      "main": [
+        [
+          {
+            "node": "Scan Selisih Harga",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scan Selisih Harga": {
+      "main": [
+        [
+          {
+            "node": "Kirim Peluang",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}

@@ -63,9 +63,27 @@ const nodes = [
   ifNode('Selesai?', '={{ $json.done }}'),
   tgSend('Lapor Hasil', `={{ $json.status === 'DONE' ? '✅ Bridge selesai' : '⚠️ Bridge ' + $json.status }}{{ $json.substatus ? ' (' + $json.substatus + ')' : '' }}\nTx asal: \`{{ $json.txHash }}\`\nTx tujuan: \`{{ $json.receiving || '-' }}\``),
   tgSend('Batal', '=🛑 Bridge dibatalkan.'),
+  // --- Arbitrase ---
+  ifNode('Mode Arb?', "={{ $json.mode === 'arb' }}"),
+  node('Kirim ke Executor', 'n8n-nodes-base.httpRequest', 4.2, {
+    method: 'POST', url: '={{ $env.BRIDGE_SIGNER_URL }}/arb',
+    sendHeaders: true, headerParameters: { parameters: [{ name: 'x-signer-secret', value: '={{ $env.BRIDGE_SIGNER_SECRET }}' }] },
+    sendBody: true, specifyBody: 'json', jsonBody: `={{ JSON.stringify({ token: $json.token, fromChain: $json.fromChain, toChain: $json.toChain,
+  capital: $json.capital, minProfit: $json.minProfit, chatId: $json.chatId, callbackUrl: $env.BRIDGE_PROGRESS_URL }) }}`,
+    options: { response: { response: { neverError: true } } } }),
+  node('Balas Arb', 'n8n-nodes-base.telegram', 1.2, { chatId: "={{ $('Parse Perintah').first().json.chatId }}",
+    text: "={{ $json.accepted ? '⏳ Arb diterima, mengecek ulang profit…' : '❌ ' + ($json.error || 'Executor tidak merespons') }}",
+    additionalFields: { appendAttribution: false } }, { credentials: TG }),
+  node('Webhook Progres', 'n8n-nodes-base.webhook', 2.1, { httpMethod: 'POST', path: 'bridge-arb-progress', options: {} },
+    { webhookId: 'bridge-arb-progress' }),
+  ifNode('Secret Valid?', "={{ $json.headers['x-signer-secret'] === $env.BRIDGE_SIGNER_SECRET }}"),
+  node('Kirim Progres', 'n8n-nodes-base.telegram', 1.2, { chatId: '={{ $json.body.chatId }}', text: '={{ $json.body.text }}',
+    additionalFields: { parse_mode: 'Markdown', appendAttribution: false } }, { credentials: TG }),
 ];
 // Tata ulang posisi supaya rapi
-const pos = { 'Balas Error': [660, 200], 'Tolak Biaya Tinggi': [1540, 200], 'Batal': [2200, 200] };
+const pos = { 'Balas Error': [660, 200], 'Tolak Biaya Tinggi': [1540, 200], 'Batal': [2200, 200],
+  'Mode Arb?': [880, -250], 'Kirim ke Executor': [1100, -250], 'Balas Arb': [1320, -250],
+  'Webhook Progres': [220, 450], 'Secret Valid?': [440, 450], 'Kirim Progres': [660, 450] };
 nodes.forEach((n) => { if (pos[n.name]) n.position = pos[n.name]; });
 
 const link = (...pairs) => pairs.reduce((c, [a, b, out = 0]) => {
@@ -73,7 +91,8 @@ const link = (...pairs) => pairs.reduce((c, [a, b, out = 0]) => {
 }, {});
 const connections = link(
   ['Telegram Trigger', 'Parse Perintah'], ['Parse Perintah', 'Perintah Valid?'],
-  ['Perintah Valid?', 'Ambil Quote LI.FI', 0], ['Perintah Valid?', 'Balas Error', 1],
+  ['Perintah Valid?', 'Mode Arb?', 0], ['Mode Arb?', 'Kirim ke Executor', 0], ['Mode Arb?', 'Ambil Quote LI.FI', 1],
+  ['Kirim ke Executor', 'Balas Arb'], ['Webhook Progres', 'Secret Valid?'], ['Secret Valid?', 'Kirim Progres', 0], ['Perintah Valid?', 'Balas Error', 1],
   ['Ambil Quote LI.FI', 'Ringkas Quote'], ['Ringkas Quote', 'Biaya Aman?'],
   ['Biaya Aman?', 'Minta Persetujuan', 0], ['Biaya Aman?', 'Tolak Biaya Tinggi', 1],
   ['Minta Persetujuan', 'Disetujui?'], ['Disetujui?', 'Eksekusi via Signer', 0], ['Disetujui?', 'Batal', 1],
@@ -87,3 +106,17 @@ nodes.find((n) => n.name === 'Batal').parameters.chatId = "={{ $('Ringkas Quote'
 const wf = { name: 'Bridge Crypto (LI.FI)', nodes, connections, settings: { executionOrder: 'v1' }, active: false };
 fs.writeFileSync(path.join(__dirname, '..', 'bridge-crypto.workflow.json'), JSON.stringify(wf, null, 2) + '\n');
 console.log('OK:', nodes.length, 'nodes');
+
+// ---------- Workflow scanner arbitrase ----------
+x = 0;
+const scanNodes = [
+  node('Tiap 10 Menit', 'n8n-nodes-base.scheduleTrigger', 1.2, { rule: { interval: [{ field: 'minutes', minutesInterval: 10 }] } }),
+  node('Scan Selisih Harga', 'n8n-nodes-base.code', 2, { jsCode: code('scan.js') }),
+  node('Kirim Peluang', 'n8n-nodes-base.telegram', 1.2, { chatId: '={{ $json.chatId }}', text: '={{ $json.text }}',
+    additionalFields: { parse_mode: 'Markdown', appendAttribution: false } }, { credentials: TG }),
+];
+const scan = { name: 'Bridge Arb Scanner', nodes: scanNodes,
+  connections: link(['Tiap 10 Menit', 'Scan Selisih Harga'], ['Scan Selisih Harga', 'Kirim Peluang']),
+  settings: { executionOrder: 'v1' }, active: false };
+fs.writeFileSync(path.join(__dirname, '..', 'bridge-arb-scanner.workflow.json'), JSON.stringify(scan, null, 2) + '\n');
+console.log('OK scanner:', scanNodes.length, 'nodes');

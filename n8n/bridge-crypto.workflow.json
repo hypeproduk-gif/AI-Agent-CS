@@ -34,7 +34,7 @@
         0
       ],
       "parameters": {
-        "jsCode": "// Parse perintah Telegram: /bridge <jumlah> <token> <chainAsal> <chainTujuan> [tokenTujuan]\n// contoh: /bridge 100 USDC arb base\nconst CHAINS = { eth: 1, op: 10, bsc: 56, polygon: 137, base: 8453, arb: 42161, avax: 43114, linea: 59144, scroll: 534352 };\nconst DECIMALS = { USDC: 6, USDT: 6, ETH: 18, WETH: 18, DAI: 18, WBTC: 8 };\nconst text = ($json.message?.text || '').trim();\nconst [cmd, amount, token, from, to, toToken] = text.split(/\\s+/);\nconst err = (m) => [{ json: { ok: false, chatId: $json.message.chat.id, error: m } }];\nif (String($json.message?.chat?.id) !== String($env.BRIDGE_ALLOWED_CHAT_ID)) return err('Chat tidak diizinkan');\nif (cmd !== '/bridge') return err('Format: /bridge <jumlah> <token> <chainAsal> <chainTujuan> [tokenTujuan]');\nconst t = (token || '').toUpperCase();\nif (!CHAINS[from] || !CHAINS[to]) return err('Chain tidak dikenal. Pilihan: ' + Object.keys(CHAINS).join(', '));\nif (!DECIMALS[t]) return err('Token tidak dikenal. Pilihan: ' + Object.keys(DECIMALS).join(', '));\nconst n = Number(amount);\nif (!(n > 0)) return err('Jumlah tidak valid');\nconst [i, f = ''] = amount.split('.');\nconst fromAmount = BigInt(i + f.padEnd(DECIMALS[t], '0').slice(0, DECIMALS[t])).toString();\nreturn [{ json: {\n  ok: true, chatId: $json.message.chat.id, amount: n, token: t,\n  fromChain: CHAINS[from], toChain: CHAINS[to], fromName: from, toName: to,\n  toToken: (toToken || t).toUpperCase(), fromAmount,\n  wallet: $env.BRIDGE_WALLET_ADDRESS,\n  maxFeePct: Number($env.BRIDGE_MAX_FEE_PCT || 1.5),\n} }];\n"
+        "jsCode": "// Parse perintah Telegram: /bridge <jumlah> <token> <chainAsal> <chainTujuan> [tokenTujuan]\n// contoh: /bridge 100 USDC arb base\nconst CHAINS = { eth: 1, op: 10, bsc: 56, polygon: 137, base: 8453, arb: 42161, avax: 43114, linea: 59144, scroll: 534352 };\nconst DECIMALS = { USDC: 6, USDT: 6, ETH: 18, WETH: 18, DAI: 18, WBTC: 8 };\nconst text = ($json.message?.text || '').trim();\nconst [cmd, amount, token, from, to, toToken] = text.split(/\\s+/);\nconst err = (m) => [{ json: { ok: false, chatId: $json.message.chat.id, error: m } }];\nif (String($json.message?.chat?.id) !== String($env.BRIDGE_ALLOWED_CHAT_ID)) return err('Chat tidak diizinkan');\nif (cmd === '/arb') { // /arb <token> <chainAsal> <chainTujuan> [modalUSD]\n  const [, tk, a, b, cap] = text.split(/\\s+/);\n  if (!CHAINS[a] || !CHAINS[b] || a === b) return err('Format: /arb <token> <chainAsal> <chainTujuan> [modalUSD]');\n  return [{ json: { ok: true, mode: 'arb', chatId: $json.message.chat.id, token: (tk || '').toUpperCase(),\n    fromChain: CHAINS[a], toChain: CHAINS[b], capital: Number(cap || $env.ARB_CAPITAL_USD || 1000),\n    minProfit: Number($env.ARB_MIN_PROFIT_USD || 5) } }];\n}\nif (cmd !== '/bridge') return err('Perintah: /bridge <jumlah> <token> <chainAsal> <chainTujuan> [tokenTujuan] atau /arb <token> <chainAsal> <chainTujuan> [modalUSD]');\nconst t = (token || '').toUpperCase();\nif (!CHAINS[from] || !CHAINS[to]) return err('Chain tidak dikenal. Pilihan: ' + Object.keys(CHAINS).join(', '));\nif (!DECIMALS[t]) return err('Token tidak dikenal. Pilihan: ' + Object.keys(DECIMALS).join(', '));\nconst n = Number(amount);\nif (!(n > 0)) return err('Jumlah tidak valid');\nconst [i, f = ''] = amount.split('.');\nconst fromAmount = BigInt(i + f.padEnd(DECIMALS[t], '0').slice(0, DECIMALS[t])).toString();\nreturn [{ json: {\n  ok: true, mode: 'bridge', chatId: $json.message.chat.id, amount: n, token: t,\n  fromChain: CHAINS[from], toChain: CHAINS[to], fromName: from, toName: to,\n  toToken: (toToken || t).toUpperCase(), fromAmount,\n  wallet: $env.BRIDGE_WALLET_ADDRESS,\n  maxFeePct: Number($env.BRIDGE_MAX_FEE_PCT || 1.5),\n} }];\n"
       }
     },
     {
@@ -542,6 +542,172 @@
           "name": "Telegram account"
         }
       }
+    },
+    {
+      "id": "bridge-20",
+      "name": "Mode Arb?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        -250
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "typeValidation": "loose",
+            "caseSensitive": true,
+            "leftValue": ""
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "Mode Arb?",
+              "leftValue": "={{ $json.mode === 'arb' }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      }
+    },
+    {
+      "id": "bridge-21",
+      "name": "Kirim ke Executor",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        -250
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BRIDGE_SIGNER_URL }}/arb",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-signer-secret",
+              "value": "={{ $env.BRIDGE_SIGNER_SECRET }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ token: $json.token, fromChain: $json.fromChain, toChain: $json.toChain,\n  capital: $json.capital, minProfit: $json.minProfit, chatId: $json.chatId, callbackUrl: $env.BRIDGE_PROGRESS_URL }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "bridge-22",
+      "name": "Balas Arb",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1320,
+        -250
+      ],
+      "parameters": {
+        "chatId": "={{ $('Parse Perintah').first().json.chatId }}",
+        "text": "={{ $json.accepted ? '⏳ Arb diterima, mengecek ulang profit…' : '❌ ' + ($json.error || 'Executor tidak merespons') }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GvWCKSvWULLSOTrP",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "bridge-23",
+      "name": "Webhook Progres",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        220,
+        450
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bridge-arb-progress",
+        "options": {}
+      },
+      "webhookId": "bridge-arb-progress"
+    },
+    {
+      "id": "bridge-24",
+      "name": "Secret Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        450
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "typeValidation": "loose",
+            "caseSensitive": true,
+            "leftValue": ""
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "Secret Valid?",
+              "leftValue": "={{ $json.headers['x-signer-secret'] === $env.BRIDGE_SIGNER_SECRET }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      }
+    },
+    {
+      "id": "bridge-25",
+      "name": "Kirim Progres",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        660,
+        450
+      ],
+      "parameters": {
+        "chatId": "={{ $json.body.chatId }}",
+        "text": "={{ $json.body.text }}",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "GvWCKSvWULLSOTrP",
+          "name": "Telegram account"
+        }
+      }
     }
   ],
   "connections": {
@@ -571,7 +737,7 @@
       "main": [
         [
           {
-            "node": "Ambil Quote LI.FI",
+            "node": "Mode Arb?",
             "type": "main",
             "index": 0
           }
@@ -579,6 +745,57 @@
         [
           {
             "node": "Balas Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mode Arb?": {
+      "main": [
+        [
+          {
+            "node": "Kirim ke Executor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ambil Quote LI.FI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kirim ke Executor": {
+      "main": [
+        [
+          {
+            "node": "Balas Arb",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Progres": {
+      "main": [
+        [
+          {
+            "node": "Secret Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Secret Valid?": {
+      "main": [
+        [
+          {
+            "node": "Kirim Progres",
             "type": "main",
             "index": 0
           }
