@@ -51,3 +51,14 @@ Batasan: profit tidak bisa dijamin mutlak. Harga bisa bergerak saat leg 1 di-bri
 | `LIFI_API_KEY` | opsional, supaya tidak kena rate limit (set juga di signer) |
 
 Executor butuh USDC di chain asal, native gas di **kedua** chain, dan `RPC_<chainId>` untuk keduanya. Hanya satu arb berjalan pada satu waktu.
+
+## Mode otomatis (tanpa perintah)
+Set `ARB_AUTO=true`: tiap 5 menit, peluang teratas langsung dikirim ke executor. Semua pengaman tetap berlaku (cek ulang sebelum tx, tahan token bila jual rugi, satu arb sekaligus).
+
+Contoh modal kecil ($10, BNB + Polygon):
+```
+ARB_AUTO=true
+ARB_CAPITAL_USD=10
+ARB_MIN_PROFIT_USD=0.10
+ARB_CHAINS=bsc,polygon
+```

@@ -110,13 +110,22 @@ console.log('OK:', nodes.length, 'nodes');
 // ---------- Workflow scanner arbitrase ----------
 x = 0;
 const scanNodes = [
-  node('Tiap 10 Menit', 'n8n-nodes-base.scheduleTrigger', 1.2, { rule: { interval: [{ field: 'minutes', minutesInterval: 10 }] } }),
+  node('Tiap 5 Menit', 'n8n-nodes-base.scheduleTrigger', 1.2, { rule: { interval: [{ field: 'minutes', minutesInterval: 5 }] } }),
   node('Scan Selisih Harga', 'n8n-nodes-base.code', 2, { jsCode: code('scan.js') }),
   node('Kirim Peluang', 'n8n-nodes-base.telegram', 1.2, { chatId: '={{ $json.chatId }}', text: '={{ $json.text }}',
     additionalFields: { parse_mode: 'Markdown', appendAttribution: false } }, { credentials: TG }),
+  node('Mode Auto?', 'n8n-nodes-base.if', 2.2, { conditions: { options: { version: 2, typeValidation: 'loose', caseSensitive: true, leftValue: '' },
+    combinator: 'and', conditions: [{ id: 'auto', leftValue: '={{ !!$json.auto }}', rightValue: true,
+    operator: { type: 'boolean', operation: 'true', singleValue: true } }] }, looseTypeValidation: true, options: {} }),
+  node('Eksekusi Otomatis', 'n8n-nodes-base.httpRequest', 4.2, {
+    method: 'POST', url: '={{ $env.BRIDGE_SIGNER_URL }}/arb',
+    sendHeaders: true, headerParameters: { parameters: [{ name: 'x-signer-secret', value: '={{ $env.BRIDGE_SIGNER_SECRET }}' }] },
+    sendBody: true, specifyBody: 'json', jsonBody: '={{ JSON.stringify($json.auto) }}',
+    options: { response: { response: { neverError: true } } } }),
 ];
 const scan = { name: 'Bridge Arb Scanner', nodes: scanNodes,
-  connections: link(['Tiap 10 Menit', 'Scan Selisih Harga'], ['Scan Selisih Harga', 'Kirim Peluang']),
+  connections: link(['Tiap 5 Menit', 'Scan Selisih Harga'], ['Scan Selisih Harga', 'Kirim Peluang'],
+    ['Scan Selisih Harga', 'Mode Auto?'], ['Mode Auto?', 'Eksekusi Otomatis', 0]),
   settings: { executionOrder: 'v1' }, active: false };
 fs.writeFileSync(path.join(__dirname, '..', 'bridge-arb-scanner.workflow.json'), JSON.stringify(scan, null, 2) + '\n');
 console.log('OK scanner:', scanNodes.length, 'nodes');

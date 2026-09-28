@@ -57,6 +57,10 @@ const fresh = out.filter((o) => o.profit >= minProfit).sort((x, y) => y.profit -
   seen[k] = now; return true;
 });
 if (!fresh.length) return [];
+// Mode otomatis: peluang terbaik langsung dikirim ke executor (executor tetap cek ulang profit)
+const b = fresh[0];
+const auto = env.ARB_AUTO === 'true' ? { token: b.t, fromChain: CHAINS[b.a], toChain: CHAINS[b.b], capital, minProfit,
+  chatId: env.BRIDGE_ALLOWED_CHAT_ID, callbackUrl: env.BRIDGE_PROGRESS_URL } : null;
 const lines = fresh.map((o) => [
   `*${o.t}* ${o.a} → ${o.b}  (selisih harga ${o.spread.toFixed(2)}%)`,
   `Harga: $${o.pa.toFixed(4)} vs $${o.pb.toFixed(4)} | via ${o.via} | ~${o.mins} mnt`,
@@ -64,4 +68,4 @@ const lines = fresh.map((o) => [
   `Profit bersih worst-case: *$${o.profit.toFixed(2)}* (${o.pct.toFixed(2)}%)`,
   `\`/arb ${o.t} ${o.a} ${o.b} ${capital}\``,
 ].join('\n'));
-return [{ json: { chatId: env.BRIDGE_ALLOWED_CHAT_ID, text: `💰 *Peluang Arbitrase Bridge*\n\n${lines.join('\n\n')}\n\n_Profit dicek ulang saat eksekusi._` } }];
+return [{ json: { auto, chatId: env.BRIDGE_ALLOWED_CHAT_ID, text: `💰 *Peluang Arbitrase Bridge*\n\n${lines.join('\n\n')}\n\n${auto ? '🤖 Mode auto: peluang teratas dieksekusi otomatis.' : '_Profit dicek ulang saat eksekusi._'}` } }];
