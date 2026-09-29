@@ -37,6 +37,13 @@ const FACTS = {
       { url: 'https://i.imgur.com/zMF8qSr.jpeg', tags: ['flek', 'penuaan'] },
     ],
   },
+  MinyakDabung: {
+    bpom: '',
+    bpomStatus: 'belum', // BPOM & PIRT belum ada
+    socialProof: '', // isi kalau sudah ada data penjualan asli
+    experience: '',
+    testimonials: [], // isi URL foto testimoni asli (blur identitas)
+  },
 };
 
 const TESTIMONI_TOKEN = '[TESTIMONI]';
@@ -59,7 +66,7 @@ function factsPrompt(product) {
     parts.push(`BPOM: terdaftar dengan nomor ${f.bpom}. Kalau lead tanya keamanan/BPOM, sebutkan nomor ini dengan yakin dan bilang bisa dicek sendiri di cekbpom.pom.go.id.`);
   } else if (f.bpomStatus) {
     const status = f.bpomStatus === 'proses' ? 'sedang dalam proses pendaftaran BPOM' : 'belum terdaftar BPOM';
-    parts.push(`BPOM: produk ini ${status}. Kalau lead tanya BPOM, jawab JUJUR dengan kalimat itu, jangan mengelak, jangan bilang sudah terdaftar, jangan mengarang nomor/sertifikat. Kalau lead tanya 'aman?' / BPOM: buka dengan bukti sosial (terjual 10.000+ pcs, rating 5), akui jujur 'secara resmi memang belum terdaftar BPOM', lalu ceritakan pengalaman pelanggan dan kesan tekstur. Jangan bilang 'aman' sebagai jaminan.`);
+    parts.push(`BPOM: produk ini ${status}. Kalau lead tanya BPOM, jawab JUJUR dengan kalimat itu, jangan mengelak, jangan bilang sudah terdaftar, jangan mengarang nomor/sertifikat. ` + (f.socialProof ? "Kalau lead tanya 'aman?' / BPOM: buka dengan bukti sosial di data, akui jujur 'secara resmi memang belum terdaftar BPOM', lalu ceritakan pengalaman pelanggan dan kesan pemakaian. " : "Kalau lead tanya 'aman?' / BPOM: akui jujur 'secara resmi memang belum terdaftar BPOM' dan jelaskan cara pakai yang aman sesuai data produk. ") + "Jangan bilang 'aman' sebagai jaminan.");
   }
   if (f.socialProof) {
     parts.push(`BUKTI SOSIAL (data toko, boleh disebut): ${f.socialProof}.`);

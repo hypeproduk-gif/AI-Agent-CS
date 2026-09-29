@@ -11,14 +11,15 @@ const BLOCKED_PHONES = ['6282125784683'];
 const PRODUCT_PATTERNS = [
   ['KitJelangNikah', /\b(nikah|menikah|pernikahan|wedding|kit jelang nikah|kitjelangnikah)\b/i],
   ['KarierKit', /\b(cv|karier|karir|lamaran kerja|ats|karierkit)\b/i],
+  ['MinyakDabung', /\b(dabung|minyak papua|minyak dabung|minyak lintah|pria dewasa)\b/i],
   ['SalGlow', /\b(salglow|salep|glowing|flek|bekas jerawat|filo)\b/i],
 ];
 
 // Kode ref dari landing page, contoh "KJN-7Q2MX". Prefix menentukan produk.
-const REF_PATTERN = /\b(SG|KK|KJN)-([A-Z0-9]{5})\b/;
+const REF_PATTERN = /\b(SG|KK|KJN|MDP)-([A-Z0-9]{5})\b/;
 // Format LP terbaru: "#promo7Q2MX" -> ref PROMO7Q2MX (produk dari konteks/default).
 const PROMO_PATTERN = /#PROMO([A-Z0-9]{5})\b/;
-const REF_PRODUCTS = { SG: 'SalGlow', KK: 'KarierKit', KJN: 'KitJelangNikah' };
+const REF_PRODUCTS = { SG: 'SalGlow', KK: 'KarierKit', KJN: 'KitJelangNikah', MDP: 'MinyakDabung' };
 
 const CLOSING_PATTERNS = [
   /\bcod\b/i,

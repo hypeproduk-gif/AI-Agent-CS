@@ -40,7 +40,7 @@ const SCALEV = {
 };
 
 // Nama toko yang dilihat pembeli (tanda tangan CS) per produk.
-const BRANDS = { SalGlow: 'Filomall-Beauty' };
+const BRANDS = { SalGlow: 'Filomall-Beauty', MinyakDabung: 'Filomall' };
 
 // Paket yang bisa di-order lewat bot.
 const PACKAGES = {
