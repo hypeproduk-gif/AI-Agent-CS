@@ -4,15 +4,15 @@
 //          Profit dihitung dari toAmountMin (worst-case slippage) dikurangi gas kedua leg.
 // ===== PENGATURAN (edit di sini) =====
 const env = {
-  BRIDGE_ALLOWED_CHAT_ID: 'ISI_CHAT_ID_TELEGRAM', // dari @userinfobot
+  BRIDGE_ALLOWED_CHAT_ID: '198044928', // dari @userinfobot
   BRIDGE_WALLET_ADDRESS: '0x000000000000000000000000000000000000dEaD', // alamat apa saja untuk simulasi
   ARB_MONITOR: 'true',        // true = hanya pantau, tanpa transaksi
-  ARB_CAPITAL_USD: '10',
-  ARB_MIN_SPREAD_PCT: '-100', // -100 = semua selisih ikut disimulasi (mode pantau)
+  ARB_CAPITAL_USD: '100',
+  ARB_MIN_SPREAD_PCT: '0.5',  // hanya selisih >= 0.5% yang disimulasi
   ARB_MIN_PROFIT_USD: '0.10',
   ARB_CHAINS: 'bsc,polygon,arb,base',
-  ARB_TOKENS: 'ETH,WBTC,LINK,UNI,AAVE',
-  ARB_MAX_SIMULATIONS: '6',
+  ARB_TOKENS: 'ETH,WBTC,LINK,UNI,AAVE,USDT,DAI,CRV,LDO,COMP,SUSHI,1INCH,PEPE,SHIB',
+  ARB_MAX_SIMULATIONS: '8',
   LIFI_API_KEY: '',           // opsional
   ARB_AUTO: 'false',
   BRIDGE_PROGRESS_URL: '',
@@ -68,7 +68,7 @@ for (const c of cands.slice(0, maxSim)) {
 if (env.ARB_MONITOR === 'true') {
   const g = $getWorkflowStaticData('global');
   const S = (g.stats ??= { scans: 0, sims: 0, win: 0, capital, pairs: {} });
-  S.scans++;
+  S.scans++; S.capital = capital;
   for (const t of tokens) for (const a of chains) for (const b of chains) {
     const pa = price[`${t}@${a}`], pb = price[`${t}@${b}`];
     if (a === b || !pa || !pb) continue;
