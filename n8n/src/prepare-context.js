@@ -11,7 +11,7 @@ const BLOCKED_PHONES = ['6282125784683'];
 const PRODUCT_PATTERNS = [
   ['KitJelangNikah', /\b(nikah|menikah|pernikahan|wedding|kit jelang nikah|kitjelangnikah)\b/i],
   ['KarierKit', /\b(cv|karier|karir|lamaran kerja|ats|karierkit)\b/i],
-  ['MinyakDabung', /\b(dabung|minyak papua|minyak dabung|minyak lintah|pria dewasa)\b/i],
+  ['MinyakDabung', /\b(minyak herbal pria|herbal pria|dabung|minyak papua|minyak dabung)\b/i],
   ['SalGlow', /\b(salglow|salep|glowing|flek|bekas jerawat|filo)\b/i],
 ];
 
