@@ -15,6 +15,7 @@ shots:
       one hand pulls out a white-navy striped sock and the other a grey sock, holding up the
       mismatched pair; handheld close-up, slight camera shake, fast-paced
     duration: 5
+    trim: 4          # Kling minimal 5 detik -> dipotong jadi 4 detik
   - id: s02
     keyframe_image: video/jobs/mami-berantakan/key_02.png
     keyframe: "top-down view of a cluttered floor by the front door"
@@ -23,3 +24,4 @@ shots:
       across the floor revealing the open backpack, keys, single shoe, single sock and fallen bottle;
       sunlight rays gently flicker
     duration: 5
+    trim: 4          # Kling minimal 5 detik -> dipotong jadi 4 detik

@@ -103,9 +103,10 @@ def make_clip(sb, shot, start_img, tail_img, out, dry):
     return dest
 
 
-def concat(clips, dest):
+def concat(clips, dest, trims):
     lst = dest.with_suffix(".txt")
-    lst.write_text("".join(f"file '{c.resolve()}'\n" for c in clips))
+    lst.write_text("".join(f"file '{c.resolve()}'\n" + (f"outpoint {t}\n" if t else "")
+                           for c, t in zip(clips, trims)))
     # re-encode agar fps/resolusi seragam antar klip
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(lst),
                     "-vf", "fps=30,format=yuv420p", "-c:v", "libx264", "-crf", "18", "-an", str(dest)], check=True)
@@ -198,7 +199,7 @@ def main():
     if a.dry_run:
         return
     print("3/3 Gabung")
-    concat(clips, out / "final.mp4")
+    concat(clips, out / "final.mp4", [s.get("trim") for s in shots])
     print(f"Selesai: {out / 'final.mp4'}")
 
 
