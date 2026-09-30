@@ -31,6 +31,7 @@ services:
       - N8N_PROTOCOL=https
       - WEBHOOK_URL=https://$DOMAIN/
       - N8N_PROXY_HOPS=1
+      - N8N_LISTEN_ADDRESS=0.0.0.0
       - GENERIC_TIMEZONE=Asia/Jakarta
       - TZ=Asia/Jakarta
       - N8N_RUNNERS_ENABLED=true
