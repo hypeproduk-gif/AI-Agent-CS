@@ -288,6 +288,11 @@ test('simulasi: pesan dari admin sendiri diabaikan', () => {
   assert.strictEqual(r.requests.length, 0);
 });
 
+test('simulasi: nomor yang diblokir (admin Wablas) tidak dibalas', () => {
+  const r = simulate(mainWf(), { webhookBody: { phone: '6281223922667', message: 'halo', isFromMe: false, isGroup: false }, row: null, http: () => ({}) });
+  assert.strictEqual(r.requests.length, 0);
+});
+
 
 
 test('workflow tes ongkir jalan dengan API tiruan & tidak membuat order', () => {

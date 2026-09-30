@@ -175,6 +175,9 @@ const column = (id) => ({
   display: true, type: 'string', readOnly: false, removed: false,
 });
 
+// Nomor yang tidak dibalas AI sama sekali (admin Wablas, dll). Format 62xxx tanpa + / spasi.
+const BLOCKED_PHONES = ['6281223922667'];
+
 const node = (name, type, typeVersion, x, parameters, extra = {}) => ({
   parameters, type, typeVersion, position: [x, extra.y || 0], name, ...extra, y: undefined,
 });
@@ -217,6 +220,12 @@ const nodes = [
         {
           id: 'not-group',
           leftValue: '={{ $json.body.isGroup }}',
+          rightValue: true,
+          operator: { type: 'boolean', operation: 'notEquals' },
+        },
+        {
+          id: 'not-blocked',
+          leftValue: `={{ ${JSON.stringify(BLOCKED_PHONES)}.includes(String($json.body.phone || '').replace(/\\D/g, '')) }}`,
           rightValue: true,
           operator: { type: 'boolean', operation: 'notEquals' },
         },

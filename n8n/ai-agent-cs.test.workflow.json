@@ -44,6 +44,15 @@
                 "type": "boolean",
                 "operation": "notEquals"
               }
+            },
+            {
+              "id": "not-blocked",
+              "leftValue": "={{ [\"6281223922667\"].includes(String($json.body.phone || '').replace(/\\D/g, '')) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
             }
           ],
           "combinator": "and"
