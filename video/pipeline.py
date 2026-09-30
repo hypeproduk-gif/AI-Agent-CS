@@ -10,7 +10,7 @@ Hasil tiap langkah di-cache di out/<project>/, jadi re-run hanya mengerjakan yan
 (hapus file keyframe/klip tertentu untuk regenerate satu shot saja).
 
 Mode job (cukup gambar + cerita): folder berisi cerita.txt + gambar referensi
-(nama file = nama referensi, mis. model.jpg, produk.png; sketsa storyboard: sb_01.jpg, sb_02.jpg, ...).
+(nama file = nama referensi, mis. model.jpg, produk.png; sketsa storyboard: sb_01.jpg, ...; keyframe siap pakai: key_01.png, ...).
 Claude menyusun storyboard.yaml otomatis dari cerita + gambar, lalu pipeline jalan.
   python video/pipeline.py video/jobs/iklan1
 
@@ -67,6 +67,9 @@ def make_keyframe(sb, shot, out, dry):
     dest = out / f"{shot['id']}_key.png"
     if dest.exists():
         return dest
+    if shot.get("keyframe_image"):  # keyframe sudah jadi: pakai apa adanya
+        shutil.copy(shot["keyframe_image"], dest)
+        return dest
     refs = list(sb.get("references", {}).items())
     images = [data_uri(p, dry) for _, p in refs]
     names = ", ".join(f"image {i + 1} = '{n}'" for i, (n, _) in enumerate(refs))
@@ -122,7 +125,8 @@ shots:
     keyframe: <adegan diam, Inggris, spesifik>
     motion: <gerakan kamera & subjek, Inggris, sederhana>
     duration: 5          # 5 atau 10
-    storyboard: <path sketsa jika ada untuk shot ini, jika tidak hapus field ini>
+    storyboard: <path sketsa sb_XX jika ada untuk shot ini, jika tidak hapus field ini>
+    keyframe_image: <path key_XX jika ada untuk shot ini (dipakai langsung), jika tidak hapus>
     continue_from_previous: <true jika lanjutan langsung adegan sebelumnya di lokasi sama, jika tidak hapus>
 Aturan: 1 aksi per shot, total durasi sesuai cerita (default 15-30 detik), gerakan realistis."""
 
@@ -130,15 +134,15 @@ Aturan: 1 aksi per shot, total durasi sesuai cerita (default 15-30 detik), gerak
 def plan_job(job):
     story = (job / "cerita.txt").read_text()
     imgs = sorted(p for p in job.iterdir() if p.suffix.lower() in IMG_EXT)
-    refs = {p.stem: str(p) for p in imgs if not p.stem.startswith("sb_")}
-    sketches = [str(p) for p in imgs if p.stem.startswith("sb_")]
+    refs = {p.stem: str(p) for p in imgs if not p.stem.startswith(("sb_", "key_"))}
+    sketches = [str(p) for p in imgs if p.stem.startswith(("sb_", "key_"))]
     content = []
     for p in imgs:
         content += [{"type": "text", "text": f"Gambar: {p}"},
                     {"type": "image", "source": {"type": "base64", "media_type": mimetypes.guess_type(str(p))[0],
                                                  "data": base64.b64encode(p.read_bytes()).decode()}}]
     content.append({"type": "text", "text": f"project: {job.name}\nreferences: {json.dumps(refs)}\n"
-                                            f"sketsa storyboard: {sketches}\n\nAlur cerita:\n{story}"})
+                                            f"sketsa/keyframe per shot: {sketches}\n\nAlur cerita:\n{story}"})
     r = requests.post("https://api.anthropic.com/v1/messages", timeout=300, headers={
         "x-api-key": os.environ["ANTHROPIC_API_KEY"], "anthropic-version": "2023-06-01"}, json={
         "model": os.getenv("PLANNER_MODEL", "claude-sonnet-5-5"), "max_tokens": 4000,

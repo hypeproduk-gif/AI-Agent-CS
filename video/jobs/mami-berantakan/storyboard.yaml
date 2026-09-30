@@ -1,0 +1,25 @@
+# Keyframe sudah disediakan (key_01/key_02) -> langsung dianimasikan, tanpa generate gambar.
+project: mami-berantakan
+aspect_ratio: "9:16"
+seed: 20260930
+style: >-
+  warm golden morning sunlight, cozy Indonesian home, soft natural tones,
+  realistic lifestyle ad, shot on 35mm, shallow depth of field, no text, no people talking
+references: {}
+shots:
+  - id: s01
+    keyframe_image: video/jobs/mami-berantakan/key_01.png
+    keyframe: "close-up of a mother's hands rummaging through a messy drawer of kids' socks"
+    motion: >-
+      the hands quickly and frantically rummage through the sock drawer, socks shift and tumble,
+      one hand pulls out a white-navy striped sock and the other a grey sock, holding up the
+      mismatched pair; handheld close-up, slight camera shake, fast-paced
+    duration: 5
+  - id: s02
+    keyframe_image: video/jobs/mami-berantakan/key_02.png
+    keyframe: "top-down view of a cluttered floor by the front door"
+    motion: >-
+      static scene, nothing moves, no people; slow smooth camera slide from left to right
+      across the floor revealing the open backpack, keys, single shoe, single sock and fallen bottle;
+      sunlight rays gently flicker
+    duration: 5
