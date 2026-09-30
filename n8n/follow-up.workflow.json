@@ -26,10 +26,10 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "qZYFr5OtcUD8F8Co",
+          "value": "5NtAx8FqnvweihCl",
           "mode": "list",
           "cachedResultName": "leads_context",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/qZYFr5OtcUD8F8Co"
+          "cachedResultUrl": "/projects/lXkS0POUoL9p5cWT/datatables/5NtAx8FqnvweihCl"
         },
         "returnAll": true
       },
@@ -95,7 +95,7 @@
       "id": "aics-fu-4",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "Rg3kLQlwRT919UB4",
+          "id": "FccOVLW0D1ArKZsy",
           "name": "Anthropic API"
         }
       }
@@ -151,7 +151,7 @@
       "id": "aics-fu-6",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "nACcE3iy140ThXzw",
+          "id": "3vqlBx8OYvAWsX7x",
           "name": "Wablas"
         }
       }
@@ -161,10 +161,10 @@
         "operation": "upsert",
         "dataTableId": {
           "__rl": true,
-          "value": "qZYFr5OtcUD8F8Co",
+          "value": "5NtAx8FqnvweihCl",
           "mode": "list",
           "cachedResultName": "leads_context",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/qZYFr5OtcUD8F8Co"
+          "cachedResultUrl": "/projects/lXkS0POUoL9p5cWT/datatables/5NtAx8FqnvweihCl"
         },
         "filters": {
           "conditions": [

@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const code = (f) => fs.readFileSync(path.join(__dirname, f), 'utf8');
-const TG = { telegramApi: { id: 'GvWCKSvWULLSOTrP', name: 'Telegram account' } };
+const TG = { telegramApi: { id: 'zlj3gcoqYjwXs3yb', name: 'Telegram account' } };
 
 let x = 0;
 const node = (name, type, typeVersion, parameters, extra = {}) =>

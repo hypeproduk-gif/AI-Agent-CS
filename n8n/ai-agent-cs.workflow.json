@@ -65,10 +65,10 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "qZYFr5OtcUD8F8Co",
+          "value": "5NtAx8FqnvweihCl",
           "mode": "list",
           "cachedResultName": "leads_context",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/qZYFr5OtcUD8F8Co"
+          "cachedResultUrl": "/projects/lXkS0POUoL9p5cWT/datatables/5NtAx8FqnvweihCl"
         },
         "filters": {
           "conditions": [
@@ -142,10 +142,10 @@
         "operation": "upsert",
         "dataTableId": {
           "__rl": true,
-          "value": "qZYFr5OtcUD8F8Co",
+          "value": "5NtAx8FqnvweihCl",
           "mode": "list",
           "cachedResultName": "leads_context",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/qZYFr5OtcUD8F8Co"
+          "cachedResultUrl": "/projects/lXkS0POUoL9p5cWT/datatables/5NtAx8FqnvweihCl"
         },
         "filters": {
           "conditions": [
@@ -249,7 +249,7 @@
       "id": "aics-07",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "Rg3kLQlwRT919UB4",
+          "id": "FccOVLW0D1ArKZsy",
           "name": "Anthropic API"
         }
       }
@@ -318,7 +318,7 @@
       "id": "aics-09",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
+          "id": "3nbV3AIwVIWymgsu",
           "name": "Scalev"
         }
       }
@@ -352,7 +352,7 @@
       "id": "aics-10",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
+          "id": "3nbV3AIwVIWymgsu",
           "name": "Scalev"
         }
       }
@@ -466,7 +466,7 @@
       "id": "aics-14",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
+          "id": "3nbV3AIwVIWymgsu",
           "name": "Scalev"
         }
       }
@@ -545,7 +545,7 @@
       "id": "aics-17",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
+          "id": "3nbV3AIwVIWymgsu",
           "name": "Scalev"
         }
       }
@@ -592,7 +592,7 @@
       "id": "aics-19",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
+          "id": "3nbV3AIwVIWymgsu",
           "name": "Scalev"
         }
       }
@@ -639,7 +639,7 @@
       "id": "aics-21",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
+          "id": "3nbV3AIwVIWymgsu",
           "name": "Scalev"
         }
       }
@@ -756,7 +756,7 @@
       "id": "aics-25",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
+          "id": "3nbV3AIwVIWymgsu",
           "name": "Scalev"
         }
       }
@@ -790,7 +790,7 @@
       "id": "aics-26",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
+          "id": "3nbV3AIwVIWymgsu",
           "name": "Scalev"
         }
       }
@@ -824,7 +824,7 @@
       "id": "aics-27",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
+          "id": "3nbV3AIwVIWymgsu",
           "name": "Scalev"
         }
       }
@@ -858,7 +858,7 @@
       "id": "aics-28",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
+          "id": "3nbV3AIwVIWymgsu",
           "name": "Scalev"
         }
       }
@@ -916,7 +916,7 @@
       "id": "aics-30",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "Rg3kLQlwRT919UB4",
+          "id": "FccOVLW0D1ArKZsy",
           "name": "Anthropic API"
         }
       }
@@ -986,7 +986,7 @@
       "id": "aics-33",
       "credentials": {
         "telegramApi": {
-          "id": "GvWCKSvWULLSOTrP",
+          "id": "zlj3gcoqYjwXs3yb",
           "name": "Telegram account"
         }
       }
@@ -1022,7 +1022,7 @@
       "id": "aics-34",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "nACcE3iy140ThXzw",
+          "id": "3vqlBx8OYvAWsX7x",
           "name": "Wablas"
         }
       }
@@ -1067,10 +1067,10 @@
         "operation": "upsert",
         "dataTableId": {
           "__rl": true,
-          "value": "JigJfYz6uPh04oCK",
+          "value": "Gmyy03S7gVyztvRB",
           "mode": "list",
           "cachedResultName": "aics_orders",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/JigJfYz6uPh04oCK"
+          "cachedResultUrl": "/projects/lXkS0POUoL9p5cWT/datatables/Gmyy03S7gVyztvRB"
         },
         "filters": {
           "conditions": [
@@ -1241,10 +1241,10 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "ZKK35xdmV3H3E2A4",
+          "value": "fTIpNCrWZuUOFBDN",
           "mode": "list",
           "cachedResultName": "lp_attribution",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ZKK35xdmV3H3E2A4"
+          "cachedResultUrl": "/projects/lXkS0POUoL9p5cWT/datatables/fTIpNCrWZuUOFBDN"
         },
         "filters": {
           "conditions": [
@@ -1309,7 +1309,7 @@
       "id": "aics-40",
       "credentials": {
         "httpQueryAuth": {
-          "id": "M4RZB8EN2hhcr2yn",
+          "id": "W8dP10pnhXyMNutz",
           "name": "Meta CAPI"
         }
       }
@@ -1405,7 +1405,7 @@
       "id": "aics-43",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "nACcE3iy140ThXzw",
+          "id": "3vqlBx8OYvAWsX7x",
           "name": "Wablas"
         }
       }
@@ -1415,10 +1415,10 @@
         "operation": "upsert",
         "dataTableId": {
           "__rl": true,
-          "value": "qZYFr5OtcUD8F8Co",
+          "value": "5NtAx8FqnvweihCl",
           "mode": "list",
           "cachedResultName": "leads_context",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/qZYFr5OtcUD8F8Co"
+          "cachedResultUrl": "/projects/lXkS0POUoL9p5cWT/datatables/5NtAx8FqnvweihCl"
         },
         "filters": {
           "conditions": [

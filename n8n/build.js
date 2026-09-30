@@ -13,25 +13,25 @@ const META = vm.runInNewContext(src('capi.js') + '\n({ pixel: META_PIXEL_ID, ver
 
 const DATA_TABLE = {
   __rl: true,
-  value: 'qZYFr5OtcUD8F8Co',
+  value: '5NtAx8FqnvweihCl',
   mode: 'list',
   cachedResultName: 'leads_context',
-  cachedResultUrl: '/projects/K2OXZkkoLw9p8qNz/datatables/qZYFr5OtcUD8F8Co',
+  cachedResultUrl: '/projects/lXkS0POUoL9p5cWT/datatables/5NtAx8FqnvweihCl',
 };
 // ID tabel & credential akun n8n (bukan rahasia) supaya import tidak perlu pilih ulang.
-const PROJECT_ID = 'K2OXZkkoLw9p8qNz';
+const PROJECT_ID = 'lXkS0POUoL9p5cWT';
 const TABLE_IDS = {
-  leads_context: 'qZYFr5OtcUD8F8Co',
-  lp_attribution: 'ZKK35xdmV3H3E2A4',
-  aics_orders: 'JigJfYz6uPh04oCK',
+  leads_context: '5NtAx8FqnvweihCl',
+  lp_attribution: 'fTIpNCrWZuUOFBDN',
+  aics_orders: 'Gmyy03S7gVyztvRB',
 };
 const CREDENTIALS = {
-  anthropic: { httpHeaderAuth: { id: 'Rg3kLQlwRT919UB4', name: 'Anthropic API' } },
-  wablas: { httpHeaderAuth: { id: 'nACcE3iy140ThXzw', name: 'Wablas' } },
-  scalev: { httpHeaderAuth: { id: '3Sg0yQwmYbm9uLyp', name: 'Scalev' } },
-  storefront: { httpHeaderAuth: { id: 'tZrolZtseWagvc2W', name: 'Scalev Storefront' } },
-  telegram: { telegramApi: { id: 'GvWCKSvWULLSOTrP', name: 'Telegram account' } },
-  meta: { httpQueryAuth: { id: 'M4RZB8EN2hhcr2yn', name: 'Meta CAPI' } }, // Query Auth: name access_token
+  anthropic: { httpHeaderAuth: { id: 'FccOVLW0D1ArKZsy', name: 'Anthropic API' } },
+  wablas: { httpHeaderAuth: { id: '3vqlBx8OYvAWsX7x', name: 'Wablas' } },
+  scalev: { httpHeaderAuth: { id: '3nbV3AIwVIWymgsu', name: 'Scalev' } },
+  storefront: { httpHeaderAuth: { id: 'sX2zfXi3kev1C1NZ', name: 'Scalev Storefront' } },
+  telegram: { telegramApi: { id: 'zlj3gcoqYjwXs3yb', name: 'Telegram account' } },
+  meta: { httpQueryAuth: { id: 'W8dP10pnhXyMNutz', name: 'Meta CAPI' } }, // Query Auth: name access_token
 };
 const tableRef = (name) => ({
   __rl: true, value: TABLE_IDS[name], mode: 'list', cachedResultName: name,

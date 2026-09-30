@@ -37,10 +37,10 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "ZKK35xdmV3H3E2A4",
+          "value": "fTIpNCrWZuUOFBDN",
           "mode": "list",
           "cachedResultName": "lp_attribution",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ZKK35xdmV3H3E2A4"
+          "cachedResultUrl": "/projects/lXkS0POUoL9p5cWT/datatables/fTIpNCrWZuUOFBDN"
         },
         "returnAll": true
       },
@@ -60,10 +60,10 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "qZYFr5OtcUD8F8Co",
+          "value": "5NtAx8FqnvweihCl",
           "mode": "list",
           "cachedResultName": "leads_context",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/qZYFr5OtcUD8F8Co"
+          "cachedResultUrl": "/projects/lXkS0POUoL9p5cWT/datatables/5NtAx8FqnvweihCl"
         },
         "returnAll": true
       },
@@ -83,10 +83,10 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "JigJfYz6uPh04oCK",
+          "value": "Gmyy03S7gVyztvRB",
           "mode": "list",
           "cachedResultName": "aics_orders",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/JigJfYz6uPh04oCK"
+          "cachedResultUrl": "/projects/lXkS0POUoL9p5cWT/datatables/Gmyy03S7gVyztvRB"
         },
         "returnAll": true
       },
@@ -133,7 +133,7 @@
       "id": "aics-recap-7",
       "credentials": {
         "telegramApi": {
-          "id": "GvWCKSvWULLSOTrP",
+          "id": "zlj3gcoqYjwXs3yb",
           "name": "Telegram account"
         }
       }
@@ -177,7 +177,7 @@
       "id": "aics-recap-9",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
+          "id": "3nbV3AIwVIWymgsu",
           "name": "Scalev"
         }
       }

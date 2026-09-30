@@ -37,10 +37,10 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "JigJfYz6uPh04oCK",
+          "value": "Gmyy03S7gVyztvRB",
           "mode": "list",
           "cachedResultName": "aics_orders",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/JigJfYz6uPh04oCK"
+          "cachedResultUrl": "/projects/lXkS0POUoL9p5cWT/datatables/Gmyy03S7gVyztvRB"
         },
         "returnAll": true
       },
@@ -94,7 +94,7 @@
       "id": "aics-resi-5",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
+          "id": "3nbV3AIwVIWymgsu",
           "name": "Scalev"
         }
       }
@@ -176,7 +176,7 @@
       "id": "aics-resi-8",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
+          "id": "3nbV3AIwVIWymgsu",
           "name": "Scalev"
         }
       }
@@ -223,7 +223,7 @@
       "id": "aics-resi-10",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "3Sg0yQwmYbm9uLyp",
+          "id": "3nbV3AIwVIWymgsu",
           "name": "Scalev"
         }
       }
@@ -260,7 +260,7 @@
       "id": "aics-resi-12",
       "credentials": {
         "telegramApi": {
-          "id": "GvWCKSvWULLSOTrP",
+          "id": "zlj3gcoqYjwXs3yb",
           "name": "Telegram account"
         }
       }

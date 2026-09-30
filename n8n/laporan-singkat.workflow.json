@@ -37,10 +37,10 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "qZYFr5OtcUD8F8Co",
+          "value": "5NtAx8FqnvweihCl",
           "mode": "list",
           "cachedResultName": "leads_context",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/qZYFr5OtcUD8F8Co"
+          "cachedResultUrl": "/projects/lXkS0POUoL9p5cWT/datatables/5NtAx8FqnvweihCl"
         },
         "returnAll": true
       },
@@ -60,10 +60,10 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "JigJfYz6uPh04oCK",
+          "value": "Gmyy03S7gVyztvRB",
           "mode": "list",
           "cachedResultName": "aics_orders",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/JigJfYz6uPh04oCK"
+          "cachedResultUrl": "/projects/lXkS0POUoL9p5cWT/datatables/Gmyy03S7gVyztvRB"
         },
         "returnAll": true
       },
@@ -164,7 +164,7 @@
       "id": "aics-report-7",
       "credentials": {
         "httpHeaderAuth": {
-          "id": "Rg3kLQlwRT919UB4",
+          "id": "FccOVLW0D1ArKZsy",
           "name": "Anthropic API"
         }
       }
@@ -200,7 +200,7 @@
       "id": "aics-report-9",
       "credentials": {
         "telegramApi": {
-          "id": "GvWCKSvWULLSOTrP",
+          "id": "zlj3gcoqYjwXs3yb",
           "name": "Telegram account"
         }
       }
