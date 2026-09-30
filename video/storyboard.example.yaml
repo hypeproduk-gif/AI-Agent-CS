@@ -1,0 +1,32 @@
+# Storyboard contoh. Jalankan: python video/pipeline.py video/storyboard.example.yaml
+project: salglow-iklan-01
+aspect_ratio: "9:16"
+seed: 424242                # seed tetap = gaya & wajah lebih stabil antar shot
+style: >-
+  cinematic product ad, soft natural window light, warm skin tones,
+  shot on 35mm, shallow depth of field, consistent color grading
+
+# Referensi yang SELALU disertakan ke setiap keyframe (karakter, produk, lokasi)
+references:
+  model: video/refs/model.jpg       # wajah/pakaian karakter
+  produk: video/refs/produk.jpg     # packshot produk
+character_lock: >-
+  the same woman from reference 'model' (same face, hairstyle, outfit),
+  the same bottle from reference 'produk' (same label, color, shape)
+
+shots:
+  - id: s01
+    keyframe: "woman looks at her dull skin in bathroom mirror, slightly worried"
+    motion: "slow push-in, she touches her cheek"
+    duration: 5
+  - id: s02
+    # opsional: pakai gambar storyboard sendiri sebagai keyframe (dirapikan sesuai referensi)
+    storyboard: video/refs/sb_02.jpg
+    keyframe: "she picks up the serum bottle from the sink and smiles"
+    motion: "hand lifts bottle toward camera, gentle rack focus"
+    duration: 5
+    continue_from_previous: true    # frame awal = frame terakhir shot sebelumnya (transisi mulus)
+  - id: s03
+    keyframe: "close-up glowing skin, bottle held next to her face, smiling at camera"
+    motion: "subtle orbit, she smiles and nods"
+    duration: 5
