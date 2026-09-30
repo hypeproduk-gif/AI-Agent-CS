@@ -25,8 +25,9 @@ function simulate(workflow, { webhookBody, row, http, tables = {} }) {
 
   const queue = [['Webhook', [{ body: webhookBody, headers: {} }]]];
   while (queue.length) {
-    const [name, input] = queue.shift();
+    const [name, queued] = queue.shift();
     const node = byName[name];
+    const input = node.executeOnce ? queued.slice(0, 1) : queued; // seperti n8n: Execute Once = hanya item pertama
     const p = node.parameters;
     const json = input[0];
     const ex = (v) => evalExpr(v, { $json: json, $ });
@@ -74,6 +75,9 @@ function simulate(workflow, { webhookBody, row, http, tables = {} }) {
         });
         break;
       }
+      case 'n8n-nodes-base.wait':
+        out = input;
+        break;
       default:
         throw new Error('Node type belum didukung simulator: ' + node.type);
     }

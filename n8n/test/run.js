@@ -473,6 +473,9 @@ test('dengan BPOM & testimoni: nomor BPOM di prompt, 3 foto dikirim setelah bala
   const imgs = r.requests.filter((q) => q.node === 'Kirim Gambar');
   assert.strictEqual(imgs.length, 3);
   assert.ok(imgs.every((q) => q.url === 'https://jkt.wablas.com/api/send-image' && q.body.phone === '6281' && q.body.image.startsWith('https://x.test/')));
+  const ask = r.requests.filter((q) => q.node === 'Tanya Lanjut');
+  assert.strictEqual(ask.length, 1);
+  assert.ok(ask[0].body.phone === '6281' && ask[0].body.message.includes('sebelum order'));
   assert.strictEqual(new Set(imgs.map((q) => q.body.image)).size, 3);
   const find = (node) => r.requests.find((q) => q.node === node);
   assert.ok(!find('Kirim WhatsApp').body.message.includes('[TESTIMONI]'));

@@ -394,6 +394,22 @@ return d.testimoni.map((image) => ({ json: { phone: d.phone, image } }));`,
     },
     options: { batching: { batch: { batchSize: 1, batchInterval: 1500 } } },
   }, { onError: 'continueRegularOutput' }),
+  // Setelah foto terakhir: 1x pertanyaan lanjutan supaya lead diarahkan ke order.
+  node('Jeda Pertanyaan', 'n8n-nodes-base.wait', 1.1, 0, { amount: 3 }, { executeOnce: true, webhookId: 'aics-jeda-pertanyaan' }),
+  node('Tanya Lanjut', 'n8n-nodes-base.httpRequest', 4.5, 0, {
+    method: 'POST',
+    url: 'https://jkt.wablas.com/api/send-message',
+    authentication: 'genericCredentialType',
+    genericAuthType: 'httpHeaderAuth',
+    sendBody: true,
+    bodyParameters: {
+      parameters: [
+        { name: 'phone', value: "={{ $('Olah Balasan').first().json.phone }}" },
+        { name: 'message', value: 'Ini testimoni dari pembeli yang kondisinya mirip kakak 😊 Ada lagi yang mau ditanyakan sebelum order, kak?' },
+      ],
+    },
+    options: {},
+  }, { executeOnce: true, onError: 'continueRegularOutput' }),
   node('Simpan Histori', 'n8n-nodes-base.dataTable', 1.1, 4200, {
     operation: 'upsert',
     dataTableId: DATA_TABLE,
@@ -431,7 +447,7 @@ const place = (names, x0, y) => names.forEach((name, i) => {
 });
 place(TOP, 0, 0);
 nodes.find((n) => n.name === 'Simpan Saat Jeda').position = [880, -200];
-place(['Kirim Testimoni?', 'Pecah Testimoni', 'Kirim Gambar'], 1100 + (BOTTOM.length + 3) * 220, -200);
+place(['Kirim Testimoni?', 'Pecah Testimoni', 'Kirim Gambar', 'Jeda Pertanyaan', 'Tanya Lanjut'], 1100 + (BOTTOM.length + 3) * 220, -200);
 place(['Order Baru?', 'Catat Order'], 1100 + (BOTTOM.length + 1) * 220, -400);
 nodes.find((n) => n.name === 'Scalev Batal Resi').position = [1100 + 12 * 220, 480];
 place(['Order Pertama?', 'Cari Atribusi', 'Siapkan CAPI', 'Meta Purchase (CAPI)'], 1100 + (BOTTOM.length + 2) * 220, -600);
@@ -499,6 +515,8 @@ const workflow = {
     ]] },
     'Kirim Testimoni?': link('Pecah Testimoni'),
     'Pecah Testimoni': link('Kirim Gambar'),
+    'Kirim Gambar': link('Jeda Pertanyaan'),
+    'Jeda Pertanyaan': link('Tanya Lanjut'),
   },
   active: false,
   settings: { executionOrder: 'v1' },
