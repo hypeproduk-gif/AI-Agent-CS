@@ -455,7 +455,7 @@ test('24 testimoni Imgur terpasang, link langsung & unik, prompt menawarkan test
   const list = vm.runInContext('FACTS.SalGlow.testimonials', ctx).map((t) => t.url);
   assert.strictEqual(list.length, 24);
   assert.strictEqual(new Set(list).size, 24);
-  assert.ok(list.every((u) => /^https:\/\/i\.imgur\.com\/[A-Za-z0-9]{7}\.(jpeg|png)$/.test(u)));
+  assert.ok(list.every((u) => /^https:\/\/n8n\.filodigital\.my\.id\/media\/testimoni\/[A-Za-z0-9]{7}\.(jpeg|png)$/.test(u)));
   const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
   assert.ok(sys.includes('[TESTIMONI]'));
 });
