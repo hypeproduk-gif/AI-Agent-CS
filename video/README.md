@@ -8,7 +8,21 @@ Automasi: gambar referensi / storyboard → keyframe konsisten → klip image-to
 3. **Sambungan antar shot** — `continue_from_previous: true` memakai frame terakhir shot sebelumnya sebagai frame awal; `--tail` memakai keyframe shot berikutnya sebagai frame akhir.
 4. **Review bertahap + cache** — cek keyframe dulu, hapus yang meleset, jalankan ulang; hanya yang hilang yang dibuat.
 
-## Pakai
+## Cara paling simpel: gambar + cerita saja
+1. Buat folder `video/jobs/<nama>/` (contoh: `video/jobs/contoh/`).
+2. Isi dengan:
+   - `cerita.txt`: alur cerita bebas, bahasa Indonesia boleh.
+   - Gambar referensi: nama file jadi nama referensinya, misalnya `model.jpg`, `produk.png`.
+   - Sketsa storyboard (opsional): `sb_01.jpg`, `sb_02.jpg`, dan seterusnya.
+3. Jalankan:
+```bash
+export ANTHROPIC_API_KEY=... FAL_KEY=...
+python video/pipeline.py video/jobs/<nama> --keyframes-only   # Claude menulis storyboard.yaml + keyframe
+python video/pipeline.py video/jobs/<nama> --tail             # video final
+```
+`storyboard.yaml` hasil Claude disimpan di folder job. Kamu boleh mengeditnya sebelum menjalankan ulang.
+
+## Pakai (manual YAML)
 ```bash
 pip install -r video/requirements.txt      # + ffmpeg
 export FAL_KEY=...                          # fal.ai

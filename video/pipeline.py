@@ -9,7 +9,12 @@ Alur per shot:
 Hasil tiap langkah di-cache di out/<project>/, jadi re-run hanya mengerjakan yang belum ada
 (hapus file keyframe/klip tertentu untuk regenerate satu shot saja).
 
-Env: FAL_KEY (https://fal.ai/dashboard/keys). Butuh ffmpeg di PATH.
+Mode job (cukup gambar + cerita): folder berisi cerita.txt + gambar referensi
+(nama file = nama referensi, mis. model.jpg, produk.png; sketsa storyboard: sb_01.jpg, sb_02.jpg, ...).
+Claude menyusun storyboard.yaml otomatis dari cerita + gambar, lalu pipeline jalan.
+  python video/pipeline.py video/jobs/iklan1
+
+Env: ANTHROPIC_API_KEY (mode job), FAL_KEY (https://fal.ai/dashboard/keys). Butuh ffmpeg di PATH.
 """
 import argparse, base64, json, mimetypes, os, shutil, subprocess, sys, time
 from pathlib import Path
@@ -103,15 +108,62 @@ def concat(clips, dest):
                     "-vf", "fps=30,format=yuv420p", "-c:v", "libx264", "-crf", "18", "-an", str(dest)], check=True)
 
 
+IMG_EXT = {".jpg", ".jpeg", ".png", ".webp"}
+PLANNER = """Kamu sutradara iklan video pendek. Dari alur cerita dan gambar referensi, tulis storyboard YAML
+(HANYA YAML, tanpa ``` atau penjelasan) dengan skema:
+project: <slug>
+aspect_ratio: "9:16"
+seed: <int>
+style: <gaya visual, Inggris, sama untuk semua shot>
+references: {<nama>: <path>}   # pakai persis daftar referensi yang diberikan
+character_lock: <deskripsi Inggris detail wajah/rambut/pakaian/produk dari gambar, sebut nama referensinya>
+shots:
+  - id: s01
+    keyframe: <adegan diam, Inggris, spesifik>
+    motion: <gerakan kamera & subjek, Inggris, sederhana>
+    duration: 5          # 5 atau 10
+    storyboard: <path sketsa jika ada untuk shot ini, jika tidak hapus field ini>
+    continue_from_previous: <true jika lanjutan langsung adegan sebelumnya di lokasi sama, jika tidak hapus>
+Aturan: 1 aksi per shot, total durasi sesuai cerita (default 15-30 detik), gerakan realistis."""
+
+
+def plan_job(job):
+    story = (job / "cerita.txt").read_text()
+    imgs = sorted(p for p in job.iterdir() if p.suffix.lower() in IMG_EXT)
+    refs = {p.stem: str(p) for p in imgs if not p.stem.startswith("sb_")}
+    sketches = [str(p) for p in imgs if p.stem.startswith("sb_")]
+    content = []
+    for p in imgs:
+        content += [{"type": "text", "text": f"Gambar: {p}"},
+                    {"type": "image", "source": {"type": "base64", "media_type": mimetypes.guess_type(str(p))[0],
+                                                 "data": base64.b64encode(p.read_bytes()).decode()}}]
+    content.append({"type": "text", "text": f"project: {job.name}\nreferences: {json.dumps(refs)}\n"
+                                            f"sketsa storyboard: {sketches}\n\nAlur cerita:\n{story}"})
+    r = requests.post("https://api.anthropic.com/v1/messages", timeout=300, headers={
+        "x-api-key": os.environ["ANTHROPIC_API_KEY"], "anthropic-version": "2023-06-01"}, json={
+        "model": os.getenv("PLANNER_MODEL", "claude-sonnet-5-5"), "max_tokens": 4000,
+        "system": PLANNER, "messages": [{"role": "user", "content": content}]})
+    r.raise_for_status()
+    text = r.json()["content"][0]["text"].strip().removeprefix("```yaml").removeprefix("```").removesuffix("```")
+    yaml.safe_load(text)  # validasi
+    dest = job / "storyboard.yaml"
+    dest.write_text(text)
+    print(f"Storyboard dibuat: {dest} (edit lalu jalankan ulang bila perlu)")
+    return dest
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("storyboard")
+    ap.add_argument("storyboard", help="file storyboard .yaml ATAU folder job (cerita.txt + gambar)")
     ap.add_argument("--dry-run", action="store_true", help="tampilkan request tanpa memanggil API")
     ap.add_argument("--keyframes-only", action="store_true", help="berhenti setelah keyframe (review dulu)")
     ap.add_argument("--tail", action="store_true", help="pakai keyframe shot berikutnya sebagai frame akhir")
     a = ap.parse_args()
 
-    sb = yaml.safe_load(Path(a.storyboard).read_text())
+    src = Path(a.storyboard)
+    if src.is_dir():
+        src = src / "storyboard.yaml" if (src / "storyboard.yaml").exists() else plan_job(src)
+    sb = yaml.safe_load(src.read_text())
     out = Path("out") / sb["project"]
     out.mkdir(parents=True, exist_ok=True)
     if not a.dry_run and not os.getenv("FAL_KEY"):
