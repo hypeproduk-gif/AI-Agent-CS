@@ -11,6 +11,7 @@ Bot CS WhatsApp (Wablas → n8n → Claude Haiku 4.5) untuk SalGlow, KarierKit, 
 - `lp/index.html` — contoh LP
 - `lp/scalev-embed.html` — script siap tempel ke Custom HTML landing page Scalev
 - `n8n/video-generator.workflow.json` — form upload gambar + cerita → video (Claude + Kling via fal.ai) → Telegram
+- `n8n/flow-prompt.workflow.json` — form upload gambar + cerita → prompt Google Flow (Veo) per shot → Telegram
 - `n8n/rekap-harian.workflow.json` — rekap harian Telegram 23:55 WIB
 - `n8n/scalev-setup.workflow.json` — jalankan manual sekali untuk melihat ID store & varian Scalev
 - `n8n/src/order-config.js` — konfigurasi Scalev (store, varian, berat, fee COD)

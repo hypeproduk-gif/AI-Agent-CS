@@ -1,0 +1,180 @@
+{
+  "name": "Prompt Google Flow (Gambar + Cerita → Prompt)",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Prompt Google Flow dari Gambar",
+        "formDescription": "Upload gambar (urut shot 1, 2, ...) dan alur cerita. Prompt per shot dikirim ke Telegram ± 1 menit.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Gambar",
+              "fieldType": "file",
+              "multipleFiles": true,
+              "acceptFileTypes": ".jpg, .jpeg, .png, .webp",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Cerita",
+              "fieldType": "textarea",
+              "placeholder": "0-4 detik: ...\n4-8 detik: ...",
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "onReceived",
+        "options": {
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Diterima! Prompt dikirim ke Telegram sebentar lagi."
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "name": "Form Prompt",
+      "webhookId": "flow-prompt-form",
+      "id": "flow-prompt-1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Gambar (urut shot) + cerita -> request Claude untuk prompt Google Flow (Veo).\nconst item = $input.first();\nconst keys = Object.keys(item.binary || {}).sort((a, b) => Number(a.split('_').pop()) - Number(b.split('_').pop()));\nif (!keys.length) throw new Error('Tidak ada gambar.');\nconst content = [];\nfor (const [i, k] of keys.entries()) {\n  const buf = await this.helpers.getBinaryDataBuffer(0, k);\n  content.push({ type: 'text', text: `Gambar shot ${i + 1}:` });\n  content.push({ type: 'image', source: { type: 'base64', media_type: item.binary[k].mimeType || 'image/png', data: buf.toString('base64') } });\n}\ncontent.push({ type: 'text', text: `Alur cerita:\\n${item.json['Cerita']}` });\nconst system = `Kamu sutradara iklan video pendek yang ahli menulis prompt Google Veo (Google Flow, mode Frames to Video).\nSetiap gambar = frame awal 1 shot, sesuai urutan. Tulis 1 prompt per gambar (jumlah = ${keys.length}).\nAturan prompt (bahasa Inggris, 60-120 kata, satu paragraf):\n- Mulai dengan jenis shot & gerakan kamera, lalu aksi subjek detik demi detik, lalu cahaya/suasana, lalu audio.\n- Konsisten dengan gambar: jangan tambah orang/benda baru, jangan ubah warna/pakaian/lokasi.\n- Klip Veo 8 detik; jika cerita minta durasi lebih pendek, tulis aksinya selesai dalam durasi itu dan sebut \"cut at N seconds\" di catatan.\n- Ikuti instruksi cerita soal suara. Jika tanpa voice over: \"No dialogue, no voice-over, no music; only natural ambient sound of ...\".\n- Akhiri dengan: \"Photorealistic, 9:16 vertical, no text, no subtitles, no morphing.\"\nBalas HANYA JSON: {\"shots\":[{\"judul\":\"<ringkas, Indonesia>\",\"prompt\":\"...\",\"catatan\":\"<tips singkat Indonesia, mis. potong di detik 4>\"}]}`;\nreturn [{ json: { body: { model: 'claude-sonnet-5-5', max_tokens: 3000, system, messages: [{ role: 'user', content }] } } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "name": "Siapkan Prompt",
+      "id": "flow-prompt-2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.body) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ],
+      "name": "Claude Tulis Prompt",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Rg3kLQlwRT919UB4",
+          "name": "Anthropic API"
+        }
+      },
+      "id": "flow-prompt-3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Susun pesan Telegram, 1 pesan per shot (mudah di-copy).\nconst text = $input.first().json.content[0].text;\nconst plan = JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1));\nconst n = plan.shots.length;\nreturn plan.shots.map((s, i) => ({ json: {\n  text: `🎬 Shot ${i + 1}/${n} — ${s.judul}\\nGambar: upload gambar ke-${i + 1} sebagai frame awal\\n${s.catatan ? '📝 ' + s.catatan + '\\n' : ''}\\n${s.prompt}`,\n} }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "name": "Format Pesan",
+      "id": "flow-prompt-4"
+    },
+    {
+      "parameters": {
+        "chatId": "-5439732568",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        880,
+        0
+      ],
+      "name": "Kirim ke Telegram",
+      "credentials": {
+        "telegramApi": {
+          "id": "GvWCKSvWULLSOTrP",
+          "name": "Telegram account"
+        }
+      },
+      "id": "flow-prompt-5"
+    }
+  ],
+  "connections": {
+    "Form Prompt": {
+      "main": [
+        [
+          {
+            "node": "Siapkan Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Siapkan Prompt": {
+      "main": [
+        [
+          {
+            "node": "Claude Tulis Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude Tulis Prompt": {
+      "main": [
+        [
+          {
+            "node": "Format Pesan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Pesan": {
+      "main": [
+        [
+          {
+            "node": "Kirim ke Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
