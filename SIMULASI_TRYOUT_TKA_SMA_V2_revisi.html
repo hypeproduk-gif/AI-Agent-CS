@@ -1,6 +1,25 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<!-- Proteksi: noindex + domain lock (ditambahkan 1 Okt 2026) -->
+<meta name="robots" content="noindex, nofollow">
+<script>
+(function () {
+  var allowed = ['toolkitparenting.my.id'];
+  var h = (location.hostname || '').toLowerCase();
+  var ok = (h === '') || allowed.some(function (d) {
+    return h === d || h.slice(-(d.length + 1)) === '.' + d;
+  });
+  if (ok) return;
+  var de = document.documentElement;
+  de.style.display = 'none';
+  function lock() {
+    de.innerHTML = '<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Produk tidak tersedia</title></head><body style="font-family:sans-serif;padding:2rem;text-align:center">Produk ini hanya tersedia di toolkitparenting.my.id</body>';
+    de.style.display = '';
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', lock); else lock();
+})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TKA SMA Kelas 12 — Simulasi Tryout & Latihan Mandiri</title>
