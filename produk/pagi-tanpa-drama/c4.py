@@ -64,10 +64,10 @@ page('cream', 'Penutup', f'''
 ''', z=1.1)
 
 # ---------- BONUS ----------
-page('dark', 'Bonus printable', f'''
+page('peach', 'Bonus printable', f'''
 <div style="text-align:center;padding-top:42mm">
 <div class="stk">Bonus printable</div>
-<div class="bigmsg" style="font-size:34pt;margin:7mm 0 5mm;color:#FFD23F">Siap Cetak,<br><span style="color:#fff">Siap Tempel</span></div>
+<div class="bigmsg" style="font-size:34pt;margin:7mm 0 5mm;">Siap Cetak,<br><span style="color:#4A3B36">Siap Tempel</span></div>
 <p class="big">Empat lembar yang bisa kamu cetak dan pakai langsung.</p>
 <div style="max-width:120mm;margin:8mm auto 0;text-align:left">
 {tbl(["#","Printable"],[["1","Chart Rutinitas Pagi Anak (balita &amp; SD)"],["2","Checklist Malam 15 Menit (tempel kulkas)"],["3","30 Ide Sarapan dan Bekal 5 Menit"],["4","Tracker Challenge 7 Hari"]],"",["14%","86%"])}
@@ -96,8 +96,8 @@ page('cream', 'Bonus 1 · Chart rutinitas', f'''
 {tbl(["Langkah","Sen","Sel","Rab","Kam","Jum"],[["&nbsp;"]+[bx]*5 for _ in range(6)],"tall",["44%","11.2%","11.2%","11.2%","11.2%","11.2%"])}
 ''', z=1.0)
 
-page('night', 'Bonus 2 · Tempel di kulkas', f'''
-<div class="bn" style="background:#fff;color:var(--ink)"><span class="tag">Bonus 2</span><span class="tt">Tempel di Kulkas</span></div>
+page('dusk', 'Bonus 2 · Tempel di kulkas', f'''
+<div class="bn"><span class="tag">Bonus 2</span><span class="tt">Tempel di Kulkas</span></div>
 {img("bonus2.jpg","strip")}
 <div class="grid2">
 <div>{card("&#9312; Baju", cb(["Baju anak lengkap (sampai kaus kaki)","Baju kerja Mami lengkap","Taruh di tempat baju besok"]), "y")}

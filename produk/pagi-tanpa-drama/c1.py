@@ -4,7 +4,7 @@ from lib import *
 page('cream', '', f'<div class="cover pg-cover">{img("cover.jpg","full")}<div class="ribbon">Sistem 45 menit &bull; Workbook untuk ibu bekerja</div></div>', num=False, cls='cover')
 
 # ---------- LISENSI ----------
-page('dark', '', f'''
+page('cream', '', f'''
 <div class="lic">
 <span class="logowrap">{img("logo.png","logo")}</span>
 <h1>Produk Original ToolkitParenting</h1>
@@ -52,7 +52,7 @@ page('cream', 'Cara memakai & isi buku', f'''
 ''')
 
 # ---------- KUIS ----------
-page('red', 'Mulai dari sini · Kuis', f'''
+page('peach', 'Mulai dari sini · Kuis', f'''
 <div class="bigmsg" style="font-size:19pt;margin-bottom:1mm">Kuis: apa tipe <em>kekacauan</em> pagimu?</div>
 <p>Jawab jujur, berdasarkan pagi-pagi di dua minggu terakhir. Lingkari satu jawaban yang paling mendekati.</p>
 <div class="qz"><b class="q">1. Jam 6 pagi, yang paling sering kamu lakukan adalah...</b><div>A. Mikir mau masak/siapkan apa untuk sarapan dan bekal<br>B. Mencari barang yang kemarin entah ditaruh di mana<br>C. Tergantung hari, tidak ada pola tetap<br>D. Membangunkan anak berkali-kali<br>E. Pagiku lumayan lancar, sampai ada yang meleset</div></div>
@@ -65,7 +65,7 @@ page('red', 'Mulai dari sini · Kuis', f'''
 ''')
 
 # ---------- HASIL KUIS ----------
-page('red', 'Mulai dari sini · Hasil kuis', f'''
+page('peach', 'Mulai dari sini · Hasil kuis', f'''
 {h2("Hasil Kuis")}
 <div class="hasil"><div class="L">A</div><div><div class="ct">Paling banyak A: Tipe "Mikir di Tempat"</div>Pagimu habis untuk memutuskan. Kamu sebenarnya cekatan, tapi tenagamu terkuras sebelum sempat bergerak.<em>Bab yang paling membantumu: Bab 2 dan Bonus 3 (30 Ide Sarapan dan Bekal 5 Menit).</em></div></div>
 <div class="hasil"><div class="L">B</div><div><div class="ct">Paling banyak B: Tipe "Cari-cari Barang"</div>Waktumu bocor sedikit demi sedikit karena barang tidak punya "rumah" tetap.<em>Bab yang paling membantumu: Bab 2, terutama bagian Stasiun Siap Berangkat.</em></div></div>
@@ -79,7 +79,7 @@ page('red', 'Mulai dari sini · Hasil kuis', f'''
 ''')
 
 # ---------- PETA CEPAT ----------
-page('red', 'Mulai dari sini · Peta cepat', f'''
+page('peach', 'Mulai dari sini · Peta cepat', f'''
 {h2("Peta Cepat: Pagimu Begini, Buka Ini")}
 <p>Tidak perlu membaca berurutan. Cari momen yang paling sering terjadi di rumahmu, lalu langsung buka bagiannya.</p>
 {tbl(["Kalau pagimu terasa begini...","Langsung buka"],[
@@ -98,7 +98,7 @@ page('red', 'Mulai dari sini · Peta cepat', f'''
 ''')
 
 # ---------- BAB 1 ----------
-page('red', 'Bagian 1 · Siapkan · Bab 1', f'''
+page('peach', 'Bagian 1 · Siapkan · Bab 1', f'''
 {hero("bab1.jpg")}
 <p>Jam 06.10. Kamu sudah bangun dari setengah enam, tapi entah kenapa jam 06.50 kamu masih mencari kaus kaki sebelah, si kecil belum mau pakai baju, bekal belum ditutup, dan suaramu sudah naik satu oktaf.</p>
 <p>Lalu di motor atau di mobil, kamu diam. Ada rasa bersalah yang ikut berangkat kerja bareng kamu.</p>
@@ -109,7 +109,7 @@ page('red', 'Bagian 1 · Siapkan · Bab 1', f'''
 <div class="src">{img("ic-lemari.png")}<div><span class="n">1.</span> <b>Keputusan yang Ditunda ke Pagi</b><br>Mau pakai baju apa, bekal isinya apa, sarapan apa, bawa payung atau tidak. Setiap keputusan kecil makan waktu dan tenaga, dan di pagi hari keputusan kecil ini menumpuk jadi besar.<em>Tandanya: kamu sering berdiri di depan lemari atau kulkas sambil berpikir, "Hmm, apa ya?"</em></div></div>
 ''')
 
-page('red', 'Bagian 1 · Siapkan · Bab 1', f'''
+page('peach', 'Bagian 1 · Siapkan · Bab 1', f'''
 <div class="src">{img("ic-barang.png")}<div><span class="n">2.</span> <b>Barang yang Tidak Ada di Tempatnya</b><br>Sepatu sebelah, kunci motor, botol minum, buku PR, ID card kantor. Mencari barang adalah pemakan waktu paling diam-diam di pagi hari. Lima menit di sini, tiga menit di sana, tiba-tiba sudah telat.<em>Tandanya: kalimat "Ada yang lihat ... nggak?" muncul hampir setiap pagi.</em></div></div>
 <div class="src">{img("ic-urutan.png")}<div><span class="n">3.</span> <b>Urutan yang Berubah-ubah</b><br>Hari ini mandi dulu baru sarapan, besok sarapan dulu baru mandi. Kamu kadang siap duluan, kadang terakhir. Tanpa urutan tetap, otak harus "menyusun ulang" pagi setiap hari, dan anak juga jadi bingung harus apa.<em>Tandanya: setiap pagi terasa seperti hari pertama.</em></div></div>
 <div class="src">{img("ic-remote.png")}<div><span class="n">4.</span> <b>Anak yang Belum Punya Rutinitas Sendiri</b><br>Anak menunggu disuruh untuk setiap langkah: bangun, ke kamar mandi, pakai baju, pakai sepatu. Semua bergantung pada suaramu. Akhirnya kamu jadi "remote control" yang harus terus ditekan, dan capeknya luar biasa.<em>Tandanya: kamu mengulang instruksi yang sama 3&ndash;5 kali sebelum anak bergerak.</em></div></div>
@@ -118,7 +118,7 @@ page('red', 'Bagian 1 · Siapkan · Bab 1', f'''
 ''')
 
 # ---------- BAB 2 ----------
-page('night', 'Bagian 1 · Siapkan · Bab 2', f'''
+page('dusk', 'Bagian 1 · Siapkan · Bab 2', f'''
 {hero("bab2.jpg")}
 <p>Ini mungkin bukan kabar yang Mami ingin dengar setelah seharian kerja: <b>pagi yang lancar biasanya dimulai dari malam sebelumnya.</b></p>
 <p>Tenang, bukan berarti kamu harus begadang menyiapkan semuanya. Yang kita butuhkan hanya <b>15 menit</b>, di jam yang sama setiap malam, dengan urutan yang sama.</p>
@@ -134,7 +134,7 @@ page('night', 'Bagian 1 · Siapkan · Bab 2', f'''
 <p>Yang penting bukan jamnya, tapi <b>konsistensinya.</b> Kegiatan yang terikat pada momen tetap jauh lebih mudah dijalankan daripada "nanti kalau sempat."</p>
 ''')
 
-page('night', 'Bagian 1 · Siapkan · Bab 2', f'''
+page('dusk', 'Bagian 1 · Siapkan · Bab 2', f'''
 {h2("Checklist Malam 15 Menit")}
 <p>Checklist ini dibagi dalam empat blok. Kerjakan berurutan. Kalau malam itu sangat capek, kerjakan <b>Blok 1 dan 2 saja</b>, itu sudah menyelamatkan sebagian besar pagimu.</p>
 <div class="grid2">
@@ -151,7 +151,7 @@ page('night', 'Bagian 1 · Siapkan · Bab 2', f'''
 <p><b>Kalau terlewat semalam, tidak apa-apa.</b> Besok malam mulai lagi. Sistem ini tidak rusak hanya karena satu malam bolong.</p>
 ''')
 
-page('night', 'Bagian 1 · Siapkan · Bab 2', f'''
+page('dusk', 'Bagian 1 · Siapkan · Bab 2', f'''
 {h2("Stasiun Siap Berangkat")}
 <p>Ingat sumber kekacauan nomor 2 di Bab 1: barang yang tidak ada di tempatnya? Solusinya adalah <b>satu titik tetap di dekat pintu keluar</b>, tempat semua barang untuk berangkat "tinggal".</p>
 <p>Aturannya satu: <b>apa pun yang dibawa keluar rumah besok pagi, malam ini sudah ada di stasiun.</b> Pagi hari, kamu dan anak cukup mengambil dari satu tempat, lalu berangkat.</p>
@@ -162,7 +162,7 @@ page('night', 'Bagian 1 · Siapkan · Bab 2', f'''
 <p><b>Kebiasaan pendukung:</b> saat pulang kerja atau pulang sekolah, barang langsung kembali ke stasiun, bukan ke sofa atau meja makan. Ini butuh waktu untuk jadi kebiasaan, jadi ingatkan dengan santai selama beberapa minggu pertama.</p>
 ''')
 
-page('night', 'Bagian 1 · Siapkan · Bab 2', f'''
+page('dusk', 'Bagian 1 · Siapkan · Bab 2', f'''
 {h2("Tempat Baju untuk Besok")}
 <p>Selain stasiun di dekat pintu, siapkan juga satu tempat khusus untuk <b>baju besok</b>: gantungan di balik pintu kamar, satu keranjang kecil per anak, atau satu kursi di kamar. Anak yang masih kecil biasanya lebih semangat kalau tempatnya "miliknya" sendiri, misalnya keranjang dengan stiker kesukaannya.</p>
 {h2("Bagaimana Kalau Malam Juga Kacau?")}
