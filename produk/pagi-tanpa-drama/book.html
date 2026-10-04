@@ -1,0 +1,650 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><title>Pagi Tanpa Drama</title><style>@font-face {
+  font-family: 'Anton';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/a6f395c163.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Caveat Brush';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/2e2bb9979d.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/5a641377e8.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(fonts/17895657a1.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(fonts/fd1924cac8.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/ddd02247ff.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url(fonts/b542d40baf.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}:root{--ink:#1E1B19;--yellow:#FFD23F;--red:#E5392F;--coral:#FF6B5E;--pink:#FFC2CF;--mint:#BFE8CF;--green:#1F8F5F;--cream:#FFF5E4}
+@page{size:210mm 297mm;margin:0}
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;font-size:9.4pt;line-height:1.52;color:var(--ink)}
+.pg{width:210mm;height:297mm;position:relative;overflow:hidden;page-break-after:always;break-after:page;display:flex;flex-direction:column;
+  background:var(--bg);color:var(--fg);}
+.pg:last-child{page-break-after:auto}
+.in{flex:1;min-height:0;padding:15mm 16mm 4mm;position:relative;z-index:2;overflow:hidden}
+.band{height:8mm;flex:none;background:var(--bandbg);color:var(--bandfg);font-family:'Anton';font-size:8.5pt;letter-spacing:1.6px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 16mm;text-transform:uppercase;z-index:3;position:relative}
+.band i{font-style:normal;opacity:.85}
+.foot{flex:none;height:11mm;padding:0 16mm;display:flex;align-items:center;justify-content:space-between;font-size:6.6pt;color:var(--mut);position:relative;z-index:3}
+.foot .n{background:var(--ink);color:var(--yellow);font-family:'Anton';font-size:8.5pt;width:7.2mm;height:7.2mm;border-radius:50%;display:flex;align-items:center;justify-content:center;letter-spacing:.3px}
+/* dekorasi latar */
+.pg::before{content:"";position:absolute;right:-30mm;top:60mm;width:90mm;height:90mm;border-radius:50%;background:var(--blob1);opacity:.55;z-index:1}
+.pg::after{content:"";position:absolute;left:-35mm;bottom:25mm;width:80mm;height:80mm;border-radius:50%;background:var(--blob2);opacity:.45;z-index:1}
+/* tema */
+.t-cream{--bg:linear-gradient(165deg,#FFF8EA 0%,#FFEBC8 100%);--fg:var(--ink);--mut:#8a7a6b;--a:var(--red);--hl:#FFD23F;--bandbg:linear-gradient(90deg,#E5392F,#FF6B5E);--bandfg:#fff;--blob1:#FFD23F;--blob2:#FFC2CF;--tint:#FFF1D6}
+.t-red{--bg:linear-gradient(165deg,#FFF3EC 0%,#FFD9D0 100%);--fg:var(--ink);--mut:#9b6e66;--a:#E5392F;--hl:#FFD23F;--bandbg:linear-gradient(90deg,#E5392F,#FF6B5E);--bandfg:#fff;--blob1:#FF6B5E;--blob2:#FFD23F;--tint:#FFE3DC}
+.t-night{--bg:linear-gradient(170deg,#1E1B19 0%,#35282A 100%);--fg:#FFF6E8;--mut:#b9a99a;--a:#FFD23F;--hl:#E5392F;--bandbg:linear-gradient(90deg,#FFD23F,#FFB02E);--bandfg:#1E1B19;--blob1:#FFD23F;--blob2:#E5392F;--tint:#FFF3D6}
+.t-yellow{--bg:linear-gradient(165deg,#FFE066 0%,#FFF3BF 100%);--fg:var(--ink);--mut:#8f7a2a;--a:#1E1B19;--hl:#fff;--bandbg:#1E1B19;--bandfg:#FFD23F;--blob1:#FFB02E;--blob2:#FFC2CF;--tint:#FFF7CF}
+.t-pink{--bg:linear-gradient(165deg,#FFC9D4 0%,#FFEDF0 100%);--fg:var(--ink);--mut:#a06773;--a:#E5392F;--hl:#FFD23F;--bandbg:linear-gradient(90deg,#1E1B19,#4a3033);--bandfg:#FFC2CF;--blob1:#FF8FA3;--blob2:#FFD23F;--tint:#FFE1E7}
+.t-mint{--bg:linear-gradient(165deg,#BFEBCF 0%,#EDFAF1 100%);--fg:var(--ink);--mut:#4f7a62;--a:#1F8F5F;--hl:#FFD23F;--bandbg:linear-gradient(90deg,#1F8F5F,#2FB57A);--bandfg:#fff;--blob1:#7FD3A5;--blob2:#FFD23F;--tint:#DDF4E6}
+.t-coral{--bg:linear-gradient(165deg,#FF9C8A 0%,#FFE4DC 100%);--fg:var(--ink);--mut:#9b5c50;--a:#E5392F;--hl:#FFD23F;--bandbg:#1E1B19;--bandfg:#FF9C8A;--blob1:#FFD23F;--blob2:#FF6B5E;--tint:#FFD8CE}
+.t-sun{--bg:linear-gradient(165deg,#FFD23F 0%,#FFF1BA 55%,#FFE3DC 100%);--fg:var(--ink);--mut:#8f7a2a;--a:#E5392F;--hl:#fff;--bandbg:linear-gradient(90deg,#E5392F,#FF6B5E);--bandfg:#fff;--blob1:#FF6B5E;--blob2:#fff;--tint:#FFF3C4}
+.t-dark{--bg:linear-gradient(170deg,#1E1B19 0%,#2c2422 100%);--fg:#FFF6E8;--mut:#b9a99a;--a:#FFD23F;--hl:#E5392F;--bandbg:linear-gradient(90deg,#FFD23F,#FFB02E);--bandfg:#1E1B19;--blob1:#E5392F;--blob2:#FFD23F;--tint:#FFF3D6}
+/* tipografi */
+h2{font-family:'Anton';font-weight:400;font-size:17.5pt;line-height:1.12;margin:5mm 0 2.6mm;letter-spacing:.4px;text-transform:uppercase;break-after:avoid}
+h2 span{background:linear-gradient(transparent 58%,var(--hl) 58%);padding:0 1.2mm;margin-left:-1.2mm;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+h2:first-child{margin-top:0}
+h3{font-size:10.4pt;font-weight:700;margin:3.4mm 0 1.2mm}
+p{margin:0 0 2.4mm}
+b,strong{font-weight:700}
+i,em{font-style:italic}
+.small{font-size:7.6pt;opacity:.85}
+.center{text-align:center}
+.big{font-size:11pt}
+ul,ol{margin:0 0 2.6mm;padding-left:5mm}
+li{margin-bottom:1mm}
+.hero{width:100%;display:block;border-radius:5mm;border:.7mm solid var(--ink);box-shadow:2.4mm 2.4mm 0 var(--ink);margin:0 0 6mm}
+.t-night::before,.t-night::after,.t-dark::before,.t-dark::after{opacity:.22}
+.t-night .hero{border-color:#FFD23F;box-shadow:2.4mm 2.4mm 0 #E5392F}
+.stk{display:inline-block;background:var(--yellow);color:var(--ink);font-family:'Anton';text-transform:uppercase;letter-spacing:.6px;padding:.6mm 2.4mm;border-radius:1.6mm;border:.45mm solid var(--ink);transform:rotate(-1.4deg);font-size:9pt;box-shadow:.8mm .8mm 0 var(--ink)}
+.stk.red{background:var(--red);color:#fff}.stk.mint{background:var(--mint)}.stk.pink{background:var(--pink)}
+/* kartu ala sticker */
+.card{background:#fff;color:var(--ink);border:.45mm solid var(--ink);border-radius:3.6mm;padding:3.4mm 4.2mm;margin:0 0 3.6mm;box-shadow:1.3mm 1.3mm 0 var(--ink);break-inside:avoid}
+.card .ct{font-weight:800;font-size:9.8pt;margin-bottom:1.4mm;color:var(--ink)}
+.card p:last-child,.card ul:last-child{margin-bottom:0}
+.card.y{background:#FFF3B8}.card.m{background:#DDF4E6}.card.p{background:#FFE1E7}.card.o{background:#FFE3DC}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 4mm;align-items:start}
+.grid2 .card{margin-bottom:4mm}
+.cb{list-style:none;padding:0}
+.cb li{display:flex;gap:2mm;align-items:flex-start}
+.box{flex:none;display:inline-block;width:3.5mm;height:3.5mm;border:.4mm solid var(--ink);border-radius:.9mm;background:#fff;margin-top:.7mm}
+/* tip + aksi */
+.tip{display:flex;gap:3mm;align-items:center;background:#FFE680;color:var(--ink);border:.45mm solid var(--ink);border-radius:3.4mm;padding:2.6mm 4mm;margin:3mm 0;box-shadow:1.2mm 1.2mm 0 var(--ink);break-inside:avoid}
+.tip img{width:11mm;height:11mm;flex:none}
+.aksi{background:var(--ink);color:#fff;border-radius:4.5mm;padding:4mm 5mm 4.5mm;margin:4mm 0 0;border:.5mm solid var(--yellow);box-shadow:1.6mm 1.6mm 0 var(--red);break-inside:avoid}
+.aksi .ah{display:flex;align-items:center;gap:3mm;margin-bottom:2.6mm}
+.aksi .ah img{width:15mm;height:15mm;flex:none}
+.aksi .at{font-family:'Anton';font-size:12.2pt;line-height:1.2;letter-spacing:.4px;color:var(--yellow);text-transform:uppercase}
+.aksi p{color:#FFEFD6}
+.aksi ul.cb li{color:#fff}.aksi .box{border-color:#FFD23F;background:transparent}
+/* tabel */
+table{width:100%;border-collapse:separate;border-spacing:0;background:#fff;color:var(--ink);font-size:8.3pt;border:.45mm solid var(--ink);border-radius:3mm;overflow:hidden;margin:0 0 3.4mm;box-shadow:1.2mm 1.2mm 0 var(--ink);line-height:1.38}
+th{background:var(--ink);color:var(--yellow);text-align:left;padding:2mm 2.6mm;font-weight:700;font-size:8pt;letter-spacing:.2px}
+td{padding:1.9mm 2.6mm;border-top:.25mm solid #e6d9c7;vertical-align:top}
+tbody tr:nth-child(even) td{background:var(--tint)}
+tr{break-inside:avoid}
+tr.grp td{background:var(--yellow)!important;font-weight:800;font-family:'Anton';letter-spacing:.5px;text-transform:uppercase;font-size:8.5pt;border-top:.4mm solid var(--ink)}
+table.fill td:nth-child(2){background:#fff!important;height:6.6mm}
+table.tall td{height:9mm}
+td.b{font-weight:700}
+/* skrip alih-alih / coba */
+.alt{margin:0 0 3.2mm;break-inside:avoid}
+.alt .sit{font-weight:800;font-size:9.4pt;margin-bottom:1.2mm}
+.alt .a1,.alt .a2{padding:2mm 3.6mm;border:.4mm solid var(--ink);font-size:8.6pt}
+.alt .a1{background:#fff;border-radius:2.6mm 2.6mm 0 0;color:#6b5d54}
+.alt .a1 b{background:#FFC2CF;color:#8a1f1f;font-size:7pt;padding:.3mm 1.6mm;border-radius:1mm;margin-right:2mm;text-transform:uppercase;letter-spacing:.4px}
+.alt .a2{background:#CFF0DB;border-top:none;border-radius:0 0 2.6mm 2.6mm;font-weight:600;box-shadow:1.1mm 1.1mm 0 var(--ink)}
+.alt .a2 b{background:var(--green);color:#fff;font-size:7pt;padding:.3mm 1.6mm;border-radius:1mm;margin-right:2mm;text-transform:uppercase;letter-spacing:.4px}
+/* sumber kekacauan */
+.src{display:flex;gap:4mm;align-items:center;background:#fff;color:var(--ink);border:.45mm solid var(--ink);border-radius:3.6mm;padding:3mm 4mm;margin-bottom:3.4mm;box-shadow:1.3mm 1.3mm 0 var(--ink);break-inside:avoid}
+.src img{width:19mm;flex:none}
+.src .n{font-family:'Anton';font-size:12pt;color:var(--red)}
+.src em{display:block;margin-top:1mm;color:#7a4a3e;font-size:8.6pt}
+.qz{background:#fff;color:var(--ink);border:.45mm solid var(--ink);border-radius:3.4mm;padding:2.6mm 4.4mm;margin-bottom:3mm;box-shadow:1.2mm 1.2mm 0 var(--ink);break-inside:avoid;font-size:8.8pt}
+.qz b.q{display:block;margin-bottom:.8mm;font-size:9.2pt}
+.qz div{padding-left:3mm}
+.hasil{display:flex;gap:3.6mm;background:#fff;color:var(--ink);border:.45mm solid var(--ink);border-radius:3.6mm;padding:3mm 4mm;margin-bottom:3.2mm;box-shadow:1.3mm 1.3mm 0 var(--ink);break-inside:avoid}
+.hasil .L{flex:none;width:11mm;height:11mm;border-radius:50%;background:var(--red);color:#fff;font-family:'Anton';font-size:15pt;display:flex;align-items:center;justify-content:center;border:.4mm solid var(--ink)}
+.hasil .ct{font-weight:800;font-size:10pt}
+.hasil em{display:block;color:#7a4a3e;margin-top:.8mm;font-size:8.4pt}
+/* bagian / peta */
+.part{display:flex;align-items:stretch;margin-bottom:2mm;border:.45mm solid var(--ink);border-radius:3.2mm;overflow:hidden;background:#fff;color:var(--ink);box-shadow:1.1mm 1.1mm 0 var(--ink);break-inside:avoid}
+.part .pl{flex:none;width:34mm;padding:2.4mm 3mm;font-family:'Anton';text-transform:uppercase;letter-spacing:.5px;font-size:9.4pt;line-height:1.15;display:flex;flex-direction:column;justify-content:center}
+.part .pl small{font-family:'Poppins';font-weight:600;font-size:6.6pt;letter-spacing:0;text-transform:none;opacity:.85}
+.part .pr{padding:2mm 3.4mm;font-size:8.2pt;flex:1;line-height:1.4}
+.part .pr b{display:block;font-size:8.6pt}
+.pl.c1{background:var(--red);color:#fff}.pl.c2{background:var(--ink);color:var(--yellow)}.pl.c3{background:var(--green);color:#fff}.pl.c4{background:var(--yellow);color:var(--ink)}.pl.c5{background:var(--pink);color:var(--ink)}
+/* cover + lisensi */
+.cover{padding:0}
+.cover img.full{width:210mm;height:297mm;display:block;object-fit:cover}
+.cover .ribbon{position:absolute;left:0;right:0;bottom:0;height:11mm;background:linear-gradient(90deg,#1E1B19,#3a2a28);color:var(--yellow);font-family:'Anton';letter-spacing:2px;font-size:9pt;display:flex;align-items:center;justify-content:center;text-transform:uppercase}
+.cover::before,.cover::after{display:none}
+.lic .logo{height:17mm}
+.lic h1{font-family:'Anton';font-weight:400;font-size:26pt;text-transform:uppercase;margin:12mm 0 4mm;color:var(--yellow);letter-spacing:.5px}
+.lic .two{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin:6mm 0}
+.lic .two>div{border-radius:4mm;padding:5mm;border:.5mm solid var(--ink)}
+.lic .ok{background:#CFF0DB;color:var(--ink)}.lic .no{background:#FFC2CF;color:var(--ink)}
+.lic .two b.h{font-family:'Anton';font-size:12pt;letter-spacing:.6px;text-transform:uppercase;display:block;margin-bottom:2mm}
+.logowrap{background:#fff;display:inline-block;border-radius:3mm;padding:2.5mm 4mm}
+/* bonus */
+.bn{display:flex;gap:3mm;align-items:center;background:var(--ink);color:#fff;border-radius:3.4mm;padding:2.4mm 4mm;margin-bottom:3.6mm}
+.bn .tag{font-family:'Anton';background:var(--yellow);color:var(--ink);padding:.6mm 2.6mm;border-radius:1.4mm;letter-spacing:.8px;font-size:8.6pt;text-transform:uppercase}
+.bn .tt{font-family:'Anton';font-size:15pt;letter-spacing:.5px;text-transform:uppercase}
+.strip{width:100%;border-radius:4mm;border:.45mm solid var(--ink);box-shadow:1.3mm 1.3mm 0 var(--ink);background:#fff;display:block;margin-bottom:3mm}
+.mood{display:flex;gap:6mm;margin:2mm 0}
+.mood img{width:14mm}
+.bigmsg{font-family:'Anton';font-size:21pt;line-height:1.1;text-transform:uppercase;letter-spacing:.5px;margin:0 0 3mm}
+.bigmsg em{font-style:normal;color:var(--a)}
+.t-night .bigmsg em{color:var(--yellow)}
+.t-night .small{color:#d8c9ba}
+.t-night p,.t-night li{color:#FFF6E8}
+.t-night .card p,.t-night .card li,.t-night table,.t-night td{color:var(--ink)}
+.t-night .tip div{color:var(--ink)}
+.t-night h2 span{background:linear-gradient(transparent 58%,#A92A24 58%)}
+.t-dark h2 span{background:linear-gradient(transparent 58%,#A92A24 58%)}
+.t-dark p,.t-dark li{color:#FFF6E8}
+.t-dark .card p,.t-dark .card li{color:var(--ink)}
+.lic .two li,.lic .two p{color:var(--ink)}
+.lic .two b.h{letter-spacing:0}
+.logowrap img{height:15mm;width:auto;display:block}
+</style></head><body>
+<section class="pg t-cream cover" data-n="1"><div class="cover pg-cover"><img class="full" src="assets/cover.jpg" alt=""><div class="ribbon">Sistem 45 menit &bull; Workbook untuk ibu bekerja</div></div></section>
+<section class="pg t-dark lic" data-n="2"><div class="in"><div style="zoom:1.12">
+<div class="lic">
+<span class="logowrap"><img class="logo" src="assets/logo.png" alt=""></span>
+<h1>Produk Original ToolkitParenting</h1>
+<p>Terima kasih sudah membeli <b>Pagi Tanpa Drama</b> langsung dari ToolkitParenting. File ini adalah produk digital original dan dilisensikan untuk <b>penggunaan pribadi</b> pembeli.</p>
+<div class="two">
+<div class="ok"><b class="h">Boleh</b><ul class=""><li>Dibaca dari HP, tablet, atau laptop milikmu</li><li>Dicetak untuk dipakai sendiri dan keluarga di rumah</li><li>Diisi, ditempel, dan dipakai berulang kali</li></ul></div>
+<div class="no"><b class="h">Dilarang</b><ul class=""><li>Membagikan atau mengirim file ini ke orang lain, termasuk lewat grup WhatsApp, Telegram, atau Google Drive</li><li>Menjual ulang, baik file maupun hasil cetaknya</li><li>Mengubah, menyalin isi, atau mengaku sebagai karya sendiri</li><li>Mengunggah ke situs, marketplace, atau media sosial</li></ul></div>
+</div>
+<p>Isi, desain, dan ilustrasi di dalam workbook ini dilindungi Undang-Undang Nomor 28 Tahun 2014 tentang Hak Cipta.</p>
+<p>Kalau ada teman yang tertarik, arahkan saja untuk membeli versi originalnya. Setiap pembelian membantu kami terus membuat alat bantu praktis untuk orang tua Indonesia.</p>
+<p class="small">Mendapatkan file ini bukan dari ToolkitParenting? Kemungkinan itu salinan tidak resmi.<br>&copy; 2026 ToolkitParenting. Hak cipta dilindungi.</p>
+</div></div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">2</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-cream " data-n="3"><div class="band"><span>Pembuka</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<img class="hero" src="assets/hero-halo.jpg" alt="">
+<p>Kalau kamu membuka buku ini, kemungkinan besar pagimu sedang tidak mudah.</p>
+<p>Bangun paling awal, mengurus anak, menyiapkan sarapan dan bekal, bersiap kerja, lalu berangkat sambil berharap tidak telat. Dan sering kali, di tengah semua itu, ada suara yang naik, ada anak yang menangis, dan ada rasa bersalah yang ikut terbawa sampai kantor.</p>
+<p>Buku ini ditulis untuk ibu yang bekerja dan juga memegang banyak urusan rumah. Isinya bukan teori panjang, dan bukan nasihat untuk jadi ibu yang lebih sabar. Isinya adalah <b>sistem sederhana yang bisa diulang</b>: apa yang disiapkan malam hari, urutan pagi yang jelas, cara menggerakkan anak tanpa harus terus mengulang instruksi, dan rencana cadangan untuk hari-hari yang meleset.</p>
+<div class="card y"><div class="ct">Satu hal perlu dikatakan sejak awal</div>
+<p><b>Buku ini tidak menjanjikan pagi yang sempurna.</b> Anak tetap akan ada hari rewelnya. Alarm tetap bisa terlewat. Yang kita bangun adalah pagi yang lebih teratur, dan cara untuk kembali ke jalur setelah hari yang berantakan.</p></div>
+<p>Kamu tidak perlu mengubah semuanya sekaligus. Satu perbaikan kecil yang berjalan sudah merupakan kemajuan.</p>
+<div class="bigmsg" style="margin-top:4mm">Pagi bukan soal anak <em>lambat</em>.<br>Sistemnya yang <em>belum ada</em>.</div>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">3</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-cream " data-n="4"><div class="band"><span>Cara memakai & isi buku</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<h2><span>Cara Memakai Buku Ini</span></h2>
+<ol>
+<li><b>Mulai dari Kuis di halaman berikutnya.</b> Kuis ini menunjukkan sumber kekacauan pagi yang paling sering terjadi di rumahmu, dan bab mana yang perlu dibaca lebih dulu.</li>
+<li><b>Baca sesuai kebutuhan, tidak harus berurutan.</b> Kalau waktumu terbatas, langsung ke bab yang disarankan hasil kuismu.</li>
+<li><b>Kerjakan Aksi Hari Ini di setiap akhir bab.</b> Aksi inilah yang mengubah isi buku jadi kebiasaan. Satu aksi kecil lebih berguna daripada satu bab yang dibaca lalu dilupakan.</li>
+<li><b>Pakai bagian yang siap pakai.</b> Ada checklist, template, skrip, dan tabel yang bisa langsung diisi. Cetak halaman yang kamu perlukan, atau isi langsung di PDF.</li>
+<li><b>Cetak bonus printable.</b> Di bagian akhir ada empat bonus: chart rutinitas anak, checklist malam untuk ditempel di kulkas, 30 ide sarapan dan bekal, serta tracker 7 hari.</li>
+<li><b>Bingung mulai dari mana? Ikuti Challenge 7 Hari di Bab 7.</b> Challenge ini merangkum seluruh isi buku jadi satu perbaikan per hari selama seminggu.</li>
+</ol>
+<h2><span>Isi Buku</span></h2>
+<div class="part"><div class="pl c1">Mulai dari sini<small>Kuis &amp; peta cepat</small></div><div class="pr"><b>Kuis tipe kekacauan pagi &bull; Peta cepat "pagimu begini, buka bab ini"</b></div></div>
+<div class="part"><div class="pl c2">1 &bull; Siapkan<small>Malam hari</small></div><div class="pr"><b>Bab 1 Kenapa Pagi Selalu Kacau</b>5 sumber kekacauan &bull; catatan pagi pertama<br><b>Bab 2 Kuncinya Ada di Malam Sebelumnya</b>Checklist malam 15 menit &bull; Stasiun Siap Berangkat</div></div>
+<div class="part"><div class="pl c4">2 &bull; Jalankan<small>Pagi hari</small></div><div class="pr"><b>Bab 3 Timeline 45 Menit</b>Timeline balita, anak SD, dua anak &bull; template timeline<br><b>Bab 4 Membuat Anak Bergerak Tanpa Teriak</b>Chart rutinitas &bull; skrip pengganti teriak &bull; trik transisi</div></div>
+<div class="part"><div class="pl c3">3 &bull; Cadangan<small>Kalau ada yang meleset</small></div><div class="pr"><b>Bab 5 Rencana B</b>Anak rewel &bull; sakit ringan &bull; telat bangun &bull; pengasuh izin &bull; Pagi Darurat 20 Menit<br><b>Bab 6 Libatkan Suami</b>Pilihan tugas tetap &bull; template pembagian tugas</div></div>
+<div class="part"><div class="pl c5">4 &bull; Mulai<small>Satu perbaikan per hari</small></div><div class="pr"><b>Bab 7 Challenge 7 Hari</b>Satu perbaikan per hari &bull; tracker</div></div>
+<div class="part"><div class="pl c1">+ Bonus<small>Siap cetak</small></div><div class="pr"><b>4 printable</b>Chart anak &bull; checklist kulkas &bull; 30 ide sarapan &amp; bekal &bull; tracker 7 hari</div></div>
+<p class="center big" style="margin-top:3mm"><b>Siap? Ambil pulpen, dan mari mulai dari kuis.</b></p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">4</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-red " data-n="5"><div class="band"><span>Mulai dari sini · Kuis</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<div class="bigmsg" style="font-size:19pt;margin-bottom:1mm">Kuis: apa tipe <em>kekacauan</em> pagimu?</div>
+<p>Jawab jujur, berdasarkan pagi-pagi di dua minggu terakhir. Lingkari satu jawaban yang paling mendekati.</p>
+<div class="qz"><b class="q">1. Jam 6 pagi, yang paling sering kamu lakukan adalah...</b><div>A. Mikir mau masak/siapkan apa untuk sarapan dan bekal<br>B. Mencari barang yang kemarin entah ditaruh di mana<br>C. Tergantung hari, tidak ada pola tetap<br>D. Membangunkan anak berkali-kali<br>E. Pagiku lumayan lancar, sampai ada yang meleset</div></div>
+<div class="qz"><b class="q">2. Kalau telat, biasanya karena...</b><div>A. Kelamaan memutuskan sesuatu<br>B. Ada barang yang hilang<br>C. Aku sendiri belum siap waktu anak sudah siap (atau sebaliknya)<br>D. Anak lama sekali di satu langkah<br>E. Ada kejadian di luar rencana</div></div>
+<div class="qz"><b class="q">3. Kalimat yang paling sering keluar dari mulutmu di pagi hari...</b><div>A. "Hari ini mau apa ya?"<br>B. "Di mana sih ...?"<br>C. "Eh, tadi aku sampai mana?"<br>D. "Ayo cepat, ayo, ayo!"<br>E. "Aduh, kenapa harus hari ini?"</div></div>
+<div class="qz"><b class="q">4. Malam hari sebelum tidur, biasanya...</b><div>A. Belum kepikiran soal besok pagi<br>B. Barang-barang masih tersebar di mana-mana<br>C. Kadang siap-siap, kadang tidak<br>D. Anak tidurnya larut atau jamnya berubah-ubah<br>E. Sudah siap, tapi tidak ada rencana kalau ada yang berubah</div></div>
+<div class="qz"><b class="q">5. Kalau pagimu bisa diperbaiki satu hal saja, kamu pilih...</b><div>A. Tidak perlu mikir lagi di pagi hari<br>B. Semua barang siap di satu tempat<br>C. Punya urutan yang jelas<br>D. Anak bisa jalan sendiri tanpa disuruh terus<br>E. Punya rencana cadangan yang siap pakai</div></div>
+<p style="margin-top:3mm"><b>Hitung jawabanmu.</b> Huruf yang paling banyak adalah tipe utama kekacauan pagimu. Kalau ada dua huruf yang sama banyak, berarti kamu punya dua tipe, dan itu sangat wajar.</p>
+<table class="fill tall"><thead><tr><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr></thead><tbody><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></tbody></table>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">5</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-red " data-n="6"><div class="band"><span>Mulai dari sini · Hasil kuis</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<h2><span>Hasil Kuis</span></h2>
+<div class="hasil"><div class="L">A</div><div><div class="ct">Paling banyak A: Tipe "Mikir di Tempat"</div>Pagimu habis untuk memutuskan. Kamu sebenarnya cekatan, tapi tenagamu terkuras sebelum sempat bergerak.<em>Bab yang paling membantumu: Bab 2 dan Bonus 3 (30 Ide Sarapan dan Bekal 5 Menit).</em></div></div>
+<div class="hasil"><div class="L">B</div><div><div class="ct">Paling banyak B: Tipe "Cari-cari Barang"</div>Waktumu bocor sedikit demi sedikit karena barang tidak punya "rumah" tetap.<em>Bab yang paling membantumu: Bab 2, terutama bagian Stasiun Siap Berangkat.</em></div></div>
+<div class="hasil"><div class="L">C</div><div><div class="ct">Paling banyak C: Tipe "Tanpa Urutan"</div>Pagimu bisa jalan, tapi selalu terasa berantakan karena setiap hari urutannya berbeda.<em>Bab yang paling membantumu: Bab 3 (Timeline 45 Menit).</em></div></div>
+<div class="hasil"><div class="L">D</div><div><div class="ct">Paling banyak D: Tipe "Remote Control"</div>Kamu jadi penggerak untuk setiap langkah anak, dan itu yang paling menguras emosi.<em>Bab yang paling membantumu: Bab 4 dan Bonus 1 (Chart Rutinitas Pagi Anak).</em></div></div>
+<div class="hasil"><div class="L">E</div><div><div class="ct">Paling banyak E: Tipe "Rapuh Saat Meleset"</div>Kamu sudah punya dasar yang cukup baik. Yang belum ada adalah jaring pengaman.<em>Bab yang paling membantumu: Bab 5 (Rencana B).</em></div></div>
+<div class="tip"><img class="" src="assets/ic-tip.png" alt=""><div>Tipe ini bukan label untuk dirimu, Mami. Ini hanya peta untuk tahu harus mulai memperbaiki dari mana. Semua bab tetap berguna, tapi kamu tidak harus mengerjakan semuanya sekaligus.</div></div>
+<h2><span>Satu Hal yang Perlu Kamu Pegang</span></h2>
+<p>Buku ini tidak menjanjikan pagi yang sempurna. Masih akan ada hari anak menangis karena kaus kakinya "rasanya aneh". Masih akan ada hari kamu telat.</p>
+<p>Yang kita bangun adalah <b>pagi yang lebih teratur, dengan sistem yang bisa diulang.</b> Jadi saat ada hari yang berantakan, kamu tidak mulai dari nol lagi keesokan harinya. Target yang realistis: lebih banyak pagi yang lancar daripada yang kacau. Itu sudah kemenangan besar.</p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">6</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-red " data-n="7"><div class="band"><span>Mulai dari sini · Peta cepat</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<h2><span>Peta Cepat: Pagimu Begini, Buka Ini</span></h2>
+<p>Tidak perlu membaca berurutan. Cari momen yang paling sering terjadi di rumahmu, lalu langsung buka bagiannya.</p>
+<table class=""><colgroup><col style="width:62%"><col style="width:38%"></colgroup><thead><tr><th>Kalau pagimu terasa begini...</th><th>Langsung buka</th></tr></thead><tbody><tr><td>Mengulang instruksi yang sama 3&ndash;5 kali sebelum anak bergerak</td><td><b>Bab 4</b> Chart Rutinitas &bull; Bonus 1</td></tr><tr><td>Jam 06.30 masih cari kaus kaki sebelah, kunci, botol minum</td><td><b>Bab 2</b> Stasiun Siap Berangkat</td></tr><tr><td>Jam 05.30 berdiri di depan kulkas, bingung bekal dan sarapan</td><td><b>Bab 2</b> Checklist Malam &bull; Bonus 3</td></tr><tr><td>Suara naik, lalu rasa bersalah ikut berangkat kerja</td><td><b>Bab 4</b> Skrip Pengganti Teriak</td></tr><tr><td>Jam sudah 06.45, anak belum mandi, kamu baru mulai bersiap</td><td><b>Bab 3</b> Timeline 45 Menit &bull; Mami Siap Duluan</td></tr><tr><td>Dua anak beda usia, semuanya minta dibantu bersamaan</td><td><b>Bab 3</b> Timeline Dua Anak Beda Usia</td></tr><tr><td>Pengasuh/ART izin mendadak, atau anak kurang sehat pagi ini</td><td><b>Bab 5</b> Rencana B #2 dan #4</td></tr><tr><td>Alarm terlewat, sisa waktu cuma 20 menit</td><td><b>Bab 5</b> Pagi Darurat 20 Menit</td></tr><tr><td>Semuanya mengandalkan kamu, suami mau bantu tapi bingung mulai dari mana</td><td><b>Bab 6</b> Satu Tugas Tetap untuk Suami</td></tr><tr><td>Mau mulai, tapi bingung dari mana</td><td><b>Bab 7</b> Challenge 7 Hari</td></tr></tbody></table>
+<div class="aksi"><div class="ah"><img class="" src="assets/ic-aksi.png" alt=""><div class="at">Mulai dari hal paling kecil: pilih satu baris di atas</div></div><div class="ab"><p class="">Lingkari satu baris yang paling sering terjadi di pagimu. Buka bagiannya malam ini, kerjakan Aksi Hari Ini di akhir bab, lalu lanjut ke bab berikutnya kalau sudah terasa ringan.</p></div></div>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">7</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-red " data-n="8"><div class="band"><span>Bagian 1 · Siapkan · Bab 1</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<img class="hero" src="assets/bab1.jpg" alt="">
+<p>Jam 06.10. Kamu sudah bangun dari setengah enam, tapi entah kenapa jam 06.50 kamu masih mencari kaus kaki sebelah, si kecil belum mau pakai baju, bekal belum ditutup, dan suaramu sudah naik satu oktaf.</p>
+<p>Lalu di motor atau di mobil, kamu diam. Ada rasa bersalah yang ikut berangkat kerja bareng kamu.</p>
+<p>Kalau itu terdengar familiar, Mami, kamu tidak sendirian. Dan yang lebih penting: <b>pagi yang kacau hampir tidak pernah soal kamu kurang sabar atau kurang pintar mengatur.</b> Biasanya soal sistem yang belum ada, atau sistem yang belum cocok dengan kondisi rumahmu.</p>
+<p>Kabar baiknya, sistem bisa dibangun. Pelan-pelan, satu bagian demi satu bagian. Tapi sebelum membangun, kita perlu tahu dulu apa yang sebenarnya bikin pagimu berantakan. Karena solusi untuk pagi yang "telat bangun" beda dengan solusi untuk pagi yang "anaknya susah digerakkan".</p>
+<h2><span>5 Sumber Kekacauan Pagi</span></h2>
+<p>Dari cerita banyak ibu bekerja, kekacauan pagi biasanya datang dari lima sumber ini. Sering kali lebih dari satu sekaligus.</p>
+<div class="src"><img class="" src="assets/ic-lemari.png" alt=""><div><span class="n">1.</span> <b>Keputusan yang Ditunda ke Pagi</b><br>Mau pakai baju apa, bekal isinya apa, sarapan apa, bawa payung atau tidak. Setiap keputusan kecil makan waktu dan tenaga, dan di pagi hari keputusan kecil ini menumpuk jadi besar.<em>Tandanya: kamu sering berdiri di depan lemari atau kulkas sambil berpikir, "Hmm, apa ya?"</em></div></div>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">8</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-red " data-n="9"><div class="band"><span>Bagian 1 · Siapkan · Bab 1</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<div class="src"><img class="" src="assets/ic-barang.png" alt=""><div><span class="n">2.</span> <b>Barang yang Tidak Ada di Tempatnya</b><br>Sepatu sebelah, kunci motor, botol minum, buku PR, ID card kantor. Mencari barang adalah pemakan waktu paling diam-diam di pagi hari. Lima menit di sini, tiga menit di sana, tiba-tiba sudah telat.<em>Tandanya: kalimat "Ada yang lihat ... nggak?" muncul hampir setiap pagi.</em></div></div>
+<div class="src"><img class="" src="assets/ic-urutan.png" alt=""><div><span class="n">3.</span> <b>Urutan yang Berubah-ubah</b><br>Hari ini mandi dulu baru sarapan, besok sarapan dulu baru mandi. Kamu kadang siap duluan, kadang terakhir. Tanpa urutan tetap, otak harus "menyusun ulang" pagi setiap hari, dan anak juga jadi bingung harus apa.<em>Tandanya: setiap pagi terasa seperti hari pertama.</em></div></div>
+<div class="src"><img class="" src="assets/ic-remote.png" alt=""><div><span class="n">4.</span> <b>Anak yang Belum Punya Rutinitas Sendiri</b><br>Anak menunggu disuruh untuk setiap langkah: bangun, ke kamar mandi, pakai baju, pakai sepatu. Semua bergantung pada suaramu. Akhirnya kamu jadi "remote control" yang harus terus ditekan, dan capeknya luar biasa.<em>Tandanya: kamu mengulang instruksi yang sama 3&ndash;5 kali sebelum anak bergerak.</em></div></div>
+<div class="src"><img class="" src="assets/ic-payung.png" alt=""><div><span class="n">5.</span> <b>Tidak Ada Cadangan untuk Hal Tak Terduga</b><br>Rencana pagimu pas-pasan. Begitu ada satu hal yang meleset (anak rewel, pengasuh izin, air mati), seluruh pagi ikut ambruk karena tidak ada ruang dan tidak ada rencana B.<em>Tandanya: pagi yang "normal" masih bisa jalan, tapi satu gangguan kecil langsung bikin telat.</em></div></div>
+<div class="aksi"><div class="ah"><img class="" src="assets/ic-aksi.png" alt=""><div class="at">Catat pagimu besok, tanpa mengubah apa pun.</div></div><div class="ab"><p class="">Besok pagi, siapkan kertas kecil atau notes di HP. Tulis hanya tiga hal:</p><table class="fill"><colgroup><col style="width:52%"><col style="width:48%"></colgroup><thead><tr><th>Yang dicatat</th><th>Isianmu</th></tr></thead><tbody><tr><td>Jam berapa kamu mulai bangun</td><td>&nbsp;</td></tr><tr><td>Jam berapa kalian benar-benar keluar rumah</td><td>&nbsp;</td></tr><tr><td>Satu momen yang paling bikin macet atau bikin suaramu naik</td><td>&nbsp;</td></tr></tbody></table><p class="">Tidak perlu diperbaiki dulu. Cukup dicatat. Catatan ini akan kita pakai di Bab 3 saat menyusun timeline 45 menit versimu sendiri.</p></div></div>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">9</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-night " data-n="10"><div class="band"><span>Bagian 1 · Siapkan · Bab 2</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<img class="hero" src="assets/bab2.jpg" alt="">
+<p>Ini mungkin bukan kabar yang Mami ingin dengar setelah seharian kerja: <b>pagi yang lancar biasanya dimulai dari malam sebelumnya.</b></p>
+<p>Tenang, bukan berarti kamu harus begadang menyiapkan semuanya. Yang kita butuhkan hanya <b>15 menit</b>, di jam yang sama setiap malam, dengan urutan yang sama.</p>
+<p>Kenapa malam? Karena di malam hari tidak ada jam yang mengejar. Keputusan kecil yang di pagi hari terasa berat ("baju apa?", "bekal apa?") di malam hari bisa diambil dengan kepala yang lebih tenang.</p>
+<p>Prinsipnya sederhana: <b>pindahkan sebanyak mungkin keputusan dan persiapan dari pagi ke malam.</b> Pagi tinggal menjalankan, bukan memikirkan.</p>
+<h2><span>Kapan 15 Menit Ini Dilakukan?</span></h2>
+<p>Pilih satu waktu yang paling masuk akal untuk rumahmu, lalu pakai terus:</p>
+<ul>
+<li><b>Setelah anak tidur.</b> Rumah lebih tenang, kamu bisa fokus. Cocok kalau anak tidur di jam yang cukup teratur.</li>
+<li><b>Setelah makan malam, bersama anak.</b> Anak ikut menyiapkan baju dan tasnya sendiri. Lebih ramai, tapi sekalian melatih kebiasaan anak. Cocok untuk anak usia 4 tahun ke atas.</li>
+<li><b>Sebelum kamu mandi malam.</b> Dijadikan "gerbang": selesai 15 menit ini, baru boleh istirahat.</li>
+</ul>
+<p>Yang penting bukan jamnya, tapi <b>konsistensinya.</b> Kegiatan yang terikat pada momen tetap jauh lebih mudah dijalankan daripada "nanti kalau sempat."</p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">10</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-night " data-n="11"><div class="band"><span>Bagian 1 · Siapkan · Bab 2</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<h2><span>Checklist Malam 15 Menit</span></h2>
+<p>Checklist ini dibagi dalam empat blok. Kerjakan berurutan. Kalau malam itu sangat capek, kerjakan <b>Blok 1 dan 2 saja</b>, itu sudah menyelamatkan sebagian besar pagimu.</p>
+<div class="grid2">
+<div><div class="card y"><div class="ct">Blok 1 &mdash; Baju (&plusmn; 4 menit)</div><ul class="cb "><li><span class="box"></span><span>Baju anak lengkap, termasuk kaus dalam, kaus kaki, jilbab/aksesoris</span></li><li><span class="box"></span><span>Baju kerjamu lengkap, termasuk sepatu dan tas</span></li><li><span class="box"></span><span>Semua baju diletakkan di satu tempat yang sudah ditentukan</span></li></ul></div>
+<div class="card y"><div class="ct">Blok 3 &mdash; Makanan (&plusmn; 5 menit)</div><ul class="cb "><li><span class="box"></span><span>Menu sarapan besok sudah diputuskan</span></li><li><span class="box"></span><span>Menu bekal besok sudah diputuskan</span></li><li><span class="box"></span><span>Bahan yang bisa disiapkan malam ini sudah disiapkan</span></li><li><span class="box"></span><span>Kotak bekal sudah dicuci dan diletakkan dekat tempat masak</span></li></ul></div></div>
+<div><div class="card m"><div class="ct">Blok 2 &mdash; Tas &amp; Barang (&plusmn; 4 menit)</div><ul class="cb "><li><span class="box"></span><span>Tas anak dicek: buku, PR, seragam olahraga, surat sekolah</span></li><li><span class="box"></span><span>Tas kerjamu dicek: ID card, charger, dompet, kunci</span></li><li><span class="box"></span><span>Botol minum dicuci dan siap diisi</span></li><li><span class="box"></span><span>Semua tas di Stasiun Siap Berangkat</span></li></ul></div>
+<div class="card m"><div class="ct">Blok 4 &mdash; Cek Besok (&plusmn; 2 menit)</div><ul class="cb "><li><span class="box"></span><span>Lihat kalender: ada acara khusus di sekolah atau kantor?</span></li><li><span class="box"></span><span>Cek bensin / saldo e-toll / saldo ojek online</span></li><li><span class="box"></span><span>Pasang alarm</span></li></ul></div></div>
+</div>
+<p class="small">Checklist ini juga tersedia dalam versi tempel kulkas di Bonus 2.</p>
+<h2><span>Tips agar Checklist Tidak Terasa Berat</span></h2>
+<p><b>Minggu pertama, jangan kejar semuanya.</b> Kalau selama ini kamu tidak punya rutinitas malam sama sekali, mulai dari Blok 1 dulu selama beberapa hari. Setelah terasa otomatis, tambahkan Blok 2, lalu seterusnya.</p>
+<p><b>Putuskan menu sekali seminggu, bukan setiap malam.</b> Blok 3 akan jauh lebih cepat kalau menu seminggu sudah ditentukan di akhir pekan. Bonus 3 berisi 30 ide sarapan dan bekal 5 menit yang bisa kamu rotasi.</p>
+<p><b>Libatkan anak sesuai usianya.</b> Anak 3&ndash;4 tahun bisa memilih satu dari dua baju yang kamu tawarkan. Anak 6 tahun ke atas bisa menyiapkan tas dan bajunya sendiri, lalu kamu cukup mengecek.</p>
+<p><b>Kalau terlewat semalam, tidak apa-apa.</b> Besok malam mulai lagi. Sistem ini tidak rusak hanya karena satu malam bolong.</p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">11</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-night " data-n="12"><div class="band"><span>Bagian 1 · Siapkan · Bab 2</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<h2><span>Stasiun Siap Berangkat</span></h2>
+<p>Ingat sumber kekacauan nomor 2 di Bab 1: barang yang tidak ada di tempatnya? Solusinya adalah <b>satu titik tetap di dekat pintu keluar</b>, tempat semua barang untuk berangkat "tinggal".</p>
+<p>Aturannya satu: <b>apa pun yang dibawa keluar rumah besok pagi, malam ini sudah ada di stasiun.</b> Pagi hari, kamu dan anak cukup mengambil dari satu tempat, lalu berangkat.</p>
+<img class="hero" src="assets/stasiun.jpg" alt="">
+<p><b>Isi stasiun biasanya:</b> tas sekolah/daycare anak, tas kerjamu, sepatu semua orang yang berangkat, kunci kendaraan atau rumah, helm atau jaket (kalau naik motor), payung, dan barang khusus besok (surat izin, uang kas, kotak prakarya).</p>
+<p><b>Tidak perlu beli apa-apa.</b> Stasiun bisa berupa satu rak sepatu dengan baki di atasnya, beberapa gantungan di dinding dekat pintu (satu per orang), keranjang plastik (satu per orang), atau ujung meja yang sengaja dikosongkan khusus untuk ini.</p>
+<div class="tip"><img class="" src="assets/ic-tip.png" alt=""><div><b>Tips penempatan:</b> sedekat mungkin dengan pintu yang kamu pakai untuk berangkat. Pasang gantungan kunci di situ juga. Kalau anak lebih dari satu, beri tanda nama atau warna berbeda. Pasang di ketinggian yang bisa dijangkau anak, supaya anak bisa mengambil dan menaruh barangnya sendiri.</div></div>
+<p><b>Kebiasaan pendukung:</b> saat pulang kerja atau pulang sekolah, barang langsung kembali ke stasiun, bukan ke sofa atau meja makan. Ini butuh waktu untuk jadi kebiasaan, jadi ingatkan dengan santai selama beberapa minggu pertama.</p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">12</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-night " data-n="13"><div class="band"><span>Bagian 1 · Siapkan · Bab 2</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<h2><span>Tempat Baju untuk Besok</span></h2>
+<p>Selain stasiun di dekat pintu, siapkan juga satu tempat khusus untuk <b>baju besok</b>: gantungan di balik pintu kamar, satu keranjang kecil per anak, atau satu kursi di kamar. Anak yang masih kecil biasanya lebih semangat kalau tempatnya "miliknya" sendiri, misalnya keranjang dengan stiker kesukaannya.</p>
+<h2><span>Bagaimana Kalau Malam Juga Kacau?</span></h2>
+<p>Ada malam-malam yang memang sudah penuh: anak rewel, pekerjaan dibawa pulang, atau kamu sudah terlalu lelah. Untuk malam seperti itu, pakai <b>Versi 5 Menit</b>:</p>
+<div class="card y"><div class="ct">Versi 5 Menit</div><ul class="cb "><li><span class="box"></span><span>Baju anak dan bajumu besok sudah ditentukan</span></li><li><span class="box"></span><span>Tas semua orang sudah di stasiun</span></li><li><span class="box"></span><span>Alarm terpasang</span></li></ul></div>
+<p>Sisanya bisa dikerjakan besok pagi dengan versi darurat di Bab 5. Lima menit lebih baik daripada tidak sama sekali.</p>
+<div class="aksi"><div class="ah"><img class="" src="assets/ic-aksi.png" alt=""><div class="at">Tentukan lokasi Stasiun Siap Berangkat malam ini, lalu jalankan Blok 1 dan Blok 2.</div></div><div class="ab"><table class="fill"><colgroup><col style="width:46%"><col style="width:54%"></colgroup><thead><tr><th>Yang ditentukan</th><th>Isianmu</th></tr></thead><tbody><tr><td>Lokasi Stasiun Siap Berangkat</td><td>&nbsp;</td></tr><tr><td>Lokasi tempat baju untuk besok</td><td>&nbsp;</td></tr><tr><td>Waktu tetap untuk checklist malam</td><td>&nbsp;</td></tr></tbody></table><p class="">Tidak perlu sempurna. Pakai tempat dan wadah yang ada di rumah. Besok pagi, perhatikan: berapa kali kamu mencari barang dibanding biasanya?</p></div></div>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">13</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-yellow " data-n="14"><div class="band"><span>Bagian 2 · Jalankan · Bab 3</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<img class="hero" src="assets/bab3.jpg" alt="">
+<p>Di Bab 1 kamu sudah mencatat satu pagi apa adanya. Di Bab 2 kamu sudah memindahkan sebagian persiapan ke malam hari. Sekarang saatnya menyusun <b>urutan pagi yang tetap</b>, supaya setiap pagi tidak lagi terasa seperti hari pertama.</p>
+<p>Dulu mungkin pagimu berjalan seperti ini: bangun, lalu mengerjakan apa pun yang paling mendesak saat itu. Masalahnya, di pagi hari <i>semuanya</i> terasa mendesak. Timeline mengubah itu. Kamu tidak perlu lagi berpikir "sekarang apa?" karena jawabannya sudah tertulis.</p>
+<h2><span>Apa yang Dimaksud &quot;45 Menit&quot;?</span></h2>
+<p>Agar jelas sejak awal: <b>45 menit dihitung dari anak dibangunkan sampai kalian keluar rumah.</b> Bagian inilah yang paling sering kacau. Sebelum anak bangun, kamu masih bisa bergerak sesuai ritmemu sendiri. Waktu sebelum itu adalah waktumu sendiri untuk bersiap, beribadah, atau memasak.</p>
+<p>45 menit juga bukan angka keramat. Kalau anakmu butuh waktu lebih lama, atau rumahmu jauh dari sekolah, silakan sesuaikan jadi 50 atau 60 menit. Yang penting adalah <b>urutannya tetap dan waktunya cukup</b>, bukan secepat-cepatnya.</p>
+<div class="card "><div class="ct">Ringkasnya</div><ul class=""><li><b>Mami bangun</b> &rarr; mandi, berpakaian, siapkan sarapan &amp; bekal (waktumu sendiri)</li><li><b>Menit 0</b> &rarr; anak dibangunkan</li><li><b>Menit 45</b> &rarr; berangkat</li></ul></div>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">14</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-yellow " data-n="15"><div class="band"><span>Bagian 2 · Jalankan · Bab 3</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<h2><span>Aturan Utama: Ibu Siap Duluan</span></h2>
+<img class="hero" src="assets/mami-duluan.jpg" alt="">
+<p>Kalau hanya ada satu hal yang kamu ambil dari bab ini, ambillah yang ini: <b>sebelum anak dibangunkan, kamu sudah mandi, sudah berpakaian kerja, dan tasmu sudah di stasiun.</b></p>
+<p>Coba ingat pagi-pagi yang paling kacau. Sering kali saat anak sudah siap, kamu baru mulai berdandan, dan anak yang menunggu mulai bermain, menumpahkan sesuatu, atau membuka lagi sepatunya. Saat kamu siap duluan, seluruh perhatianmu di 45 menit itu bisa untuk anak. Dan anak biasanya lebih mudah digerakkan oleh orang tua yang tenang daripada yang sedang terburu-buru.</p>
+<table class=""><thead><tr><th>Sebaiknya selesai sebelum anak bangun</th><th>Boleh ditunda sampai anak siap</th></tr></thead><tbody><tr><td>Mandi<br>Berpakaian kerja<br>Sarapan &amp; bekal sudah dimasak atau di atas kompor<br>Tasmu sudah di stasiun</td><td>Memakai sepatu<br>Riasan wajah terakhir<br>Jaket atau kerudung luar</td></tr></tbody></table>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">15</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-yellow " data-n="16"><div class="band"><span>Bagian 2 · Jalankan · Bab 3</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.04">
+<h2><span>Timeline Versi Balita (2–5 Tahun)</span></h2>
+<p>Balita biasanya belum bisa banyak mengurus diri sendiri, dan transisinya lambat. Karena itu timeline ini memberi jeda lebih panjang di setiap langkah.</p>
+<table class=""><colgroup><col style="width:16%"><col style="width:20%"><col style="width:64%"></colgroup><thead><tr><th>Menit</th><th>Contoh jam</th><th>Kegiatan</th></tr></thead><tbody><tr><td>-30 s/d 0</td><td>05.45&ndash;06.15</td><td><b>Waktu Mami:</b> mandi, berpakaian, siapkan sarapan &amp; bekal</td></tr><tr><td>0</td><td>06.15</td><td>Bangunkan anak dengan pelan, beri waktu 3&ndash;5 menit untuk &quot;mengumpulkan nyawa&quot;</td></tr><tr><td>5</td><td>06.20</td><td>Ke kamar mandi: pipis, cuci muka atau mandi, sikat gigi</td></tr><tr><td>15</td><td>06.30</td><td>Pakai baju (sudah disiapkan semalam)</td></tr><tr><td>22</td><td>06.37</td><td>Sarapan</td></tr><tr><td>35</td><td>06.50</td><td>Cuci tangan, isi botol minum, masukkan bekal ke tas</td></tr><tr><td>40</td><td>06.55</td><td>Pakai sepatu, ambil tas dari stasiun</td></tr><tr><td>45</td><td>07.00</td><td><b>Berangkat</b></td></tr></tbody></table>
+<div class="tip"><img class="" src="assets/ic-tip.png" alt=""><div>Kalau anak mandi pagi, beri blok 10 menit penuh untuk kamar mandi. Sarapan balita sering lama: sajikan porsi kecil yang mudah dimakan. Kalau anak diantar ke daycare atau pengasuh, sebagian sarapan bisa dipindah ke sana sesuai kesepakatan.</div></div>
+<h2><span>Timeline Versi Anak SD (6–10 Tahun)</span></h2>
+<p>Anak SD sudah bisa mengerjakan banyak langkah sendiri. Peranmu bergeser dari "mengerjakan" ke "mengecek".</p>
+<table class=""><colgroup><col style="width:16%"><col style="width:20%"><col style="width:64%"></colgroup><thead><tr><th>Menit</th><th>Contoh jam</th><th>Kegiatan</th></tr></thead><tbody><tr><td>-30 s/d 0</td><td>05.30&ndash;06.00</td><td><b>Waktu Mami:</b> mandi, berpakaian, siapkan sarapan &amp; bekal</td></tr><tr><td>0</td><td>06.00</td><td>Bangunkan anak</td></tr><tr><td>3</td><td>06.03</td><td>Anak ke kamar mandi: mandi, sikat gigi</td></tr><tr><td>13</td><td>06.13</td><td>Anak pakai seragam sendiri</td></tr><tr><td>20</td><td>06.20</td><td>Sarapan bersama</td></tr><tr><td>32</td><td>06.32</td><td>Anak cek tas sendiri pakai chart (Bab 4), isi botol minum</td></tr><tr><td>38</td><td>06.38</td><td>Pakai sepatu, ambil tas dari stasiun</td></tr><tr><td>42</td><td>06.42</td><td><b>Cadangan 3 menit</b> untuk yang lupa atau meleset</td></tr><tr><td>45</td><td>06.45</td><td><b>Berangkat</b></td></tr></tbody></table>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">16</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-yellow " data-n="17"><div class="band"><span>Bagian 2 · Jalankan · Bab 3</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.04">
+<div class="tip"><img class="" src="assets/ic-tip.png" alt=""><div>Cadangan 3 menit bukan untuk diisi kegiatan lain. Kalau tidak terpakai, kalian berangkat lebih awal. Kalau anak masuk sekolah lebih pagi, geser seluruh timeline ke belakang, bukan dipadatkan.</div></div>
+<h2><span>Timeline Versi Dua Anak Beda Usia</span></h2>
+<p>Kuncinya adalah <b>berselang, bukan bersamaan.</b> Anak yang lebih lambat (biasanya yang lebih kecil) dibangunkan belakangan, supaya kamu tidak mengurus dua anak di langkah yang sama. Contoh: kakak kelas 3 SD, adik 3 tahun.</p>
+<table class=""><colgroup><col style="width:14%"><col style="width:16%"><col style="width:35%"><col style="width:35%"></colgroup><thead><tr><th>Menit</th><th>Jam</th><th>Kakak (SD)</th><th>Adik (Balita)</th></tr></thead><tbody><tr><td>-30 s/d 0</td><td>05.30&ndash;06.00</td><td><i>Masih tidur</i></td><td><i>Masih tidur</i></td></tr><tr><td>0</td><td>06.00</td><td>Dibangunkan</td><td><i>Masih tidur</i></td></tr><tr><td>3</td><td>06.03</td><td>Mandi, sikat gigi (mandiri)</td><td><i>Masih tidur</i></td></tr><tr><td>10</td><td>06.10</td><td>Pakai seragam (mandiri)</td><td>Dibangunkan pelan</td></tr><tr><td>15</td><td>06.15</td><td>Mulai sarapan</td><td>Ke kamar mandi <b>(dibantu Mami)</b></td></tr><tr><td>25</td><td>06.25</td><td>Cek tas pakai chart</td><td>Pakai baju <b>(dibantu Mami)</b></td></tr><tr><td>30</td><td>06.30</td><td>Selesai sarapan, isi botol minum</td><td>Sarapan</td></tr><tr><td>38</td><td>06.38</td><td>Pakai sepatu</td><td>Pakai sepatu <b>(dibantu Mami)</b></td></tr><tr><td>42</td><td>06.42</td><td>Cadangan</td><td>Cadangan</td></tr><tr><td>45</td><td>06.45</td><td><b>Berangkat</b></td><td><b>Berangkat</b></td></tr></tbody></table>
+<p><b>Kenapa pola ini berhasil:</b> saat kakak mengerjakan langkah mandiri, perhatianmu penuh untuk adik, dan kamu tidak perlu membantu dua anak di kamar mandi bersamaan. Kakak yang sudah siap bisa diberi tugas kecil, misalnya mengambilkan sepatu adik dari stasiun, tapi jangan jadikan kakak "pengasuh" tetap.</p>
+<p>Kalau anak-anakmu dua-duanya balita, bangunkan yang paling lama "mengumpulkan nyawa" lebih dulu. Kalau dua-duanya SD, mereka bisa berjalan bersamaan dengan versi SD, cukup bagi giliran kamar mandi.</p>
+<p><b>Ada pengasuh atau keluarga lain yang membantu?</b> Tuliskan siapa mengerjakan apa di kolom tersendiri, supaya tidak ada yang saling menunggu. Soal pembagian tugas dengan suami, kita bahas di Bab 6.</p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">17</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-yellow " data-n="18"><div class="band"><span>Bagian 2 · Jalankan · Bab 3</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<h2><span>Template Timeline Versimu</span></h2>
+<p>Pakai catatan pagi yang kamu buat di akhir Bab 1.</p>
+<ol>
+<li>Tulis jam <b>berangkat</b> yang kamu inginkan di baris paling bawah.</li>
+<li>Mundur 45 menit (atau lebih kalau perlu). Itu jam <b>bangunkan anak</b>.</li>
+<li>Mundur lagi 30 menit atau sesuai kebutuhanmu. Itu jam <b>Mami bangun</b>.</li>
+<li>Isi langkah-langkah di tengahnya, beri waktu lebih untuk bagian yang paling sering macet.</li>
+<li>Sisakan cadangan 3&ndash;5 menit sebelum berangkat.</li>
+</ol>
+<table class="tall"><colgroup><col style="width:16%"><col style="width:14%"><col style="width:24%"><col style="width:23%"><col style="width:23%"></colgroup><thead><tr><th>Menit</th><th>Jam</th><th>Mami</th><th>Anak 1</th><th>Anak 2</th></tr></thead><tbody><tr><td>Mami bangun</td><td></td><td></td><td></td><td></td></tr><tr><td>0</td><td></td><td></td><td></td><td></td></tr><tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr><tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr><tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr><tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr><tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr><tr><td>Cadangan</td><td></td><td></td><td></td><td></td></tr><tr><td><b>Berangkat</b></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<p>Setelah jadi, tempel timeline ini di tempat yang sering kamu lihat di pagi hari, misalnya pintu kulkas atau dekat cermin kamar mandi.</p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">18</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-yellow " data-n="19"><div class="band"><span>Bagian 2 · Jalankan · Bab 3</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<h2><span>Minggu Pertama Pasti Belum Pas</span></h2>
+<p>Timeline yang baru dibuat hampir tidak pernah langsung cocok. Itu bukan tanda gagal, itu data. Setiap sore di minggu pertama, tanyakan satu hal: <b>"Langkah mana yang tadi pagi paling molor?"</b> Lalu tambahkan waktu di langkah itu. Biasanya setelah satu sampai dua minggu, timeline mulai terasa pas dengan ritme rumahmu.</p>
+<div class="aksi"><div class="ah"><img class="" src="assets/ic-aksi.png" alt=""><div class="at">Isi Template Timeline Versimu, lalu jalankan besok pagi sekali saja.</div></div><div class="ab"><p class="">Besok sore, isi catatan singkat ini:</p><table class="fill"><colgroup><col style="width:52%"><col style="width:48%"></colgroup><thead><tr><th>Yang dicek</th><th>Isianmu</th></tr></thead><tbody><tr><td>Apakah Mami sudah siap sebelum anak dibangunkan?</td><td>Ya / Belum</td></tr><tr><td>Jam berangkat sebenarnya</td><td>&nbsp;</td></tr><tr><td>Langkah yang paling molor</td><td>&nbsp;</td></tr><tr><td>Perubahan kecil untuk lusa</td><td>&nbsp;</td></tr></tbody></table><p class="">Satu kali percobaan sudah cukup untuk hari ini. Perbaikannya pelan-pelan.</p></div></div>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">19</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-pink " data-n="20"><div class="band"><span>Bagian 2 · Jalankan · Bab 4</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<img class="hero" src="assets/bab4.jpg" alt="">
+<p>Mari jujur sebentar, Mami. Hampir semua ibu pernah berteriak di pagi hari. Bukan karena tidak sayang, tapi karena jam terus berjalan, anak masih duduk memandangi satu kaus kaki, dan instruksi yang sama sudah diulang empat kali.</p>
+<p>Bab ini tidak akan menghakimi teriakan itu. Yang kita lakukan adalah <b>mengurangi momen yang membuat kamu merasa harus berteriak</b>, dengan tiga alat: chart rutinitas, skrip pengganti teriak, dan trik transisi. Tujuannya pelan-pelan memindahkan "tombol" dari suaramu ke sistem yang bisa anak lihat dan ikuti sendiri.</p>
+<h2><span>Kenapa Instruksi Lisan Sering Tidak Didengar</span></h2>
+<p>Di pagi hari, anak menerima banyak sekali kalimat: "ayo bangun", "cepat mandi", "bajunya dipakai", "jangan main dulu", "sepatunya mana". Semuanya lewat suara, semuanya terdengar mirip. Bagi anak, terutama yang masih kecil, deretan kalimat seperti ini mudah lewat begitu saja. Bukan karena mereka nakal, tapi karena mereka belum terbiasa menyimpan urutan panjang di kepala sambil setengah mengantuk. Makanya alat pertama kita adalah sesuatu yang bisa <b>dilihat</b>.</p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">20</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-pink " data-n="21"><div class="band"><span>Bagian 2 · Jalankan · Bab 4</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.06">
+<h2><span>Alat 1: Chart Rutinitas Pagi</span></h2>
+<p>Chart rutinitas adalah daftar langkah pagi anak, ditempel di tempat yang mudah dilihat, dengan urutan yang sama dengan timeline di Bab 3. Pertanyaan "habis ini apa, Ma?" sekarang bisa dijawab anak sendiri dengan melihat chart.</p>
+<p><b>Versi balita (2&ndash;5 tahun): bergambar.</b> Balita belum bisa membaca, jadi setiap langkah diwakili gambar. Cukup 5&ndash;6 langkah.</p>
+<img class="strip" src="assets/chart-laki.jpg" alt="">
+<p><b>Versi anak SD (6&ndash;10 tahun): checklist.</b> Anak SD bisa membaca dan mencentang sendiri: bangun dan rapikan selimut, mandi, sikat gigi, pakai seragam lengkap, sarapan, taruh piring di tempat cuci, cek tas, pakai sepatu, siap di pintu. Kedua versi tersedia siap cetak di Bonus 1.</p>
+<div class="tip"><img class="" src="assets/ic-tip.png" alt=""><div><b>Agar chart benar-benar dipakai:</b> tempel sejajar mata anak. Buat bersama anak, biarkan ia mewarnai atau memilih stiker. Beri cara menandai yang menyenangkan: jepitan jemuran yang dipindah untuk balita, spidol yang bisa dihapus untuk anak SD. Dan pastikan urutan chart sama dengan timeline.</div></div>
+<p><b>Cara mengenalkannya:</b> hari pertama sampai ketiga, jalani chart <i>bersama</i> anak. Tunjuk langkahnya, kerjakan bersama, tandai bersama. Setelah itu, ganti instruksimu dengan pertanyaan: "Di chart, habis ini apa?" Pelan-pelan, anak yang akan membaca sendiri tanpa ditanya.</p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">21</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-pink " data-n="22"><div class="band"><span>Bagian 2 · Jalankan · Bab 4</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.04">
+<h2><span>Alat 2: Skrip Pengganti Teriak</span></h2>
+<p>Teriakan sering muncul karena di momen genting kita tidak punya kalimat lain yang siap dipakai. Skrip adalah kalimat pendek yang sudah disiapkan sebelumnya. Pilih 2&ndash;3 yang paling cocok dengan situasi di rumahmu.</p>
+<div class="alt"><div class="sit">Saat anak belum mau bangun</div><div class="a1"><b>Alih-alih</b>&quot;Bangun! Sudah jam berapa ini!&quot;</div><div class="a2"><b>Coba</b>&quot;Mami hitung sampai lima, terus kita bangun bareng. Mau duduk sendiri atau Mami bantu?&quot;</div></div>
+<div class="alt"><div class="sit">Saat anak terdistraksi mainan atau TV</div><div class="a1"><b>Alih-alih</b>&quot;Berhenti main! Dari tadi disuruh!&quot;</div><div class="a2"><b>Coba</b>&quot;Mainannya boleh istirahat di sini, nanti sore ketemu lagi. Sekarang chart bilang apa?&quot;</div></div>
+<div class="alt"><div class="sit">Saat anak lama sekali di satu langkah</div><div class="a1"><b>Alih-alih</b>&quot;Cepetan! Kamu lambat banget!&quot;</div><div class="a2"><b>Coba</b>&quot;Kira-kira bisa selesai sebelum lagu ini habis, nggak?&quot;</div></div>
+<div class="alt"><div class="sit">Saat anak menolak baju atau sepatu</div><div class="a1"><b>Alih-alih</b>&quot;Pakai yang itu! Nggak ada pilihan!&quot;</div><div class="a2"><b>Coba</b>&quot;Yang ini atau yang ini? Kamu yang pilih.&quot;<br><span class='small'>(Pastikan dua-duanya pilihan yang kamu setujui.)</span></div></div>
+<div class="alt"><div class="sit">Saat kamu sudah mengulang instruksi berkali-kali</div><div class="a1"><b>Alih-alih</b>Menaikkan suara lebih tinggi lagi.</div><div class="a2"><b>Coba</b>Mendekat, turunkan badan sejajar anak, sentuh bahunya, lalu bicara pelan: &quot;Sekarang waktunya pakai sepatu.&quot;</div></div>
+<p class="small">Yang terakhir ini sering jauh lebih efektif daripada teriakan dari ruangan lain, karena anak benar-benar menyadari kamu sedang bicara padanya.</p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">22</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-pink " data-n="23"><div class="band"><span>Bagian 2 · Jalankan · Bab 4</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.04">
+<div class="alt"><div class="sit">Saat kamu merasa mau meledak</div><div class="a1"><b>Alih-alih</b>(Menahan sampai meledak.)</div><div class="a2"><b>Coba</b>&quot;Mami butuh tarik napas sebentar.&quot; Lalu benar-benar tarik napas tiga kali sebelum bicara lagi.</div></div>
+<p>Tidak apa-apa bilang begitu di depan anak. Anak juga belajar bahwa orang dewasa pun kadang perlu jeda.</p>
+<div class="card o"><div class="ct">Kalau tetap terlanjur berteriak</div><p>Itu akan terjadi, dan tidak menghapus semua usahamu. Setelah suasana tenang, cukup bilang: <i>&quot;Tadi Mami suaranya keras ya. Mami minta maaf. Besok kita coba lagi bareng.&quot;</i> Lalu lanjutkan. Tidak perlu berlarut-larut menyalahkan diri.</p></div>
+<h2><span>Alat 3: Trik Transisi</span></h2>
+<p>Pagi hari penuh perpindahan: dari tidur ke bangun, dari kamar ke kamar mandi, dari main ke makan, dari rumah ke luar. Banyak momen macet terjadi tepat di perpindahan ini.</p>
+<ul>
+<li><b>Peringatan sebelum pindah.</b> "Dua menit lagi kita pakai sepatu ya." Perpindahan yang diberitahu lebih dulu biasanya lebih mudah diterima daripada yang mendadak.</li>
+<li><b>Lagu sebagai penanda waktu.</b> Pilih satu lagu untuk satu langkah, misalnya lagu favorit anak untuk pakai baju: selesai sebelum lagunya habis.</li>
+<li><b>Timer yang bisa dilihat.</b> Timer dapur, jam pasir, atau timer di HP yang terlihat. Anak bisa melihat sisa waktunya sendiri.</li>
+<li><b>Tugas kecil yang berarti.</b> Menekan tombol lift, membawa kunci dari stasiun, atau menjadi "pengecek pintu sudah dikunci".</li>
+<li><b>Permainan "balapan".</b> "Siapa yang pakai sepatu duluan, Mami atau kamu?" Sesekali biarkan anak menang. Kalau anak mudah kesal saat kalah, lewati trik ini.</li>
+<li><b>Sesuatu yang ditunggu di ujung.</b> Misalnya lima menit membaca buku bergambar bersama kalau semua sudah siap sebelum waktunya, atau memilih lagu di perjalanan. Jaga agar sederhana supaya bisa diulang setiap hari.</li>
+</ul>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">23</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-pink " data-n="24"><div class="band"><span>Bagian 2 · Jalankan · Bab 4</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<h2><span>Yang Perlu Diingat</span></h2>
+<p><b>Tidak semua trik cocok untuk semua anak.</b> Coba satu per satu, lihat reaksinya, lalu simpan yang berhasil. <b>Konsisten lebih penting daripada banyak trik.</b> Satu chart yang dipakai setiap hari jauh lebih berguna daripada lima trik yang ganti-ganti. <b>Hasilnya bertahap.</b> Yang kita cari adalah kecenderungan yang membaik dari minggu ke minggu, bukan perubahan dalam semalam.</p>
+<div class="aksi"><div class="ah"><img class="" src="assets/ic-aksi.png" alt=""><div class="at">Buat chart rutinitas bersama anak, lalu pilih dua skrip yang mau kamu pakai minggu ini.</div></div><div class="ab"><table class="fill"><colgroup><col style="width:46%"><col style="width:54%"></colgroup><thead><tr><th>Yang ditentukan</th><th>Isianmu</th></tr></thead><tbody><tr><td>Versi chart (balita / SD)</td><td>&nbsp;</td></tr><tr><td>Lokasi chart ditempel</td><td>&nbsp;</td></tr><tr><td>Cara anak menandai langkah</td><td>&nbsp;</td></tr><tr><td>Skrip pilihan 1</td><td>&nbsp;</td></tr><tr><td>Skrip pilihan 2</td><td>&nbsp;</td></tr><tr><td>Trik transisi yang mau dicoba</td><td>&nbsp;</td></tr></tbody></table><p class="">Tulis dua skrip pilihanmu di kertas kecil dan tempel di dekat timeline. Di momen genting, kalimat yang tertulis jauh lebih mudah diingat daripada yang hanya ada di kepala.</p></div></div>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">24</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-mint " data-n="25"><div class="band"><span>Bagian 3 · Cadangan · Bab 5</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<img class="hero" src="assets/bab5.jpg" alt="">
+<p>Sejauh ini kita sudah membangun pagi yang "normal". Tapi pagi yang normal tidak datang setiap hari. Ada pagi ketika anak bangun dengan suasana hati yang buruk. Ada pagi ketika alarm tidak berbunyi. Ada pagi ketika pesan WhatsApp dari pengasuh masuk jam 5.30: "Bu, maaf hari ini saya tidak bisa datang."</p>
+<p>Tujuan bab ini bukan mencegah semua gangguan, karena itu mustahil. Tujuannya adalah <b>punya langkah yang sudah diputuskan sebelumnya</b>, supaya saat gangguan datang, kamu tidak perlu berpikir dari nol di tengah kepanikan.</p>
+<h2><span>Rencana B #1: Anak Rewel</span></h2>
+<ol>
+<li><b>Turunkan target pagi itu.</b> Pagi seperti ini bukan waktunya melatih kemandirian. Kalau biasanya anak pakai baju sendiri, hari ini bantu saja.</li>
+<li><b>Pangkas langkah yang tidak wajib.</b> Mandi bisa diganti cuci muka dan lap badan. Sarapan bisa dibawa, kalau memungkinkan.</li>
+<li><b>Beri pilihan kecil, bukan perintah.</b> "Mau digendong ke kamar mandi atau jalan sendiri?"</li>
+<li><b>Kurangi kata-kata.</b> Cukup kalimat pendek dan pelukan.</li>
+<li><b>Pakai waktu cadangan.</b> Ini gunanya cadangan 3&ndash;5 menit di timeline Bab 3.</li>
+</ol>
+<p><b>Sebaiknya dihindari:</b> membandingkan dengan saudara atau anak lain, dan memulai "pelajaran" tentang sikap di tengah pagi yang sempit. Simpan untuk sore atau malam saat semua sudah tenang.</p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">25</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-mint " data-n="26"><div class="band"><span>Bagian 3 · Cadangan · Bab 5</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.05">
+<h2><span>Rencana B #2: Anak Sakit Ringan</span></h2>
+<p>Bab ini tidak membahas cara menilai atau mengobati kondisi anak. Untuk itu, ikuti arahan dokter atau tenaga kesehatan yang biasa menangani anakmu. Yang kita siapkan di sini adalah <b>sisi logistiknya</b>.</p>
+<div class="card "><div class="ct">Siapkan dari sekarang, saat anak sehat</div><ul class="cb "><li><span class="box"></span><span>Cari tahu aturan sekolah/daycare: kondisi apa yang membuat anak sebaiknya tidak masuk, dan cara izinnya</span></li><li><span class="box"></span><span>Simpan nomor wali kelas atau pengurus daycare di HP</span></li><li><span class="box"></span><span>Simpan kontak dokter atau klinik langganan</span></li><li><span class="box"></span><span>Ketahui aturan izin atau kerja dari rumah di kantormu</span></li><li><span class="box"></span><span>Tentukan dengan suami siapa yang lebih memungkinkan izin kalau anak harus di rumah</span></li><li><span class="box"></span><span>Tentukan &quot;pendamping cadangan&quot;: orang tua, mertua, saudara, atau tetangga yang dipercaya</span></li></ul></div>
+<p><b>Di pagi harinya:</b> putuskan masuk atau tidak, berdasarkan aturan sekolah dan arahan tenaga kesehatan. Kalau tidak masuk, kabari sekolah, kantor, dan atur pendamping. Kalau masuk, selipkan kebutuhan tambahan di tas (tisu, baju ganti, botol minum lebih besar) dan kabari guru.</p>
+<div class="card y"><div class="ct">Template pesan izin ke sekolah</div><i>Selamat pagi, Bu/Pak [nama guru]. Saya [nama], orang tua dari [nama anak] kelas [kelas]. Hari ini [nama anak] izin tidak masuk karena kurang sehat. Terima kasih atas perhatiannya.</i></div>
+<div class="card y"><div class="ct">Template pesan ke atasan</div><i>Selamat pagi, [nama atasan]. Anak saya sedang kurang sehat pagi ini. Saya izin [datang terlambat / bekerja dari rumah / cuti] hari ini. Untuk pekerjaan [yang mendesak], akan saya [selesaikan jam berapa / serahkan ke siapa]. Saya tetap bisa dihubungi lewat [HP/WA/email].</i></div>
+<p>Simpan kedua template ini di notes HP supaya tinggal diubah sedikit dan dikirim.</p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">26</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-mint " data-n="27"><div class="band"><span>Bagian 3 · Cadangan · Bab 5</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.04">
+<h2><span>Rencana B #3: Telat Bangun</span></h2>
+<ol>
+<li><b>Tarik napas dulu, lalu cek jam berangkat.</b> Hitung berapa menit yang tersisa sebenarnya. Sering kali situasinya tidak separah perasaan pertama.</li>
+<li><b>Langsung ke Pagi Darurat 20 Menit</b> (di halaman berikut) kalau sisa waktunya kurang dari timeline normal.</li>
+<li><b>Kabari lebih awal kalau memang akan telat.</b> Pesan singkat sebelum jam masuk biasanya lebih mudah diterima daripada datang telat tanpa kabar.</li>
+</ol>
+<p><b>Mencegah terulang:</b> kalau telat karena tidur terlalu malam, majukan jam checklist malam. Pasang dua alarm di dua perangkat berbeda. Letakkan alarm agak jauh dari tempat tidur, supaya harus berdiri untuk mematikannya.</p>
+<h2><span>Rencana B #4: Pengasuh atau ART Izin Mendadak</span></h2>
+<p>Bagi banyak ibu bekerja, ini salah satu pagi yang paling bikin panik, karena bukan hanya pagi yang terganggu, tapi seluruh hari. Siapkan <b>Daftar Pendamping Cadangan</b> sekarang:</p>
+<table class="tall"><colgroup><col style="width:8%"><col style="width:28%"><col style="width:22%"><col style="width:42%"></colgroup><thead><tr><th>No</th><th>Nama / tempat</th><th>Nomor HP</th><th>Catatan (jam bisa, jarak, syarat)</th></tr></thead><tbody><tr><td>1</td><td></td><td></td><td></td></tr><tr><td>2</td><td></td><td></td><td></td></tr><tr><td>3</td><td></td><td></td><td></td></tr></tbody></table>
+<p>Pilihan yang bisa dipertimbangkan: orang tua atau mertua, saudara, tetangga yang dipercaya, daycare yang menerima penitipan harian, atau pengasuh panggilan yang sudah dikenal. Cara terbaik adalah <b>menghubungi mereka sekarang, saat tidak darurat.</b> Permintaan mendadak di jam 6 pagi lebih mudah diterima kalau sebelumnya sudah dibicarakan.</p>
+<p><b>Di pagi harinya:</b> hubungi pendamping cadangan sesuai urutan. Kalau tidak ada yang bisa, bicarakan dengan suami siapa yang izin atau bekerja dari rumah (Bab 6). Kabari kantor secepatnya.</p>
+<div class="tip"><img class="" src="assets/ic-tip.png" alt=""><div>Minta pengasuh mengabari paling lambat malam sebelumnya kalau ada kemungkinan tidak bisa datang. Tidak semua izin bisa diketahui lebih awal, tapi kebiasaan ini mengurangi kejutan di pagi hari.</div></div>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">27</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-mint " data-n="28"><div class="band"><span>Bagian 3 · Cadangan · Bab 5</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.05">
+<h2><span>Pagi Darurat 20 Menit</span></h2>
+<p>Versi paling ringkas dari timeline Bab 3. Prinsipnya: <b>hanya yang wajib, sisanya dilepas.</b></p>
+<table class=""><colgroup><col style="width:12%"><col style="width:54%"><col style="width:34%"></colgroup><thead><tr><th>Menit</th><th>Mami</th><th>Anak</th></tr></thead><tbody><tr><td>0</td><td>Bangunkan anak sambil nyalakan lampu</td><td>Bangun</td></tr><tr><td>2</td><td>Cuci muka, sikat gigi, pakai baju kerja yang disiapkan semalam</td><td>Cuci muka, sikat gigi, pipis</td></tr><tr><td>8</td><td>Bantu anak pakai baju</td><td>Pakai baju (dibantu)</td></tr><tr><td>12</td><td>Ambil sarapan bawa (roti, buah, susu kotak), isi botol minum</td><td>Duduk, makan sesuatu yang cepat</td></tr><tr><td>16</td><td>Ambil tas dari stasiun, cek kunci</td><td>Pakai sepatu</td></tr><tr><td>20</td><td><b>Berangkat</b></td><td><b>Berangkat</b></td></tr></tbody></table>
+<table class=""><thead><tr><th>Boleh dilepas</th><th>Harus tetap ada</th></tr></thead><tbody><tr><td>Mandi pagi (ganti cuci muka &amp; lap badan)<br>Sarapan duduk di meja<br>Bekal masak (ganti bekal praktis)<br>Riasan lengkap<br>Merapikan tempat tidur dan rumah</td><td>Semua orang berpakaian layak<br>Tas lengkap<br>Anak sudah makan atau membawa makanan<br>Kunci dan dompet terbawa</td></tr></tbody></table>
+<div class="card y"><div class="ct">Stok Pagi Darurat &mdash; simpan selalu di rumah</div><ul class="cb "><li><span class="box"></span><span>Roti atau biskuit yang mengenyangkan</span></li><li><span class="box"></span><span>Buah yang tidak perlu dikupas rumit (pisang, jeruk kecil)</span></li><li><span class="box"></span><span>Susu kotak atau minuman kotak</span></li><li><span class="box"></span><span>Bekal kering cadangan yang tahan lama</span></li></ul></div>
+<p>Pagi Darurat 20 Menit hanya bisa berjalan kalau checklist malam sudah dilakukan. Tanpa baju dan tas yang siap di tempatnya, 20 menit hampir mustahil.</p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">28</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-mint " data-n="29"><div class="band"><span>Bagian 3 · Cadangan · Bab 5</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<h2><span>Setelah Pagi yang Berantakan</span></h2>
+<p>Rencana B tidak selalu berhasil sempurna. Saat itu terjadi, ingat: <b>satu pagi yang berantakan tidak membatalkan sistemmu.</b> Malam nanti, jalankan lagi checklist malam. Besok pagi, kembali ke timeline normal. Kalau mau, sore harinya tanyakan: <i>"Apa satu hal yang bisa disiapkan supaya pagi seperti tadi lebih ringan lain kali?"</i></p>
+<h2><span>Contekan Cepat Rencana B</span></h2>
+<table class=""><colgroup><col style="width:32%"><col style="width:68%"></colgroup><thead><tr><th>Kalau yang terjadi...</th><th>Langkah pertama</th></tr></thead><tbody><tr><td>Anak rewel</td><td>Turunkan target, pangkas langkah, beri pilihan kecil</td></tr><tr><td>Anak kurang sehat</td><td>Ikuti arahan tenaga kesehatan &bull; kabari sekolah &amp; kantor pakai template &bull; hubungi pendamping cadangan</td></tr><tr><td>Telat bangun</td><td>Cek sisa menit &bull; langsung Pagi Darurat 20 Menit &bull; kabari lebih awal</td></tr><tr><td>Pengasuh/ART izin</td><td>Hubungi Daftar Pendamping Cadangan sesuai urutan &bull; bicarakan izin/WFH dengan suami &bull; kabari kantor</td></tr></tbody></table>
+<div class="aksi"><div class="ah"><img class="" src="assets/ic-aksi.png" alt=""><div class="at">Isi Daftar Pendamping Cadangan, simpan dua template pesan di HP, dan siapkan Stok Pagi Darurat.</div></div><div class="ab"><ul class="cb "><li><span class="box"></span><span>Daftar Pendamping Cadangan terisi minimal 2 nama</span></li><li><span class="box"></span><span>Minimal 1 pendamping cadangan sudah dihubungi dan bersedia</span></li><li><span class="box"></span><span>Template izin sekolah tersimpan di notes HP</span></li><li><span class="box"></span><span>Template izin kantor tersimpan di notes HP</span></li><li><span class="box"></span><span>Aturan izin sakit sekolah/daycare sudah diketahui</span></li><li><span class="box"></span><span>Stok Pagi Darurat tersedia di rumah</span></li></ul><p class="">Semua ini dikerjakan saat pagi sedang tenang, supaya saat pagi tidak tenang, kamu tinggal menjalankan.</p></div></div>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">29</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-coral " data-n="30"><div class="band"><span>Bagian 3 · Cadangan · Bab 6</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<img class="hero" src="assets/bab6.jpg" alt="">
+<p>Sampai bab ini, sebagian besar sistem memang dijalankan oleh Mami. Tapi pagi di rumah bukan urusan satu orang. Kalau ada suami di rumah pada pagi hari, sistem ini akan jauh lebih ringan kalau dijalankan berdua.</p>
+<p>Bab ini bukan tentang siapa yang lebih banyak mengerjakan, dan bukan tentang mencari siapa yang kurang. Banyak suami sebenarnya mau membantu, tapi tidak tahu harus mulai dari mana. Yang sering hilang bukan niatnya, tapi <b>kejelasannya.</b> Pendekatan kita sederhana: <b>satu tugas tetap, yang jelas, dan dikerjakan setiap hari.</b></p>
+<h2><span>Kenapa Satu Tugas Tetap?</span></h2>
+<p>Kalimat "tolong bantu-bantu ya pagi ini" terdengar wajar, tapi sulit dijalankan. Bantu apa? Mulai jam berapa? Akibatnya, Mami tetap jadi "remote control", hanya saja sekarang untuk dua orang. Satu tugas tetap itu <b>jelas</b> (tahu persis bagiannya), <b>utuh</b> (tanggung jawab dari awal sampai selesai), dan <b>bisa jadi kebiasaan</b> (sama setiap hari). Satu tugas yang benar-benar lepas dari pikiranmu bisa terasa sangat berbeda dibanding banyak bantuan yang masih harus kamu arahkan.</p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">30</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-coral " data-n="31"><div class="band"><span>Bagian 3 · Cadangan · Bab 6</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.04">
+<h2><span>Pilihan Tugas Tetap untuk Suami</span></h2>
+<p>Pilih tugas yang <b>cocok dengan jam dan kebiasaan suami</b>, bukan yang menurut Mami paling berat.</p>
+<table class=""><colgroup><col style="width:28%"><col style="width:72%"></colgroup><thead><tr><th>Kalau suami...</th><th>Pilihan tugas</th></tr></thead><tbody><tr><td>Bangun lebih awal</td><td>Membangunkan anak dan menemani di kamar mandi &bull; Menyiapkan sarapan &bull; Mengisi botol minum dan memasukkan bekal ke tas</td></tr><tr><td>Berangkat bersamaan</td><td>Memakaikan baju dan sepatu anak &bull; Mengecek tas anak pakai chart &bull; Memanaskan kendaraan dan memastikan barang dari stasiun terbawa</td></tr><tr><td>Berangkat lebih siang</td><td>Mengantar anak ke sekolah/daycare &bull; Merapikan meja makan dan dapur setelah semua berangkat</td></tr><tr><td>Berangkat lebih pagi</td><td>Tugas malam: Blok 2 checklist malam atau menyiapkan baju anak &bull; Memasang alarm dan memastikan pintu terkunci</td></tr></tbody></table>
+<p>Satu tugas dulu. Setelah berjalan lancar beberapa minggu, baru bicarakan kalau mau menambah.</p>
+<h2><span>Cara Mengajak Bicara</span></h2>
+<p><b>Pilih waktu yang tenang.</b> Bukan di tengah pagi yang kacau, bukan saat salah satu baru pulang kerja. Akhir pekan atau malam setelah anak tidur biasanya lebih pas.</p>
+<p><b>Mulai dari tujuan bersama, bukan dari keluhan.</b></p>
+<div class="alt"><div class="sit">Membuka obrolan</div><div class="a1"><b>Alih-alih</b>&quot;Kamu nggak pernah bantu pagi-pagi.&quot;</div><div class="a2"><b>Coba</b>&quot;Aku lagi coba bikin pagi kita lebih tenang, biar nggak ada yang teriak-teriak dan nggak telat. Aku butuh bantuanmu di satu bagian.&quot;</div></div>
+<p><b>Tunjukkan sistemnya.</b> Perlihatkan timeline Bab 3 dan chart Bab 4, supaya suami mudah melihat di mana bagiannya. <b>Tawarkan pilihan.</b> "Dari yang ini, mana yang paling cocok sama jadwalmu?" Tugas yang dipilih sendiri biasanya lebih dijalankan.</p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">31</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-coral " data-n="32"><div class="band"><span>Bagian 3 · Cadangan · Bab 6</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.0">
+<p><b>Sepakati standar yang wajar.</b> Cara suami mengerjakan mungkin berbeda. Selama tujuannya tercapai, coba biarkan. Kalau setiap hasil dikoreksi, tugas itu pelan-pelan kembali ke tanganmu lagi.</p>
+<p><b>Minta masukan juga.</b> "Menurutmu, bagian mana dari pagi kita yang paling bikin repot?" Kadang suami melihat hal yang tidak kamu lihat.</p>
+<h2><span>Template Pembagian Tugas Pagi</span></h2>
+<p>Isi bersama. Yang penting setiap baris punya satu nama yang jelas.</p>
+<table class=""><colgroup><col style="width:38%"><col style="width:15%"><col style="width:15%"><col style="width:15%"><col style="width:17%"></colgroup><thead><tr><th>Tugas</th><th>Mami</th><th>Suami</th><th>Anak</th><th>Lainnya</th></tr></thead><tbody><tr class="grp"><td colspan="5">Malam sebelumnya</td></tr><tr><td>Siapkan baju anak</td><td></td><td></td><td></td><td></td></tr><tr><td>Siapkan tas &amp; isi stasiun</td><td></td><td></td><td></td><td></td></tr><tr><td>Putuskan &amp; siapkan bahan sarapan/bekal</td><td></td><td></td><td></td><td></td></tr><tr><td>Pasang alarm &amp; cek pintu</td><td></td><td></td><td></td><td></td></tr><tr class="grp"><td colspan="5">Pagi hari</td></tr><tr><td>Bangunkan anak</td><td></td><td></td><td></td><td></td></tr><tr><td>Dampingi anak di kamar mandi</td><td></td><td></td><td></td><td></td></tr><tr><td>Pakaikan/cek baju anak</td><td></td><td></td><td></td><td></td></tr><tr><td>Siapkan sarapan</td><td></td><td></td><td></td><td></td></tr><tr><td>Siapkan bekal &amp; botol minum</td><td></td><td></td><td></td><td></td></tr><tr><td>Cek tas pakai chart</td><td></td><td></td><td></td><td></td></tr><tr><td>Siapkan kendaraan</td><td></td><td></td><td></td><td></td></tr><tr><td>Antar anak</td><td></td><td></td><td></td><td></td></tr><tr class="grp"><td colspan="5">Kalau ada gangguan (Bab 5)</td></tr><tr><td>Yang izin/WFH kalau anak sakit</td><td></td><td></td><td></td><td></td></tr><tr><td>Yang menghubungi pendamping cadangan</td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<p><b>Tugas tetap suami (satu kalimat):</b> ________________________________________________</p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">32</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-coral " data-n="33"><div class="band"><span>Bagian 3 · Cadangan · Bab 6</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<h2><span>Kalau Kondisinya Berbeda</span></h2>
+<p>Kalau suami bekerja di luar kota, shift malam, atau memang tidak ada di rumah saat pagi, bab ini tetap bisa dipakai.</p>
+<ul>
+<li><b>Geser tugas ke malam hari</b> saat ia di rumah.</li>
+<li><b>Libatkan orang lain</b> lewat kolom "Lainnya": pengasuh, orang tua, atau keluarga.</li>
+<li><b>Libatkan anak lebih banyak:</b> anak SD bisa punya satu tugas tetap juga.</li>
+<li><b>Sederhanakan timeline</b> dan andalkan checklist malam lebih penuh kalau kamu menjalankan pagi sendirian.</li>
+</ul>
+<p>Sistem ini tetap bekerja. Pembagiannya saja yang menyesuaikan.</p>
+<h2><span>Setelah Berjalan: Cek Bersama</span></h2>
+<p>Setelah satu atau dua minggu, luangkan lima belas menit untuk mengobrol: apa yang sudah terasa lebih ringan, bagian mana yang masih sering macet, dan apakah ada tugas yang perlu ditukar. Jangan lupa bilang terima kasih. Kalimat sederhana seperti <i>"Pagi ini enak banget karena kamu yang pegang sarapan"</i> membantu kebiasaan baru terasa dihargai, dan lebih mungkin bertahan.</p>
+<div class="aksi"><div class="ah"><img class="" src="assets/ic-aksi.png" alt=""><div class="at">Ajak suami bicara lima belas menit, sepakati satu tugas tetap, dan isi template pembagian bersama.</div></div><div class="ab"><table class="fill"><colgroup><col style="width:46%"><col style="width:54%"></colgroup><thead><tr><th>Yang ditentukan</th><th>Isianmu</th></tr></thead><tbody><tr><td>Waktu mengobrol</td><td>&nbsp;</td></tr><tr><td>Tugas tetap suami</td><td>&nbsp;</td></tr><tr><td>Mulai berlaku tanggal</td><td>&nbsp;</td></tr><tr><td>Tanggal cek bersama (1&ndash;2 minggu lagi)</td><td>&nbsp;</td></tr></tbody></table><p class="">Satu tugas, jelas, dan disepakati berdua. Itu sudah cukup untuk memulai.</p></div></div>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">33</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-sun " data-n="34"><div class="band"><span>Bagian 4 · Mulai · Bab 7</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<img class="hero" src="assets/bab7.jpg" alt="">
+<p>Mami sudah membaca enam bab. Mungkin sebagian sudah kamu coba, mungkin sebagian masih tersimpan di kepala. Keduanya tidak apa-apa. Bab terakhir ini merangkum semuanya jadi satu tantangan sederhana: <b>satu perbaikan per hari, selama tujuh hari.</b></p>
+<p>Mengubah seluruh pagi sekaligus hampir selalu terasa berat, lalu berhenti di hari ketiga. Satu perbaikan kecil yang berhasil setiap hari jauh lebih mungkin bertahan.</p>
+<h2><span>Aturan Challenge</span></h2>
+<ol>
+<li><b>Satu perbaikan per hari, tidak lebih.</b> Tujuan kita bukan cepat, tapi bertahan.</li>
+<li><b>Perbaikan hari sebelumnya tetap dijalankan.</b> Semuanya menumpuk pelan-pelan.</li>
+<li><b>Tidak ada hari yang "gagal".</b> Kalau satu hari terlewat, cukup lanjutkan besoknya.</li>
+<li><b>Isi tracker setiap sore atau malam.</b> Hanya butuh dua menit.</li>
+<li><b>Boleh mulai hari apa saja.</b> Banyak ibu merasa lebih mudah mulai Minggu malam.</li>
+</ol>
+<div class="card y"><div class="ct">Hari 1: Siapkan Baju Malam Ini <small>(Bab 2)</small></div><ul class="cb "><li><span class="box"></span><span>Tentukan tempat baju untuk besok</span></li><li><span class="box"></span><span>Siapkan baju semua orang yang berangkat</span></li></ul><p class="small">Perhatikan besok: apakah pagi terasa lebih cepat tanpa memilih baju?</p></div>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">34</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-sun " data-n="35"><div class="band"><span>Bagian 4 · Mulai · Bab 7</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.04">
+<div class="card "><div class="ct">Hari 2: Bangun Stasiun Siap Berangkat <small>(Bab 2)</small></div><ul class="cb "><li><span class="box"></span><span>Tentukan lokasi stasiun</span></li><li><span class="box"></span><span>Semua tas, sepatu, kunci sudah di stasiun sebelum tidur</span></li><li><span class="box"></span><span>Tetap siapkan baju besok</span></li></ul><p class="small">Perhatikan besok: berapa kali terdengar "ada yang lihat ... nggak?"</p></div>
+<div class="card "><div class="ct">Hari 3: Mami Siap Duluan <small>(Bab 3)</small></div><ul class="cb "><li><span class="box"></span><span>Pasang alarm sesuai jam &quot;Mami bangun&quot;</span></li><li><span class="box"></span><span>Besok pagi: selesai bersiap sebelum membangunkan anak</span></li><li><span class="box"></span><span>Tetap jalankan Hari 1 dan 2</span></li></ul><p class="small">Perhatikan besok: apakah perhatianmu terasa lebih utuh untuk anak?</p></div>
+<div class="card "><div class="ct">Hari 4: Jalankan Timeline <small>(Bab 3)</small></div><ul class="cb "><li><span class="box"></span><span>Timeline versimu sudah terisi dan ditempel</span></li><li><span class="box"></span><span>Besok pagi: ikuti urutan timeline</span></li><li><span class="box"></span><span>Catat langkah mana yang paling molor</span></li><li><span class="box"></span><span>Tetap jalankan Hari 1&ndash;3</span></li></ul></div>
+<div class="card "><div class="ct">Hari 5: Kenalkan Chart Rutinitas <small>(Bab 4)</small></div><ul class="cb "><li><span class="box"></span><span>Chart rutinitas dibuat dan ditempel (Bonus 1)</span></li><li><span class="box"></span><span>Cara menandai langkah sudah ditentukan</span></li><li><span class="box"></span><span>Tulis dua skrip pengganti teriak dan tempel di dekat timeline</span></li><li><span class="box"></span><span>Tetap jalankan Hari 1&ndash;4</span></li></ul><p class="small">Perhatikan besok: berapa kali kamu perlu mengulang instruksi?</p></div>
+<div class="card "><div class="ct">Hari 6: Siapkan Rencana B <small>(Bab 5)</small></div><ul class="cb "><li><span class="box"></span><span>Isi Daftar Pendamping Cadangan</span></li><li><span class="box"></span><span>Simpan template pesan izin sekolah dan kantor di HP</span></li><li><span class="box"></span><span>Cek atau belanja Stok Pagi Darurat</span></li><li><span class="box"></span><span>Tetap jalankan Hari 1&ndash;5</span></li></ul></div>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">35</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-sun " data-n="36"><div class="band"><span>Bagian 4 · Mulai · Bab 7</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.12">
+<div class="card m"><div class="ct">Hari 7: Satu Tugas Tetap untuk Suami <small>(Bab 6)</small></div><ul class="cb "><li><span class="box"></span><span>Mengobrol dengan suami (atau anggota keluarga yang membantu)</span></li><li><span class="box"></span><span>Satu tugas tetap sudah disepakati</span></li><li><span class="box"></span><span>Template pembagian tugas terisi dan ditempel</span></li><li><span class="box"></span><span>Tetap jalankan Hari 1&ndash;6</span></li></ul><p class="small">Kenapa di hari terakhir? Karena setelah enam hari, kamu sudah punya sistem nyata untuk ditunjukkan, bukan hanya rencana.</p></div>
+<h2><span>Tracker 7 Hari</span></h2>
+<p>Isi setiap sore atau malam. Versi siap cetak tersedia di Bonus 4. Setelah hari ketujuh, bandingkan dengan catatan pagi pertamamu di Bab 1.</p>
+<h2><span>Setelah Hari Ketujuh</span></h2>
+<ul>
+<li><b>Pertahankan yang berhasil.</b> Simpan yang membuat pagi lebih ringan, sesuaikan yang masih terasa berat.</li>
+<li><b>Evaluasi sebulan sekali.</b> Anak tumbuh, jadwal sekolah berubah; luangkan lima belas menit di akhir bulan.</li>
+<li><b>Naikkan kemandirian anak pelan-pelan,</b> satu langkah demi satu langkah.</li>
+<li><b>Kembali ke buku ini kapan saja.</b> Setelah libur panjang atau anak naik kelas, ulangi Challenge 7 Hari. Biasanya jauh lebih cepat karena dasarnya sudah ada.</li>
+</ul>
+<div class="aksi"><div class="ah"><img class="" src="assets/ic-aksi.png" alt=""><div class="at">Tentukan tanggal mulai Challenge 7 Hari dan tulis di kalender.</div></div><div class="ab"><table class="fill"><colgroup><col style="width:46%"><col style="width:54%"></colgroup><thead><tr><th>Yang ditentukan</th><th>Isianmu</th></tr></thead><tbody><tr><td>Tanggal mulai Hari 1</td><td>&nbsp;</td></tr><tr><td>Waktu mengisi tracker setiap hari</td><td>&nbsp;</td></tr><tr><td>Tanggal evaluasi bulanan pertama</td><td>&nbsp;</td></tr></tbody></table><p class="">Satu tanggal. Itu langkah pertamanya.</p></div></div>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">36</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-cream " data-n="37"><div class="band"><span>Penutup</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.0">
+<img class="hero" src="assets/penutup.jpg" alt="">
+<h2><span>Penutup</span></h2>
+<p>Mami, pagi yang kamu jalani setiap hari adalah pekerjaan yang jarang terlihat. Tidak ada yang memberi nilai untuk bekal yang sudah siap, anak yang berangkat dengan baju lengkap, atau kamu yang tiba di kantor tepat waktu setelah mengurus semuanya.</p>
+<p>Buku ini tidak menjanjikan pagi yang sempurna. Akan tetap ada hari yang berantakan, anak yang rewel, dan alarm yang terlewat. Yang kamu punya sekarang adalah sistem yang bisa diulang, dan cara untuk kembali ke jalur setelah hari yang sulit.</p>
+<h2><span>Satu Permintaan Terakhir, Mami</span></h2>
+<p>Workbook ini hanya akan bekerja kalau <b>dikerjakan</b>, bukan hanya dibaca.</p>
+<p>Kita semua pernah begitu: beli planner, semangat di hari pertama, lalu filenya tenggelam di folder Download. Atau sudah dicetak rapi, lalu tersimpan di laci dan tidak pernah disentuh lagi. Buku ini dibuat supaya tidak bernasib sama.</p>
+<p>Kamu tidak perlu mengerjakan semuanya. Tapi kerjakan <b>sesuatu</b>, dan mulailah malam ini:</p>
+<ul>
+<li><b>Cetak satu halaman saja,</b> checklist malam di Bonus 2, lalu tempel di kulkas.</li>
+<li><b>Isi satu tabel saja,</b> misalnya Aksi Hari Ini di Bab 1.</li>
+<li><b>Tulis tanggal mulai Challenge 7 Hari</b> di kalender HP-mu sekarang, sebelum menutup file ini.</li>
+</ul>
+<p>Tidak apa-apa kalau tulisannya berantakan, tabelnya dicoret-coret, atau checklist-nya bolong di beberapa malam. Workbook yang penuh coretan justru tanda sedang dipakai.</p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">37</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-cream " data-n="38"><div class="band"><span>Penutup</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.1">
+<div class="aksi"><div class="ah"><img class="" src="assets/ic-aksi.png" alt=""><div class="at">Janji kecil untuk diri sendiri</div></div><div class="ab"><table class="fill"><colgroup><col style="width:58%"><col style="width:42%"></colgroup><thead><tr><th>Yang akan aku lakukan</th><th>Kapan</th></tr></thead><tbody><tr><td>Halaman pertama yang aku cetak</td><td>&nbsp;</td></tr><tr><td>Aksi pertama yang aku kerjakan</td><td>&nbsp;</td></tr><tr><td>Tanggal mulai Challenge 7 Hari</td><td>&nbsp;</td></tr></tbody></table><p class="">Satu langkah kecil yang dikerjakan jauh lebih berarti daripada seluruh buku yang hanya disimpan.</p></div></div>
+<div class="bigmsg" style="margin-top:8mm">Semoga lebih banyak pagi yang <em>tenang</em>, Mami.</div>
+<p class="big">Semoga lebih banyak pagi di rumahmu yang berjalan tenang. Dan semoga di perjalanan berangkat kerja, yang ikut bersamamu bukan lagi rasa bersalah, tapi sedikit lega.</p>
+<p class="center" style="margin-top:12mm"><span class="logowrap"><img class="logo" src="assets/logo.png" alt=""></span></p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">38</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-dark " data-n="39"><div class="band"><span>Bonus printable</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.0">
+<div style="text-align:center;padding-top:42mm">
+<div class="stk">Bonus printable</div>
+<div class="bigmsg" style="font-size:34pt;margin:7mm 0 5mm;color:#FFD23F">Siap Cetak,<br><span style="color:#fff">Siap Tempel</span></div>
+<p class="big">Empat lembar yang bisa kamu cetak dan pakai langsung.</p>
+<div style="max-width:120mm;margin:8mm auto 0;text-align:left">
+<table class=""><colgroup><col style="width:14%"><col style="width:86%"></colgroup><thead><tr><th>#</th><th>Printable</th></tr></thead><tbody><tr><td>1</td><td>Chart Rutinitas Pagi Anak (balita &amp; SD)</td></tr><tr><td>2</td><td>Checklist Malam 15 Menit (tempel kulkas)</td></tr><tr><td>3</td><td>30 Ide Sarapan dan Bekal 5 Menit</td></tr><tr><td>4</td><td>Tracker Challenge 7 Hari</td></tr></tbody></table>
+</div></div>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">39</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-cream " data-n="40"><div class="band"><span>Bonus 1 · Chart rutinitas</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.0">
+<div class="bn"><span class="tag">Bonus 1 &middot; Versi balita (2&ndash;5 tahun)</span><span class="tt">Pagi [Nama Anak]</span></div>
+<p>Cetak, tempel sejajar mata anak. Pilih satu versi. Jepit jepitan jemuran di bawah tiap gambar, lalu pindahkan ke kotak "Sudah" setiap langkah selesai.</p>
+<img class="strip" src="assets/chart-laki.jpg" alt="">
+<table class="tall"><thead><tr><th>Bangun</th><th>Pipis</th><th>Sikat Gigi</th><th>Pakai Baju</th><th>Makan</th><th>Pakai Sepatu</th></tr></thead><tbody><tr><td>Sudah <span class='box'></span></td><td>Sudah <span class='box'></span></td><td>Sudah <span class='box'></span></td><td>Sudah <span class='box'></span></td><td>Sudah <span class='box'></span></td><td>Sudah <span class='box'></span></td></tr></tbody></table>
+<hr style="border:0;border-top:.5mm dashed #1E1B19;margin:5mm 0">
+<img class="strip" src="assets/chart-hijab.jpg" alt="">
+<table class="tall"><thead><tr><th>Bangun</th><th>Pipis</th><th>Sikat Gigi</th><th>Pakai Baju</th><th>Makan</th><th>Pakai Sepatu</th></tr></thead><tbody><tr><td>Sudah <span class='box'></span></td><td>Sudah <span class='box'></span></td><td>Sudah <span class='box'></span></td><td>Sudah <span class='box'></span></td><td>Sudah <span class='box'></span></td><td>Sudah <span class='box'></span></td></tr></tbody></table>
+<p class="center big"><b>Hore, aku siap berangkat!</b></p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">40</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-cream " data-n="41"><div class="band"><span>Bonus 1 · Chart rutinitas</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.0">
+<div class="bn"><span class="tag">Bonus 1 &middot; Versi anak SD (6&ndash;10 tahun)</span><span class="tt">Checklist Pagi [Nama Anak]</span></div>
+<p>Laminating dulu, lalu centang pakai spidol yang bisa dihapus.</p>
+<table class=""><colgroup><col style="width:44%"><col style="width:11.2%"><col style="width:11.2%"><col style="width:11.2%"><col style="width:11.2%"><col style="width:11.2%"></colgroup><thead><tr><th>Langkah</th><th>Sen</th><th>Sel</th><th>Rab</th><th>Kam</th><th>Jum</th></tr></thead><tbody><tr><td>Bangun &amp; rapikan selimut</td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td></tr><tr><td>Mandi</td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td></tr><tr><td>Sikat gigi</td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td></tr><tr><td>Pakai seragam lengkap</td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td></tr><tr><td>Sarapan</td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td></tr><tr><td>Taruh piring di tempat cuci</td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td></tr><tr><td>Cek tas: buku, PR, botol minum, bekal</td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td></tr><tr><td>Pakai sepatu</td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td></tr><tr><td>Siap di pintu</td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td></tr></tbody></table>
+<p class="center big"><b>Semua tercentang = aku keren hari ini!</b></p>
+<h2><span>Versi kosong (sesuaikan dengan timeline-mu)</span></h2>
+<table class="tall"><colgroup><col style="width:44%"><col style="width:11.2%"><col style="width:11.2%"><col style="width:11.2%"><col style="width:11.2%"><col style="width:11.2%"></colgroup><thead><tr><th>Langkah</th><th>Sen</th><th>Sel</th><th>Rab</th><th>Kam</th><th>Jum</th></tr></thead><tbody><tr><td>&nbsp;</td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td></tr><tr><td>&nbsp;</td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td></tr><tr><td>&nbsp;</td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td></tr><tr><td>&nbsp;</td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td></tr><tr><td>&nbsp;</td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td></tr><tr><td>&nbsp;</td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td><td><span class='box'></span></td></tr></tbody></table>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">41</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-night " data-n="42"><div class="band"><span>Bonus 2 · Tempel di kulkas</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.05">
+<div class="bn" style="background:#fff;color:var(--ink)"><span class="tag">Bonus 2</span><span class="tt">Tempel di Kulkas</span></div>
+<img class="strip" src="assets/bonus2.jpg" alt="">
+<div class="grid2">
+<div><div class="card y"><div class="ct">&#9312; Baju</div><ul class="cb "><li><span class="box"></span><span>Baju anak lengkap (sampai kaus kaki)</span></li><li><span class="box"></span><span>Baju kerja Mami lengkap</span></li><li><span class="box"></span><span>Taruh di tempat baju besok</span></li></ul></div>
+<div class="card y"><div class="ct">&#9314; Makanan</div><ul class="cb "><li><span class="box"></span><span>Menu sarapan diputuskan</span></li><li><span class="box"></span><span>Menu bekal diputuskan</span></li><li><span class="box"></span><span>Bahan disiapkan</span></li><li><span class="box"></span><span>Kotak bekal siap</span></li></ul></div></div>
+<div><div class="card m"><div class="ct">&#9313; Tas &amp; Stasiun</div><ul class="cb "><li><span class="box"></span><span>Tas anak dicek (buku, PR, surat)</span></li><li><span class="box"></span><span>Tas Mami dicek (ID, charger, dompet, kunci)</span></li><li><span class="box"></span><span>Botol minum dicuci</span></li><li><span class="box"></span><span>Semua tas di stasiun</span></li></ul></div>
+<div class="card m"><div class="ct">&#9315; Cek Besok</div><ul class="cb "><li><span class="box"></span><span>Ada acara khusus?</span></li><li><span class="box"></span><span>Bensin / saldo aman?</span></li><li><span class="box"></span><span>Alarm terpasang</span></li></ul></div></div></div>
+<div class="card o"><div class="ct">Malam capek? Versi 5 menit</div><ul class="cb "><li><span class="box"></span><span>Baju besok ditentukan</span></li><li><span class="box"></span><span>Tas di stasiun</span></li><li><span class="box"></span><span>Alarm terpasang</span></li></ul></div>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">42</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-cream " data-n="43"><div class="band"><span>Bonus 3 · 30 ide sarapan & bekal</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.0">
+<div class="bn"><span class="tag">Bonus 3</span><span class="tt">30 Ide Sarapan dan Bekal 5 Menit</span></div>
+<p>"5 menit" adalah waktu di pagi hari, dengan asumsi bahan sudah disiapkan malam sebelumnya. Pilih 5&ndash;7 ide untuk dirotasi setiap minggu. Sesuaikan dengan selera, usia, dan kebutuhan makan anakmu.</p>
+<img class="strip" src="assets/bonus3.jpg" alt="">
+<h2><span>Nasi &amp; Lauk</span></h2>
+<table class=""><colgroup><col style="width:7%"><col style="width:31%"><col style="width:33%"><col style="width:29%"></colgroup><thead><tr><th>No</th><th>Menu</th><th>Siapkan malam</th><th>Pagi hari</th></tr></thead><tbody><tr><td>1</td><td>Nasi telur dadar gulung</td><td>Kocok telur + daun bawang, simpan di kulkas</td><td>Dadar, gulung, potong</td></tr><tr><td>2</td><td>Nasi kepal isi abon</td><td>Siapkan nasi dan abon</td><td>Kepal, isi, bungkus plastik</td></tr><tr><td>3</td><td>Nasi goreng sederhana</td><td>Siapkan nasi dan bumbu</td><td>Tumis 3&ndash;4 menit</td></tr><tr><td>4</td><td>Nasi + nugget/sosis</td><td>Siapkan nasi</td><td>Goreng/panggang nugget</td></tr><tr><td>5</td><td>Nasi + telur ceplok kecap</td><td>Siapkan nasi</td><td>Ceplok telur, beri kecap</td></tr><tr><td>6</td><td>Nasi + ayam suwir</td><td>Suwir ayam masak dari sore</td><td>Panaskan, tata di kotak</td></tr><tr><td>7</td><td>Nasi + tempe/tahu bacem</td><td>Bacem akhir pekan, simpan di kulkas</td><td>Goreng sebentar</td></tr><tr><td>8</td><td>Onigiri tuna mayo</td><td>Campur tuna + mayo</td><td>Bentuk nasi, isi, bungkus</td></tr></tbody></table>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">43</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-cream " data-n="44"><div class="band"><span>Bonus 3 · 30 ide sarapan & bekal</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.0">
+<h2><span>Roti</span></h2>
+<table class=""><colgroup><col style="width:7%"><col style="width:31%"><col style="width:33%"><col style="width:29%"></colgroup><thead><tr><th>No</th><th>Menu</th><th>Siapkan malam</th><th>Pagi hari</th></tr></thead><tbody><tr><td>9</td><td>Roti selai kacang + pisang</td><td>Tidak perlu</td><td>Oles, iris pisang, tangkupkan</td></tr><tr><td>10</td><td>Roti telur</td><td>Kocok telur</td><td>Celup roti, panggang di teflon</td></tr><tr><td>11</td><td>Sandwich keju + ham/smoked beef</td><td>Tidak perlu</td><td>Susun, tangkupkan, potong</td></tr><tr><td>12</td><td>Roti gulung sosis</td><td>Siapkan sosis</td><td>Gulung, panggang sebentar</td></tr><tr><td>13</td><td>Roti bakar cokelat/keju</td><td>Tidak perlu</td><td>Oles, panggang di teflon</td></tr><tr><td>14</td><td>Roti isi telur orak-arik</td><td>Tidak perlu</td><td>Orak-arik, isi ke roti</td></tr></tbody></table>
+<h2><span>Mie &amp; Pasta</span></h2>
+<table class=""><colgroup><col style="width:7%"><col style="width:31%"><col style="width:33%"><col style="width:29%"></colgroup><thead><tr><th>No</th><th>Menu</th><th>Siapkan malam</th><th>Pagi hari</th></tr></thead><tbody><tr><td>15</td><td>Makaroni keju</td><td>Rebus makaroni, simpan di kulkas</td><td>Panaskan dengan susu + keju</td></tr><tr><td>16</td><td>Spageti saus bolognese</td><td>Saus dari akhir pekan, rebus spageti</td><td>Panaskan, campur</td></tr><tr><td>17</td><td>Bihun goreng</td><td>Rendam bihun, siapkan bumbu</td><td>Tumis 3&ndash;4 menit</td></tr><tr><td>18</td><td>Mie telur rebus</td><td>Siapkan sayur yang sudah dipotong</td><td>Rebus mie + telur + sayur</td></tr></tbody></table>
+<h2><span>Siap Beku <small style='font-family:Poppins;font-size:8pt;text-transform:none'>(dibuat akhir pekan, simpan di freezer)</small></span></h2>
+<table class=""><colgroup><col style="width:7%"><col style="width:31%"><col style="width:33%"><col style="width:29%"></colgroup><thead><tr><th>No</th><th>Menu</th><th>Siapkan akhir pekan</th><th>Pagi hari</th></tr></thead><tbody><tr><td>27</td><td>Risol/lumpia</td><td>Buat dan bekukan</td><td>Goreng/air fryer</td></tr><tr><td>28</td><td>Nugget ayam buatan sendiri</td><td>Buat dan bekukan</td><td>Goreng/panggang</td></tr><tr><td>29</td><td>Perkedel kentang</td><td>Buat dan bekukan</td><td>Goreng</td></tr><tr><td>30</td><td>Martabak telur mini</td><td>Buat dan bekukan</td><td>Goreng/panggang</td></tr></tbody></table>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">44</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-cream " data-n="45"><div class="band"><span>Bonus 3 · 30 ide sarapan & bekal</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.0">
+<h2><span>Ringan &amp; Cepat</span></h2>
+<table class=""><colgroup><col style="width:7%"><col style="width:31%"><col style="width:33%"><col style="width:29%"></colgroup><thead><tr><th>No</th><th>Menu</th><th>Siapkan malam</th><th>Pagi hari</th></tr></thead><tbody><tr><td>19</td><td>Oatmeal/overnight oats</td><td>Campur oat + susu, simpan di kulkas</td><td>Tambah buah, siap makan</td></tr><tr><td>20</td><td>Sereal + susu</td><td>Tidak perlu</td><td>Tuang</td></tr><tr><td>21</td><td>Pancake</td><td>Buat adonan, simpan di kulkas</td><td>Tuang, masak di teflon</td></tr><tr><td>22</td><td>Telur rebus + buah</td><td>Rebus telur, simpan di kulkas</td><td>Kupas, siapkan buah</td></tr><tr><td>23</td><td>Kentang rebus + telur</td><td>Rebus kentang</td><td>Panaskan, tambah telur</td></tr><tr><td>24</td><td>Jagung rebus</td><td>Rebus dari malam</td><td>Panaskan</td></tr><tr><td>25</td><td>Ubi/singkong kukus</td><td>Kukus dari malam</td><td>Panaskan</td></tr><tr><td>26</td><td>Bubur instan + topping</td><td>Siapkan topping</td><td>Seduh, beri topping</td></tr></tbody></table>
+<h2><span>Daftar Menu Mingguanku</span></h2>
+<table class="tall"><colgroup><col style="width:20%"><col style="width:40%"><col style="width:40%"></colgroup><thead><tr><th>Hari</th><th>Sarapan</th><th>Bekal</th></tr></thead><tbody><tr><td>Senin</td><td></td><td></td></tr><tr><td>Selasa</td><td></td><td></td></tr><tr><td>Rabu</td><td></td><td></td></tr><tr><td>Kamis</td><td></td><td></td></tr><tr><td>Jumat</td><td></td><td></td></tr></tbody></table>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">45</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-sun " data-n="46"><div class="band"><span>Bonus 4 · Tracker challenge</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.0">
+<div class="bn"><span class="tag">Bonus 4</span><span class="tt">Challenge Pagi Tanpa Drama</span></div>
+<p><b>Tanggal mulai:</b> ____________________</p>
+<table class="tall"><colgroup><col style="width:7%"><col style="width:22%"><col style="width:9%"><col style="width:13%"><col style="width:16%"><col style="width:16%"><col style="width:17%"></colgroup><thead><tr><th>Hari</th><th>Perbaikan</th><th>Jalan?</th><th>Jam berangkat</th><th>Suara naik (0 / 1&ndash;2 / 3+)</th><th>Pagi terasa</th><th>Catatan kecil</th></tr></thead><tbody><tr><td>1</td><td>Siapkan baju malam</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>2</td><td>Stasiun Siap Berangkat</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>3</td><td>Mami siap duluan</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>4</td><td>Jalankan timeline</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>5</td><td>Chart rutinitas anak</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>6</td><td>Siapkan Rencana B</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>7</td><td>Satu tugas tetap suami</td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<p><b>Lingkari wajah yang paling menggambarkan pagimu hari itu.</b></p>
+<div class="mood"><img class="" src="assets/mood1.png" alt=""><img class="" src="assets/mood2.png" alt=""><img class="" src="assets/mood3.png" alt=""></div>
+<h2><span>Sebelum vs Sesudah</span></h2>
+<table class="tall"><colgroup><col style="width:26%"><col style="width:40%"><col style="width:34%"></colgroup><thead><tr><th></th><th>Pagi pertama (catatan Bab 1)</th><th>Hari ke-7</th></tr></thead><tbody><tr><td>Jam bangun</td><td></td><td></td></tr><tr><td>Jam berangkat</td><td></td><td></td></tr><tr><td>Momen paling macet</td><td></td><td></td></tr></tbody></table>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">46</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+<section class="pg t-sun " data-n="47"><div class="band"><span>Bonus 4 · Tracker challenge</span><i>Pagi Tanpa Drama</i></div><div class="in"><div style="zoom:1.0">
+<div class="card y"><div class="ct">Yang paling berhasil untukku:</div><div style='height:42mm'></div></div>
+<div class="card m"><div class="ct">Yang masih perlu disesuaikan:</div><div style='height:42mm'></div></div>
+<div class="bigmsg" style="margin-top:10mm;text-align:center">Pagi bukan soal anak <em>lambat</em>.<br>Sistemnya yang <em>belum ada</em>.<br><span style="font-size:14pt">Dan sekarang, sistemnya sudah ada di tanganmu.</span></div>
+<p class="center" style="margin-top:8mm"><span class="logowrap"><img class="logo" src="assets/logo.png" alt=""></span></p>
+</div></div><div class="foot"><span>Pagi Tanpa Drama &middot; &copy; ToolkitParenting</span><span class="n">47</span><span>Untuk penggunaan pribadi, dilarang disebarluaskan</span></div></section>
+</body></html>
