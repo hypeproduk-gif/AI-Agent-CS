@@ -84,7 +84,7 @@ header p{color:var(--muted);margin-top:8px;font-size:14.5px;max-width:500px;marg
 .try-progress-fill{height:4px;background:#fff;border-radius:2px;transition:.3s}
 
 /* ===== SHARED CARD ===== */
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px 22px 18px;box-shadow:var(--sh);margin-bottom:14px}
+.card{scroll-margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px 22px 18px;box-shadow:var(--sh);margin-bottom:14px}
 .qhead{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px}
 .qnum{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap;padding-top:2px}
 .badges{display:flex;flex-wrap:wrap;gap:5px}
@@ -1088,8 +1088,8 @@ function latPickKat(i, pi, val) {
   renderLatCard();
 }
 
-function latGo(d) { setLatIdx(getLatIdx()+d); renderLatCard(); window.scrollTo({top:0,behavior:'smooth'}); }
-function latJump(i) { setLatIdx(i); renderLatCard(); window.scrollTo({top:0,behavior:'smooth'}); }
+function latGo(d) { setLatIdx(getLatIdx()+d); renderLatCard(); document.getElementById('latCard').scrollIntoView({behavior:'smooth',block:'start'}); }
+function latJump(i) { setLatIdx(i); renderLatCard(); document.getElementById('latCard').scrollIntoView({behavior:'smooth',block:'start'}); }
 
 function latFinish() {
   const list = getCurrentLat();
