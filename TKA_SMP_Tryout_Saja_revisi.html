@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TKA SMP Kelas 9 — Simulasi Tryout Level Lanjut</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lora:ital,wght@0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F4F6F5;
+  --card:#FFFFFF;
+  --ink:#1A2630;
+  --muted:#5A6870;
+  --line:#E0E6E4;
+  --teal:#1B3A6B;
+  --teal-dark:#12294D;
+  --teal-soft:#E4EBF5;
+  --green:#1A8050;
+  --green-soft:#E4F0E9;
+  --red:#C0392B;
+  --red-soft:#FAECEB;
+  --amber:#C87D1A;
+  --amber-soft:#FBF2E2;
+  --blue:#0F6B65;
+  --blue-soft:#E3EFEE;
+  --r:14px;
+  --sh:0 1px 3px rgba(26,38,48,.05),0 6px 18px rgba(26,38,48,.06);
+  --mode-try:#1B3A6B;
+  --mode-lat:#0F6B65;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;padding-bottom:80px}
+.wrap{max-width:760px;margin:0 auto;padding:0 18px}
+
+/* ===== HEADER ===== */
+header{padding:32px 0 0;text-align:center}
+.kicker{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);background:var(--teal-soft);padding:5px 12px;border-radius:999px;margin-bottom:12px}
+header h1{font-size:clamp(22px,5vw,30px);font-weight:800;line-height:1.2;letter-spacing:-.02em}
+header h1 em{font-style:normal;color:var(--teal)}
+header p{color:var(--muted);margin-top:8px;font-size:14.5px;max-width:500px;margin-left:auto;margin-right:auto}
+.standar{margin-top:14px;font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);padding:6px 14px;border-radius:999px}
+.standar b{color:var(--ink);font-weight:600}
+
+/* ===== MODE SWITCHER ===== */
+.mode-bar{display:flex;gap:0;margin:24px 0 0;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px;box-shadow:var(--sh)}
+.mode-btn{flex:1;padding:11px 8px;border-radius:999px;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:.18s;color:var(--muted);background:none;text-align:center}
+.mode-btn span{display:block;font-size:10.5px;font-weight:500;opacity:.75;margin-top:1px}
+.mode-btn.act-try{background:var(--mode-try);color:#fff}
+.mode-btn.act-lat{background:var(--mode-lat);color:#fff}
+
+/* ===== TRYOUT SECTION ===== */
+#trySection{}
+.try-intro{margin-top:20px}
+.try-info{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin-bottom:16px;box-shadow:var(--sh)}
+.try-info h3{font-size:14px;font-weight:700;margin-bottom:10px;color:var(--ink)}
+.try-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.try-info-item{background:var(--teal-soft);border-radius:10px;padding:10px 14px}
+.try-info-item .label{font-size:11px;color:var(--teal-dark);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.try-info-item .val{font-size:17px;font-weight:800;color:var(--teal-dark);margin-top:2px}
+.paket-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.paket-card{background:var(--card);border:1.5px solid var(--line);border-radius:var(--r);padding:16px;cursor:pointer;transition:.18s;box-shadow:var(--sh)}
+.paket-card:hover{border-color:var(--teal);transform:translateY(-2px)}
+.paket-card.done{border-color:var(--green);background:var(--green-soft)}
+.paket-card.active{border-color:var(--teal);background:var(--teal-soft)}
+.pk-num{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.pk-title{font-size:15px;font-weight:800;color:var(--ink)}
+.pk-sub{font-size:12px;color:var(--muted);margin-top:3px}
+.pk-score{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;font-weight:700}
+.pk-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex:none}
+.pk-dot.no{background:var(--red)}
+
+/* ===== TRYOUT SESSION ===== */
+#trySession{display:none} /* dikelola JS */
+.session-header{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--teal);border-radius:12px;margin-bottom:16px;color:#fff}
+.sess-mapel{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.8}
+.sess-paket{font-size:15px;font-weight:800}
+.sess-timer-wrap{margin-left:auto;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);padding:7px 14px;border-radius:999px}
+.sess-timer{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.05em}
+.timer-toggle{background:none;border:none;color:#fff;cursor:pointer;font-size:14px;opacity:.8;font-family:inherit}
+.try-progress-bar{height:4px;background:rgba(255,255,255,.25);border-radius:2px;margin-bottom:16px}
+.try-progress-fill{height:4px;background:#fff;border-radius:2px;transition:.3s}
+
+/* ===== SHARED CARD ===== */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px 22px 18px;box-shadow:var(--sh);margin-bottom:14px}
+.qhead{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px}
+.qnum{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap;padding-top:2px}
+.badges{display:flex;flex-wrap:wrap;gap:5px}
+.badge{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.b-el{background:var(--teal-soft);color:var(--teal-dark)}
+.b-tp{background:var(--blue-soft);color:var(--blue)}
+.b-ipa{background:var(--amber-soft);color:var(--amber)}
+.b-try{background:var(--teal);color:#fff}
+
+.teks{background:#F9FBFA;border:1px solid var(--line);border-left:3px solid var(--teal);border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:14px;line-height:1.65}
+.teks-judul{font-weight:700;font-size:13px;color:var(--teal-dark);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em}
+.teks p{margin-bottom:8px;color:#2E3E48}
+.teks p:last-child{margin-bottom:0}
+
+.soal{font-size:15px;font-weight:600;line-height:1.5;margin-bottom:14px;color:var(--ink)}
+.hint{font-size:12px;color:var(--muted);margin-bottom:10px;font-style:italic}
+
+/* Options */
+.opts{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);cursor:pointer;transition:.15s;font-size:14px}
+.opt:hover:not(.locked){background:var(--teal-soft);border-color:var(--teal)}
+.opt.selected{background:var(--teal-soft);border-color:var(--teal)}
+.opt.locked{cursor:default}
+.opt.correct{background:var(--green-soft);border-color:var(--green)}
+.opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.mark{min-width:26px;height:26px;border-radius:50%;background:var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--muted);flex:none;margin-top:1px}
+.opt.selected .mark{background:var(--teal);color:#fff}
+.opt.correct .mark{background:var(--green);color:#fff}
+.opt.wrong .mark{background:var(--red);color:#fff}
+.otext{flex:1;line-height:1.4}
+
+/* KAT */
+.kat{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.kat-row{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:#fff}
+.kat-row.res-ok{border-color:var(--green);background:var(--green-soft)}
+.kat-row.res-no{border-color:var(--red);background:var(--red-soft)}
+.kt{flex:1;font-size:13.5px;line-height:1.45}
+.kat-choose{display:flex;gap:6px;flex:none}
+.kbtn{font-family:inherit;font-size:12px;font-weight:700;padding:5px 10px;border-radius:8px;border:1.5px solid var(--line);background:#fff;cursor:pointer;color:var(--muted);transition:.13s}
+.kbtn.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.kbtn.ans{background:var(--green);border-color:var(--green);color:#fff}
+
+/* Actions */
+.actions{display:flex;gap:8px;align-items:center;margin-top:4px}
+.spacer{flex:1}
+.btn{font-family:inherit;font-size:13.5px;font-weight:700;padding:10px 20px;border-radius:999px;border:none;cursor:pointer;transition:.15s}
+.btn-ghost{background:var(--card);border:1.5px solid var(--line);color:var(--muted)}
+.btn-ghost:hover:not(:disabled){border-color:var(--teal);color:var(--teal)}
+.btn-ghost:disabled{opacity:.4;cursor:default}
+.btn-primary{background:var(--teal);color:#fff}
+.btn-primary:hover:not(:disabled){background:var(--teal-dark)}
+.btn-primary:disabled{opacity:.4;cursor:default}
+.btn-finish{background:var(--green);color:#fff}
+
+/* Pembahasan */
+.bahas{display:none;margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+.bahas.show{display:block}
+.bh{font-size:12px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.verdict{font-size:13.5px;font-weight:700;margin-bottom:8px;padding:8px 12px;border-radius:8px}
+.verdict.ok{background:var(--green-soft);color:var(--green)}
+.verdict.no{background:var(--red-soft);color:var(--red)}
+.bahas>div:last-child{font-size:13.5px;line-height:1.55;color:#3A4A55}
+
+/* Progress bar (Latihan) */
+.prog-wrap{margin:16px 0 0}
+.prog-bar{height:6px;background:var(--line);border-radius:3px}
+.prog-fill{height:6px;background:var(--teal);border-radius:3px;transition:.3s}
+.prog-txt{font-size:12px;color:var(--muted);margin-top:6px;display:flex;justify-content:space-between}
+
+/* Palette */
+.pal-wrap{margin:16px 0}
+.pal-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.palette{display:flex;flex-wrap:wrap;gap:5px}
+.pnum{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--line);background:var(--card);font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.13s}
+.pnum:hover{border-color:var(--teal)}
+.pnum.current{border-color:var(--teal);background:var(--teal);color:#fff}
+.pnum.done-ok{border-color:var(--green);background:var(--green-soft);color:var(--green)}
+.pnum.done-no{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.pnum.try-ans{border-color:var(--teal);background:var(--teal-soft);color:var(--teal-dark)}
+
+/* Tabs (Latihan mode) */
+.tabs-lat{display:flex;gap:8px;margin:20px 0 16px;background:var(--card);border:1px solid var(--line);padding:5px;border-radius:999px;box-shadow:var(--sh)}
+.tab-lat{flex:1;text-align:center;padding:9px 8px;border-radius:999px;cursor:pointer;font-weight:600;font-size:13.5px;color:var(--muted);border:none;background:none;transition:.15s;font-family:inherit}
+.tab-lat span{display:block;font-size:10.5px;font-weight:500;opacity:.75;margin-top:1px}
+.tab-lat.act{background:var(--mode-lat);color:#fff}
+.tab-lat.act span{opacity:.85}
+.tab-ipa-lat.act{background:#8A6D1A}
+.tab-eng-lat.act{background:var(--blue)}
+.b-eng{background:var(--blue-soft);color:var(--blue)}
+
+/* IPA banner */
+.ipa-note{display:none;background:var(--amber-soft);border:1px solid #F0DDA8;border-radius:12px;padding:13px 16px;font-size:13px;line-height:1.5;color:#5F4E17;margin-bottom:16px}
+.ipa-note.show{display:block}
+.ipa-note b{color:#4A3D10}
+
+/* Summary screen */
+.summary{display:none;text-align:center;padding:32px 0}
+.summary.show{display:block}
+.sum-score{font-size:72px;font-weight:800;line-height:1;color:var(--teal);margin-bottom:4px}
+.sum-grade{font-size:15px;font-weight:600;color:var(--muted);margin-bottom:20px}
+.sum-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;max-width:360px;margin:0 auto 24px}
+.sum-item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 10px;text-align:center}
+.sum-num{font-size:22px;font-weight:800;margin-bottom:2px}
+.sum-lbl{font-size:11px;color:var(--muted);font-weight:600}
+.sum-ok .sum-num{color:var(--green)}
+.sum-no .sum-num{color:var(--red)}
+.sum-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+
+/* Tryout Result */
+.try-result{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px;text-align:center;box-shadow:var(--sh);margin-top:16px}
+.tr-title{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.tr-score{font-size:60px;font-weight:800;color:var(--teal);line-height:1;margin-bottom:4px}
+.tr-sub{font-size:13.5px;color:var(--muted);margin-bottom:16px}
+.tr-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.tr-item{border-radius:10px;padding:12px;text-align:center}
+.tr-item.ok-item{background:var(--green-soft)}
+.tr-item.no-item{background:var(--red-soft)}
+.tr-item .tn{font-size:22px;font-weight:800;margin-bottom:2px}
+.tr-item .tl{font-size:11.5px;font-weight:600;color:var(--muted)}
+.tr-item.ok-item .tn{color:var(--green)}
+.tr-item.no-item .tn{color:var(--red)}
+.tr-interpret{background:var(--teal-soft);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--teal-dark);text-align:left;line-height:1.5;margin-bottom:16px}
+.tr-interpret b{font-weight:700}
+
+/* Footer */
+.footer-note{text-align:center;font-size:12px;color:var(--muted);margin-top:24px;padding-top:16px;border-top:1px solid var(--line)}
+
+@media(max-width:500px){
+  .paket-grid{grid-template-columns:1fr 1fr}
+  .try-info-grid{grid-template-columns:1fr 1fr}
+  .sum-grid{grid-template-columns:1fr 1fr 1fr}
+  .tr-grid{grid-template-columns:1fr 1fr}
+  .card{padding:16px 16px 14px}
+}
+
+.brand{display:block;width:min(300px,76%);height:auto;margin:0 auto 16px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 12px}
+.fr{display:inline-flex;flex-direction:column;vertical-align:-0.5em;text-align:center;margin:0 .15em;line-height:1;font-size:.92em}
+.fr-n{padding:0 .3em;border-bottom:1.6px solid currentColor}.fr-d{padding:0 .3em}
+sup{font-size:.72em;vertical-align:.42em;line-height:0}
+.card{scroll-margin-top:12px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<!-- ===== HEADER ===== -->
+<header>
+  <img class='brand' src='data:image/webp;base64,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' alt='Toolkit Parenting - Alat bantu praktis untuk orang tua Indonesia' width='450' height='137'>
+  <div class="kicker">TKA SMP · Kelas 9</div>
+  <h1>Simulasi Tryout TKA SMP<br><em>Terstandar (level+1)</em></h1>
+  <p>2 paket tryout simulasi TKA level lanjut (HOTS), satu tingkat di atas soal latihan.</p>
+  <p style="margin-top:4px;font-size:10.5px;color:var(--muted)">*HOTS = <i>Higher Order Thinking Skills</i>, soal bernalar yang menuntut analisis dan pemecahan masalah — bukan sekadar hafalan — sesuai standar TKA resmi Kemendikdasmen.</p>
+  <div class="standar"><b>Matematika + Bahasa Indonesia</b>&nbsp;· Standar TKA SMP 2026 · Acuan Permendikdasmen No. 9/2025 &amp; Kepmendikdasmen No. 56/2026</div>
+<div style="margin:16px auto 0;max-width:660px;padding:10px 14px;font-size:12px;line-height:1.6;color:#7a3500;background:#FFF3E0;border:1px solid #F5C38A;border-bottom:2px solid #F97316;border-radius:10px;text-align:left"><b>⚠️ Ketentuan Penggunaan:</b> File ini didapatkan dari pembelian resmi ToolkitParenting dan hanya untuk penggunaan pribadi. Dilarang menyebarluaskan, menjual ulang, atau membagikan file ini kepada pihak lain tanpa izin tertulis. Dapatkan produk asli dan produk ToolkitParenting lainnya <a href="https://toolkitparenting.my.id/" target="_blank" rel="noopener" style="color:#b84f08;font-weight:700">di sini</a>.</div></header>
+
+<!-- ===== TRYOUT SECTION ===== -->
+<div id="trySection">
+
+  <!-- Intro pilih paket -->
+  <div id="tryIntro" class="try-intro">
+    <div class="try-info" style="margin-top:20px">
+      <h3>📋 Cara Kerja Tryout</h3>
+      <div class="try-info-grid">
+        <div class="try-info-item">
+          <div class="label">Sesi per Paket</div>
+          <div class="val">2 Sesi</div>
+        </div>
+        <div class="try-info-item">
+          <div class="label">Soal per Sesi</div>
+          <div class="val">30 Soal</div>
+        </div>
+        <div class="try-info-item">
+          <div class="label">Waktu per Sesi</div>
+          <div class="val">75 Menit</div>
+        </div>
+        <div class="try-info-item">
+          <div class="label">Total per Paket</div>
+          <div class="val">150 Menit</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.6;color:var(--ink)">
+        <b>Alur tiap paket:</b><br>
+        <span style="color:var(--teal)">&#9312;</span> Kerjakan <b>Matematika 30 soal</b> (75 menit) &rarr; lihat skor MTK<br>
+        <span style="color:var(--teal)">&#9313;</span> Lanjut <b>Bahasa Indonesia 30 soal</b> (75 menit) &rarr; lihat skor gabungan<br>
+        <span style="color:var(--muted);font-size:12px;margin-top:4px;display:block">Jawaban terkunci selama sesi berlangsung. Skor muncul setelah selesai. Format identik dengan TKA asli.</span>
+        <span style="color:var(--muted);font-size:12px;display:block;margin-top:2px">🔄 <b>Ingin mengulang?</b> Tombol ulangi tersedia di halaman skor setiap sesi dan setelah paket selesai.</span>
+      </div>
+    </div>
+
+    <div class="paket-grid" id="paketGrid"></div>
+  </div>
+
+  <!-- Sesi aktif tryout -->
+  <div id="trySession">
+    <div class="session-header" id="sessHeader">
+      <div>
+        <div class="sess-mapel" id="sessMapelLabel"></div>
+        <div class="sess-paket" id="sessPaketLabel"></div>
+      </div>
+      <div class="sess-timer-wrap">
+        <span id="timerDisplay">75:00</span>
+        <button class="timer-toggle" onclick="toggleTimer()" id="timerBtn">⏸</button>
+      </div>
+    </div>
+    <div class="try-progress-bar"><div class="try-progress-fill" id="tryProgFill"></div></div>
+
+    <!-- Palette navigasi -->
+    <div class="pal-wrap" id="tryPalWrap">
+      <div class="pal-label">Navigasi Soal</div>
+      <div class="palette" id="tryPalette"></div>
+    </div>
+
+    <div class="card" id="tryCard"></div>
+
+    <!-- Hasil tryout satu sesi -->
+    <div class="try-result" id="tryResult" style="display:none">
+      <div class="tr-title" id="trTitle"></div>
+      <div class="tr-score" id="trScore"></div>
+      <div class="tr-sub" id="trSub"></div>
+      <div class="tr-grid">
+        <div class="tr-item ok-item"><div class="tn" id="trOk"></div><div class="tl">Benar</div></div>
+        <div class="tr-item no-item"><div class="tn" id="trNo"></div><div class="tl">Salah/Kosong</div></div>
+      </div>
+      <div class="tr-interpret" id="trInterpret"></div>
+      <div class="sum-btns">
+        <button class="btn btn-ghost" onclick="tryNextMapel()" id="btnNextMapel">Lanjut BIN →</button>
+        <button class="btn btn-ghost" onclick="backToPaketPicker()" id="btnBackPaket">← Pilih Paket</button>
+        <button class="btn btn-ghost" onclick="resetPaket()" id="btnResetPaket" style="display:none;color:var(--red);border-color:var(--red)">🔄 Ulangi Paket Ini</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:28px;padding:18px 20px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);font-size:12px;line-height:1.7;color:var(--muted)">
+  <div style="font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:8px">📋 Acuan Resmi Penyusunan Soal</div>
+  <p>Soal-soal dalam produk ini disusun mengacu pada regulasi dan kerangka asesmen resmi berikut:</p>
+  <ol style="margin:8px 0 0 16px;display:flex;flex-direction:column;gap:4px">
+    <li><b>Permendikdasmen No. 9 Tahun 2025</b> tentang Tes Kemampuan Akademik (TKA) — diundangkan 3 Juni 2025, Berita Negara RI Tahun 2025 Nomor 384</li>
+    <li><b>Kepmendikdasmen No. 95/M/2025</b> tentang Pedoman Penyelenggaraan Tes Kemampuan Akademik — ditetapkan 11 Juli 2025</li>
+    <li><b>Peraturan Kepala BSKAP No. 047/H/AN/2025</b> tentang Kerangka Asesmen TKA Jenjang SD/MI/sederajat dan SMP/MTs/sederajat</li>
+  </ol>
+  <p style="margin-top:10px">Berdasarkan regulasi tersebut, TKA SMP/MTs mencakup dua mata pelajaran yang sama seperti jenjang SD: <b>Matematika</b> dan <b>Bahasa Indonesia</b>, masing-masing 30 soal dikerjakan dalam sesi terpisah selama 75 menit per sesi. Tipe soal meliputi Pilihan Ganda (PGS), Pilihan Ganda Kompleks (MCMA), dan Benar/Salah (KAT). Penyelenggara: Pusat Asesmen Pendidikan (Pusmendik), Kemendikdasmen.</p>
+  <p style="margin-top:6px;font-style:italic">Soal dalam produk ini bukan soal bocoran dan tidak berasal dari Pusmendik. Soal dibuat secara mandiri oleh tim ToolkitParenting dengan mengacu pada kisi-kisi dan kerangka asesmen resmi di atas sebagai panduan penyusunan materi dan tingkat kesulitan.</p>
+  <p style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)">📢 <b>Update rencana kebijakan (per Mei 2026):</b> Kepala BKPDM Kemendikdasmen menyampaikan dalam Rapat Kerja bersama Komisi X DPR RI (19 Mei 2026) bahwa terdapat usulan penambahan mata pelajaran <b>IPA dan Bahasa Inggris untuk TKA SMP</b> mulai pelaksanaan TKA 2027 — belum berlaku untuk TKA SMP 2026. Sebagai antisipasi, Simulasi Tryout ini menyediakan bank soal latihan mandiri IPA dan Bahasa Inggris pada mode Latihan (ditandai label "Antisipasi 2027"), di luar 2 paket tryout resmi (MTK + BIN) yang tetap menjadi acuan utama untuk TKA SMP 2026.</p>
+</div>
+<div class="footer-note" style="margin-top:16px">ToolkitParenting · Produk Digital TKA SMP</div>
+
+</div><!-- /wrap -->
+
+<div style="max-width:760px;margin:28px auto 0;padding:0 18px;text-align:center;font-size:12px;line-height:1.6;color:#5A6870">Hanya untuk penggunaan pribadi. Dilarang disebarluaskan atau dijual ulang tanpa izin tertulis. © ToolkitParenting · <a href="https://toolkitparenting.my.id/" target="_blank" rel="noopener" style="color:inherit;font-weight:700">toolkitparenting.my.id</a></div>
+<script>
+/* ===================================================
+   DATA
+=================================================== */
+const PAKET = {"paket1":{"mtk":[{"m":"mtk","e":"Bilangan Berpangkat & Bentuk Akar","t":"pgs","s":"Hasil dari 2<sup>3</sup> × 2<sup>4</sup> : 2<sup>5</sup> adalah ...","o":["16","32","4","8"],"a":2,"p":"2<sup>3</sup> × 2<sup>4</sup> = 2<sup>7</sup>. Kemudian 2<sup>7</sup> : 2<sup>5</sup> = 2<sup>2</sup> = 4.","paket":1,"noSoal":1},{"m":"mtk","e":"Bilangan Berpangkat & Bentuk Akar","t":"pgs","s":"Bentuk sederhana dari √72 adalah ...","o":["3√6","36√2","4√3","6√2"],"a":3,"p":"72 = 36 × 2, sehingga √72 = √36 × √2 = 6√2.","paket":1,"noSoal":2},{"m":"mtk","e":"Bilangan Berpangkat & Bentuk Akar","t":"pgs","s":"Sebuah bakteri membelah diri menjadi 2 setiap 20 menit. Jika mula-mula ada 5 bakteri, berapa banyak bakteri setelah 2 jam?","o":["320","160","640","80"],"a":0,"p":"2 jam = 120 menit, jadi terjadi <span class=\"fr\"><span class=\"fr-n\">120</span><span class=\"fr-d\">20</span></span> = 6 kali pembelahan. Jumlah bakteri = 5 × 2<sup>6</sup> = 5 × 64 = 320.","paket":1,"noSoal":3},{"m":"mtk","e":"Aljabar & Persamaan Linear","t":"pgs","s":"Himpunan penyelesaian dari 3(x − 2) = 2x + 5 adalah ...","o":["x = 7","x = 11","x = −1","x = 1"],"a":1,"p":"3x − 6 = 2x + 5  →  3x − 2x = 5 + 6  →  x = 11.","paket":1,"noSoal":4},{"m":"mtk","e":"Aljabar & Persamaan Linear","t":"pgs","s":"Keliling sebuah persegi panjang adalah 46 cm. Jika panjangnya 5 cm lebih dari lebarnya, berapa luas persegi panjang tersebut?","o":["132 cm²","115 cm²","126 cm²","120 cm²"],"a":2,"p":"Misal lebar = x, panjang = x+5. Keliling: 2(x + x+5) = 46  →  2(2x+5) = 46  →  4x+10=46  →  4x=36  →  x=9. Lebar=9, panjang=14. Luas = 9 × 14 = 126 cm².","paket":1,"noSoal":5},{"m":"mtk","e":"Aljabar & Persamaan Linear","t":"pgs","s":"Umur Rani 4 tahun lebih tua dari umur Sinta. Jika jumlah umur mereka 28 tahun, umur Rani adalah ...","o":["16 tahun","14 tahun","18 tahun","12 tahun"],"a":0,"p":"Misal umur Sinta = x, Rani = x+4. × + (x+4) = 28  →  2x = 24  →  x = 12. Umur Rani = 12+4 = 16 tahun.","paket":1,"noSoal":6},{"m":"mtk","e":"Aljabar & Persamaan Linear","t":"mcma","s":"Perhatikan persamaan 2x + 3 = 11. Pernyataan yang benar tentang penyelesaiannya adalah ... (Pilih semua yang benar)","o":["Jika x diganti 4, ruas kiri sama dengan ruas kanan","Nilai x yang memenuhi adalah 4","Persamaan ini memiliki lebih dari satu penyelesaian","Jika x diganti 3, persamaan tersebut bernilai benar"],"a":[0,1],"p":"2x+3=11  →  2x=8  →  x=4 (benar). Substitusi x=4: 2(4)+3=11, sama dengan ruas kanan (benar). PLSV berderajat satu hanya punya satu penyelesaian (salah). Jika x=3: 2(3)+3=9, tidak sama dengan 11, jadi pernyataan ini salah.","paket":1,"noSoal":7},{"m":"mtk","e":"Perbandingan & Aritmetika Sosial","t":"pgs","s":"Sebuah toko membeli 40 kaos dengan harga Rp35.000 per kaos. Jika toko ingin untung 20%, harga jual per kaos adalah ...","o":["Rp40.000","Rp42.000","Rp45.000","Rp38.500"],"a":1,"p":"Untung 20% dari 35.000 = 7.000. Harga jual = 35.000 + 7.000 = 42.000.","paket":1,"noSoal":8},{"m":"mtk","e":"Perbandingan & Aritmetika Sosial","t":"pgs","s":"Denah rumah dibuat dengan skala 1:150. Jika panjang ruang tamu pada denah 4 cm, panjang sebenarnya adalah ...","o":["4 m","5 m","6,5 m","6 m"],"a":3,"p":"Panjang sebenarnya = 4 × 150 = 600 cm = 6 m.","paket":1,"noSoal":9},{"m":"mtk","e":"Perbandingan & Aritmetika Sosial","t":"pgs","s":"Perbandingan uang tabungan Adi dan Bela adalah 4:7. Jika selisih tabungan mereka Rp450.000, jumlah tabungan keduanya adalah ...","o":["Rp1.500.000","Rp1.800.000","Rp1.650.000","Rp1.350.000"],"a":2,"p":"Selisih bagian: 7−4=3 bagian = 450.000, jadi 1 bagian = 150.000. Total bagian = 11, jumlah = 11 × 150.000 = 1.650.000.","paket":1,"noSoal":10},{"m":"mtk","e":"Perbandingan & Aritmetika Sosial","t":"kat","s":"Tentukan benar atau salah setiap pernyataan berikut.","p":"Naik 10% lalu 10%: 100  →  110  →  121, kenaikan 21% (benar). Rugi 15% dari 200.000 = 30.000, bukan 35.000 (salah). Untung 25% berarti harga jual = 1,25 × harga beli (benar). Diskon 30% dari 150.000 = 45.000, sehingga yang dibayar adalah 150.000 − 45.000 = 105.000, bukan 45.000 (salah).","kp":[["Diskon 30% dari harga Rp150.000 menyisakan Rp45.000 untuk dibayar",false],["Jika harga naik 10% lalu naik lagi 10%, kenaikan totalnya adalah 21%",true],["Rugi 15% dari harga beli Rp200.000 sama dengan Rp35.000",false],["Untung 25% dari harga beli berarti harga jual sama dengan harga beli dikali 1,25",true]],"paket":1,"noSoal":11},{"m":"mtk","e":"Bangun Ruang Sisi Datar","t":"pgs","s":"Sebuah kotak kado berbentuk balok berukuran 25 cm × 15 cm × 10 cm akan dilapisi kertas kado tanpa tumpang tindih. Berapa cm² luas kertas kado minimal yang dibutuhkan?","o":["1.550 cm²","1.600 cm²","1.500 cm²","1.450 cm²"],"a":0,"p":"Luas permukaan balok = 2(pl+pt+lt) = 2(25×15 + 25×10 + 15×10) = 2(375+250+150) = 2(775) = 1.550 cm².","paket":1,"noSoal":12},{"m":"mtk","e":"Bangun Ruang Sisi Datar","t":"pgs","s":"Sebuah prisma segitiga siku-siku memiliki sisi siku-siku alas 6 cm dan 8 cm, serta tinggi prisma 20 cm. Volume prisma tersebut adalah ...","o":["1.200 cm³","240 cm³","960 cm³","480 cm³"],"a":3,"p":"Luas alas segitiga = <span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">2</span></span> × 6 × 8 = 24 cm². Volume = luas alas × tinggi prisma = 24 × 20 = 480 cm³.","paket":1,"noSoal":13},{"m":"mtk","e":"Bangun Ruang Sisi Datar","t":"pgs","s":"Sebuah limas segiempat beraturan memiliki alas persegi dengan sisi 12 cm dan tinggi limas 8 cm. Volume limas tersebut adalah ...","o":["288 cm³","384 cm³","1.152 cm³","768 cm³"],"a":1,"p":"Luas alas = 12 × 12 = 144 cm². Volume limas = <span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">3</span></span> × luas alas × tinggi = <span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">3</span></span> × 144 × 8 = 384 cm³.","paket":1,"noSoal":14},{"m":"mtk","e":"Bangun Ruang Sisi Lengkung","t":"pgs","s":"Sebuah drum berbentuk tabung memiliki jari-jari 21 cm dan tinggi 50 cm. Volume drum tersebut adalah ... (π = <span class=\"fr\"><span class=\"fr-n\">22</span><span class=\"fr-d\">7</span></span>)","o":["69.300 cm³","62.700 cm³","70.400 cm³","66.000 cm³"],"a":0,"p":"Volume tabung = π × r<sup>2</sup> × t = <span class=\"fr\"><span class=\"fr-n\">22</span><span class=\"fr-d\">7</span></span> × 21<sup>2</sup> × 50 = <span class=\"fr\"><span class=\"fr-n\">22</span><span class=\"fr-d\">7</span></span> × 441 × 50 = 22 × 63 × 50 = 69.300 cm³.","paket":1,"noSoal":15},{"m":"mtk","e":"Bangun Ruang Sisi Lengkung","t":"pgs","s":"Sebuah bola pejal memiliki jari-jari 6 cm dimasukkan ke dalam tabung berisi air penuh dengan jari-jari tabung 6 cm dan tinggi 24 cm. Berapa cm³ air yang tumpah?","o":["452,16 cm³","904,32 cm³","678,24 cm³","1.130,4 cm³"],"a":1,"p":"Volume bola yang tumpah = <span class=\"fr\"><span class=\"fr-n\">4</span><span class=\"fr-d\">3</span></span> × π × r<sup>3</sup> = <span class=\"fr\"><span class=\"fr-n\">4</span><span class=\"fr-d\">3</span></span> × 3,14 × 6<sup>3</sup> = <span class=\"fr\"><span class=\"fr-n\">4</span><span class=\"fr-d\">3</span></span> × 3,14 × 216 = 904,32 cm³ (air yang tumpah sama dengan volume bola karena bola dimasukkan penuh ke air).","paket":1,"noSoal":16},{"m":"mtk","e":"Statistika & Peluang","t":"pgs","s":"Data nilai ulangan 8 siswa: 70, 75, 80, 85, 90, 75, 80, 85. Modus dari data tersebut adalah ...","o":["80","85","75 dan 80 dan 85","75"],"a":2,"p":"Nilai 75 muncul 2 kali, 80 muncul 2 kali, dan 85 muncul 2 kali — ketiganya modus (multimodal).","paket":1,"noSoal":17},{"m":"mtk","e":"Statistika & Peluang","t":"pgs","s":"Sebuah dadu dilempar satu kali. Peluang munculnya mata dadu bilangan prima adalah ...","o":["<span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">6</span></span>","<span class=\"fr\"><span class=\"fr-n\">2</span><span class=\"fr-d\">3</span></span>","<span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">3</span></span>","<span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">2</span></span>"],"a":3,"p":"Bilangan prima pada dadu: 2, 3, 5 (ada 3 dari 6 sisi). Peluang = <span class=\"fr\"><span class=\"fr-n\">3</span><span class=\"fr-d\">6</span></span> = <span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">2</span></span>.","paket":1,"noSoal":18},{"m":"mtk","e":"Statistika & Peluang","t":"mcma","s":"Dalam sebuah kotak terdapat 4 kelereng merah dan 6 kelereng biru. Sebuah kelereng diambil secara acak. Pernyataan yang benar adalah ... (Pilih semua yang benar)","o":["Peluang terambil kelereng merah sama dengan peluang terambil kelereng biru","Peluang terambil kelereng biru lebih besar dari peluang terambil kelereng merah","Peluang terambil kelereng merah atau biru adalah 1","Peluang terambil kelereng merah adalah <span class=\"fr\"><span class=\"fr-n\">2</span><span class=\"fr-d\">5</span></span>"],"a":[1,2,3],"p":"Peluang merah = <span class=\"fr\"><span class=\"fr-n\">4</span><span class=\"fr-d\">10</span></span> = <span class=\"fr\"><span class=\"fr-n\">2</span><span class=\"fr-d\">5</span></span> (benar). Peluang biru = <span class=\"fr\"><span class=\"fr-n\">6</span><span class=\"fr-d\">10</span></span> = <span class=\"fr\"><span class=\"fr-n\">3</span><span class=\"fr-d\">5,</span></span> lebih besar dari <span class=\"fr\"><span class=\"fr-n\">2</span><span class=\"fr-d\">5</span></span> (benar). Karena hanya ada 2 warna, peluang merah atau biru pasti 1 (benar). Peluang merah <span class=\"fr\"><span class=\"fr-n\">2</span><span class=\"fr-d\">5</span></span> tidak sama dengan peluang biru <span class=\"fr\"><span class=\"fr-n\">3</span><span class=\"fr-d\">5</span></span> (salah).","paket":1,"noSoal":19},{"m":"mtk","e":"Statistika & Peluang","t":"kat","s":"Tentukan benar atau salah setiap pernyataan berikut tentang data nilai: 60, 65, 70, 70, 75, 80, 85, 90.","p":"Jumlah = 595, rata-rata = <span class=\"fr\"><span class=\"fr-n\">595</span><span class=\"fr-d\">8</span></span> = 74,375 (benar). Median = rata-rata data ke-4 dan ke-5 = <span class=\"fr\"><span class=\"fr-n\">70+75</span><span class=\"fr-d\">2</span></span> = 72,5, bukan 75 (salah). Jangkauan = 90 − 60 = 30 (benar). Modus: 70 muncul 2 kali (terbanyak), bukan 75 (salah).","kp":[["Data 60, 65, 70, 70, 75, 80, 85, 90: rata-rata data tersebut adalah 74,375",true],["Data 60, 65, 70, 70, 75, 80, 85, 90: modus data tersebut adalah 75",false],["Data 60, 65, 70, 70, 75, 80, 85, 90: median data tersebut adalah 75",false],["Data 60, 65, 70, 70, 75, 80, 85, 90: jangkauan data tersebut adalah 30",true]],"paket":1,"noSoal":20},{"m":"mtk","e":"Statistika & Peluang","t":"pgs","s":"Sebuah kelas mengadakan survei minat ekstrakurikuler: 12 siswa memilih basket, 8 siswa memilih musik, dan 10 siswa memilih pramuka. Jika total siswa yang disurvei 30 orang, berapa persen siswa yang memilih musik?","o":["25%","30%","20%","26,67%"],"a":3,"p":"Persentase = <span class=\"fr\"><span class=\"fr-n\">8</span><span class=\"fr-d\">30</span></span> × 100% = 26,67%.","paket":1,"noSoal":21},{"m":"mtk","e":"Bilangan Berpangkat & Bentuk Akar","t":"pgs","s":"Hasil dari 3<sup>4</sup> − 2<sup>5</sup> adalah ...","o":["45","41","49","51"],"a":2,"p":"3<sup>4</sup>=81, 2<sup>5</sup>=32. 81−32=49.","paket":1,"noSoal":22},{"m":"mtk","e":"Bilangan Berpangkat & Bentuk Akar","t":"pgs","s":"Bentuk sederhana dari 2√3 + 5√3 − √3 adalah ...","o":["6√3","6√9","8√3","7√3"],"a":0,"p":"2√3+5√3-√3 = (2+5−1)√3 = 6√3.","paket":1,"noSoal":23},{"m":"mtk","e":"Aljabar & Persamaan Linear","t":"pgs","s":"Nilai x yang memenuhi persamaan <span class=\"fr\"><span class=\"fr-n\">x+3</span><span class=\"fr-d\">2</span></span> = <span class=\"fr\"><span class=\"fr-n\">2x−1</span><span class=\"fr-d\">3</span></span> adalah ...","o":["x = 7","x = 11","x = 9","x = 5"],"a":1,"p":"Kali silang: 3(x+3) = 2(2x−1)  →  3x+9 = 4x−2  →  9+2 = 4x−3x  →  x = 11.","paket":1,"noSoal":24},{"m":"mtk","e":"Aljabar & Persamaan Linear","t":"pgs","s":"Sebuah persegi panjang memiliki lebar (x) cm dan panjang (2x+3) cm. Jika keliling persegi panjang tersebut 42 cm, maka nilai x adalah ...","o":["5","7","6","8"],"a":2,"p":"Keliling = 2(p+l) = 2((2x+3)+x) = 2(3x+3) = 6x+6. 6x+6=42  →  6x=36  →  x=6.","paket":1,"noSoal":25},{"m":"mtk","e":"Perbandingan & Aritmetika Sosial","t":"pgs","s":"Sebuah motor bekas dibeli seharga Rp8.500.000 kemudian dijual kembali dengan harga Rp7.650.000. Persentase kerugian penjualan motor tersebut adalah ...","o":["8%","12%","15%","10%"],"a":3,"p":"Rugi = 8.500.000−7.650.000=850.000. Persentase rugi = <span class=\"fr\"><span class=\"fr-n\">850.000</span><span class=\"fr-d\">8.500.000</span></span> × 100% = 10%.","paket":1,"noSoal":26},{"m":"mtk","e":"Perbandingan & Aritmetika Sosial","t":"pgs","s":"Perbandingan jumlah siswa laki-laki dan perempuan di suatu kelas adalah 3:5. Jika jumlah seluruh siswa 32 orang, banyak siswa laki-laki adalah ...","o":["12 orang","10 orang","14 orang","16 orang"],"a":0,"p":"Total bagian = 3+5=8. Nilai 1 bagian = <span class=\"fr\"><span class=\"fr-n\">32</span><span class=\"fr-d\">8</span></span>=4. Siswa laki-laki = 3×4=12 orang.","paket":1,"noSoal":27},{"m":"mtk","e":"Bangun Ruang Sisi Datar","t":"pgs","s":"Sebuah balok memiliki panjang 14 cm, lebar 8 cm, dan tinggi 6 cm. Volume balok tersebut adalah ...","o":["560 cm³","672 cm³","756 cm³","588 cm³"],"a":1,"p":"Volume balok = p × l × t = 14 × 8 × 6 = 672 cm³.","paket":1,"noSoal":28},{"m":"mtk","e":"Bangun Ruang Sisi Lengkung","t":"pgs","s":"Sebuah kerucut memiliki jari-jari 7 cm dan tinggi 24 cm. Volume kerucut tersebut adalah ... (π = <span class=\"fr\"><span class=\"fr-n\">22</span><span class=\"fr-d\">7</span></span>)","o":["1.100 cm³","1.056 cm³","1.232 cm³","1.320 cm³"],"a":2,"p":"Volume kerucut = <span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">3</span></span> × π × r<sup>2</sup> × t = <span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">3</span></span> × <span class=\"fr\"><span class=\"fr-n\">22</span><span class=\"fr-d\">7</span></span> × 49 × 24 = <span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">3</span></span> × 22 × 7 × 24 = <span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">3</span></span> × 3.696 = 1.232 cm³.","paket":1,"noSoal":29},{"m":"mtk","e":"Statistika & Peluang","t":"pgs","s":"Sebuah kantong berisi 5 bola merah, 3 bola kuning, dan 2 bola hijau. Peluang terambilnya bola kuning secara acak adalah ...","o":["<span class=\"fr\"><span class=\"fr-n\">3</span><span class=\"fr-d\">10</span></span>","<span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">5</span></span>","<span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">2</span></span>","<span class=\"fr\"><span class=\"fr-n\">3</span><span class=\"fr-d\">5</span></span>"],"a":0,"p":"Total bola = 5+3+2=10. Peluang kuning = <span class=\"fr\"><span class=\"fr-n\">3</span><span class=\"fr-d\">10</span></span>.","paket":1,"noSoal":30}],"bin":[{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Apa yang dimaksud dengan digital eye strain berdasarkan teks?","o":["Penyakit mata menular yang berpindah dari satu orang ke orang lain melalui sentuhan pada gawai","Gangguan pada mata berupa mata kering, perih, dan pandangan buram karena terlalu lama menatap layar","Kerusakan permanen pada layar gawai yang muncul akibat terlalu lama dipakai dalam sehari","Kebiasaan bermain gim secara berlebihan sehingga seseorang lupa waktu makan dan belajar"],"a":1,"p":"Paragraf 2 mendefinisikan digital eye strain sebagai gangguan mata dengan gejala mata kering, perih, dan pandangan buram setelah menatap layar lama.","tk":["Rata-rata remaja Indonesia menghabiskan lebih dari enam jam sehari menatap layar gawai, baik untuk belajar, bermain gim, maupun berselancar di media sosial. Kebiasaan ini kerap dianggap wajar karena gawai memang telah menjadi bagian tak terpisahkan dari keseharian. Namun, di balik kepraktisannya, paparan layar yang berlebihan menyimpan sejumlah risiko yang sering luput dari perhatian.","Salah satu dampak yang paling sering dikeluhkan adalah gangguan pada mata, yang dikenal dengan istilah digital eye strain. Gejalanya meliputi mata kering, perih, dan pandangan buram setelah menatap layar dalam waktu lama. Selain itu, cahaya biru yang dipancarkan layar gawai dapat mengganggu produksi hormon melatonin, sehingga membuat seseorang lebih sulit tidur meskipun tubuh sudah lelah.","Meskipun demikian, gawai bukanlah musuh yang harus dijauhi sepenuhnya. Para ahli menyarankan penerapan aturan 20-20-20: setiap 20 menit menatap layar, alihkan pandangan ke objek sejauh 20 kaki (sekitar 6 meter) selama 20 detik. Dengan pengaturan waktu yang bijak, manfaat gawai tetap bisa dinikmati tanpa harus mengorbankan kesehatan mata dan kualitas tidur."],"tj":"Bahaya Tersembunyi di Balik Layar Gawai","paket":1,"noSoal":1},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Mengapa cahaya biru dari layar gawai dapat mengganggu tidur seseorang?","o":["Karena cahaya biru membuat mata menjadi buta sementara sehingga sulit memejamkan kelopak mata","Karena cahaya biru baru muncul pada malam hari sehingga hanya mengganggu orang yang begadang","Karena cahaya biru mengganggu produksi hormon melatonin yang berperan mengatur tidur","Karena cahaya biru menaikkan suhu tubuh secara drastis sehingga seseorang merasa kepanasan"],"a":2,"p":"Paragraf 2 menjelaskan cahaya biru dapat mengganggu produksi hormon melatonin, sehingga seseorang lebih sulit tidur.","tk":["Rata-rata remaja Indonesia menghabiskan lebih dari enam jam sehari menatap layar gawai, baik untuk belajar, bermain gim, maupun berselancar di media sosial. Kebiasaan ini kerap dianggap wajar karena gawai memang telah menjadi bagian tak terpisahkan dari keseharian. Namun, di balik kepraktisannya, paparan layar yang berlebihan menyimpan sejumlah risiko yang sering luput dari perhatian.","Salah satu dampak yang paling sering dikeluhkan adalah gangguan pada mata, yang dikenal dengan istilah digital eye strain. Gejalanya meliputi mata kering, perih, dan pandangan buram setelah menatap layar dalam waktu lama. Selain itu, cahaya biru yang dipancarkan layar gawai dapat mengganggu produksi hormon melatonin, sehingga membuat seseorang lebih sulit tidur meskipun tubuh sudah lelah.","Meskipun demikian, gawai bukanlah musuh yang harus dijauhi sepenuhnya. Para ahli menyarankan penerapan aturan 20-20-20: setiap 20 menit menatap layar, alihkan pandangan ke objek sejauh 20 kaki (sekitar 6 meter) selama 20 detik. Dengan pengaturan waktu yang bijak, manfaat gawai tetap bisa dinikmati tanpa harus mengorbankan kesehatan mata dan kualitas tidur."],"tj":"Bahaya Tersembunyi di Balik Layar Gawai","paket":1,"noSoal":2},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Apa fungsi aturan 20-20-20 yang disebutkan dalam teks?","o":["Sebagai aturan pemerintah yang membatasi lama penggunaan gawai bagi seluruh warga negara","Sebagai jadwal wajib bermain gim setiap hari agar remaja tidak merasa bosan di rumah","Sebagai cara mempercepat pengisian baterai gawai supaya selalu siap dipakai sepanjang hari","Sebagai cara mengistirahatkan mata secara berkala ketika memakai gawai dalam waktu lama"],"a":3,"p":"Paragraf 3 menjelaskan aturan 20-20-20 sebagai cara mengistirahatkan mata: setiap 20 menit, alihkan pandangan sejauh 20 kaki selama 20 detik.","tk":["Rata-rata remaja Indonesia menghabiskan lebih dari enam jam sehari menatap layar gawai, baik untuk belajar, bermain gim, maupun berselancar di media sosial. Kebiasaan ini kerap dianggap wajar karena gawai memang telah menjadi bagian tak terpisahkan dari keseharian. Namun, di balik kepraktisannya, paparan layar yang berlebihan menyimpan sejumlah risiko yang sering luput dari perhatian.","Salah satu dampak yang paling sering dikeluhkan adalah gangguan pada mata, yang dikenal dengan istilah digital eye strain. Gejalanya meliputi mata kering, perih, dan pandangan buram setelah menatap layar dalam waktu lama. Selain itu, cahaya biru yang dipancarkan layar gawai dapat mengganggu produksi hormon melatonin, sehingga membuat seseorang lebih sulit tidur meskipun tubuh sudah lelah.","Meskipun demikian, gawai bukanlah musuh yang harus dijauhi sepenuhnya. Para ahli menyarankan penerapan aturan 20-20-20: setiap 20 menit menatap layar, alihkan pandangan ke objek sejauh 20 kaki (sekitar 6 meter) selama 20 detik. Dengan pengaturan waktu yang bijak, manfaat gawai tetap bisa dinikmati tanpa harus mengorbankan kesehatan mata dan kualitas tidur."],"tj":"Bahaya Tersembunyi di Balik Layar Gawai","paket":1,"noSoal":3},{"m":"bin","e":"Teks Informasi","t":"mcma","s":"Berdasarkan teks, pernyataan yang benar adalah ... (Pilih semua yang benar)","o":["Gawai harus dijauhi sepenuhnya agar tidak berbahaya","Remaja Indonesia rata-rata menatap layar gawai lebih dari enam jam sehari","Aturan 20-20-20 disarankan oleh para ahli untuk menjaga kesehatan mata","Mata kering dan perih adalah gejala digital eye strain"],"a":[1,2,3],"p":"Rata-rata lebih dari 6 jam sehari (benar, paragraf 1). Teks menyatakan gawai bukan musuh yang harus dijauhi sepenuhnya (salah). Mata kering dan perih adalah gejala digital eye strain (benar, paragraf 2). Aturan 20-20-20 disarankan ahli (benar, paragraf 3).","tk":["Rata-rata remaja Indonesia menghabiskan lebih dari enam jam sehari menatap layar gawai, baik untuk belajar, bermain gim, maupun berselancar di media sosial. Kebiasaan ini kerap dianggap wajar karena gawai memang telah menjadi bagian tak terpisahkan dari keseharian. Namun, di balik kepraktisannya, paparan layar yang berlebihan menyimpan sejumlah risiko yang sering luput dari perhatian.","Salah satu dampak yang paling sering dikeluhkan adalah gangguan pada mata, yang dikenal dengan istilah digital eye strain. Gejalanya meliputi mata kering, perih, dan pandangan buram setelah menatap layar dalam waktu lama. Selain itu, cahaya biru yang dipancarkan layar gawai dapat mengganggu produksi hormon melatonin, sehingga membuat seseorang lebih sulit tidur meskipun tubuh sudah lelah.","Meskipun demikian, gawai bukanlah musuh yang harus dijauhi sepenuhnya. Para ahli menyarankan penerapan aturan 20-20-20: setiap 20 menit menatap layar, alihkan pandangan ke objek sejauh 20 kaki (sekitar 6 meter) selama 20 detik. Dengan pengaturan waktu yang bijak, manfaat gawai tetap bisa dinikmati tanpa harus mengorbankan kesehatan mata dan kualitas tidur."],"tj":"Bahaya Tersembunyi di Balik Layar Gawai","paket":1,"noSoal":4},{"m":"bin","e":"Teks Informasi","t":"kat","p":"Digital eye strain bisa dialami siapa saja yang menatap layar lama, tidak disebutkan khusus orang dewasa (salah). Cahaya biru memengaruhi melatonin dan tidur (benar). Aturan 20-20-20 memang setiap 20 menit (benar). Teks justru menyatakan gawai bukan musuh yang harus dijauhi (salah).","kp":[["Teks menyimpulkan bahwa gawai sepenuhnya berbahaya dan harus ditinggalkan",false],["Digital eye strain hanya dialami oleh orang dewasa",false],["Aturan 20-20-20 menyarankan istirahat setiap 20 menit",true],["Cahaya biru dari layar dapat memengaruhi kualitas tidur",true]],"tk":["Rata-rata remaja Indonesia menghabiskan lebih dari enam jam sehari menatap layar gawai, baik untuk belajar, bermain gim, maupun berselancar di media sosial. Kebiasaan ini kerap dianggap wajar karena gawai memang telah menjadi bagian tak terpisahkan dari keseharian. Namun, di balik kepraktisannya, paparan layar yang berlebihan menyimpan sejumlah risiko yang sering luput dari perhatian.","Salah satu dampak yang paling sering dikeluhkan adalah gangguan pada mata, yang dikenal dengan istilah digital eye strain. Gejalanya meliputi mata kering, perih, dan pandangan buram setelah menatap layar dalam waktu lama. Selain itu, cahaya biru yang dipancarkan layar gawai dapat mengganggu produksi hormon melatonin, sehingga membuat seseorang lebih sulit tidur meskipun tubuh sudah lelah.","Meskipun demikian, gawai bukanlah musuh yang harus dijauhi sepenuhnya. Para ahli menyarankan penerapan aturan 20-20-20: setiap 20 menit menatap layar, alihkan pandangan ke objek sejauh 20 kaki (sekitar 6 meter) selama 20 detik. Dengan pengaturan waktu yang bijak, manfaat gawai tetap bisa dinikmati tanpa harus mengorbankan kesehatan mata dan kualitas tidur."],"tj":"Bahaya Tersembunyi di Balik Layar Gawai","paket":1,"noSoal":5},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Simpulan yang paling tepat dari keseluruhan teks adalah ...","o":["Penggunaan gawai perlu diimbangi kebiasaan bijak agar manfaatnya didapat tanpa mengorbankan kesehatan","Semua remaja harus berhenti memakai gawai agar kesehatan mata dan tidurnya tetap terjaga","Cahaya biru dari layar sama sekali tidak berpengaruh terhadap tubuh dan kualitas tidur","Gawai adalah penyebab utama semua penyakit mata yang diderita manusia di seluruh dunia"],"a":0,"p":"Ketiga paragraf membangun argumen: gawai bermanfaat tapi berisiko jika berlebihan, sehingga solusinya adalah penggunaan yang bijak, bukan menghindarinya sepenuhnya.","tk":["Rata-rata remaja Indonesia menghabiskan lebih dari enam jam sehari menatap layar gawai, baik untuk belajar, bermain gim, maupun berselancar di media sosial. Kebiasaan ini kerap dianggap wajar karena gawai memang telah menjadi bagian tak terpisahkan dari keseharian. Namun, di balik kepraktisannya, paparan layar yang berlebihan menyimpan sejumlah risiko yang sering luput dari perhatian.","Salah satu dampak yang paling sering dikeluhkan adalah gangguan pada mata, yang dikenal dengan istilah digital eye strain. Gejalanya meliputi mata kering, perih, dan pandangan buram setelah menatap layar dalam waktu lama. Selain itu, cahaya biru yang dipancarkan layar gawai dapat mengganggu produksi hormon melatonin, sehingga membuat seseorang lebih sulit tidur meskipun tubuh sudah lelah.","Meskipun demikian, gawai bukanlah musuh yang harus dijauhi sepenuhnya. Para ahli menyarankan penerapan aturan 20-20-20: setiap 20 menit menatap layar, alihkan pandangan ke objek sejauh 20 kaki (sekitar 6 meter) selama 20 detik. Dengan pengaturan waktu yang bijak, manfaat gawai tetap bisa dinikmati tanpa harus mengorbankan kesehatan mata dan kualitas tidur."],"tj":"Bahaya Tersembunyi di Balik Layar Gawai","paket":1,"noSoal":6},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Mengapa masakan tradisional mulai jarang ditemui di kalangan generasi muda perkotaan menurut teks?","o":["Karena tergerus makanan cepat saji dan tren kuliner global yang digemari anak muda perkotaan","Karena bahan bakunya sudah punah sehingga resep tradisional tidak mungkin dibuat kembali","Karena pemerintah melarang penjualan makanan tradisional di pusat-pusat kota besar","Karena rasa masakan tradisional dianggap tidak enak oleh hampir seluruh generasi muda"],"a":0,"p":"Paragraf 1 menyebutkan masakan tradisional mulai jarang ditemui di tengah gempuran makanan cepat saji dan tren kuliner global.","tk":["Indonesia dikenal memiliki kekayaan kuliner yang luar biasa, dengan setiap daerah menyimpan cita rasa khasnya masing-masing. Namun, di tengah gempuran makanan cepat saji dan tren kuliner global, sejumlah masakan tradisional mulai jarang ditemui, terutama di kalangan generasi muda perkotaan.","Beberapa komunitas dan pelaku usaha kini berupaya menghidupkan kembali resep-resep warisan leluhur dengan cara yang lebih relevan bagi generasi sekarang, misalnya melalui kemasan modern, promosi di media sosial, atau kolaborasi dengan kafe-kafe kekinian. Upaya ini terbukti cukup efektif menarik minat anak muda untuk mencicipi, bahkan mempelajari cara membuat masakan tradisional.","Melestarikan kuliner tradisional bukan sekadar soal menjaga rasa, melainkan juga menjaga identitas dan sejarah suatu daerah. Setiap hidangan biasanya menyimpan cerita tentang kebiasaan, kepercayaan, atau kondisi geografis masyarakat yang menciptakannya. Dengan demikian, upaya pelestarian kuliner sesungguhnya adalah upaya menjaga memori kolektif suatu bangsa."],"tj":"Menjaga Warisan Lewat Lidah: Kuliner Nusantara","paket":1,"noSoal":7},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Bagaimana cara yang disebutkan dalam teks untuk menarik minat anak muda terhadap kuliner tradisional?","o":["Dengan melarang penjualan makanan cepat saji secara total di seluruh wilayah perkotaan","Melalui kemasan modern, promosi di media sosial, dan kolaborasi dengan kafe kekinian","Dengan mengubah seluruh resep aslinya sehingga rasanya sama dengan makanan cepat saji","Dengan menaikkan harga makanan tradisional agar terkesan mewah dan eksklusif di mata pembeli"],"a":1,"p":"Paragraf 2 menyebutkan cara tersebut: kemasan modern, promosi media sosial, kolaborasi dengan kafe kekinian.","tk":["Indonesia dikenal memiliki kekayaan kuliner yang luar biasa, dengan setiap daerah menyimpan cita rasa khasnya masing-masing. Namun, di tengah gempuran makanan cepat saji dan tren kuliner global, sejumlah masakan tradisional mulai jarang ditemui, terutama di kalangan generasi muda perkotaan.","Beberapa komunitas dan pelaku usaha kini berupaya menghidupkan kembali resep-resep warisan leluhur dengan cara yang lebih relevan bagi generasi sekarang, misalnya melalui kemasan modern, promosi di media sosial, atau kolaborasi dengan kafe-kafe kekinian. Upaya ini terbukti cukup efektif menarik minat anak muda untuk mencicipi, bahkan mempelajari cara membuat masakan tradisional.","Melestarikan kuliner tradisional bukan sekadar soal menjaga rasa, melainkan juga menjaga identitas dan sejarah suatu daerah. Setiap hidangan biasanya menyimpan cerita tentang kebiasaan, kepercayaan, atau kondisi geografis masyarakat yang menciptakannya. Dengan demikian, upaya pelestarian kuliner sesungguhnya adalah upaya menjaga memori kolektif suatu bangsa."],"tj":"Menjaga Warisan Lewat Lidah: Kuliner Nusantara","paket":1,"noSoal":8},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Apa makna frasa \"menjaga memori kolektif suatu bangsa\" pada paragraf terakhir?","o":["Memori kolektif hanya dimiliki oleh para orang tua yang masih mengingat masa lalu","Kuliner tradisional sama sekali tidak berkaitan dengan sejarah masyarakat yang menciptakannya","Setiap orang wajib menghafal seluruh resep masakan tradisional dari daerahnya masing-masing","Melestarikan kuliner berarti menjaga sejarah dan identitas bersama yang dimiliki masyarakat suatu daerah"],"a":3,"p":"Paragraf 3 menjelaskan setiap hidangan menyimpan cerita tentang kebiasaan dan sejarah masyarakat, sehingga melestarikannya berarti menjaga identitas dan sejarah bersama.","tk":["Indonesia dikenal memiliki kekayaan kuliner yang luar biasa, dengan setiap daerah menyimpan cita rasa khasnya masing-masing. Namun, di tengah gempuran makanan cepat saji dan tren kuliner global, sejumlah masakan tradisional mulai jarang ditemui, terutama di kalangan generasi muda perkotaan.","Beberapa komunitas dan pelaku usaha kini berupaya menghidupkan kembali resep-resep warisan leluhur dengan cara yang lebih relevan bagi generasi sekarang, misalnya melalui kemasan modern, promosi di media sosial, atau kolaborasi dengan kafe-kafe kekinian. Upaya ini terbukti cukup efektif menarik minat anak muda untuk mencicipi, bahkan mempelajari cara membuat masakan tradisional.","Melestarikan kuliner tradisional bukan sekadar soal menjaga rasa, melainkan juga menjaga identitas dan sejarah suatu daerah. Setiap hidangan biasanya menyimpan cerita tentang kebiasaan, kepercayaan, atau kondisi geografis masyarakat yang menciptakannya. Dengan demikian, upaya pelestarian kuliner sesungguhnya adalah upaya menjaga memori kolektif suatu bangsa."],"tj":"Menjaga Warisan Lewat Lidah: Kuliner Nusantara","paket":1,"noSoal":9},{"m":"bin","e":"Teks Informasi","t":"mcma","s":"Berdasarkan teks, pernyataan yang sesuai adalah ... (Pilih semua yang benar)","o":["Kuliner tradisional tidak memiliki nilai sejarah apa pun","Melestarikan kuliner berkaitan dengan menjaga identitas suatu daerah","Upaya modernisasi kemasan terbukti efektif menarik minat anak muda","Setiap daerah di Indonesia memiliki cita rasa khasnya masing-masing"],"a":[1,2,3],"p":"Setiap daerah punya cita rasa khas (benar, paragraf 1). Modernisasi kemasan efektif menarik anak muda (benar, paragraf 2). Kuliner justru menyimpan nilai sejarah, bukan tidak punya sama sekali (salah). Melestarikan kuliner = menjaga identitas daerah (benar, paragraf 3).","tk":["Indonesia dikenal memiliki kekayaan kuliner yang luar biasa, dengan setiap daerah menyimpan cita rasa khasnya masing-masing. Namun, di tengah gempuran makanan cepat saji dan tren kuliner global, sejumlah masakan tradisional mulai jarang ditemui, terutama di kalangan generasi muda perkotaan.","Beberapa komunitas dan pelaku usaha kini berupaya menghidupkan kembali resep-resep warisan leluhur dengan cara yang lebih relevan bagi generasi sekarang, misalnya melalui kemasan modern, promosi di media sosial, atau kolaborasi dengan kafe-kafe kekinian. Upaya ini terbukti cukup efektif menarik minat anak muda untuk mencicipi, bahkan mempelajari cara membuat masakan tradisional.","Melestarikan kuliner tradisional bukan sekadar soal menjaga rasa, melainkan juga menjaga identitas dan sejarah suatu daerah. Setiap hidangan biasanya menyimpan cerita tentang kebiasaan, kepercayaan, atau kondisi geografis masyarakat yang menciptakannya. Dengan demikian, upaya pelestarian kuliner sesungguhnya adalah upaya menjaga memori kolektif suatu bangsa."],"tj":"Menjaga Warisan Lewat Lidah: Kuliner Nusantara","paket":1,"noSoal":10},{"m":"bin","e":"Teks Informasi","t":"kat","p":"Masakan tradisional belum semuanya punah, hanya jarang ditemui (salah). Kolaborasi kafe kekinian disebut sebagai cara pelestarian (benar). Hidangan menyimpan cerita geografis (benar, paragraf 3). Pelestarian kuliner justru terkait erat dengan identitas bangsa (salah).","kp":[["Pelestarian kuliner tradisional tidak ada hubungannya dengan identitas bangsa",false],["Kolaborasi dengan kafe kekinian adalah salah satu cara melestarikan kuliner tradisional",true],["Setiap hidangan tradisional bisa menyimpan cerita tentang kondisi geografis masyarakatnya",true],["Semua masakan tradisional Indonesia sudah punah",false]],"tk":["Indonesia dikenal memiliki kekayaan kuliner yang luar biasa, dengan setiap daerah menyimpan cita rasa khasnya masing-masing. Namun, di tengah gempuran makanan cepat saji dan tren kuliner global, sejumlah masakan tradisional mulai jarang ditemui, terutama di kalangan generasi muda perkotaan.","Beberapa komunitas dan pelaku usaha kini berupaya menghidupkan kembali resep-resep warisan leluhur dengan cara yang lebih relevan bagi generasi sekarang, misalnya melalui kemasan modern, promosi di media sosial, atau kolaborasi dengan kafe-kafe kekinian. Upaya ini terbukti cukup efektif menarik minat anak muda untuk mencicipi, bahkan mempelajari cara membuat masakan tradisional.","Melestarikan kuliner tradisional bukan sekadar soal menjaga rasa, melainkan juga menjaga identitas dan sejarah suatu daerah. Setiap hidangan biasanya menyimpan cerita tentang kebiasaan, kepercayaan, atau kondisi geografis masyarakat yang menciptakannya. Dengan demikian, upaya pelestarian kuliner sesungguhnya adalah upaya menjaga memori kolektif suatu bangsa."],"tj":"Menjaga Warisan Lewat Lidah: Kuliner Nusantara","paket":1,"noSoal":11},{"m":"bin","e":"Teks Fiksi","t":"pgs","s":"Mengapa Wulan mencatat resep-resep Mbah Ijah?","o":["Karena Mbah Ijah memaksa Wulan mencatat setiap resep agar tidak dimarahi oleh keluarga","Karena Wulan berencana menjual kumpulan resep itu sebagai buku masakan kepada banyak orang","Karena Wulan ingin resep itu tetap bisa diwariskan meski Mbah Ijah sudah tiada","Karena Wulan tidak percaya diri dengan kemampuan memasaknya sendiri tanpa catatan tertulis"],"a":2,"p":"Wulan menjelaskan sendiri alasannya: ia tidak ingin resep itu hilang begitu saja dan berharap anak cucu masih bisa memasaknya kelak.","tk":["Mbah Ijah sudah delapan puluh tahun, namun ingatannya tentang resep-resep masakan kampung masih setajam dulu. Cucunya, Wulan, datang setiap akhir pekan bukan sekadar untuk mengobrol, tapi juga mencatat satu per satu resep yang belum pernah tertulis di mana pun — hanya tersimpan di kepala Mbah Ijah.","\"Kenapa sih repot-repot dicatat, Lan? Nanti juga kamu hafal sendiri kalau sering masak,\" kata Mbah Ijah sambil mengaduk bumbu. Wulan tersenyum. \"Aku nggak mau resep Mbah cuma ada di kepala Mbah, terus hilang kalau nggak ada yang nulis. Aku pengen anak cucu kita nanti masih bisa masak ini, walau Mbah udah nggak ada.\"","Mbah Ijah terdiam sejenak, lalu tersenyum kecil. Ia tidak menjawab, hanya menambahkan sejumput garam ke dalam masakan dengan gerakan yang sudah dihafal tangannya selama puluhan tahun. Namun sejak sore itu, setiap kali memasak, ia mulai menjelaskan setiap takaran dengan lebih detail dari biasanya — seolah kini turut menjaga sesuatu yang akan diwariskan."],"tj":"Resep Terakhir Mbah Ijah","paket":1,"noSoal":12},{"m":"bin","e":"Teks Fiksi","t":"pgs","s":"Apa makna perubahan sikap Mbah Ijah yang \"mulai menjelaskan setiap takaran dengan lebih detail\" di akhir cerita?","o":["Mbah Ijah diam-diam mulai menerima dan ikut serta dalam usaha Wulan mewariskan resep keluarga","Mbah Ijah mulai lupa cara memasak sehingga harus berhati-hati dalam menakar setiap bumbu","Mbah Ijah marah kepada Wulan dan sengaja mempersulit resepnya agar tidak bisa dicatat","Mbah Ijah berniat membuka usaha katering baru bersama cucunya setelah resepnya tercatat"],"a":0,"p":"Meski awalnya menganggap tidak perlu, perubahan sikap Mbah Ijah yang mulai lebih detail menunjukkan ia diam-diam ikut serta menjaga warisan yang diinginkan Wulan, tanpa perlu diucapkan.","tk":["Mbah Ijah sudah delapan puluh tahun, namun ingatannya tentang resep-resep masakan kampung masih setajam dulu. Cucunya, Wulan, datang setiap akhir pekan bukan sekadar untuk mengobrol, tapi juga mencatat satu per satu resep yang belum pernah tertulis di mana pun — hanya tersimpan di kepala Mbah Ijah.","\"Kenapa sih repot-repot dicatat, Lan? Nanti juga kamu hafal sendiri kalau sering masak,\" kata Mbah Ijah sambil mengaduk bumbu. Wulan tersenyum. \"Aku nggak mau resep Mbah cuma ada di kepala Mbah, terus hilang kalau nggak ada yang nulis. Aku pengen anak cucu kita nanti masih bisa masak ini, walau Mbah udah nggak ada.\"","Mbah Ijah terdiam sejenak, lalu tersenyum kecil. Ia tidak menjawab, hanya menambahkan sejumput garam ke dalam masakan dengan gerakan yang sudah dihafal tangannya selama puluhan tahun. Namun sejak sore itu, setiap kali memasak, ia mulai menjelaskan setiap takaran dengan lebih detail dari biasanya — seolah kini turut menjaga sesuatu yang akan diwariskan."],"tj":"Resep Terakhir Mbah Ijah","paket":1,"noSoal":13},{"m":"bin","e":"Teks Fiksi","t":"kat","p":"Wulan datang tiap akhir pekan untuk mencatat (benar, paragraf 1). Mbah Ijah tidak menjawab, ia hanya terdiam dan menambahkan garam ke masakan (salah, paragraf 1). Resep belum pernah tertulis (benar, paragraf 1). Tidak ada tanda kemarahan, hanya keheningan dan senyum kecil (salah).","kp":[["Wulan datang setiap akhir pekan untuk mencatat resep Mbah Ijah",true],["Mbah Ijah menjawab alasan Wulan dengan panjang lebar",false],["Mbah Ijah marah besar kepada Wulan karena dianggap tidak percaya",false],["Resep-resep Mbah Ijah sebelumnya belum pernah tertulis di mana pun",true]],"tk":["Mbah Ijah sudah delapan puluh tahun, namun ingatannya tentang resep-resep masakan kampung masih setajam dulu. Cucunya, Wulan, datang setiap akhir pekan bukan sekadar untuk mengobrol, tapi juga mencatat satu per satu resep yang belum pernah tertulis di mana pun — hanya tersimpan di kepala Mbah Ijah.","\"Kenapa sih repot-repot dicatat, Lan? Nanti juga kamu hafal sendiri kalau sering masak,\" kata Mbah Ijah sambil mengaduk bumbu. Wulan tersenyum. \"Aku nggak mau resep Mbah cuma ada di kepala Mbah, terus hilang kalau nggak ada yang nulis. Aku pengen anak cucu kita nanti masih bisa masak ini, walau Mbah udah nggak ada.\"","Mbah Ijah terdiam sejenak, lalu tersenyum kecil. Ia tidak menjawab, hanya menambahkan sejumput garam ke dalam masakan dengan gerakan yang sudah dihafal tangannya selama puluhan tahun. Namun sejak sore itu, setiap kali memasak, ia mulai menjelaskan setiap takaran dengan lebih detail dari biasanya — seolah kini turut menjaga sesuatu yang akan diwariskan."],"tj":"Resep Terakhir Mbah Ijah","paket":1,"noSoal":14},{"m":"bin","e":"Teks Fiksi","t":"pgs","s":"Apa yang membuat pelanggan tetap datang ke bengkel Pak Yusuf menurut teks?","o":["Karena Pak Yusuf selalu memberikan potongan harga besar-besaran kepada setiap pelanggan baru","Karena semua bengkel lain di sekitar kampung itu sudah tutup sehingga tak ada pilihan lain","Karena bengkelnya merupakan yang terbesar dan paling lengkap peralatannya di seluruh kota","Kejujurannya menjelaskan kerusakan, meski itu berarti keuntungannya menjadi lebih kecil"],"a":3,"p":"Paragraf 1 menyebutkan pelanggan datang karena kejujuran Pak Yusuf soal kerusakan, meski berarti keuntungannya lebih kecil.","tk":["Pak Yusuf sudah tiga puluh tahun membetulkan sepeda motor di bengkel kecilnya. Banyak pelanggan datang bukan hanya karena harganya murah, tapi karena Pak Yusuf selalu jujur soal kerusakan. Kalau sebuah onderdil masih bisa dipakai, ia tidak akan menyarankan penggantian meski itu berarti keuntungannya lebih kecil.","Suatu hari, seorang pelanggan baru membawa motor yang sebenarnya hanya perlu servis ringan, padahal bengkel lain sebelumnya sudah memvonis harus ganti mesin dengan biaya jutaan rupiah. Setelah diperiksa Pak Yusuf, motor itu selesai diperbaiki hanya dengan biaya seratus ribu rupiah.","\"Kok bisa beda jauh, Pak?\" tanya pelanggan itu heran. Pak Yusuf tersenyum sambil mengelap tangannya yang belepotan oli. \"Saya cuma benerin yang emang rusak, Mas. Rezeki saya udah ada jalannya sendiri, nggak perlu nambah-nambahin kerusakan orang.\""],"tj":"Bengkel Pak Yusuf","paket":1,"noSoal":15},{"m":"bin","e":"Teks Fiksi","t":"pgs","s":"Apa makna kalimat Pak Yusuf \"Rezeki saya udah ada jalannya sendiri, nggak perlu nambah-nambahin kerusakan orang\"?","o":["Pak Yusuf sama sekali tidak membutuhkan uang sehingga tidak peduli pada hasil bengkelnya","Pak Yusuf percaya kejujuran lebih penting daripada mengambil untung dengan cara merugikan pelanggan","Pak Yusuf tidak yakin dirinya bisa menjadi kaya sehingga memilih bekerja seadanya saja","Pak Yusuf ingin menyalahkan bengkel lain di depan pelanggan agar bengkelnya makin terkenal"],"a":1,"p":"Kalimat ini mengungkapkan prinsip hidup Pak Yusuf: ia memilih jujur dan cukup dengan rezekinya sendiri, daripada mengambil keuntungan dengan cara menipu pelanggan.","tk":["Pak Yusuf sudah tiga puluh tahun membetulkan sepeda motor di bengkel kecilnya. Banyak pelanggan datang bukan hanya karena harganya murah, tapi karena Pak Yusuf selalu jujur soal kerusakan. Kalau sebuah onderdil masih bisa dipakai, ia tidak akan menyarankan penggantian meski itu berarti keuntungannya lebih kecil.","Suatu hari, seorang pelanggan baru membawa motor yang sebenarnya hanya perlu servis ringan, padahal bengkel lain sebelumnya sudah memvonis harus ganti mesin dengan biaya jutaan rupiah. Setelah diperiksa Pak Yusuf, motor itu selesai diperbaiki hanya dengan biaya seratus ribu rupiah.","\"Kok bisa beda jauh, Pak?\" tanya pelanggan itu heran. Pak Yusuf tersenyum sambil mengelap tangannya yang belepotan oli. \"Saya cuma benerin yang emang rusak, Mas. Rezeki saya udah ada jalannya sendiri, nggak perlu nambah-nambahin kerusakan orang.\""],"tj":"Bengkel Pak Yusuf","paket":1,"noSoal":16},{"m":"bin","e":"Teks Fiksi","t":"mcma","s":"Berdasarkan cerita, pernyataan yang benar adalah ... (Pilih semua yang benar)","o":["Pak Yusuf sudah membuka bengkel selama tiga puluh tahun","Bengkel lain sebelumnya menyarankan penggantian mesin dengan biaya jutaan rupiah","Pak Yusuf menyalahkan bengkel lain di depan pelanggannya","Pak Yusuf akhirnya memperbaiki motor dengan biaya seratus ribu rupiah"],"a":[0,1,3],"p":"Tiga puluh tahun (benar, paragraf 1). Bengkel lain vonis ganti mesin jutaan rupiah (benar, paragraf 2). Biaya perbaikan Pak Yusuf seratus ribu rupiah (benar, paragraf 2). Pak Yusuf tidak menyalahkan bengkel lain, ia hanya menjelaskan prinsipnya sendiri (salah).","tk":["Pak Yusuf sudah tiga puluh tahun membetulkan sepeda motor di bengkel kecilnya. Banyak pelanggan datang bukan hanya karena harganya murah, tapi karena Pak Yusuf selalu jujur soal kerusakan. Kalau sebuah onderdil masih bisa dipakai, ia tidak akan menyarankan penggantian meski itu berarti keuntungannya lebih kecil.","Suatu hari, seorang pelanggan baru membawa motor yang sebenarnya hanya perlu servis ringan, padahal bengkel lain sebelumnya sudah memvonis harus ganti mesin dengan biaya jutaan rupiah. Setelah diperiksa Pak Yusuf, motor itu selesai diperbaiki hanya dengan biaya seratus ribu rupiah.","\"Kok bisa beda jauh, Pak?\" tanya pelanggan itu heran. Pak Yusuf tersenyum sambil mengelap tangannya yang belepotan oli. \"Saya cuma benerin yang emang rusak, Mas. Rezeki saya udah ada jalannya sendiri, nggak perlu nambah-nambahin kerusakan orang.\""],"tj":"Bengkel Pak Yusuf","paket":1,"noSoal":17},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Apa yang dimaksud dengan generasi sandwich berdasarkan teks?","o":["Seseorang yang bekerja di dua perusahaan berbeda untuk menambah penghasilan keluarganya","Generasi yang gemar makan roti lapis dan sering berkumpul di kafe pada akhir pekan","Seseorang yang menanggung kebutuhan finansial orang tua dan anaknya sekaligus","Generasi yang lahir di antara dua perang dunia sehingga hidup dalam masa yang sulit"],"a":2,"p":"Paragraf 1 mendefinisikan generasi sandwich sebagai orang yang menanggung kebutuhan finansial dua generasi: orang tua dan anak.","tk":["Istilah generasi sandwich merujuk pada seseorang yang harus menanggung kebutuhan finansial dua generasi sekaligus: orang tua yang sudah lanjut usia dan anak-anak mereka sendiri yang masih bergantung secara ekonomi. Fenomena ini semakin banyak ditemui seiring meningkatnya usia harapan hidup dan naiknya biaya hidup di perkotaan.","Tekanan yang dialami generasi sandwich tidak hanya bersifat finansial, tetapi juga emosional. Mereka sering merasa terjepit antara tanggung jawab merawat orang tua dan membesarkan anak, sambil tetap harus bekerja untuk memenuhi kebutuhan sehari-hari. Kondisi ini dapat memicu kelelahan fisik maupun mental jika tidak dikelola dengan baik.","Para ahli menyarankan pentingnya perencanaan keuangan sejak dini serta keterbukaan komunikasi antaranggota keluarga untuk membagi tanggung jawab secara adil. Selain itu, mencari dukungan dari komunitas atau layanan konseling keluarga juga dapat membantu meringankan beban psikologis generasi sandwich."],"tj":"Fenomena Generasi Sandwich","paket":1,"noSoal":18},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Mengapa fenomena generasi sandwich semakin banyak ditemui menurut teks?","o":["Karena harga rumah dan kebutuhan pokok di perkotaan semakin murah dibanding dahulu","Karena usia harapan hidup meningkat dan biaya hidup di perkotaan semakin naik","Karena pemerintah mewajibkan setiap warga merawat orang tua yang sudah lanjut usia","Karena semakin banyak orang memilih untuk tidak menikah dan tinggal sendirian di kota"],"a":1,"p":"Paragraf 1 menyebutkan dua faktor: meningkatnya usia harapan hidup dan naiknya biaya hidup perkotaan.","tk":["Istilah generasi sandwich merujuk pada seseorang yang harus menanggung kebutuhan finansial dua generasi sekaligus: orang tua yang sudah lanjut usia dan anak-anak mereka sendiri yang masih bergantung secara ekonomi. Fenomena ini semakin banyak ditemui seiring meningkatnya usia harapan hidup dan naiknya biaya hidup di perkotaan.","Tekanan yang dialami generasi sandwich tidak hanya bersifat finansial, tetapi juga emosional. Mereka sering merasa terjepit antara tanggung jawab merawat orang tua dan membesarkan anak, sambil tetap harus bekerja untuk memenuhi kebutuhan sehari-hari. Kondisi ini dapat memicu kelelahan fisik maupun mental jika tidak dikelola dengan baik.","Para ahli menyarankan pentingnya perencanaan keuangan sejak dini serta keterbukaan komunikasi antaranggota keluarga untuk membagi tanggung jawab secara adil. Selain itu, mencari dukungan dari komunitas atau layanan konseling keluarga juga dapat membantu meringankan beban psikologis generasi sandwich."],"tj":"Fenomena Generasi Sandwich","paket":1,"noSoal":19},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Apa dampak yang dialami generasi sandwich selain tekanan finansial?","o":["Tekanan emosional yang bisa memicu kelelahan fisik maupun mental","Peningkatan pendapatan secara drastis sehingga beban finansial menjadi jauh lebih ringan","Waktu luang yang berlebihan sehingga mereka sering merasa bosan di rumah masing-masing","Kesempatan kerja yang jauh lebih banyak sehingga bebas memilih pekerjaan yang diinginkan"],"a":0,"p":"Paragraf 2 menjelaskan tekanan generasi sandwich juga bersifat emosional, yang bisa memicu kelelahan fisik dan mental.","tk":["Istilah generasi sandwich merujuk pada seseorang yang harus menanggung kebutuhan finansial dua generasi sekaligus: orang tua yang sudah lanjut usia dan anak-anak mereka sendiri yang masih bergantung secara ekonomi. Fenomena ini semakin banyak ditemui seiring meningkatnya usia harapan hidup dan naiknya biaya hidup di perkotaan.","Tekanan yang dialami generasi sandwich tidak hanya bersifat finansial, tetapi juga emosional. Mereka sering merasa terjepit antara tanggung jawab merawat orang tua dan membesarkan anak, sambil tetap harus bekerja untuk memenuhi kebutuhan sehari-hari. Kondisi ini dapat memicu kelelahan fisik maupun mental jika tidak dikelola dengan baik.","Para ahli menyarankan pentingnya perencanaan keuangan sejak dini serta keterbukaan komunikasi antaranggota keluarga untuk membagi tanggung jawab secara adil. Selain itu, mencari dukungan dari komunitas atau layanan konseling keluarga juga dapat membantu meringankan beban psikologis generasi sandwich."],"tj":"Fenomena Generasi Sandwich","paket":1,"noSoal":20},{"m":"bin","e":"Teks Informasi","t":"mcma","s":"Saran yang disebutkan teks untuk meringankan beban generasi sandwich adalah ... (Pilih semua yang benar)","o":["Perencanaan keuangan sejak dini","Mencari dukungan dari komunitas atau konseling keluarga","Berhenti bekerja sepenuhnya","Keterbukaan komunikasi antaranggota keluarga"],"a":[0,1,3],"p":"Paragraf 3 menyebutkan tiga saran: perencanaan keuangan, komunikasi terbuka, dan dukungan komunitas/konseling. Berhenti bekerja tidak disebutkan dan tidak realistis mengingat kebutuhan finansial.","tk":["Istilah generasi sandwich merujuk pada seseorang yang harus menanggung kebutuhan finansial dua generasi sekaligus: orang tua yang sudah lanjut usia dan anak-anak mereka sendiri yang masih bergantung secara ekonomi. Fenomena ini semakin banyak ditemui seiring meningkatnya usia harapan hidup dan naiknya biaya hidup di perkotaan.","Tekanan yang dialami generasi sandwich tidak hanya bersifat finansial, tetapi juga emosional. Mereka sering merasa terjepit antara tanggung jawab merawat orang tua dan membesarkan anak, sambil tetap harus bekerja untuk memenuhi kebutuhan sehari-hari. Kondisi ini dapat memicu kelelahan fisik maupun mental jika tidak dikelola dengan baik.","Para ahli menyarankan pentingnya perencanaan keuangan sejak dini serta keterbukaan komunikasi antaranggota keluarga untuk membagi tanggung jawab secara adil. Selain itu, mencari dukungan dari komunitas atau layanan konseling keluarga juga dapat membantu meringankan beban psikologis generasi sandwich."],"tj":"Fenomena Generasi Sandwich","paket":1,"noSoal":21},{"m":"bin","e":"Teks Informasi","t":"kat","p":"Generasi sandwich menanggung dua generasi, bukan hanya orang tua (salah). Tekanan bersifat finansial dan emosional (benar). Perencanaan keuangan disebut sebagai saran (benar). Fenomena ini justru semakin banyak ditemui (salah).","kp":[["Generasi sandwich hanya menanggung kebutuhan finansial orang tua saja",false],["Tekanan generasi sandwich bisa bersifat finansial dan emosional",true],["Perencanaan keuangan sejak dini adalah salah satu saran yang disebutkan dalam teks",true],["Fenomena generasi sandwich semakin jarang ditemui saat ini",false]],"tk":["Istilah generasi sandwich merujuk pada seseorang yang harus menanggung kebutuhan finansial dua generasi sekaligus: orang tua yang sudah lanjut usia dan anak-anak mereka sendiri yang masih bergantung secara ekonomi. Fenomena ini semakin banyak ditemui seiring meningkatnya usia harapan hidup dan naiknya biaya hidup di perkotaan.","Tekanan yang dialami generasi sandwich tidak hanya bersifat finansial, tetapi juga emosional. Mereka sering merasa terjepit antara tanggung jawab merawat orang tua dan membesarkan anak, sambil tetap harus bekerja untuk memenuhi kebutuhan sehari-hari. Kondisi ini dapat memicu kelelahan fisik maupun mental jika tidak dikelola dengan baik.","Para ahli menyarankan pentingnya perencanaan keuangan sejak dini serta keterbukaan komunikasi antaranggota keluarga untuk membagi tanggung jawab secara adil. Selain itu, mencari dukungan dari komunitas atau layanan konseling keluarga juga dapat membantu meringankan beban psikologis generasi sandwich."],"tj":"Fenomena Generasi Sandwich","paket":1,"noSoal":22},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Apa yang dimaksud dengan growth mindset berdasarkan teks?","o":["Sikap yang tidak pernah mau belajar dari kesalahan karena merasa dirinya selalu benar","Sikap yang selalu menghindari tantangan baru karena takut gagal di depan banyak orang","Sikap yang menganggap kegagalan sebagai akhir dari segalanya dan tidak bisa diperbaiki","Sikap melihat kegagalan sebagai informasi untuk perbaikan, bukan bukti ketidakmampuan"],"a":3,"p":"Paragraf 2 mendefinisikan growth mindset sebagai sikap melihat kegagalan sebagai informasi untuk perbaikan.","tk":["Banyak orang menganggap kegagalan sebagai akhir dari segalanya, padahal dalam banyak kasus, kegagalan justru menjadi titik awal pembelajaran yang paling berharga. Penemu bola lampu, Thomas Edison, dikenal melakukan ribuan percobaan yang gagal sebelum akhirnya menemukan formula yang berhasil.","Sikap terhadap kegagalan sangat menentukan apakah seseorang bisa bangkit atau justru terpuruk. Orang yang memiliki growth mindset cenderung melihat kegagalan sebagai informasi untuk perbaikan, bukan sebagai bukti ketidakmampuan permanen. Sebaliknya, orang dengan fixed mindset sering menghindari tantangan baru karena takut gagal.","Membangun ketahanan terhadap kegagalan bisa dilatih, misalnya dengan membiasakan diri mengevaluasi kesalahan secara objektif, tidak menyalahkan diri secara berlebihan, dan tetap mencoba lagi dengan strategi yang telah diperbaiki. Dengan cara ini, kegagalan tidak lagi menjadi hal yang menakutkan, melainkan bagian alami dari proses belajar."],"tj":"Belajar dari Kegagalan","paket":1,"noSoal":23},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Mengapa contoh Thomas Edison dimunculkan dalam teks?","o":["Untuk membandingkan jumlah percobaan Edison dengan penemu lain yang hidup pada zamannya","Untuk menjelaskan sejarah penemuan listrik secara terperinci dari masa ke masa kepada pembaca","Untuk menunjukkan bahwa kegagalan berulang bisa menjadi jalan menuju keberhasilan besar","Untuk menunjukkan bahwa Edison tidak pernah mengalami kegagalan selama menjadi seorang penemu"],"a":2,"p":"Contoh Edison yang gagal ribuan kali sebelum berhasil digunakan sebagai bukti konkret bahwa kegagalan bisa menjadi jalan menuju keberhasilan.","tk":["Banyak orang menganggap kegagalan sebagai akhir dari segalanya, padahal dalam banyak kasus, kegagalan justru menjadi titik awal pembelajaran yang paling berharga. Penemu bola lampu, Thomas Edison, dikenal melakukan ribuan percobaan yang gagal sebelum akhirnya menemukan formula yang berhasil.","Sikap terhadap kegagalan sangat menentukan apakah seseorang bisa bangkit atau justru terpuruk. Orang yang memiliki growth mindset cenderung melihat kegagalan sebagai informasi untuk perbaikan, bukan sebagai bukti ketidakmampuan permanen. Sebaliknya, orang dengan fixed mindset sering menghindari tantangan baru karena takut gagal.","Membangun ketahanan terhadap kegagalan bisa dilatih, misalnya dengan membiasakan diri mengevaluasi kesalahan secara objektif, tidak menyalahkan diri secara berlebihan, dan tetap mencoba lagi dengan strategi yang telah diperbaiki. Dengan cara ini, kegagalan tidak lagi menjadi hal yang menakutkan, melainkan bagian alami dari proses belajar."],"tj":"Belajar dari Kegagalan","paket":1,"noSoal":24},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Bagaimana cara melatih ketahanan terhadap kegagalan menurut teks?","o":["Mengevaluasi kesalahan secara objektif, tidak menyalahkan diri berlebihan, dan mencoba lagi dengan strategi baru","Menghindari semua kegiatan yang berisiko gagal supaya tidak pernah merasa kecewa lagi","Berhenti mencoba setelah gagal satu kali karena percaya hasilnya akan selalu sama saja","Menyalahkan orang lain atas kegagalan yang terjadi agar beban perasaan terasa lebih ringan"],"a":0,"p":"Paragraf 3 menyebutkan tiga langkah: evaluasi objektif, tidak menyalahkan diri berlebihan, dan mencoba lagi dengan strategi diperbaiki.","tk":["Banyak orang menganggap kegagalan sebagai akhir dari segalanya, padahal dalam banyak kasus, kegagalan justru menjadi titik awal pembelajaran yang paling berharga. Penemu bola lampu, Thomas Edison, dikenal melakukan ribuan percobaan yang gagal sebelum akhirnya menemukan formula yang berhasil.","Sikap terhadap kegagalan sangat menentukan apakah seseorang bisa bangkit atau justru terpuruk. Orang yang memiliki growth mindset cenderung melihat kegagalan sebagai informasi untuk perbaikan, bukan sebagai bukti ketidakmampuan permanen. Sebaliknya, orang dengan fixed mindset sering menghindari tantangan baru karena takut gagal.","Membangun ketahanan terhadap kegagalan bisa dilatih, misalnya dengan membiasakan diri mengevaluasi kesalahan secara objektif, tidak menyalahkan diri secara berlebihan, dan tetap mencoba lagi dengan strategi yang telah diperbaiki. Dengan cara ini, kegagalan tidak lagi menjadi hal yang menakutkan, melainkan bagian alami dari proses belajar."],"tj":"Belajar dari Kegagalan","paket":1,"noSoal":25},{"m":"bin","e":"Teks Informasi","t":"mcma","s":"Berdasarkan teks, pernyataan yang benar adalah ... (Pilih semua yang benar)","o":["Thomas Edison melakukan ribuan percobaan sebelum menemukan formula yang berhasil","Kegagalan selalu menjadi akhir dari segalanya tanpa pengecualian","Orang dengan fixed mindset cenderung menghindari tantangan baru","Ketahanan terhadap kegagalan dapat dilatih"],"a":[0,2,3],"p":"Edison melakukan ribuan percobaan (benar, paragraf 1). Fixed mindset menghindari tantangan (benar, paragraf 2). Teks justru membantah anggapan kegagalan sebagai akhir segalanya (salah). Ketahanan bisa dilatih (benar, paragraf 3).","tk":["Banyak orang menganggap kegagalan sebagai akhir dari segalanya, padahal dalam banyak kasus, kegagalan justru menjadi titik awal pembelajaran yang paling berharga. Penemu bola lampu, Thomas Edison, dikenal melakukan ribuan percobaan yang gagal sebelum akhirnya menemukan formula yang berhasil.","Sikap terhadap kegagalan sangat menentukan apakah seseorang bisa bangkit atau justru terpuruk. Orang yang memiliki growth mindset cenderung melihat kegagalan sebagai informasi untuk perbaikan, bukan sebagai bukti ketidakmampuan permanen. Sebaliknya, orang dengan fixed mindset sering menghindari tantangan baru karena takut gagal.","Membangun ketahanan terhadap kegagalan bisa dilatih, misalnya dengan membiasakan diri mengevaluasi kesalahan secara objektif, tidak menyalahkan diri secara berlebihan, dan tetap mencoba lagi dengan strategi yang telah diperbaiki. Dengan cara ini, kegagalan tidak lagi menjadi hal yang menakutkan, melainkan bagian alami dari proses belajar."],"tj":"Belajar dari Kegagalan","paket":1,"noSoal":26},{"m":"bin","e":"Teks Fiksi","t":"pgs","s":"Mengapa Andra menolak tawaran ibunya untuk membeli jam weker baru?","o":["Karena ia tidak menyukai warna jam weker yang ditawarkan oleh ibunya kepada dirinya","Karena ia tidak punya cukup uang untuk membeli jam weker pengganti yang masih bagus","Karena ia berencana membeli jam weker sendiri setelah menabung dari uang jajan sekolah","Karena ia ingin mencoba mengatasi masalah bangun kesiangan dengan usahanya sendiri"],"a":3,"p":"Andra secara eksplisit mengatakan ingin mencoba mengatasi sendiri, menunjukkan keinginan untuk melatih kedisiplinan dirinya tanpa bergantung pada alat.","tk":["Andra selalu bangun kesiangan sejak jam wekernya rusak dua minggu lalu. Ibunya sudah menawarkan untuk membelikan yang baru, tapi Andra menolak. \"Biar aku coba atasi sendiri, Bu,\" katanya.","Ia mulai tidur lebih awal, meletakkan gelas air di dekat jendela agar sinar matahari pagi memantul ke wajahnya, bahkan meminta adiknya membangunkannya setiap pagi dengan imbalan membantu PR adiknya. Butuh waktu hampir seminggu sampai ritme barunya mulai terbentuk.","Suatu pagi, Andra bangun sendiri tanpa bantuan siapa pun, tepat sebelum alarm ponsel adiknya berbunyi. Ia tersenyum puas. Bukan karena jam wekernya sudah diperbaiki, tapi karena ia berhasil melatih dirinya sendiri untuk disiplin tanpa alat bantu."],"tj":"Jam Weker Rusak","paket":1,"noSoal":27},{"m":"bin","e":"Teks Fiksi","t":"pgs","s":"Apa makna kepuasan Andra di akhir cerita, meski jam wekernya belum diperbaiki?","o":["Kepuasannya karena ia berhasil tidur lebih lama pada pagi hari tanpa ada yang mengganggu","Kepuasannya karena akhirnya ia berhasil membeli jam weker baru dengan uang tabungannya sendiri","Kepuasannya berasal dari keberhasilan melatih disiplin diri, bukan dari alat bantu semata","Kepuasannya karena adiknya berhenti membangunkannya sehingga ia bisa tidur lebih lama lagi"],"a":2,"p":"Cerita menegaskan kepuasan Andra datang dari pencapaian pribadi melatih kedisiplinan diri, bukan dari solusi teknis seperti jam weker yang diperbaiki.","tk":["Andra selalu bangun kesiangan sejak jam wekernya rusak dua minggu lalu. Ibunya sudah menawarkan untuk membelikan yang baru, tapi Andra menolak. \"Biar aku coba atasi sendiri, Bu,\" katanya.","Ia mulai tidur lebih awal, meletakkan gelas air di dekat jendela agar sinar matahari pagi memantul ke wajahnya, bahkan meminta adiknya membangunkannya setiap pagi dengan imbalan membantu PR adiknya. Butuh waktu hampir seminggu sampai ritme barunya mulai terbentuk.","Suatu pagi, Andra bangun sendiri tanpa bantuan siapa pun, tepat sebelum alarm ponsel adiknya berbunyi. Ia tersenyum puas. Bukan karena jam wekernya sudah diperbaiki, tapi karena ia berhasil melatih dirinya sendiri untuk disiplin tanpa alat bantu."],"tj":"Jam Weker Rusak","paket":1,"noSoal":28},{"m":"bin","e":"Teks Informasi","t":"kat","p":"Edison melakukan ribuan percobaan, bukan sedikit (salah). Growth mindset memandang kegagalan sebagai proses belajar (benar). Fixed mindset justru menghindari tantangan (salah). Evaluasi objektif adalah bagian melatih ketahanan (benar).","kp":[["Fixed mindset cenderung berani menghadapi tantangan baru",false],["Mengevaluasi kesalahan secara objektif adalah bagian dari melatih ketahanan terhadap kegagalan",true],["Growth mindset melihat kegagalan sebagai bagian dari proses belajar",true],["Thomas Edison hanya melakukan sedikit percobaan sebelum berhasil",false]],"tk":["Banyak orang menganggap kegagalan sebagai akhir dari segalanya, padahal dalam banyak kasus, kegagalan justru menjadi titik awal pembelajaran yang paling berharga. Penemu bola lampu, Thomas Edison, dikenal melakukan ribuan percobaan yang gagal sebelum akhirnya menemukan formula yang berhasil.","Sikap terhadap kegagalan sangat menentukan apakah seseorang bisa bangkit atau justru terpuruk. Orang yang memiliki growth mindset cenderung melihat kegagalan sebagai informasi untuk perbaikan, bukan sebagai bukti ketidakmampuan permanen. Sebaliknya, orang dengan fixed mindset sering menghindari tantangan baru karena takut gagal.","Membangun ketahanan terhadap kegagalan bisa dilatih, misalnya dengan membiasakan diri mengevaluasi kesalahan secara objektif, tidak menyalahkan diri secara berlebihan, dan tetap mencoba lagi dengan strategi yang telah diperbaiki. Dengan cara ini, kegagalan tidak lagi menjadi hal yang menakutkan, melainkan bagian alami dari proses belajar."],"tj":"Belajar dari Kegagalan","paket":1,"noSoal":29},{"m":"bin","e":"Teks Fiksi","t":"kat","p":"Andra menolak tawaran ibunya (salah). Ia meminta bantuan adiknya (benar, paragraf 2). Ia akhirnya bangun sendiri (benar, paragraf 3). Ia justru merasa puas, bukan kecewa (salah).","kp":[["Andra meminta bantuan adiknya untuk membangunkannya setiap pagi",true],["Andra berhasil bangun sendiri tanpa bantuan pada akhir cerita",true],["Andra menerima tawaran ibunya untuk membeli jam weker baru",false],["Andra merasa kecewa karena jam wekernya belum diperbaiki",false]],"tk":["Andra selalu bangun kesiangan sejak jam wekernya rusak dua minggu lalu. Ibunya sudah menawarkan untuk membelikan yang baru, tapi Andra menolak. \"Biar aku coba atasi sendiri, Bu,\" katanya.","Ia mulai tidur lebih awal, meletakkan gelas air di dekat jendela agar sinar matahari pagi memantul ke wajahnya, bahkan meminta adiknya membangunkannya setiap pagi dengan imbalan membantu PR adiknya. Butuh waktu hampir seminggu sampai ritme barunya mulai terbentuk.","Suatu pagi, Andra bangun sendiri tanpa bantuan siapa pun, tepat sebelum alarm ponsel adiknya berbunyi. Ia tersenyum puas. Bukan karena jam wekernya sudah diperbaiki, tapi karena ia berhasil melatih dirinya sendiri untuk disiplin tanpa alat bantu."],"tj":"Jam Weker Rusak","paket":1,"noSoal":30}]},"paket2":{"mtk":[{"m":"mtk","e":"Sistem Persamaan Linear Dua Variabel","t":"pgs","s":"Harga 2 buku dan 3 pensil adalah Rp17.000, sedangkan harga 4 buku dan 1 pensil adalah Rp19.000. Harga satu buku adalah ...","o":["Rp3.000","Rp4.000","Rp4.500","Rp5.000"],"a":1,"p":"Misal buku=x, pensil=y. 2x+3y=17000 ... (1), 4x+y=19000  →  y=19000−4x ... (2). Substitusi ke (1): 2x+3(19000−4x)=17000  →  2x+57000−12x=17000  →  −10x=−40000  →  x=4000.","paket":2,"noSoal":1},{"m":"mtk","e":"Sistem Persamaan Linear Dua Variabel","t":"pgs","s":"Jumlah dua bilangan adalah 45 dan selisihnya adalah 9. Hasil kali kedua bilangan tersebut adalah ...","o":["468","504","459","486"],"a":3,"p":"x+y=45, x-y=9. Jumlahkan: 2x=54, x=27, y=18. Hasil kali = 27×18=486.","paket":2,"noSoal":2},{"m":"mtk","e":"Sistem Persamaan Linear Dua Variabel","t":"pgs","s":"Sebuah bilangan terdiri dari dua angka. Jumlah kedua angkanya 11. Jika angka puluhan dan satuan ditukar, nilai bilangan bertambah 45. Bilangan semula adalah ...","o":["38","83","47","74"],"a":0,"p":"Misal puluhan=a, satuan=b, a+b=11. Bilangan semula=10a+b, setelah ditukar=10b+a. (10b+a)−(10a+b)=45  →  9b-9a=45  →  b-a=5. Dengan a+b=11 dan b-a=5: 2b=16, b=8, a=3. Bilangan=38.","paket":2,"noSoal":3},{"m":"mtk","e":"Bilangan Berpangkat & Bentuk Akar","t":"pgs","s":"Bentuk sederhana dari (3√2) × (2√8) adalah ...","o":["48","12√16","24","6√10"],"a":2,"p":"3√2 × 2√8 = 6 × √(2×8) = 6 × √16 = 6 × 4 = 24.","paket":2,"noSoal":4},{"m":"mtk","e":"Bilangan Berpangkat & Bentuk Akar","t":"pgs","s":"Hasil dari 5<sup>−2</sup> adalah ...","o":["-10","<span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">10</span></span>","-25","<span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">25</span></span>"],"a":3,"p":"5<sup>−2</sup> = <span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">5</span></span><sup>2</sup> = <span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">25</span></span>.","paket":2,"noSoal":5},{"m":"mtk","e":"Bilangan Berpangkat & Bentuk Akar","t":"kat","s":"Tentukan benar atau salah setiap pernyataan berikut.","p":"2<sup>3</sup> × 2<sup>2</sup> = 2<sup>3+2</sup> = 2<sup>5</sup> (benar). √50=√(25×2)=5√2 (benar). (−3)<sup>2</sup> = 9, bukan −9 (salah). Bilangan apapun (kecuali 0) pangkat 0 = 1, bukan 0 (salah).","kp":[["2<sup>3</sup> × 2<sup>2</sup> sama dengan 2<sup>5</sup>",true],["3<sup>0</sup> = 0",false],["√50 dapat disederhanakan menjadi 5√2",true],["(−3)<sup>2</sup> hasilnya adalah −9",false]],"paket":2,"noSoal":6},{"m":"mtk","e":"Perbandingan & Aritmetika Sosial","t":"pgs","s":"Seorang pedagang membeli sepeda seharga Rp900.000. Karena rusak sedikit, ia menjualnya dengan rugi 8%. Harga jual sepeda tersebut adalah ...","o":["Rp828.000","Rp810.000","Rp872.000","Rp832.000"],"a":0,"p":"Rugi 8% dari 900.000 = 72.000. Harga jual = 900.000 − 72.000 = 828.000.","paket":2,"noSoal":7},{"m":"mtk","e":"Perbandingan & Aritmetika Sosial","t":"pgs","s":"Sebuah proyek dapat diselesaikan 6 pekerja dalam 15 hari. Jika pekerjaan harus selesai dalam 10 hari, berapa pekerja tambahan yang dibutuhkan?","o":["4 orang","5 orang","3 orang","2 orang"],"a":2,"p":"Total pekerjaan = 6×15=90 orang-hari. Untuk 10 hari: <span class=\"fr\"><span class=\"fr-n\">90</span><span class=\"fr-d\">10</span></span>=9 pekerja. Tambahan = 9−6=3 orang.","paket":2,"noSoal":8},{"m":"mtk","e":"Perbandingan & Aritmetika Sosial","t":"pgs","s":"Pak Anton meminjam uang di koperasi Rp2.000.000 dengan bunga tunggal 1,5% per bulan. Berapa total yang harus dibayar Pak Anton setelah 8 bulan?","o":["Rp2.180.000","Rp2.240.000","Rp2.300.000","Rp2.160.000"],"a":1,"p":"Bunga tunggal = 2.000.000 × 1,5% × 8 = 240.000. Total bayar = 2.000.000 + 240.000 = 2.240.000.","paket":2,"noSoal":9},{"m":"mtk","e":"Bangun Ruang Sisi Datar","t":"pgs","s":"Sebuah tenda berbentuk prisma dengan alas segitiga memiliki alas segitiga 4 m dan tinggi segitiga 3 m, serta panjang tenda 8 m. Berapa m³ volume udara di dalam tenda tersebut?","o":["48 m³","24 m³","96 m³","36 m³"],"a":0,"p":"Luas alas segitiga = <span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">2</span></span> × 4 × 3 = 6 m². Volume = 6 × 8 = 48 m³.","paket":2,"noSoal":10},{"m":"mtk","e":"Bangun Ruang Sisi Datar","t":"pgs","s":"Sebuah akuarium berbentuk kubus tanpa tutup memiliki panjang rusuk 40 cm. Berapa cm² luas kaca yang dibutuhkan untuk membuat akuarium tersebut?","o":["6.400 cm²","8.000 cm²","7.200 cm²","9.600 cm²"],"a":1,"p":"Kubus tanpa tutup memiliki 5 sisi. Luas = 5 × 40<sup>2</sup> = 5 × 1600 = 8.000 cm².","paket":2,"noSoal":11},{"m":"mtk","e":"Bangun Ruang Sisi Lengkung","t":"pgs","s":"Sebuah kerucut memiliki jari-jari alas 9 cm dan tinggi 12 cm. Panjang garis pelukis kerucut tersebut adalah ...","o":["21 cm","18 cm","13 cm","15 cm"],"a":3,"p":"Garis pelukis = √(r<sup>2</sup>+t<sup>2</sup>) = √(9<sup>2</sup>+12<sup>2</sup>) = √(81+144) = √225 = 15 cm.","paket":2,"noSoal":12},{"m":"mtk","e":"Bangun Ruang Sisi Lengkung","t":"pgs","s":"Sebuah bola memiliki volume 4.851 cm³. Jari-jari bola tersebut adalah ... (π = <span class=\"fr\"><span class=\"fr-n\">22</span><span class=\"fr-d\">7</span></span>)","o":["7 cm","9 cm","10,5 cm","12 cm"],"a":2,"p":"V=<span class=\"fr\"><span class=\"fr-n\">4</span><span class=\"fr-d\">3</span></span> × π × r<sup>3</sup>. 4.851 = <span class=\"fr\"><span class=\"fr-n\">4</span><span class=\"fr-d\">3</span></span> × <span class=\"fr\"><span class=\"fr-n\">22</span><span class=\"fr-d\">7</span></span> × r<sup>3</sup>  →  4.851 = <span class=\"fr\"><span class=\"fr-n\">88</span><span class=\"fr-d\">21</span></span> × r<sup>3</sup>  →  r<sup>3</sup> = 4.851 × <span class=\"fr\"><span class=\"fr-n\">21</span><span class=\"fr-d\">88</span></span> = 1.157,625. r = akar pangkat tiga dari 1.157,625 = 10,5 cm.","paket":2,"noSoal":13},{"m":"mtk","e":"Bangun Ruang Sisi Lengkung","t":"mcma","s":"Sebuah tabung memiliki jari-jari 7 cm dan tinggi 10 cm. Pernyataan yang benar tentang tabung tersebut adalah ... (Pilih semua yang benar, π=<span class=\"fr\"><span class=\"fr-n\">22</span><span class=\"fr-d\">7</span></span>)","o":["Luas selimut tabung adalah 880 cm²","Luas permukaan total tabung adalah 748 cm²","Volume tabung adalah 1.540 cm³","Luas alas tabung adalah 154 cm²"],"a":[1,2,3],"p":"Volume = <span class=\"fr\"><span class=\"fr-n\">22</span><span class=\"fr-d\">7</span></span> × 49 × 10 = 1.540 cm³ (benar). Selimut = 2 × <span class=\"fr\"><span class=\"fr-n\">22</span><span class=\"fr-d\">7</span></span> × 7 × 10 = 440 cm², bukan 880 (salah). Alas = <span class=\"fr\"><span class=\"fr-n\">22</span><span class=\"fr-d\">7</span></span> × 49 = 154 cm² (benar). Permukaan total = selimut + 2 × alas = 440 + 308 = 748 cm² (benar).","paket":2,"noSoal":14},{"m":"mtk","e":"Statistika & Peluang","t":"pgs","s":"Dua buah dadu dilempar bersamaan. Peluang munculnya jumlah kedua mata dadu sama dengan 8 adalah ...","o":["<span class=\"fr\"><span class=\"fr-n\">4</span><span class=\"fr-d\">36</span></span>","<span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">9</span></span>","<span class=\"fr\"><span class=\"fr-n\">5</span><span class=\"fr-d\">36</span></span>","<span class=\"fr\"><span class=\"fr-n\">6</span><span class=\"fr-d\">36</span></span>"],"a":2,"p":"Kombinasi jumlah 8 dari 2 dadu: (2,6),(3,5),(4,4),(5,3),(6,2) = 5 kombinasi dari 36 kemungkinan. Peluang = <span class=\"fr\"><span class=\"fr-n\">5</span><span class=\"fr-d\">36</span></span>.","paket":2,"noSoal":15},{"m":"mtk","e":"Statistika & Peluang","t":"pgs","s":"Nilai rata-rata ulangan matematika 30 siswa adalah 72. Setelah nilai 2 siswa yang tidak hadir digabungkan, rata-rata menjadi 73. Jika salah satu dari 2 siswa itu mendapat nilai 80, berapa nilai siswa satunya?","o":["84","88","90","96"],"a":3,"p":"Total 30 siswa = 30×72=2160. Total 32 siswa = 32×73=2336. Total 2 siswa tambahan = 2336−2160=176. Nilai siswa kedua = 176−80 = 96.","paket":2,"noSoal":16},{"m":"mtk","e":"Statistika & Peluang","t":"kat","s":"Tentukan benar atau salah setiap pernyataan berikut.","p":"Peluang selalu 0 ≤ P ≤ 1, tidak pernah lebih dari 1 (pernyataan \"lebih dari 1\" salah). Koin punya 2 sisi, peluang angka = <span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">2</span></span> (benar). Peluang tidak hujan = 1 − 0,3 = 0,7, bukan 0,3 (salah). Kejadian pasti punya peluang 1 (benar).","kp":[["Peluang kejadian yang pasti terjadi adalah 1",true],["Peluang suatu kejadian dapat bernilai lebih dari 1",false],["Peluang munculnya angka pada pelemparan satu koin adalah <span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">2</span></span>",true],["Jika peluang hujan besok 0,3, maka peluang tidak hujan adalah 0,3 juga",false]],"paket":2,"noSoal":17},{"m":"mtk","e":"Statistika & Peluang","t":"pgs","s":"Berikut data tinggi badan (cm) 10 siswa: 150, 155, 148, 160, 152, 158, 150, 155, 162, 150. Berapakah median dari data tersebut?","o":["152,5","153,5","150","155"],"a":1,"p":"Data terurut: 148,150,150,150,152,155,155,158,160,162. Median = rata-rata dua data tengah (ke-5 dan ke-6) = <span class=\"fr\"><span class=\"fr-n\">152+155</span><span class=\"fr-d\">2</span></span> = 153,5.","paket":2,"noSoal":18},{"m":"mtk","e":"Sistem Persamaan Linear Dua Variabel","t":"pgs","s":"Harga 3 pulpen dan 2 buku adalah Rp21.000. Harga 1 pulpen sama dengan setengah harga 1 buku. Harga satu buku adalah ...","o":["Rp6.000","Rp6.500","Rp5.500","Rp7.000"],"a":0,"p":"Misal pulpen=x, buku=y, x=<span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">2</span></span> y. 3(<span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">2</span></span> y)+2y=21000  →  1,5y+2y=21000  →  3,5y=21000  →  y=6.000.","paket":2,"noSoal":19},{"m":"mtk","e":"Bilangan Berpangkat & Bentuk Akar","t":"pgs","s":"Bentuk sederhana dari √48 − √12 adalah ...","o":["2√3","4√3","6√3","√36"],"a":0,"p":"√48=4√3, √12=2√3. 4√3−2√3=2√3.","paket":2,"noSoal":20},{"m":"mtk","e":"Perbandingan & Aritmetika Sosial","t":"pgs","s":"Sebuah barang dibeli dengan harga Rp120.000 kemudian dijual dengan untung Rp18.000. Persentase keuntungan penjualan barang tersebut adalah ...","o":["12%","18%","15%","20%"],"a":2,"p":"Persentase untung = <span class=\"fr\"><span class=\"fr-n\">18.000</span><span class=\"fr-d\">120.000</span></span> × 100% = 15%.","paket":2,"noSoal":21},{"m":"mtk","e":"Perbandingan & Aritmetika Sosial","t":"pgs","s":"Denah sebuah taman dibuat dengan skala 1:2.000. Jika luas taman pada denah adalah 15 cm², luas taman sebenarnya adalah ...","o":["600 m²","6.000 m²","60.000 m²","3.000 m²"],"a":1,"p":"Skala luas = (1:2000)<sup>2</sup> = 1:4.000.000. Luas sebenarnya = 15 × 4.000.000 = 60.000.000 cm² = 6.000 m².","paket":2,"noSoal":22},{"m":"mtk","e":"Bangun Ruang Sisi Datar","t":"pgs","s":"Sebuah limas segitiga memiliki luas alas 30 cm² dan tinggi limas 9 cm. Volume limas tersebut adalah ...","o":["180 cm³","60 cm³","270 cm³","90 cm³"],"a":3,"p":"Volume limas = <span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">3</span></span> × luas alas × tinggi = <span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">3</span></span> × 30 × 9 = 90 cm³.","paket":2,"noSoal":23},{"m":"mtk","e":"Bangun Ruang Sisi Datar","t":"pgs","s":"Sebuah prisma memiliki alas berbentuk persegi dengan sisi 6 cm dan tinggi prisma 15 cm. Volume prisma tersebut adalah ...","o":["360 cm³","540 cm³","480 cm³","450 cm³"],"a":1,"p":"Luas alas = 6×6=36 cm². Volume = 36 × 15 = 540 cm³.","paket":2,"noSoal":24},{"m":"mtk","e":"Bangun Ruang Sisi Lengkung","t":"pgs","s":"Luas permukaan bola dengan jari-jari 10,5 cm adalah ... (π = <span class=\"fr\"><span class=\"fr-n\">22</span><span class=\"fr-d\">7</span></span>)","o":["1.470 cm²","1.320 cm²","1.386 cm²","1.155 cm²"],"a":2,"p":"Luas permukaan bola = 4 × π × r<sup>2</sup> = 4 × <span class=\"fr\"><span class=\"fr-n\">22</span><span class=\"fr-d\">7</span></span> × 10,5<sup>2</sup> = 4 × <span class=\"fr\"><span class=\"fr-n\">22</span><span class=\"fr-d\">7</span></span> × 110,25 = 1.386 cm².","paket":2,"noSoal":25},{"m":"mtk","e":"Bangun Ruang Sisi Lengkung","t":"pgs","s":"Sebuah kaleng berbentuk tabung memiliki diameter 14 cm dan tinggi 20 cm digunakan untuk menyimpan minyak. Volume minyak maksimal yang dapat ditampung adalah ... (π = <span class=\"fr\"><span class=\"fr-n\">22</span><span class=\"fr-d\">7</span></span>)","o":["3.080 cm³","2.940 cm³","3.850 cm³","3.520 cm³"],"a":0,"p":"Jari-jari = 7 cm. Volume = <span class=\"fr\"><span class=\"fr-n\">22</span><span class=\"fr-d\">7</span></span> × 7<sup>2</sup> × 20 = <span class=\"fr\"><span class=\"fr-n\">22</span><span class=\"fr-d\">7</span></span> × 49 × 20 = 22 × 7 × 20 = 3.080 cm³.","paket":2,"noSoal":26},{"m":"mtk","e":"Statistika & Peluang","t":"pgs","s":"Sebuah kartu diambil secara acak dari satu set kartu remi (52 kartu). Peluang terambilnya kartu As adalah ...","o":["<span class=\"fr\"><span class=\"fr-n\">4</span><span class=\"fr-d\">13</span></span>","<span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">4</span></span>","<span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">52</span></span>","<span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">13</span></span>"],"a":3,"p":"Dalam satu set kartu remi, ada 4 kartu As dari 52 kartu. Peluang = <span class=\"fr\"><span class=\"fr-n\">4</span><span class=\"fr-d\">52</span></span> = <span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">13</span></span>.","paket":2,"noSoal":27},{"m":"mtk","e":"Statistika & Peluang","t":"pgs","s":"Data hasil ujian 6 siswa: 78, 82, 75, 90, 85, 80. Berapakah rata-rata nilai keenam siswa tersebut?","o":["82,5","83","80","81,67"],"a":3,"p":"Jumlah = 78+82+75+90+85+80=490. Rata-rata = <span class=\"fr\"><span class=\"fr-n\">490</span><span class=\"fr-d\">6</span></span> = 81,67.","paket":2,"noSoal":28},{"m":"mtk","e":"Statistika & Peluang","t":"pgs","s":"Sebuah koin dilempar 3 kali. Peluang munculnya tepat 2 kali angka adalah ...","o":["<span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">2</span></span>","<span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">4</span></span>","<span class=\"fr\"><span class=\"fr-n\">3</span><span class=\"fr-d\">8</span></span>","<span class=\"fr\"><span class=\"fr-n\">1</span><span class=\"fr-d\">8</span></span>"],"a":2,"p":"Total kemungkinan = 2<sup>3</sup>=8. Kombinasi tepat 2 angka dari 3 lemparan = C(3,2)=3. Peluang = <span class=\"fr\"><span class=\"fr-n\">3</span><span class=\"fr-d\">8</span></span>.","paket":2,"noSoal":29},{"m":"mtk","e":"Sistem Persamaan Linear Dua Variabel","t":"pgs","s":"Keliling sebuah lapangan berbentuk persegi panjang adalah 90 m. Jika panjangnya 3 m lebih dari 2 kali lebarnya, maka luas lapangan tersebut adalah ...","o":["434 m²","448 m²","406 m²","420 m²"],"a":0,"p":"Misal lebar=x, panjang=2x+3. Keliling: 2((2x+3)+x)=90  →  2(3x+3)=90  →  6x+6=90  →  6x=84  →  x=14. Panjang=2(14)+3=31. Luas=14×31=434 m².","paket":2,"noSoal":30}],"bin":[{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Bagaimana mekanisme bank sampah yang dijelaskan dalam teks?","o":["Warga memilah sampah anorganik, menabungnya di bank sampah, dan bisa menukarnya dengan uang atau kebutuhan pokok","Pemerintah mengambil seluruh sampah milik warga secara gratis setiap pagi dari depan rumah","Warga membakar sampah rumah tangga lebih dulu lalu menjual abunya kepada para pengepul","Warga membuang semua sampah ke sungai agar didaur ulang secara alami oleh arus air"],"a":0,"p":"Paragraf 2 menjelaskan mekanisme: memilah sampah anorganik, ditimbang dan dicatat sebagai saldo, bisa diambil sebagai uang tunai atau kebutuhan pokok.","tk":["Di sebuah desa kecil, warga dulu terbiasa membakar atau membuang sampah rumah tangga sembarangan ke sungai. Kebiasaan ini perlahan berubah sejak sekelompok pemuda desa mendirikan bank sampah, sebuah sistem pengelolaan sampah yang memungkinkan warga menabung sampah anorganik untuk ditukar dengan uang.","Mekanismenya cukup sederhana: warga memilah sampah plastik, kertas, dan logam dari sampah organik, lalu membawanya ke bank sampah untuk ditimbang dan dicatat sebagai saldo tabungan. Saldo tersebut bisa diambil sewaktu-waktu dalam bentuk uang tunai atau ditukar dengan kebutuhan pokok. Sampah yang terkumpul kemudian dijual ke pengepul untuk didaur ulang.","Dalam dua tahun berjalan, volume sampah yang dibuang ke sungai desa tersebut menurun drastis, sementara pendapatan tambahan warga dari menabung sampah justru meningkat. Program ini membuktikan bahwa pengelolaan sampah yang baik tidak melulu soal beban tambahan, melainkan juga bisa menjadi peluang ekonomi bagi masyarakat."],"tj":"Ketika Sampah Menjadi Berkah: Bank Sampah di Pedesaan","paket":2,"noSoal":1},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Apa dampak dari adanya bank sampah bagi desa tersebut menurut teks?","o":["Warga menjadi malas mengelola sampah sehingga bank sampah akhirnya berhenti beroperasi","Sungai desa menjadi semakin tercemar karena sampah yang ditabung ikut terbawa banjir","Tidak ada perubahan apa pun di desa tersebut setelah bank sampah itu mulai berdiri","Volume sampah yang dibuang ke sungai menurun dan pendapatan tambahan warga meningkat"],"a":3,"p":"Paragraf 3 menyebutkan volume sampah ke sungai menurun drastis dan pendapatan tambahan warga meningkat.","tk":["Di sebuah desa kecil, warga dulu terbiasa membakar atau membuang sampah rumah tangga sembarangan ke sungai. Kebiasaan ini perlahan berubah sejak sekelompok pemuda desa mendirikan bank sampah, sebuah sistem pengelolaan sampah yang memungkinkan warga menabung sampah anorganik untuk ditukar dengan uang.","Mekanismenya cukup sederhana: warga memilah sampah plastik, kertas, dan logam dari sampah organik, lalu membawanya ke bank sampah untuk ditimbang dan dicatat sebagai saldo tabungan. Saldo tersebut bisa diambil sewaktu-waktu dalam bentuk uang tunai atau ditukar dengan kebutuhan pokok. Sampah yang terkumpul kemudian dijual ke pengepul untuk didaur ulang.","Dalam dua tahun berjalan, volume sampah yang dibuang ke sungai desa tersebut menurun drastis, sementara pendapatan tambahan warga dari menabung sampah justru meningkat. Program ini membuktikan bahwa pengelolaan sampah yang baik tidak melulu soal beban tambahan, melainkan juga bisa menjadi peluang ekonomi bagi masyarakat."],"tj":"Ketika Sampah Menjadi Berkah: Bank Sampah di Pedesaan","paket":2,"noSoal":2},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Apa yang dapat disimpulkan dari kalimat \"pengelolaan sampah yang baik tidak melulu soal beban tambahan, melainkan juga bisa menjadi peluang ekonomi\"?","o":["Bank sampah hanya cocok diterapkan di kota besar yang memiliki banyak pengepul sampah","Mengelola sampah selalu merugikan warga secara finansial sehingga sebaiknya dihindari saja","Mengelola sampah dengan baik bisa memberi manfaat ekonomi, bukan hanya tanggung jawab yang merepotkan","Sampah sebaiknya tetap dibuang ke sungai karena cara itu lebih praktis dan tidak berbiaya"],"a":2,"p":"Kalimat ini menyimpulkan bahwa pengelolaan sampah yang baik bisa mengubah persepsi dari beban menjadi peluang ekonomi, seperti dibuktikan program bank sampah di desa tersebut.","tk":["Di sebuah desa kecil, warga dulu terbiasa membakar atau membuang sampah rumah tangga sembarangan ke sungai. Kebiasaan ini perlahan berubah sejak sekelompok pemuda desa mendirikan bank sampah, sebuah sistem pengelolaan sampah yang memungkinkan warga menabung sampah anorganik untuk ditukar dengan uang.","Mekanismenya cukup sederhana: warga memilah sampah plastik, kertas, dan logam dari sampah organik, lalu membawanya ke bank sampah untuk ditimbang dan dicatat sebagai saldo tabungan. Saldo tersebut bisa diambil sewaktu-waktu dalam bentuk uang tunai atau ditukar dengan kebutuhan pokok. Sampah yang terkumpul kemudian dijual ke pengepul untuk didaur ulang.","Dalam dua tahun berjalan, volume sampah yang dibuang ke sungai desa tersebut menurun drastis, sementara pendapatan tambahan warga dari menabung sampah justru meningkat. Program ini membuktikan bahwa pengelolaan sampah yang baik tidak melulu soal beban tambahan, melainkan juga bisa menjadi peluang ekonomi bagi masyarakat."],"tj":"Ketika Sampah Menjadi Berkah: Bank Sampah di Pedesaan","paket":2,"noSoal":3},{"m":"bin","e":"Teks Informasi","t":"mcma","s":"Berdasarkan teks, pernyataan yang benar adalah ... (Pilih semua yang benar)","o":["Sampah organik dan anorganik dipilah sebelum ditabung","Warga tidak mendapat keuntungan apa pun dari program ini","Bank sampah didirikan oleh sekelompok pemuda desa","Sampah yang terkumpul dijual ke pengepul untuk didaur ulang"],"a":[0,2,3],"p":"Didirikan pemuda desa (benar, paragraf 1). Sampah dipilah organik dan anorganik (benar, paragraf 2). Sampah dijual ke pengepul untuk didaur ulang (benar, paragraf 2). Warga justru mendapat pendapatan tambahan (salah).","tk":["Di sebuah desa kecil, warga dulu terbiasa membakar atau membuang sampah rumah tangga sembarangan ke sungai. Kebiasaan ini perlahan berubah sejak sekelompok pemuda desa mendirikan bank sampah, sebuah sistem pengelolaan sampah yang memungkinkan warga menabung sampah anorganik untuk ditukar dengan uang.","Mekanismenya cukup sederhana: warga memilah sampah plastik, kertas, dan logam dari sampah organik, lalu membawanya ke bank sampah untuk ditimbang dan dicatat sebagai saldo tabungan. Saldo tersebut bisa diambil sewaktu-waktu dalam bentuk uang tunai atau ditukar dengan kebutuhan pokok. Sampah yang terkumpul kemudian dijual ke pengepul untuk didaur ulang.","Dalam dua tahun berjalan, volume sampah yang dibuang ke sungai desa tersebut menurun drastis, sementara pendapatan tambahan warga dari menabung sampah justru meningkat. Program ini membuktikan bahwa pengelolaan sampah yang baik tidak melulu soal beban tambahan, melainkan juga bisa menjadi peluang ekonomi bagi masyarakat."],"tj":"Ketika Sampah Menjadi Berkah: Bank Sampah di Pedesaan","paket":2,"noSoal":4},{"m":"bin","e":"Teks Informasi","t":"kat","p":"Menabung sampah anorganik (benar, paragraf 2). Sebelumnya warga membuang ke sungai (benar, paragraf 1). Volume sampah justru menurun, bukan meningkat (salah). Warga mendapat pendapatan tambahan, jadi ada keuntungan ekonomi (salah).","kp":[["Program bank sampah tidak memberikan keuntungan ekonomi bagi warga",false],["Sebelum ada bank sampah, warga terbiasa membuang sampah ke sungai",true],["Bank sampah memungkinkan warga menabung sampah anorganik",true],["Volume sampah ke sungai meningkat setelah dua tahun program berjalan",false]],"tk":["Di sebuah desa kecil, warga dulu terbiasa membakar atau membuang sampah rumah tangga sembarangan ke sungai. Kebiasaan ini perlahan berubah sejak sekelompok pemuda desa mendirikan bank sampah, sebuah sistem pengelolaan sampah yang memungkinkan warga menabung sampah anorganik untuk ditukar dengan uang.","Mekanismenya cukup sederhana: warga memilah sampah plastik, kertas, dan logam dari sampah organik, lalu membawanya ke bank sampah untuk ditimbang dan dicatat sebagai saldo tabungan. Saldo tersebut bisa diambil sewaktu-waktu dalam bentuk uang tunai atau ditukar dengan kebutuhan pokok. Sampah yang terkumpul kemudian dijual ke pengepul untuk didaur ulang.","Dalam dua tahun berjalan, volume sampah yang dibuang ke sungai desa tersebut menurun drastis, sementara pendapatan tambahan warga dari menabung sampah justru meningkat. Program ini membuktikan bahwa pengelolaan sampah yang baik tidak melulu soal beban tambahan, melainkan juga bisa menjadi peluang ekonomi bagi masyarakat."],"tj":"Ketika Sampah Menjadi Berkah: Bank Sampah di Pedesaan","paket":2,"noSoal":5},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Apa yang dimaksud dengan bias konfirmasi berdasarkan teks?","o":["Kemampuan seseorang membedakan berita yang benar dan berita yang salah dengan cepat","Kecenderungan lebih mudah percaya pada informasi yang sesuai dengan keyakinan sendiri, meski belum tentu benar","Sikap selalu curiga terhadap semua jenis informasi yang diterima dari media mana pun","Kebiasaan memverifikasi semua berita sebelum membagikannya kepada teman dan keluarga"],"a":1,"p":"Paragraf 2 mendefinisikan bias konfirmasi sebagai kecenderungan lebih mudah percaya informasi yang sesuai keyakinan sendiri, meski belum tentu benar.","tk":["Di tengah derasnya arus informasi digital, berita bohong atau hoaks menyebar dengan sangat cepat, bahkan lebih cepat daripada klarifikasinya. Salah satu alasan utamanya adalah karena berita bohong sering kali dikemas dengan judul yang provokatif dan emosional, sehingga mendorong orang untuk segera membagikannya tanpa membaca isi secara utuh.","Fenomena ini diperparah oleh apa yang disebut bias konfirmasi, yaitu kecenderungan seseorang untuk lebih mudah percaya pada informasi yang sesuai dengan keyakinan yang sudah dimilikinya, meskipun informasi tersebut belum tentu benar. Akibatnya, orang cenderung malas memverifikasi berita yang sejalan dengan pandangannya sendiri.","Untuk mengurangi penyebaran hoaks, langkah sederhana yang dapat dilakukan adalah membaca berita secara utuh sebelum membagikannya, memeriksa sumber informasi, dan membandingkannya dengan media terpercaya lainnya. Kebiasaan kecil ini, jika dilakukan banyak orang, dapat memberi dampak besar dalam menekan penyebaran informasi yang menyesatkan."],"tj":"Mengapa Kita Mudah Percaya Berita Bohong","paket":2,"noSoal":6},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Mengapa judul berita yang provokatif dan emosional mempercepat penyebaran hoaks?","o":["Karena judul itu mendorong orang segera membagikan berita tanpa membaca isinya secara utuh","Karena judul provokatif selalu memuat informasi yang benar dan sudah terbukti kebenarannya","Karena judul emosional membuat isi berita menjadi lebih pendek sehingga cepat selesai dibaca","Karena media terpercaya hanya diizinkan memakai judul provokatif dalam setiap pemberitaannya"],"a":0,"p":"Paragraf 1 menjelaskan judul provokatif dan emosional mendorong orang segera membagikan tanpa membaca isi secara utuh, sehingga hoaks menyebar cepat.","tk":["Di tengah derasnya arus informasi digital, berita bohong atau hoaks menyebar dengan sangat cepat, bahkan lebih cepat daripada klarifikasinya. Salah satu alasan utamanya adalah karena berita bohong sering kali dikemas dengan judul yang provokatif dan emosional, sehingga mendorong orang untuk segera membagikannya tanpa membaca isi secara utuh.","Fenomena ini diperparah oleh apa yang disebut bias konfirmasi, yaitu kecenderungan seseorang untuk lebih mudah percaya pada informasi yang sesuai dengan keyakinan yang sudah dimilikinya, meskipun informasi tersebut belum tentu benar. Akibatnya, orang cenderung malas memverifikasi berita yang sejalan dengan pandangannya sendiri.","Untuk mengurangi penyebaran hoaks, langkah sederhana yang dapat dilakukan adalah membaca berita secara utuh sebelum membagikannya, memeriksa sumber informasi, dan membandingkannya dengan media terpercaya lainnya. Kebiasaan kecil ini, jika dilakukan banyak orang, dapat memberi dampak besar dalam menekan penyebaran informasi yang menyesatkan."],"tj":"Mengapa Kita Mudah Percaya Berita Bohong","paket":2,"noSoal":7},{"m":"bin","e":"Teks Informasi","t":"mcma","s":"Langkah yang disarankan teks untuk mengurangi penyebaran hoaks adalah ... (Pilih semua yang benar)","o":["Memeriksa sumber informasi","Membaca berita secara utuh sebelum membagikannya","Membagikan berita secepat mungkin agar viral","Membandingkan dengan media terpercaya lainnya"],"a":[0,1,3],"p":"Paragraf 3 menyebutkan tiga langkah: membaca utuh, memeriksa sumber, dan membandingkan dengan media terpercaya. Membagikan secepat mungkin justru bukan solusi, melainkan bagian dari masalah.","tk":["Di tengah derasnya arus informasi digital, berita bohong atau hoaks menyebar dengan sangat cepat, bahkan lebih cepat daripada klarifikasinya. Salah satu alasan utamanya adalah karena berita bohong sering kali dikemas dengan judul yang provokatif dan emosional, sehingga mendorong orang untuk segera membagikannya tanpa membaca isi secara utuh.","Fenomena ini diperparah oleh apa yang disebut bias konfirmasi, yaitu kecenderungan seseorang untuk lebih mudah percaya pada informasi yang sesuai dengan keyakinan yang sudah dimilikinya, meskipun informasi tersebut belum tentu benar. Akibatnya, orang cenderung malas memverifikasi berita yang sejalan dengan pandangannya sendiri.","Untuk mengurangi penyebaran hoaks, langkah sederhana yang dapat dilakukan adalah membaca berita secara utuh sebelum membagikannya, memeriksa sumber informasi, dan membandingkannya dengan media terpercaya lainnya. Kebiasaan kecil ini, jika dilakukan banyak orang, dapat memberi dampak besar dalam menekan penyebaran informasi yang menyesatkan."],"tj":"Mengapa Kita Mudah Percaya Berita Bohong","paket":2,"noSoal":8},{"m":"bin","e":"Teks Informasi","t":"kat","p":"Hoaks menyebar lebih cepat dari klarifikasi (benar, paragraf 1). Bias konfirmasi justru membuat orang malas memverifikasi (salah). Memeriksa sumber justru termasuk langkah yang disarankan (salah, paragraf 3). Judul provokatif mendorong berbagi tanpa membaca (benar, paragraf 1).","kp":[["Memeriksa sumber informasi tidak termasuk langkah mengurangi penyebaran hoaks",false],["Hoaks sering menyebar lebih cepat daripada klarifikasinya",true],["Bias konfirmasi membuat orang lebih rajin memverifikasi berita",false],["Judul yang provokatif cenderung mendorong orang untuk membagikan berita tanpa membaca isinya",true]],"tk":["Di tengah derasnya arus informasi digital, berita bohong atau hoaks menyebar dengan sangat cepat, bahkan lebih cepat daripada klarifikasinya. Salah satu alasan utamanya adalah karena berita bohong sering kali dikemas dengan judul yang provokatif dan emosional, sehingga mendorong orang untuk segera membagikannya tanpa membaca isi secara utuh.","Fenomena ini diperparah oleh apa yang disebut bias konfirmasi, yaitu kecenderungan seseorang untuk lebih mudah percaya pada informasi yang sesuai dengan keyakinan yang sudah dimilikinya, meskipun informasi tersebut belum tentu benar. Akibatnya, orang cenderung malas memverifikasi berita yang sejalan dengan pandangannya sendiri.","Untuk mengurangi penyebaran hoaks, langkah sederhana yang dapat dilakukan adalah membaca berita secara utuh sebelum membagikannya, memeriksa sumber informasi, dan membandingkannya dengan media terpercaya lainnya. Kebiasaan kecil ini, jika dilakukan banyak orang, dapat memberi dampak besar dalam menekan penyebaran informasi yang menyesatkan."],"tj":"Mengapa Kita Mudah Percaya Berita Bohong","paket":2,"noSoal":9},{"m":"bin","e":"Teks Fiksi","t":"pgs","s":"Mengapa Kakek selalu membuat perahu kertas setiap hujan turun?","o":["Karena Kakek bosan karena tidak ada kegiatan lain yang bisa dikerjakan saat hujan deras","Karena kebiasaan itu mengingatkannya pada kenangan bermain bersama adiknya yang sudah tiada","Karena Kakek sedang mengajari Fajar cara berenang di selokan setiap kali hujan turun","Karena Kakek ingin membuang sampah kertas ke selokan agar halaman rumah tetap bersih"],"a":1,"p":"Kakek menjelaskan sendiri di paragraf 2 bahwa membuat perahu kertas mengingatkannya pada masa kecil bermain bersama adiknya yang sudah tiada.","tk":["Setiap kali hujan turun deras, Kakek selalu duduk di teras sambil melipat kertas menjadi perahu-perahu kecil. Cucunya, Fajar, dulu suka menertawakannya. \"Buat apa sih, Kek? Kan cuma dibuang ke got.\" Kakek hanya tersenyum tanpa menjawab.","Suatu sore, saat hujan reda, Kakek mengajak Fajar melihat perahu-perahu kertas itu mengalir di selokan depan rumah. \"Kakek dulu, waktu seumuran kamu, main perahu kertas ini sama adik Kakek. Sekarang adik Kakek udah nggak ada. Tiap kali bikin perahu kertas, Kakek jadi inget dia lagi, seolah-olah dia masih di sini, main bareng Kakek.\"","Fajar terdiam. Ia tidak lagi menganggap kebiasaan Kakek sebagai hal yang sia-sia. Sejak sore itu, setiap hujan turun, Fajar mulai ikut melipat perahu kertas di samping Kakek, meski ia sendiri tidak pernah mengenal adik Kakek yang diceritakan itu."],"tj":"Perahu Kertas Kakek","paket":2,"noSoal":10},{"m":"bin","e":"Teks Fiksi","t":"pgs","s":"Perubahan sikap apa yang terjadi pada Fajar di akhir cerita, dan apa maknanya?","o":["Fajar berhenti bermain dengan Kakek karena merasa bosan melihat kebiasaan yang selalu sama","Fajar mulai membenci hujan karena terus mengingatkannya pada kebiasaan lama milik Kakek","Fajar pindah rumah supaya tidak lagi melihat Kakek melipat kertas setiap kali hujan turun","Fajar ikut melipat perahu kertas bersama Kakek, menunjukkan ia kini memahami makna di balik kebiasaan itu"],"a":3,"p":"Awalnya Fajar menertawakan kebiasaan Kakek, namun di akhir cerita ia ikut melipat perahu kertas — perubahan ini menunjukkan pemahaman dan penghargaan baru terhadap makna kenangan Kakek.","tk":["Setiap kali hujan turun deras, Kakek selalu duduk di teras sambil melipat kertas menjadi perahu-perahu kecil. Cucunya, Fajar, dulu suka menertawakannya. \"Buat apa sih, Kek? Kan cuma dibuang ke got.\" Kakek hanya tersenyum tanpa menjawab.","Suatu sore, saat hujan reda, Kakek mengajak Fajar melihat perahu-perahu kertas itu mengalir di selokan depan rumah. \"Kakek dulu, waktu seumuran kamu, main perahu kertas ini sama adik Kakek. Sekarang adik Kakek udah nggak ada. Tiap kali bikin perahu kertas, Kakek jadi inget dia lagi, seolah-olah dia masih di sini, main bareng Kakek.\"","Fajar terdiam. Ia tidak lagi menganggap kebiasaan Kakek sebagai hal yang sia-sia. Sejak sore itu, setiap hujan turun, Fajar mulai ikut melipat perahu kertas di samping Kakek, meski ia sendiri tidak pernah mengenal adik Kakek yang diceritakan itu."],"tj":"Perahu Kertas Kakek","paket":2,"noSoal":11},{"m":"bin","e":"Teks Fiksi","t":"kat","p":"Fajar dulu menertawakan kebiasaan itu (benar, paragraf 1). Kakek tidak membuat untuk dijual, melainkan sebagai kenangan (salah). Kakek pernah bermain bersama adiknya (benar, paragraf 2). Fajar tidak pernah mengenal adik Kakek tersebut (salah, paragraf 3).","kp":[["Kakek pernah bermain perahu kertas bersama adiknya semasa kecil",true],["Kakek membuat perahu kertas untuk dijual",false],["Fajar dulu menertawakan kebiasaan Kakek membuat perahu kertas",true],["Fajar pernah mengenal langsung adik Kakek yang diceritakan",false]],"tk":["Setiap kali hujan turun deras, Kakek selalu duduk di teras sambil melipat kertas menjadi perahu-perahu kecil. Cucunya, Fajar, dulu suka menertawakannya. \"Buat apa sih, Kek? Kan cuma dibuang ke got.\" Kakek hanya tersenyum tanpa menjawab.","Suatu sore, saat hujan reda, Kakek mengajak Fajar melihat perahu-perahu kertas itu mengalir di selokan depan rumah. \"Kakek dulu, waktu seumuran kamu, main perahu kertas ini sama adik Kakek. Sekarang adik Kakek udah nggak ada. Tiap kali bikin perahu kertas, Kakek jadi inget dia lagi, seolah-olah dia masih di sini, main bareng Kakek.\"","Fajar terdiam. Ia tidak lagi menganggap kebiasaan Kakek sebagai hal yang sia-sia. Sejak sore itu, setiap hujan turun, Fajar mulai ikut melipat perahu kertas di samping Kakek, meski ia sendiri tidak pernah mengenal adik Kakek yang diceritakan itu."],"tj":"Perahu Kertas Kakek","paket":2,"noSoal":12},{"m":"bin","e":"Teks Fiksi","t":"pgs","s":"Mengapa Doni mengusulkan buku kumpulan surat sebagai kado, bukan barang seperti tas?","o":["Karena Doni tidak memiliki cukup uang untuk ikut patungan membeli hadiah barang mahal","Karena Bu Mira sebenarnya tidak suka membawa tas kerja ketika pergi mengajar ke sekolah","Karena ia teringat Bu Mira menyebut murid-muridnya \"harta karun\", sehingga surat pribadi terasa lebih bermakna","Karena buku kumpulan surat jauh lebih murah dibanding tas kerja yang diusulkan teman-temannya"],"a":2,"p":"Doni menjelaskan alasannya sendiri: teringat ucapan Bu Mira tentang murid-muridnya sebagai 'harta karun', sehingga surat pribadi dari hati dirasa lebih sesuai dan bermakna.","tk":["Kelas 9C sepakat mengumpulkan uang untuk membelikan kado perpisahan bagi Bu Mira, wali kelas mereka yang akan pensiun. Sebagian besar siswa mengusulkan tas kerja mahal, tapi Doni, ketua kelas, punya ide lain. \"Gimana kalau kita bikin buku kumpulan surat dari kita semua? Bu Mira selalu bilang, murid-muridnya itu 'harta karun' beliau.\"","Awalnya banyak yang ragu, merasa ide itu kurang berkesan dibanding hadiah barang. Namun setelah didiskusikan, seluruh kelas akhirnya sepakat menulis surat masing-masing, menceritakan kenangan dan ucapan terima kasih mereka kepada Bu Mira selama tiga tahun diajar olehnya.","Hari perpisahan tiba. Ketika Bu Mira membuka buku kumpulan surat itu, air matanya langsung menetes. Ia membaca satu per satu dengan pelan, sesekali tertawa kecil, sesekali terdiam lama. \"Ini,\" katanya sambil memeluk buku itu, \"jauh lebih berharga dari tas semahal apa pun.\""],"tj":"Kado untuk Bu Mira","paket":2,"noSoal":13},{"m":"bin","e":"Teks Fiksi","t":"pgs","s":"Apa pesan moral yang dapat dipetik dari cerita ini?","o":["Menulis surat adalah kegiatan yang membuang waktu dan tidak layak dijadikan kenang-kenangan","Pemberian yang tulus dan personal sering lebih bermakna daripada hadiah yang mahal secara materi","Hadiah yang paling baik selalu berupa barang mahal karena menunjukkan rasa hormat","Guru tidak pernah menghargai hadiah dari murid-muridnya karena sudah terlalu sering menerimanya"],"a":1,"p":"Cerita membangun kontras antara usulan hadiah mahal (tas) dan hadiah personal (buku surat) — dan menunjukkan yang kedua justru lebih menyentuh, mengajarkan bahwa ketulusan lebih bermakna dari nilai materi.","tk":["Kelas 9C sepakat mengumpulkan uang untuk membelikan kado perpisahan bagi Bu Mira, wali kelas mereka yang akan pensiun. Sebagian besar siswa mengusulkan tas kerja mahal, tapi Doni, ketua kelas, punya ide lain. \"Gimana kalau kita bikin buku kumpulan surat dari kita semua? Bu Mira selalu bilang, murid-muridnya itu 'harta karun' beliau.\"","Awalnya banyak yang ragu, merasa ide itu kurang berkesan dibanding hadiah barang. Namun setelah didiskusikan, seluruh kelas akhirnya sepakat menulis surat masing-masing, menceritakan kenangan dan ucapan terima kasih mereka kepada Bu Mira selama tiga tahun diajar olehnya.","Hari perpisahan tiba. Ketika Bu Mira membuka buku kumpulan surat itu, air matanya langsung menetes. Ia membaca satu per satu dengan pelan, sesekali tertawa kecil, sesekali terdiam lama. \"Ini,\" katanya sambil memeluk buku itu, \"jauh lebih berharga dari tas semahal apa pun.\""],"tj":"Kado untuk Bu Mira","paket":2,"noSoal":14},{"m":"bin","e":"Teks Fiksi","t":"mcma","s":"Berdasarkan cerita, pernyataan yang benar adalah ... (Pilih semua yang benar)","o":["Bu Mira menangis ketika membaca kumpulan surat tersebut","Doni adalah ketua kelas yang mengusulkan ide buku kumpulan surat","Bu Mira adalah wali kelas 9C yang akan pensiun","Seluruh siswa langsung setuju tanpa keraguan sedikit pun"],"a":[0,1,2],"p":"Bu Mira wali kelas yang akan pensiun (benar, paragraf 1). Doni ketua kelas pengusul ide (benar, paragraf 1). Awalnya banyak yang ragu, tidak langsung setuju (salah, paragraf 2). Bu Mira menangis membaca surat (benar, paragraf 3).","tk":["Kelas 9C sepakat mengumpulkan uang untuk membelikan kado perpisahan bagi Bu Mira, wali kelas mereka yang akan pensiun. Sebagian besar siswa mengusulkan tas kerja mahal, tapi Doni, ketua kelas, punya ide lain. \"Gimana kalau kita bikin buku kumpulan surat dari kita semua? Bu Mira selalu bilang, murid-muridnya itu 'harta karun' beliau.\"","Awalnya banyak yang ragu, merasa ide itu kurang berkesan dibanding hadiah barang. Namun setelah didiskusikan, seluruh kelas akhirnya sepakat menulis surat masing-masing, menceritakan kenangan dan ucapan terima kasih mereka kepada Bu Mira selama tiga tahun diajar olehnya.","Hari perpisahan tiba. Ketika Bu Mira membuka buku kumpulan surat itu, air matanya langsung menetes. Ia membaca satu per satu dengan pelan, sesekali tertawa kecil, sesekali terdiam lama. \"Ini,\" katanya sambil memeluk buku itu, \"jauh lebih berharga dari tas semahal apa pun.\""],"tj":"Kado untuk Bu Mira","paket":2,"noSoal":15},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Apa perbedaan mendasar antara ekonomi linear dan ekonomi sirkular menurut teks?","o":["Ekonomi linear berakhir dengan membuang produk, sedangkan ekonomi sirkular berusaha memperbaiki, memakai ulang, atau mendaur ulang","Ekonomi linear lebih ramah lingkungan dibanding ekonomi sirkular karena sampahnya lebih sedikit","Ekonomi sirkular hanya berlaku untuk produk elektronik dan tidak untuk jenis barang yang lain","Ekonomi linear dan ekonomi sirkular pada dasarnya sama saja dan tidak memiliki perbedaan berarti"],"a":0,"p":"Paragraf 1-2 menjelaskan ekonomi linear berujung pada membuang, sedangkan ekonomi sirkular memutus rantai buang dengan memperbaiki, menggunakan kembali, atau mendaur ulang.","tk":["Model ekonomi yang selama ini banyak dianut adalah ekonomi linear: ambil bahan baku, produksi, gunakan, lalu buang. Model ini terbukti menghasilkan tumpukan sampah yang terus bertambah dan menguras sumber daya alam secara cepat. Sebagai alternatif, muncul konsep ekonomi sirkular yang berusaha memutus rantai 'buang' tersebut.","Dalam ekonomi sirkular, produk dirancang agar bisa diperbaiki, digunakan kembali, atau didaur ulang setelah masa pakainya selesai, alih-alih langsung dibuang. Contohnya, pakaian bekas yang masih layak bisa dijual kembali atau diolah menjadi produk baru, sementara limbah elektronik diambil komponennya untuk digunakan pada produk lain.","Penerapan ekonomi sirkular membutuhkan perubahan pola pikir baik dari produsen maupun konsumen. Produsen perlu mendesain produk yang lebih tahan lama dan mudah diperbaiki, sementara konsumen perlu terbiasa memperbaiki atau menjual barang lama alih-alih langsung membuangnya. Perubahan ini, meski butuh waktu, dinilai penting untuk keberlanjutan lingkungan jangka panjang."],"tj":"Ekonomi Sirkular: Solusi Masa Depan","paket":2,"noSoal":16},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Apa yang dibutuhkan produsen untuk mendukung penerapan ekonomi sirkular?","o":["Menurunkan kualitas produk dengan sengaja supaya konsumen cepat membeli barang yang baru","Memproduksi barang sebanyak-banyaknya tanpa mempertimbangkan daya tahan dan kemudahan perbaikan","Mendesain produk yang lebih tahan lama dan mudah diperbaiki","Menghentikan seluruh kegiatan produksi supaya tidak ada lagi barang baru yang dibuang"],"a":2,"p":"Paragraf 3 menyebutkan produsen perlu mendesain produk yang lebih tahan lama dan mudah diperbaiki.","tk":["Model ekonomi yang selama ini banyak dianut adalah ekonomi linear: ambil bahan baku, produksi, gunakan, lalu buang. Model ini terbukti menghasilkan tumpukan sampah yang terus bertambah dan menguras sumber daya alam secara cepat. Sebagai alternatif, muncul konsep ekonomi sirkular yang berusaha memutus rantai 'buang' tersebut.","Dalam ekonomi sirkular, produk dirancang agar bisa diperbaiki, digunakan kembali, atau didaur ulang setelah masa pakainya selesai, alih-alih langsung dibuang. Contohnya, pakaian bekas yang masih layak bisa dijual kembali atau diolah menjadi produk baru, sementara limbah elektronik diambil komponennya untuk digunakan pada produk lain.","Penerapan ekonomi sirkular membutuhkan perubahan pola pikir baik dari produsen maupun konsumen. Produsen perlu mendesain produk yang lebih tahan lama dan mudah diperbaiki, sementara konsumen perlu terbiasa memperbaiki atau menjual barang lama alih-alih langsung membuangnya. Perubahan ini, meski butuh waktu, dinilai penting untuk keberlanjutan lingkungan jangka panjang."],"tj":"Ekonomi Sirkular: Solusi Masa Depan","paket":2,"noSoal":17},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Contoh penerapan ekonomi sirkular yang disebutkan dalam teks adalah ...","o":["Konsumen dilarang membeli barang bekas karena dianggap merugikan para produsen barang baru","Produk baru selalu dibuat dari bahan baku murni tanpa pernah memakai bahan hasil daur ulang","Semua barang lama langsung dibuang begitu saja tanpa diproses terlebih dahulu oleh siapa pun","Pakaian bekas dijual kembali dan limbah elektronik diambil komponennya untuk dipakai pada produk lain"],"a":3,"p":"Paragraf 2 memberikan contoh konkret: pakaian bekas dijual kembali dan limbah elektronik diambil komponennya.","tk":["Model ekonomi yang selama ini banyak dianut adalah ekonomi linear: ambil bahan baku, produksi, gunakan, lalu buang. Model ini terbukti menghasilkan tumpukan sampah yang terus bertambah dan menguras sumber daya alam secara cepat. Sebagai alternatif, muncul konsep ekonomi sirkular yang berusaha memutus rantai 'buang' tersebut.","Dalam ekonomi sirkular, produk dirancang agar bisa diperbaiki, digunakan kembali, atau didaur ulang setelah masa pakainya selesai, alih-alih langsung dibuang. Contohnya, pakaian bekas yang masih layak bisa dijual kembali atau diolah menjadi produk baru, sementara limbah elektronik diambil komponennya untuk digunakan pada produk lain.","Penerapan ekonomi sirkular membutuhkan perubahan pola pikir baik dari produsen maupun konsumen. Produsen perlu mendesain produk yang lebih tahan lama dan mudah diperbaiki, sementara konsumen perlu terbiasa memperbaiki atau menjual barang lama alih-alih langsung membuangnya. Perubahan ini, meski butuh waktu, dinilai penting untuk keberlanjutan lingkungan jangka panjang."],"tj":"Ekonomi Sirkular: Solusi Masa Depan","paket":2,"noSoal":18},{"m":"bin","e":"Teks Informasi","t":"mcma","s":"Berdasarkan teks, pernyataan yang benar adalah ... (Pilih semua yang benar)","o":["Perubahan menuju ekonomi sirkular membutuhkan waktu","Ekonomi linear menghasilkan tumpukan sampah yang terus bertambah","Konsumen tidak memiliki peran dalam penerapan ekonomi sirkular","Ekonomi sirkular berusaha memutus rantai 'buang' pada produk"],"a":[0,1,3],"p":"Ekonomi linear menghasilkan tumpukan sampah (benar, paragraf 1). Ekonomi sirkular memutus rantai buang (benar, paragraf 1). Konsumen justru punya peran penting, bukan tidak berperan (salah). Perubahan butuh waktu (benar, paragraf 3).","tk":["Model ekonomi yang selama ini banyak dianut adalah ekonomi linear: ambil bahan baku, produksi, gunakan, lalu buang. Model ini terbukti menghasilkan tumpukan sampah yang terus bertambah dan menguras sumber daya alam secara cepat. Sebagai alternatif, muncul konsep ekonomi sirkular yang berusaha memutus rantai 'buang' tersebut.","Dalam ekonomi sirkular, produk dirancang agar bisa diperbaiki, digunakan kembali, atau didaur ulang setelah masa pakainya selesai, alih-alih langsung dibuang. Contohnya, pakaian bekas yang masih layak bisa dijual kembali atau diolah menjadi produk baru, sementara limbah elektronik diambil komponennya untuk digunakan pada produk lain.","Penerapan ekonomi sirkular membutuhkan perubahan pola pikir baik dari produsen maupun konsumen. Produsen perlu mendesain produk yang lebih tahan lama dan mudah diperbaiki, sementara konsumen perlu terbiasa memperbaiki atau menjual barang lama alih-alih langsung membuangnya. Perubahan ini, meski butuh waktu, dinilai penting untuk keberlanjutan lingkungan jangka panjang."],"tj":"Ekonomi Sirkular: Solusi Masa Depan","paket":2,"noSoal":19},{"m":"bin","e":"Teks Informasi","t":"kat","p":"Ekonomi linear mengikuti pola ambil-produksi-gunakan-buang (benar). Ekonomi sirkular justru butuh perubahan pola pikir keduanya (salah). Limbah elektronik diambil komponennya (benar). Baik produsen maupun konsumen berperan (salah).","kp":[["Ekonomi linear mengikuti pola ambil, produksi, gunakan, lalu buang",true],["Limbah elektronik dalam ekonomi sirkular bisa diambil komponennya untuk produk lain",true],["Ekonomi sirkular hanya bisa diterapkan oleh produsen, bukan konsumen",false],["Ekonomi sirkular tidak memerlukan perubahan pola pikir produsen maupun konsumen",false]],"tk":["Model ekonomi yang selama ini banyak dianut adalah ekonomi linear: ambil bahan baku, produksi, gunakan, lalu buang. Model ini terbukti menghasilkan tumpukan sampah yang terus bertambah dan menguras sumber daya alam secara cepat. Sebagai alternatif, muncul konsep ekonomi sirkular yang berusaha memutus rantai 'buang' tersebut.","Dalam ekonomi sirkular, produk dirancang agar bisa diperbaiki, digunakan kembali, atau didaur ulang setelah masa pakainya selesai, alih-alih langsung dibuang. Contohnya, pakaian bekas yang masih layak bisa dijual kembali atau diolah menjadi produk baru, sementara limbah elektronik diambil komponennya untuk digunakan pada produk lain.","Penerapan ekonomi sirkular membutuhkan perubahan pola pikir baik dari produsen maupun konsumen. Produsen perlu mendesain produk yang lebih tahan lama dan mudah diperbaiki, sementara konsumen perlu terbiasa memperbaiki atau menjual barang lama alih-alih langsung membuangnya. Perubahan ini, meski butuh waktu, dinilai penting untuk keberlanjutan lingkungan jangka panjang."],"tj":"Ekonomi Sirkular: Solusi Masa Depan","paket":2,"noSoal":20},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Apa fungsi biologis tidur yang disebutkan dalam teks?","o":["Tidur hanya berfungsi untuk mengistirahatkan mata yang lelah setelah seharian membaca","Tidur tidak memiliki fungsi biologis yang berarti selain mengisi waktu di malam hari","Otak memproses dan menyimpan informasi, sedangkan tubuh memperbaiki sel-sel yang rusak","Tidur berfungsi untuk mempercepat pertumbuhan rambut dan kuku pada orang yang sedang dewasa"],"a":2,"p":"Paragraf 1 menjelaskan dua fungsi tidur: otak memproses dan menyimpan informasi, serta tubuh memperbaiki sel-sel rusak.","tk":["Tidur sering dianggap sebagai waktu 'tidak produktif' sehingga banyak orang mengorbankannya demi menyelesaikan pekerjaan atau tugas. Padahal, tidur memiliki fungsi biologis yang sangat penting: selama tidur, otak memproses dan menyimpan informasi yang dipelajari sepanjang hari, serta tubuh melakukan perbaikan sel-sel yang rusak.","Kurang tidur secara terus-menerus dapat berdampak serius, mulai dari menurunnya konsentrasi dan daya ingat, meningkatnya risiko obesitas dan penyakit jantung, hingga gangguan suasana hati seperti mudah marah atau cemas. Remaja yang sedang dalam masa pertumbuhan bahkan membutuhkan waktu tidur lebih panjang dibanding orang dewasa.","Untuk menjaga kualitas tidur, para ahli menyarankan menetapkan jadwal tidur yang konsisten, menghindari layar gawai setidaknya satu jam sebelum tidur, dan menciptakan lingkungan kamar yang gelap serta tenang. Kebiasaan-kebiasaan kecil ini, jika dilakukan secara rutin, dapat memberikan dampak besar bagi kualitas hidup secara keseluruhan."],"tj":"Mengapa Kita Perlu Tidur Cukup","paket":2,"noSoal":21},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Mengapa remaja membutuhkan waktu tidur lebih panjang dibanding orang dewasa menurut teks?","o":["Karena remaja lebih mudah lelah daripada orang dewasa akibat banyaknya kegiatan di sekolah","Karena remaja sedang berada dalam masa pertumbuhan","Karena remaja lebih banyak bermain gawai sehingga tubuhnya cepat merasa letih setiap hari","Karena remaja tidak memiliki tanggung jawab sehingga bebas tidur selama yang diinginkan"],"a":1,"p":"Paragraf 2 menyebutkan remaja yang sedang dalam masa pertumbuhan membutuhkan waktu tidur lebih panjang.","tk":["Tidur sering dianggap sebagai waktu 'tidak produktif' sehingga banyak orang mengorbankannya demi menyelesaikan pekerjaan atau tugas. Padahal, tidur memiliki fungsi biologis yang sangat penting: selama tidur, otak memproses dan menyimpan informasi yang dipelajari sepanjang hari, serta tubuh melakukan perbaikan sel-sel yang rusak.","Kurang tidur secara terus-menerus dapat berdampak serius, mulai dari menurunnya konsentrasi dan daya ingat, meningkatnya risiko obesitas dan penyakit jantung, hingga gangguan suasana hati seperti mudah marah atau cemas. Remaja yang sedang dalam masa pertumbuhan bahkan membutuhkan waktu tidur lebih panjang dibanding orang dewasa.","Untuk menjaga kualitas tidur, para ahli menyarankan menetapkan jadwal tidur yang konsisten, menghindari layar gawai setidaknya satu jam sebelum tidur, dan menciptakan lingkungan kamar yang gelap serta tenang. Kebiasaan-kebiasaan kecil ini, jika dilakukan secara rutin, dapat memberikan dampak besar bagi kualitas hidup secara keseluruhan."],"tj":"Mengapa Kita Perlu Tidur Cukup","paket":2,"noSoal":22},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Saran apa yang diberikan teks untuk menjaga kualitas tidur?","o":["Menetapkan jadwal tidur konsisten, menghindari layar gawai sebelum tidur, dan menciptakan kamar yang gelap dan tenang","Tidur sebanyak mungkin tanpa jadwal tertentu supaya tubuh selalu merasa segar kembali","Memakai gawai sampai benar-benar mengantuk supaya mata cepat lelah dan segera tertidur","Tidur di ruangan yang terang dan ramai agar tidak terlalu nyenyak dan mudah terbangun"],"a":0,"p":"Paragraf 3 menyebutkan tiga saran: jadwal tidur konsisten, menghindari gawai sebelum tidur, dan lingkungan kamar gelap serta tenang.","tk":["Tidur sering dianggap sebagai waktu 'tidak produktif' sehingga banyak orang mengorbankannya demi menyelesaikan pekerjaan atau tugas. Padahal, tidur memiliki fungsi biologis yang sangat penting: selama tidur, otak memproses dan menyimpan informasi yang dipelajari sepanjang hari, serta tubuh melakukan perbaikan sel-sel yang rusak.","Kurang tidur secara terus-menerus dapat berdampak serius, mulai dari menurunnya konsentrasi dan daya ingat, meningkatnya risiko obesitas dan penyakit jantung, hingga gangguan suasana hati seperti mudah marah atau cemas. Remaja yang sedang dalam masa pertumbuhan bahkan membutuhkan waktu tidur lebih panjang dibanding orang dewasa.","Untuk menjaga kualitas tidur, para ahli menyarankan menetapkan jadwal tidur yang konsisten, menghindari layar gawai setidaknya satu jam sebelum tidur, dan menciptakan lingkungan kamar yang gelap serta tenang. Kebiasaan-kebiasaan kecil ini, jika dilakukan secara rutin, dapat memberikan dampak besar bagi kualitas hidup secara keseluruhan."],"tj":"Mengapa Kita Perlu Tidur Cukup","paket":2,"noSoal":23},{"m":"bin","e":"Teks Informasi","t":"mcma","s":"Dampak kurang tidur yang disebutkan dalam teks adalah ... (Pilih semua yang benar)","o":["Gangguan suasana hati seperti mudah marah atau cemas","Meningkatnya kemampuan belajar secara drastis","Menurunnya konsentrasi dan daya ingat","Meningkatnya risiko obesitas dan penyakit jantung"],"a":[0,2,3],"p":"Paragraf 2 menyebutkan tiga dampak: menurunnya konsentrasi/daya ingat, risiko obesitas/penyakit jantung, dan gangguan suasana hati. Kurang tidur justru menurunkan, bukan meningkatkan kemampuan belajar.","tk":["Tidur sering dianggap sebagai waktu 'tidak produktif' sehingga banyak orang mengorbankannya demi menyelesaikan pekerjaan atau tugas. Padahal, tidur memiliki fungsi biologis yang sangat penting: selama tidur, otak memproses dan menyimpan informasi yang dipelajari sepanjang hari, serta tubuh melakukan perbaikan sel-sel yang rusak.","Kurang tidur secara terus-menerus dapat berdampak serius, mulai dari menurunnya konsentrasi dan daya ingat, meningkatnya risiko obesitas dan penyakit jantung, hingga gangguan suasana hati seperti mudah marah atau cemas. Remaja yang sedang dalam masa pertumbuhan bahkan membutuhkan waktu tidur lebih panjang dibanding orang dewasa.","Untuk menjaga kualitas tidur, para ahli menyarankan menetapkan jadwal tidur yang konsisten, menghindari layar gawai setidaknya satu jam sebelum tidur, dan menciptakan lingkungan kamar yang gelap serta tenang. Kebiasaan-kebiasaan kecil ini, jika dilakukan secara rutin, dapat memberikan dampak besar bagi kualitas hidup secara keseluruhan."],"tj":"Mengapa Kita Perlu Tidur Cukup","paket":2,"noSoal":24},{"m":"bin","e":"Teks Informasi","t":"kat","p":"Tidur justru memiliki fungsi biologis penting, bukan sepenuhnya tidak produktif (salah). Kurang tidur meningkatkan risiko penyakit jantung (benar). Menghindari gawai sebelum tidur adalah saran yang disebutkan (benar). Remaja justru butuh tidur lebih panjang (salah).","kp":[["Menghindari layar gawai sebelum tidur adalah salah satu saran menjaga kualitas tidur",true],["Remaja membutuhkan waktu tidur yang lebih pendek dibanding orang dewasa",false],["Tidur adalah waktu yang sepenuhnya tidak produktif bagi tubuh",false],["Kurang tidur dapat meningkatkan risiko penyakit jantung",true]],"tk":["Tidur sering dianggap sebagai waktu 'tidak produktif' sehingga banyak orang mengorbankannya demi menyelesaikan pekerjaan atau tugas. Padahal, tidur memiliki fungsi biologis yang sangat penting: selama tidur, otak memproses dan menyimpan informasi yang dipelajari sepanjang hari, serta tubuh melakukan perbaikan sel-sel yang rusak.","Kurang tidur secara terus-menerus dapat berdampak serius, mulai dari menurunnya konsentrasi dan daya ingat, meningkatnya risiko obesitas dan penyakit jantung, hingga gangguan suasana hati seperti mudah marah atau cemas. Remaja yang sedang dalam masa pertumbuhan bahkan membutuhkan waktu tidur lebih panjang dibanding orang dewasa.","Untuk menjaga kualitas tidur, para ahli menyarankan menetapkan jadwal tidur yang konsisten, menghindari layar gawai setidaknya satu jam sebelum tidur, dan menciptakan lingkungan kamar yang gelap serta tenang. Kebiasaan-kebiasaan kecil ini, jika dilakukan secara rutin, dapat memberikan dampak besar bagi kualitas hidup secara keseluruhan."],"tj":"Mengapa Kita Perlu Tidur Cukup","paket":2,"noSoal":25},{"m":"bin","e":"Teks Fiksi","t":"pgs","s":"Mengapa Pak Karto enggan mengganti sepeda tuanya dengan motor?","o":["Karena harga motor bekas terlalu mahal sehingga tidak terjangkau oleh penghasilannya","Karena anaknya melarang ia memakai motor demi alasan keselamatan di jalan saat berdagang","Karena ia tidak bisa mengendarai motor sehingga takut jatuh di jalan raya yang ramai","Karena sepeda itu menyimpan kenangan dan makna emosional sepanjang perjalanan hidupnya berjualan"],"a":3,"p":"Pak Karto menjelaskan sendiri bahwa sepeda itu telah menemaninya dari muda, menunjukkan ada ikatan emosional dan kenangan yang membuatnya enggan menggantinya.","tk":["Pak Karto masih mengayuh sepeda tuanya setiap pagi untuk berjualan sayur keliling, meski anaknya sudah beberapa kali menawarkan motor bekas untuk mempermudah pekerjaannya. \"Sepeda ini yang antar saya keliling kampung dari muda sampai sekarang, Nak. Rasanya nggak tega ganti,\" katanya sambil mengelap embun di setangnya.","Suatu pagi, rantai sepeda itu putus di tengah jalan. Untuk pertama kalinya, Pak Karto harus meminjam motor tetangga agar dagangannya tidak basi. Meski lebih cepat sampai, ia mengaku ada yang terasa hilang: suara khas kayuhan roda dan sapaan pelanggan yang biasa ia dengar sepanjang perjalanan.","Sore harinya, anaknya membawa pulang sepeda itu yang sudah diperbaiki, bahkan dengan rantai baru yang lebih kuat. Pak Karto tersenyum lega. Bukan hanya karena bisa kembali berjualan seperti biasa, tapi karena ia tahu, anaknya kini mengerti bahwa sepeda itu bukan sekadar alat transportasi baginya."],"tj":"Sepeda Tua Pak Karto","paket":2,"noSoal":26},{"m":"bin","e":"Teks Fiksi","t":"pgs","s":"Apa makna kalimat \"anaknya kini mengerti bahwa sepeda itu bukan sekadar alat transportasi baginya\" di akhir cerita?","o":["Anaknya tidak peduli dengan perasaan Pak Karto dan hanya ingin sepeda itu cepat beres","Anaknya akhirnya memahami nilai emosional sepeda itu bagi Pak Karto, bukan sekadar fungsi praktisnya","Anaknya ingin membeli sepeda baru yang lebih mahal untuk menggantikan sepeda ayahnya","Anaknya berencana menjual sepeda tua itu lalu menggantinya dengan motor yang lebih baik"],"a":1,"p":"Tindakan anaknya memperbaiki (bukan mengganti) sepeda menunjukkan ia telah memahami nilai emosional yang melekat pada benda itu bagi ayahnya.","tk":["Pak Karto masih mengayuh sepeda tuanya setiap pagi untuk berjualan sayur keliling, meski anaknya sudah beberapa kali menawarkan motor bekas untuk mempermudah pekerjaannya. \"Sepeda ini yang antar saya keliling kampung dari muda sampai sekarang, Nak. Rasanya nggak tega ganti,\" katanya sambil mengelap embun di setangnya.","Suatu pagi, rantai sepeda itu putus di tengah jalan. Untuk pertama kalinya, Pak Karto harus meminjam motor tetangga agar dagangannya tidak basi. Meski lebih cepat sampai, ia mengaku ada yang terasa hilang: suara khas kayuhan roda dan sapaan pelanggan yang biasa ia dengar sepanjang perjalanan.","Sore harinya, anaknya membawa pulang sepeda itu yang sudah diperbaiki, bahkan dengan rantai baru yang lebih kuat. Pak Karto tersenyum lega. Bukan hanya karena bisa kembali berjualan seperti biasa, tapi karena ia tahu, anaknya kini mengerti bahwa sepeda itu bukan sekadar alat transportasi baginya."],"tj":"Sepeda Tua Pak Karto","paket":2,"noSoal":27},{"m":"bin","e":"Teks Fiksi","t":"mcma","s":"Berdasarkan cerita, pernyataan yang benar adalah ... (Pilih semua yang benar)","o":["Rantai sepeda Pak Karto putus di tengah jalan","Anaknya pernah menawarkan motor bekas kepada Pak Karto","Pak Karto akhirnya memutuskan membeli motor baru","Pak Karto berjualan sayur keliling menggunakan sepeda"],"a":[0,1,3],"p":"Berjualan sayur keliling dengan sepeda (benar, paragraf 1). Anaknya menawarkan motor bekas (benar, paragraf 1). Rantai putus di tengah jalan (benar, paragraf 2). Pak Karto tidak membeli motor, justru sepedanya diperbaiki (salah).","tk":["Pak Karto masih mengayuh sepeda tuanya setiap pagi untuk berjualan sayur keliling, meski anaknya sudah beberapa kali menawarkan motor bekas untuk mempermudah pekerjaannya. \"Sepeda ini yang antar saya keliling kampung dari muda sampai sekarang, Nak. Rasanya nggak tega ganti,\" katanya sambil mengelap embun di setangnya.","Suatu pagi, rantai sepeda itu putus di tengah jalan. Untuk pertama kalinya, Pak Karto harus meminjam motor tetangga agar dagangannya tidak basi. Meski lebih cepat sampai, ia mengaku ada yang terasa hilang: suara khas kayuhan roda dan sapaan pelanggan yang biasa ia dengar sepanjang perjalanan.","Sore harinya, anaknya membawa pulang sepeda itu yang sudah diperbaiki, bahkan dengan rantai baru yang lebih kuat. Pak Karto tersenyum lega. Bukan hanya karena bisa kembali berjualan seperti biasa, tapi karena ia tahu, anaknya kini mengerti bahwa sepeda itu bukan sekadar alat transportasi baginya."],"tj":"Sepeda Tua Pak Karto","paket":2,"noSoal":28},{"m":"bin","e":"Teks Fiksi","t":"kat","p":"Meminjam motor tetangga (benar, paragraf 2). Ia justru merasa ada yang hilang, tidak sama (salah). Anaknya memperbaiki dengan rantai baru (benar, paragraf 3). Pak Karto tersenyum lega, bukan marah (salah).","kp":[["Pak Karto meminjam motor tetangga saat rantai sepedanya putus",true],["Anaknya memperbaiki sepeda Pak Karto dengan rantai baru",true],["Pak Karto merasa perjalanannya dengan motor persis sama seperti dengan sepeda",false],["Pak Karto marah kepada anaknya karena memperbaiki sepeda itu",false]],"tk":["Pak Karto masih mengayuh sepeda tuanya setiap pagi untuk berjualan sayur keliling, meski anaknya sudah beberapa kali menawarkan motor bekas untuk mempermudah pekerjaannya. \"Sepeda ini yang antar saya keliling kampung dari muda sampai sekarang, Nak. Rasanya nggak tega ganti,\" katanya sambil mengelap embun di setangnya.","Suatu pagi, rantai sepeda itu putus di tengah jalan. Untuk pertama kalinya, Pak Karto harus meminjam motor tetangga agar dagangannya tidak basi. Meski lebih cepat sampai, ia mengaku ada yang terasa hilang: suara khas kayuhan roda dan sapaan pelanggan yang biasa ia dengar sepanjang perjalanan.","Sore harinya, anaknya membawa pulang sepeda itu yang sudah diperbaiki, bahkan dengan rantai baru yang lebih kuat. Pak Karto tersenyum lega. Bukan hanya karena bisa kembali berjualan seperti biasa, tapi karena ia tahu, anaknya kini mengerti bahwa sepeda itu bukan sekadar alat transportasi baginya."],"tj":"Sepeda Tua Pak Karto","paket":2,"noSoal":29},{"m":"bin","e":"Teks Informasi","t":"pgs","s":"Apa tujuan akhir dari penerapan ekonomi sirkular menurut teks?","o":["Membuat semua produk menjadi sekali pakai agar konsumen terus membeli barang yang baru","Menghentikan seluruh kegiatan produksi agar tidak ada lagi barang baru yang dihasilkan","Meningkatkan harga barang bekas supaya para pedagang mendapatkan untung yang lebih besar","Keberlanjutan lingkungan dalam jangka panjang"],"a":3,"p":"Paragraf 3 menyebutkan perubahan menuju ekonomi sirkular dinilai penting untuk keberlanjutan lingkungan jangka panjang.","tk":["Model ekonomi yang selama ini banyak dianut adalah ekonomi linear: ambil bahan baku, produksi, gunakan, lalu buang. Model ini terbukti menghasilkan tumpukan sampah yang terus bertambah dan menguras sumber daya alam secara cepat. Sebagai alternatif, muncul konsep ekonomi sirkular yang berusaha memutus rantai 'buang' tersebut.","Dalam ekonomi sirkular, produk dirancang agar bisa diperbaiki, digunakan kembali, atau didaur ulang setelah masa pakainya selesai, alih-alih langsung dibuang. Contohnya, pakaian bekas yang masih layak bisa dijual kembali atau diolah menjadi produk baru, sementara limbah elektronik diambil komponennya untuk digunakan pada produk lain.","Penerapan ekonomi sirkular membutuhkan perubahan pola pikir baik dari produsen maupun konsumen. Produsen perlu mendesain produk yang lebih tahan lama dan mudah diperbaiki, sementara konsumen perlu terbiasa memperbaiki atau menjual barang lama alih-alih langsung membuangnya. Perubahan ini, meski butuh waktu, dinilai penting untuk keberlanjutan lingkungan jangka panjang."],"tj":"Ekonomi Sirkular: Solusi Masa Depan","paket":2,"noSoal":30}]}};
+const BANK_LAMA = [];
+
+/* ===================================================
+   STATE
+=================================================== */
+const SK_TRY = 'tkaTryState_v3';
+const SK_LAT = 'tkaLatState_v3';
+
+let tryState = loadState(SK_TRY) || {
+  activePaket: null,   // 1..4
+  activeMapel: null,   // 'mtk' atau 'bin'
+  answers: {},         // 'p1_mtk_0': {sel, checked, ok}
+  scores: {},          // 'p1_mtk': {ok, total, done}
+  timer: {},           // 'p1_mtk': {remaining, paused}
+};
+
+let latState = loadState(SK_LAT) || {
+  mapel: 'mtk',
+  ans: {},
+  idx: {},
+};
+
+let tryIdx = 0;        // index soal saat ini dalam tryout
+let timerInterval = null;
+let mode = 'try';      // 'try' atau 'lat'
+
+function loadState(k){ try{ const s=localStorage.getItem(k); return s?JSON.parse(s):null; }catch(e){return null;} }
+function saveState(k, s){ try{ localStorage.setItem(k,JSON.stringify(s)); }catch(e){} }
+function saveTry(){ saveState(SK_TRY, tryState); }
+function saveLat(){ saveState(SK_LAT, latState); }
+
+/* ===================================================
+   MODE SWITCH
+=================================================== */
+function switchMode(m) {
+  mode = m;
+  document.getElementById('trySection').style.display = m==='try' ? '' : 'none';
+  document.getElementById('latSection').style.display = m==='lat' ? '' : 'none';
+  document.getElementById('btnModeTry').className = 'mode-btn' + (m==='try' ? ' act-try' : '');
+  document.getElementById('btnModeLat').className = 'mode-btn' + (m==='lat' ? ' act-lat' : '');
+  if (m==='try') renderPaketGrid();
+  else renderLat();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ===================================================
+   TRYOUT — PAKET PICKER
+=================================================== */
+function renderPaketGrid() {
+  stopTimer();
+  document.getElementById('tryIntro').style.display = '';
+  document.getElementById('trySession').style.display = 'none';
+
+  const g = document.getElementById('paketGrid');
+  let html = '';
+  for (let p = 1; p <= 2; p++) {
+    const mtkKey = 'p'+p+'_mtk', binKey = 'p'+p+'_bin';
+    const mtkScore = tryState.scores[mtkKey];
+    const binScore = tryState.scores[binKey];
+    const bothDone = mtkScore && binScore;
+    
+    let scoreHtml = '';
+    if (mtkScore && mtkScore.done) {
+      scoreHtml += '<div class="pk-score"><div class="pk-dot"></div>MTK: '+mtkScore.ok+'/'+mtkScore.total+'</div>';
+    }
+    if (binScore && binScore.done) {
+      scoreHtml += '<div class="pk-score"><div class="pk-dot"></div>BIN: '+binScore.ok+'/'+binScore.total+'</div>';
+    }
+    if (!mtkScore && !binScore) {
+      scoreHtml = '<div class="pk-sub">Belum dikerjakan</div>';
+    }
+    
+    html += '<div class="paket-card'+( bothDone ? ' done' : '')+'" onclick="startPaket('+p+')">'
+      + '<div class="pk-num">Paket '+p+'</div>'
+      + '<div class="pk-title">Tryout '+p+'</div>'
+      + '<div class="pk-sub">2 sesi &nbsp;·&nbsp; 60 soal &nbsp;·&nbsp; 150 menit</div>'
+      + scoreHtml
+      + '</div>';
+  }
+  g.innerHTML = html;
+}
+
+function startPaket(p) {
+  // Cek apakah MTK sudah selesai → langsung ke BIN
+  const mtkKey = 'p'+p+'_mtk';
+  const binKey = 'p'+p+'_bin';
+  const mtkDone = tryState.scores[mtkKey] && tryState.scores[mtkKey].done;
+  const binDone = tryState.scores[binKey] && tryState.scores[binKey].done;
+  
+  if (binDone) {
+    // Kedua sudah selesai, show summary atau restart option
+    showPaketSummary(p);
+    return;
+  }
+  
+  const mapel = mtkDone ? 'bin' : 'mtk';
+  startSession(p, mapel);
+}
+
+function startSession(p, mapel) {
+  tryState.activePaket = p;
+  tryState.activeMapel = mapel;
+  saveTry();
+  
+  tryIdx = 0;
+  
+  document.getElementById('tryIntro').style.display = 'none';
+  document.getElementById('trySession').style.display = 'block';
+  document.getElementById('tryResult').style.display = 'none';
+  document.getElementById('tryCard').style.display = '';
+  
+  const mapelLabel = mapel === 'mtk' ? 'Matematika' : 'Bahasa Indonesia';
+  document.getElementById('sessMapelLabel').textContent = mapelLabel;
+  document.getElementById('sessPaketLabel').textContent = 'Paket ' + p + ' — Tryout ' + p;
+  
+  // Inisialisasi timer
+  const timerKey = 'p'+p+'_'+mapel;
+  if (!tryState.timer[timerKey]) {
+    tryState.timer[timerKey] = { remaining: 75*60, paused: false };
+  }
+  
+  startTimer(timerKey);
+  renderTryCard();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ===================================================
+   TRYOUT — TIMER
+=================================================== */
+function startTimer(key) {
+  stopTimer();
+  const t = tryState.timer[key];
+  updateTimerDisplay(t.remaining);
+  
+  if (!t.paused && tryState.scores['p'+tryState.activePaket+'_'+tryState.activeMapel]?.done) return;
+  
+  timerInterval = setInterval(() => {
+    const k = 'p'+tryState.activePaket+'_'+tryState.activeMapel;
+    if (!tryState.timer[k]) return;
+    if (tryState.timer[k].paused) return;
+    tryState.timer[k].remaining--;
+    saveTry();
+    updateTimerDisplay(tryState.timer[k].remaining);
+    if (tryState.timer[k].remaining <= 0) {
+      stopTimer();
+      autoSubmit();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+function toggleTimer() {
+  const key = 'p'+tryState.activePaket+'_'+tryState.activeMapel;
+  if (!tryState.timer[key]) return;
+  tryState.timer[key].paused = !tryState.timer[key].paused;
+  document.getElementById('timerBtn').textContent = tryState.timer[key].paused ? '▶' : '⏸';
+  saveTry();
+}
+
+function updateTimerDisplay(sec) {
+  const m = Math.floor(Math.max(0,sec)/60).toString().padStart(2,'0');
+  const s = (Math.max(0,sec)%60).toString().padStart(2,'0');
+  const el = document.getElementById('timerDisplay');
+  if (el) { el.textContent = m+':'+s; el.style.color = sec < 300 ? '#C0392B' : ''; }
+}
+
+function autoSubmit() {
+  // Paksa selesai semua soal yang belum dijawab
+  const p = tryState.activePaket;
+  const mapel = tryState.activeMapel;
+  const soalList = PAKET['paket'+p][mapel];
+  soalList.forEach((q, i) => {
+    const k = 'p'+p+'_'+mapel+'_'+i;
+    if (!tryState.answers[k]) tryState.answers[k] = {};
+    if (!tryState.answers[k].checked) {
+      tryState.answers[k].checked = true;
+      tryState.answers[k].ok = false;
+    }
+  });
+  saveTry();
+  showSessionResult();
+}
+
+/* ===================================================
+   TRYOUT — RENDER SOAL
+=================================================== */
+function getCurrentSoalList() {
+  const p = tryState.activePaket;
+  const mapel = tryState.activeMapel;
+  return PAKET['paket'+p][mapel];
+}
+
+function getTryAnsKey(idx) {
+  return 'p'+tryState.activePaket+'_'+tryState.activeMapel+'_'+idx;
+}
+
+function renderTryCard() {
+  const list = getCurrentSoalList();
+  if (tryIdx >= list.length) tryIdx = list.length-1;
+  if (tryIdx < 0) tryIdx = 0;
+  
+  const q = list[tryIdx];
+  const k = getTryAnsKey(tryIdx);
+  const rec = tryState.answers[k] || {};
+  
+  // Progress bar
+  let answered = 0;
+  list.forEach((_, i) => { if (tryState.answers[getTryAnsKey(i)]?.sel !== undefined) answered++; });
+  document.getElementById('tryProgFill').style.width = (answered/list.length*100)+'%';
+  
+  // Render palette
+  renderTryPalette(list);
+  
+  const tipeLabel = {pgs:'Pilihan Ganda',mcma:'Pilihan Ganda Kompleks',kat:'Benar / Salah'}[q.t];
+  let html = '<div class="qhead"><div class="qnum">Soal <b>'+(tryIdx+1)+'</b> / '+list.length+'</div>';
+  html += '<div class="badges"><span class="badge b-el">'+q.e+'</span><span class="badge b-tp">'+tipeLabel+'</span></div></div>';
+  
+  if (q.tk) {
+    html += '<div class="teks">';
+    if (q.tj) html += '<div class="teks-judul">'+q.tj+'</div>';
+    q.tk.forEach(p => html += '<p>'+p+'</p>');
+    html += '</div>';
+  }
+  
+  html += '<div class="soal">'+(q.s || 'Tentukan benar atau salah setiap pernyataan berikut.')+'</div>';
+  
+  if (q.t === 'pgs' || q.t === 'mcma') {
+    if (q.t === 'mcma') html += '<div class="hint">Bisa lebih dari satu jawaban benar.</div>';
+    html += '<div class="opts">';
+    const letters = ['A','B','C','D','E'];
+    q.o.forEach((opt, oi) => {
+      let cls = 'opt '+q.t;
+      const selected = q.t === 'pgs' ? rec.sel === oi : (rec.sel||[]).includes(oi);
+      if (selected) cls += ' selected';
+      html += '<div class="'+cls+'" onclick="tryPick('+tryIdx+','+oi+')">'
+        + '<div class="mark">'+(selected ? (q.t==='pgs'?'●':'✓') : letters[oi])+'</div>'
+        + '<div class="otext">'+opt+'</div></div>';
+    });
+    html += '</div>';
+  } else if (q.t === 'kat') {
+    html += '<div class="kat">';
+    q.kp.forEach((p, pi) => {
+      const cur = rec.sel ? rec.sel[pi] : undefined;
+      const bCls = 'kbtn'+(cur===true ? ' on' : '');
+      const sCls = 'kbtn'+(cur===false ? ' on' : '');
+      html += '<div class="kat-row"><div class="kt">'+p[0]+'</div>'
+        + '<div class="kat-choose"><button class="'+bCls+'" onclick="tryPickKat('+tryIdx+','+pi+',true)">Benar</button>'
+        + '<button class="'+sCls+'" onclick="tryPickKat('+tryIdx+','+pi+',false)">Salah</button></div></div>';
+    });
+    html += '</div>';
+  }
+  
+  html += '<div class="actions">';
+  html += '<button class="btn btn-ghost" '+(tryIdx===0?'disabled':'')+' onclick="tryGo(-1)">← Sebelumnya</button>';
+  html += '<div class="spacer"></div>';
+  if (tryIdx < list.length-1) {
+    html += '<button class="btn btn-primary" onclick="tryGo(1)">Berikutnya →</button>';
+  } else {
+    const allAns = list.every((_,i) => tryState.answers[getTryAnsKey(i)]?.sel !== undefined || tryState.answers[getTryAnsKey(i)]?.sel?.length > 0);
+    html += '<button class="btn btn-finish" onclick="confirmSubmit()">Selesai & Lihat Skor</button>';
+  }
+  html += '</div>';
+  
+  document.getElementById('tryCard').innerHTML = html;
+}
+
+function renderTryPalette(list) {
+  const pal = document.getElementById('tryPalette');
+  let html = '';
+  list.forEach((_, i) => {
+    let cls = 'pnum';
+    if (i === tryIdx) cls += ' current';
+    else {
+      const rec = tryState.answers[getTryAnsKey(i)];
+      if (rec && rec.sel !== undefined) cls += ' try-ans';
+    }
+    html += '<button class="'+cls+'" onclick="tryJump('+i+')">'+(i+1)+'</button>';
+  });
+  pal.innerHTML = html;
+}
+
+function tryPick(idx, oi) {
+  const k = getTryAnsKey(idx);
+  const q = getCurrentSoalList()[idx];
+  if (!tryState.answers[k]) tryState.answers[k] = {};
+  if (q.t === 'pgs') {
+    tryState.answers[k].sel = oi;
+  } else {
+    let s = tryState.answers[k].sel || [];
+    if (s.includes(oi)) s = s.filter(x => x !== oi); else s = [...s, oi];
+    tryState.answers[k].sel = s;
+  }
+  saveTry();
+  renderTryCard();
+}
+
+function tryPickKat(idx, pi, val) {
+  const k = getTryAnsKey(idx);
+  if (!tryState.answers[k]) tryState.answers[k] = {};
+  if (!tryState.answers[k].sel) tryState.answers[k].sel = [];
+  tryState.answers[k].sel[pi] = val;
+  saveTry();
+  renderTryCard();
+}
+
+function tryGo(d) { tryIdx += d; renderTryCard(); window.scrollTo({top:0,behavior:'smooth'}); }
+function tryJump(i) { tryIdx = i; renderTryCard(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function confirmSubmit() {
+  const list = getCurrentSoalList();
+  let unanswered = 0;
+  list.forEach((_,i) => {
+    const rec = tryState.answers[getTryAnsKey(i)];
+    if (!rec || rec.sel === undefined) unanswered++;
+  });
+  if (unanswered > 0) {
+    if (!confirm('Masih ada '+unanswered+' soal belum dijawab. Yakin selesai?')) return;
+  }
+  stopTimer();
+  gradeSession();
+  showSessionResult();
+}
+
+function gradeSession() {
+  const p = tryState.activePaket;
+  const mapel = tryState.activeMapel;
+  const list = PAKET['paket'+p][mapel];
+  let ok = 0;
+  
+  list.forEach((q, i) => {
+    const k = getTryAnsKey(i);
+    if (!tryState.answers[k]) tryState.answers[k] = {};
+    const rec = tryState.answers[k];
+    
+    let correct = false;
+    if (q.t === 'pgs') {
+      correct = rec.sel === q.a;
+    } else if (q.t === 'mcma') {
+      const sel = (rec.sel||[]).slice().sort().join(',');
+      const ans = q.a.slice().sort().join(',');
+      correct = sel === ans;
+    } else if (q.t === 'kat') {
+      correct = q.kp.every((p, pi) => rec.sel && rec.sel[pi] === p[1]);
+    }
+    
+    rec.checked = true;
+    rec.ok = correct;
+    if (correct) ok++;
+  });
+  
+  const scoreKey = 'p'+p+'_'+mapel;
+  tryState.scores[scoreKey] = { ok, total: list.length, done: true };
+  saveTry();
+}
+
+function showSessionResult() {
+  const p = tryState.activePaket;
+  const mapel = tryState.activeMapel;
+  const scoreKey = 'p'+p+'_'+mapel;
+  const score = tryState.scores[scoreKey];
+  
+  document.getElementById('tryCard').style.display = 'none';
+  document.getElementById('tryPalWrap').style.display = 'none';
+  document.getElementById('tryResult').style.display = '';
+  
+  const mapelLabel = mapel === 'mtk' ? 'Matematika' : 'Bahasa Indonesia';
+  const pct = Math.round(score.ok / score.total * 100);
+  
+  document.getElementById('trTitle').textContent = 'Skor ' + mapelLabel + ' — Paket ' + p;
+  document.getElementById('trScore').textContent = pct;
+  document.getElementById('trSub').textContent = score.ok + ' benar dari ' + score.total + ' soal';
+  document.getElementById('trOk').textContent = score.ok;
+  document.getElementById('trNo').textContent = score.total - score.ok;
+  
+  // Interpretasi
+  let msg = '';
+  if (pct >= 80) msg = '<b>Luar biasa!</b> Skor kamu sangat bagus. Anak sudah siap menghadapi TKA yang sesungguhnya.';
+  else if (pct >= 65) msg = '<b>Bagus!</b> Pemahaman sudah baik. Review soal yang salah dan ulangi topik yang masih lemah.';
+  else if (pct >= 50) msg = '<b>Terus berlatih.</b> Masih ada ruang untuk berkembang. Fokus pada topik yang paling banyak salah.';
+  else msg = '<b>Semangat!</b> Latihan lebih sering dan baca kembali pembahasan setiap soal yang salah.';
+  document.getElementById('trInterpret').innerHTML = msg;
+  
+  // Tombol lanjut
+  const mtkDone = tryState.scores['p'+p+'_mtk']?.done;
+  const binDone = tryState.scores['p'+p+'_bin']?.done;
+  
+  const btnNext = document.getElementById('btnNextMapel');
+  const btnReset = document.getElementById('btnResetPaket');
+  
+  if (mapel === 'mtk' && !binDone) {
+    btnNext.style.display = '';
+    btnNext.textContent = 'Lanjut BIN →';
+    btnReset.style.display = '';
+    btnReset.textContent = '🔄 Ulangi MTK';
+    btnReset.setAttribute('onclick', 'resetSesiMapel()');
+    btnReset.removeAttribute('data-paket');
+  } else if (mapel === 'bin') {
+    btnNext.style.display = 'none';
+    // BIN selesai → kedua mapel selesai → show summary paket penuh
+    showPaketSummary(p);
+    return;
+  } else {
+    btnNext.style.display = 'none';
+    btnReset.style.display = '';
+    btnReset.textContent = '🔄 Ulangi Sesi Ini';
+    btnReset.setAttribute('onclick', 'resetSesiMapel()');
+    btnReset.removeAttribute('data-paket');
+  }
+  
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function tryNextMapel() {
+  const p = tryState.activePaket;
+  startSession(p, 'bin');
+}
+
+function showPaketSummary(p) {
+  const mtkScore = tryState.scores['p'+p+'_mtk'];
+  const binScore = tryState.scores['p'+p+'_bin'];
+  
+  document.getElementById('tryIntro').style.display = 'none';
+  document.getElementById('trySession').style.display = 'block';
+  document.getElementById('tryResult').style.display = '';
+  document.getElementById('tryCard').style.display = 'none';
+  document.getElementById('tryPalWrap').style.display = 'none';
+  
+  const totOk = (mtkScore?.ok||0) + (binScore?.ok||0);
+  const totSoal = (mtkScore?.total||0) + (binScore?.total||0);
+  const pct = Math.round(totOk/totSoal*100);
+  
+  document.getElementById('trTitle').textContent = 'Hasil Akhir Paket ' + p;
+  document.getElementById('trScore').textContent = pct;
+  document.getElementById('trSub').textContent = totOk + ' benar dari ' + totSoal + ' soal (MTK + BIN)';
+  document.getElementById('trOk').textContent = totOk;
+  document.getElementById('trNo').textContent = totSoal - totOk;
+  
+  let msg = '';
+  if (pct >= 80) msg = '<b>Excellent!</b> Skor gabungan sangat memuaskan.';
+  else if (pct >= 65) msg = '<b>Bagus!</b> Coba review topik yang masih kurang.';
+  else msg = '<b>Tetap semangat!</b> Latih terus dengan paket lainnya.';
+  document.getElementById('trInterpret').innerHTML = msg;
+  
+  document.getElementById('btnNextMapel').style.display = 'none';
+  document.getElementById('btnBackPaket').textContent = '← Pilih Paket Lain';
+  document.getElementById('btnResetPaket').style.display = '';
+  document.getElementById('btnResetPaket').setAttribute('data-paket', p);
+  
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function backToPaketPicker() {
+  document.getElementById('tryResult').style.display = 'none';
+  document.getElementById('tryPalWrap').style.display = '';
+  document.getElementById('tryCard').style.display = '';
+  renderPaketGrid();
+  document.getElementById('tryIntro').style.display = '';
+  document.getElementById('trySession').style.display = 'none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function resetPaket() {
+  const p = parseInt(document.getElementById('btnResetPaket').getAttribute('data-paket') || tryState.activePaket);
+  if (!confirm('Yakin ingin mengulang Paket ' + p + '? Semua jawaban dan skor paket ini akan dihapus.')) return;
+  // Hapus semua jawaban dan skor paket ini
+  for (const mapel of ['mtk', 'bin']) {
+    const soalList = PAKET['paket'+p][mapel];
+    soalList.forEach((_, i) => { delete tryState.answers['p'+p+'_'+mapel+'_'+i]; });
+    delete tryState.scores['p'+p+'_'+mapel];
+    delete tryState.timer['p'+p+'_'+mapel];
+  }
+  saveTry();
+  backToPaketPicker();
+}
+
+function resetSesiMapel() {
+  const p = tryState.activePaket;
+  const mapel = tryState.activeMapel;
+  if (!confirm('Yakin ingin mengulang sesi ini? Jawaban sesi ini akan dihapus.')) return;
+  const soalList = PAKET['paket'+p][mapel];
+  soalList.forEach((_, i) => { delete tryState.answers['p'+p+'_'+mapel+'_'+i]; });
+  delete tryState.scores['p'+p+'_'+mapel];
+  delete tryState.timer['p'+p+'_'+mapel];
+  saveTry();
+  startSession(p, mapel);
+}
+
+/* ===================================================
+   LATIHAN MODE
+=================================================== */
+const LAT_BANK = {
+  mtk: BANK_LAMA.filter(q => q.m === 'mtk'),
+  bin: BANK_LAMA.filter(q => q.m === 'bin'),
+  ipa: BANK_LAMA.filter(q => q.m === 'ipa'),
+  eng: BANK_LAMA.filter(q => q.m === 'eng'),
+};
+
+function getCurrentLat() {
+  const m = latState.mapel;
+  return LAT_BANK[m];
+}
+
+function getLatIdx() {
+  return latState.idx[latState.mapel] || 0;
+}
+
+function setLatIdx(i) {
+  latState.idx[latState.mapel] = i;
+  saveLat();
+}
+
+function getLatAnsKey(i) {
+  return latState.mapel + '_' + i;
+}
+
+function switchTab(el) {
+  document.querySelectorAll('.tab-lat').forEach(t => t.classList.remove('act'));
+  el.classList.add('act');
+  latState.mapel = el.dataset.mapel;
+  saveLat();
+  document.getElementById('ipaNoteEl').classList.toggle('show', latState.mapel === 'ipa' || latState.mapel === 'eng');
+  renderLat();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderLat() {
+  const m = latState.mapel;
+  document.querySelectorAll('.tab-lat').forEach(t => {
+    t.classList.toggle('act', t.dataset.mapel === m);
+  });
+  document.getElementById('ipaNoteEl').classList.toggle('show', m === 'ipa' || m === 'eng');
+  
+  updateLatScores();
+  renderLatPalette();
+  renderLatCard();
+}
+
+function updateLatScores() {
+  ['mtk','bin','ipa','eng'].forEach(m => {
+    const list = LAT_BANK[m];
+    let ok = 0, done = 0;
+    list.forEach((_, i) => {
+      const k = m+'_'+i;
+      const r = latState.ans[k];
+      if (r && r.checked) { done++; if (r.ok) ok++; }
+    });
+    const el = document.getElementById('score'+m.charAt(0).toUpperCase()+m.slice(1));
+    if (el) el.textContent = ok+' benar';
+  });
+  
+  const m = latState.mapel;
+  const list = LAT_BANK[m];
+  let ok = 0, done = 0;
+  list.forEach((_, i) => {
+    const k = getLatAnsKey(i);
+    const r = latState.ans[k];
+    if (r && r.checked) { done++; if (r.ok) ok++; }
+  });
+  const pf = document.getElementById('latProgFill');
+  if (pf) pf.style.width = (done/list.length*100)+'%';
+  const pt = document.getElementById('latProgTxt');
+  if (pt) pt.textContent = done + ' dari ' + list.length + ' soal dikerjakan';
+  const sn = document.getElementById('latScoreNum');
+  if (sn) sn.textContent = ok + ' benar';
+}
+
+function renderLatPalette() {
+  const list = getCurrentLat();
+  const curIdx = getLatIdx();
+  const pal = document.getElementById('latPalette');
+  let html = '';
+  list.forEach((_, i) => {
+    let cls = 'pnum';
+    if (i === curIdx) cls += ' current';
+    const r = latState.ans[getLatAnsKey(i)];
+    if (r && r.checked) cls += (r.ok ? ' done-ok' : ' done-no');
+    html += '<button class="'+cls+'" onclick="latJump('+i+')">'+(i+1)+'</button>';
+  });
+  pal.innerHTML = html;
+}
+
+function renderLatCard() {
+  const list = getCurrentLat();
+  const curIdx = getLatIdx();
+  
+  if (curIdx >= list.length || curIdx < 0) return;
+  const q = list[curIdx];
+  const k = getLatAnsKey(curIdx);
+  const rec = latState.ans[k] || {};
+  const locked = rec.checked;
+  
+  const sumEl = document.getElementById('latSummary');
+  sumEl.classList.remove('show');
+  document.getElementById('latPalWrap').style.display = '';
+  document.getElementById('latCard').style.display = '';
+  
+  const tipeLabel = {pgs:'Pilihan Ganda',mcma:'Pilihan Ganda Kompleks',kat:'Benar / Salah'}[q.t];
+  let html = '<div class="qhead"><div class="qnum">Soal <b>'+(curIdx+1)+'</b> / '+list.length+'</div>';
+  html += '<div class="badges"><span class="badge b-el">'+q.e+'</span><span class="badge b-tp">'+tipeLabel+'</span>'+((latState.mapel==='ipa'||latState.mapel==='eng')?'<span class="badge '+(latState.mapel==='ipa'?'b-ipa':'b-eng')+'">Antisipasi 2027</span>':'')+'</div></div>';
+  
+  if (q.tk) {
+    html += '<div class="teks">';
+    if (q.tj) html += '<div class="teks-judul">'+q.tj+'</div>';
+    q.tk.forEach(p => html += '<p>'+p+'</p>');
+    html += '</div>';
+  }
+  
+  const soalTeks = q.s || 'Tentukan benar atau salah setiap pernyataan berikut sesuai bacaan/konsep.';
+  html += '<div class="soal">'+soalTeks+'</div>';
+  
+  if (q.t === 'pgs' || q.t === 'mcma') {
+    if (q.t === 'mcma') html += '<div class="hint">Bisa lebih dari satu jawaban benar.</div>';
+    html += '<div class="opts">';
+    const letters = ['A','B','C','D','E'];
+    q.o.forEach((opt, oi) => {
+      let cls = 'opt '+q.t;
+      const selected = q.t === 'pgs' ? rec.sel === oi : (rec.sel||[]).includes(oi);
+      if (selected && !locked) cls += ' selected';
+      if (locked) {
+        cls += ' locked';
+        const isAns = q.t === 'pgs' ? oi === q.a : q.a.includes(oi);
+        if (isAns) cls += ' correct';
+        else if (selected) cls += ' wrong';
+      }
+      const markContent = locked && (q.t==='pgs'?oi===q.a:q.a.includes(oi)) ? '✓' : (locked&&selected ? '✕' : letters[oi]);
+      html += '<div class="'+cls+'" onclick="latPick('+curIdx+','+oi+')">'
+        + '<div class="mark">'+markContent+'</div>'
+        + '<div class="otext">'+opt+'</div></div>';
+    });
+    html += '</div>';
+  } else if (q.t === 'kat') {
+    html += '<div class="kat">';
+    q.kp.forEach((p, pi) => {
+      const cur = rec.sel ? rec.sel[pi] : undefined;
+      let rowcls = 'kat-row';
+      if (locked) { rowcls += ' locked'; rowcls += (cur===p[1]) ? ' res-ok' : ' res-no'; }
+      const bCls = 'kbtn'+(cur===true?' on':'')+(locked&&p[1]===true?' ans':'');
+      const sCls = 'kbtn'+(cur===false?' on':'')+(locked&&p[1]===false?' ans':'');
+      html += '<div class="'+rowcls+'"><div class="kt">'+p[0]+'</div>'
+        + '<div class="kat-choose"><button class="'+bCls+'" onclick="latPickKat('+curIdx+','+pi+',true)">Benar</button>'
+        + '<button class="'+sCls+'" onclick="latPickKat('+curIdx+','+pi+',false)">Salah</button></div></div>';
+    });
+    html += '</div>';
+  }
+  
+  const canCheck = latAnswered(curIdx) && !locked;
+  html += '<div class="actions">';
+  html += '<button class="btn btn-ghost" '+(curIdx===0?'disabled':'')+' onclick="latGo(-1)">← Sebelumnya</button>';
+  html += '<div class="spacer"></div>';
+  if (!locked) {
+    html += '<button class="btn btn-primary" '+(canCheck?'':'disabled')+' onclick="latCheck('+curIdx+')">Cek Jawaban</button>';
+  } else {
+    if (curIdx < list.length-1) html += '<button class="btn btn-primary" onclick="latGo(1)">Berikutnya →</button>';
+    else html += '<button class="btn btn-finish" onclick="latFinish()">Lihat Hasil</button>';
+  }
+  html += '</div>';
+  
+  if (locked) {
+    html += '<div class="bahas show"><div class="bh">📘 Pembahasan</div>'
+      + '<div class="verdict '+(rec.ok?'ok':'no')+'">'+(rec.ok?'Jawaban benar ✓':'Jawaban belum tepat ✗')+'</div>'
+      + '<div>'+q.p+'</div></div>';
+  }
+  
+  document.getElementById('latCard').innerHTML = html;
+  updateLatScores();
+  renderLatPalette();
+}
+
+function latAnswered(i) {
+  const q = getCurrentLat()[i];
+  const rec = latState.ans[getLatAnsKey(i)];
+  if (!rec) return false;
+  if (q.t === 'pgs') return rec.sel !== undefined;
+  if (q.t === 'mcma') return (rec.sel||[]).length > 0;
+  if (q.t === 'kat') return rec.sel && rec.sel.filter(x=>x!==undefined).length === q.kp.length;
+  return false;
+}
+
+function latCheck(i) {
+  const q = getCurrentLat()[i];
+  const k = getLatAnsKey(i);
+  const rec = latState.ans[k];
+  if (!rec) return;
+  let ok = false;
+  if (q.t === 'pgs') ok = rec.sel === q.a;
+  else if (q.t === 'mcma') ok = (rec.sel||[]).slice().sort().join(',') === q.a.slice().sort().join(',');
+  else if (q.t === 'kat') ok = q.kp.every((p, pi) => rec.sel && rec.sel[pi] === p[1]);
+  rec.checked = true; rec.ok = ok;
+  saveLat();
+  renderLatCard();
+}
+
+function latPick(i, oi) {
+  const q = getCurrentLat()[i];
+  if (latState.ans[getLatAnsKey(i)]?.checked) return;
+  if (!latState.ans[getLatAnsKey(i)]) latState.ans[getLatAnsKey(i)] = {};
+  if (q.t === 'pgs') {
+    latState.ans[getLatAnsKey(i)].sel = oi;
+  } else {
+    let s = latState.ans[getLatAnsKey(i)].sel || [];
+    if (s.includes(oi)) s = s.filter(x=>x!==oi); else s=[...s,oi];
+    latState.ans[getLatAnsKey(i)].sel = s;
+  }
+  saveLat();
+  renderLatCard();
+}
+
+function latPickKat(i, pi, val) {
+  const k = getLatAnsKey(i);
+  if (latState.ans[k]?.checked) return;
+  if (!latState.ans[k]) latState.ans[k] = {};
+  if (!latState.ans[k].sel) latState.ans[k].sel = [];
+  latState.ans[k].sel[pi] = val;
+  saveLat();
+  renderLatCard();
+}
+
+function latGo(d) { setLatIdx(getLatIdx()+d); renderLatCard(); window.scrollTo({top:0,behavior:'smooth'}); }
+function latJump(i) { setLatIdx(i); renderLatCard(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function latFinish() {
+  const list = getCurrentLat();
+  let ok=0,no=0,tot=list.length;
+  list.forEach((_,i)=>{ const r=latState.ans[getLatAnsKey(i)]; if(r&&r.checked){r.ok?ok++:no++;} });
+  const pct = Math.round(ok/tot*100);
+  document.getElementById('latSumScore').textContent = pct;
+  document.getElementById('latSumSub').textContent = ok+' benar dari '+tot+' soal';
+  document.getElementById('latSumOk').textContent = ok;
+  document.getElementById('latSumNo').textContent = no;
+  document.getElementById('latSumTot').textContent = tot;
+  document.getElementById('latCard').style.display = 'none';
+  document.getElementById('latPalWrap').style.display = 'none';
+  document.getElementById('latSummary').classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function latResetConfirm() {
+  const label = {mtk:'Matematika', bin:'Bahasa Indonesia', ipa:'IPA (Antisipasi)', eng:'Bahasa Inggris (Antisipasi)'}[latState.mapel];
+  if (!confirm('Ulangi latihan ' + label + '? Semua jawaban mapel ini akan dihapus.')) return;
+  latRestart();
+}
+
+function latRestart() {
+  const m = latState.mapel;
+  LAT_BANK[m].forEach((_,i)=>{ delete latState.ans[m+'_'+i]; });
+  latState.idx[m] = 0;
+  saveLat();
+  renderLat();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function latReview() {
+  setLatIdx(0);
+  renderLatCard();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ===================================================
+   INIT
+=================================================== */
+renderPaketGrid();
+</script>
+</body>
+</html>
