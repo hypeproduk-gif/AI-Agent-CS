@@ -61,14 +61,28 @@
     </div>
     <hr style="border:0;border-top:1px solid var(--bd);margin:16px 0">
     <div class="row">
-      <label>Lebar output (px)<input id="w" type="number" min="0" placeholder="asli"></label>
-      <label>Tinggi output (px)<input id="h" type="number" min="0" placeholder="asli"></label>
-      <label>Jika lebar &amp; tinggi diisi
-        <select id="fit"><option value="cover">Crop pas (cover)</option><option value="contain">Margin putih (contain)</option><option value="stretch">Tarik paksa</option></select></label>
+      <label>Rasio output
+        <select id="ratio">
+          <option value="0">Sesuai asli</option><option value="1">1:1 (persegi)</option><option value="0.8">4:5 (feed IG)</option>
+          <option value="0.5625">9:16 (Story/Reels)</option><option value="1.7778">16:9</option><option value="0.75">3:4</option><option value="0.6667">2:3</option>
+        </select></label>
+      <label>Ukuran (lebar)
+        <select id="wsel">
+          <option value="0">Sesuai asli</option><option value="1080">1080 px (HD)</option><option value="1440">1440 px (QHD)</option>
+          <option value="2160">2160 px (4K)</option><option value="3840">3840 px (4K UHD)</option><option value="custom">Custom…</option>
+        </select></label>
+      <label id="wcWrap" class="hide">Lebar custom (px)<input id="wc" type="number" min="16" value="1080"></label>
+      <label>Jika rasio berubah
+        <select id="fit">
+          <option value="blur">Isi tepi dengan latar blur</option><option value="cover">Crop pas (potong sisi)</option>
+          <option value="white">Margin putih</option><option value="stretch">Tarik paksa (distorsi)</option>
+        </select></label>
+      <label>Penajaman saat diperbesar (0-100)<input id="sharp" type="number" min="0" max="100" value="40"></label>
       <label>Format
         <select id="fmt"><option value="jpeg">JPG</option><option value="png">PNG</option><option value="webp">WEBP</option></select></label>
       <label>Kualitas (JPG/WEBP)<input id="q" type="number" min="1" max="100" value="95"></label>
     </div>
+    <p style="font-size:.8rem;color:var(--mut);margin:8px 0 0">Catatan: perbesar ukuran memakai interpolasi berkualitas tinggi + penajaman, bukan AI. Hasilnya lebih halus dan tajam, tetapi detail yang tidak ada di foto asli tidak bisa dimunculkan.</p>
     <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
       <button id="go" disabled>Pisahkan</button>
       <button id="zip" class="sec hide">Unduh semua (ZIP)</button>
@@ -101,6 +115,7 @@ $("file").onchange = e => loadFile(e.target.files[0]);
 $("drop").ondragover = e => { e.preventDefault(); $("drop").classList.add("on"); };
 $("drop").ondragleave = () => $("drop").classList.remove("on");
 $("drop").ondrop = e => { e.preventDefault(); $("drop").classList.remove("on"); loadFile(e.dataTransfer.files[0]); };
+$("wsel").onchange = () => $("wcWrap").classList.toggle("hide", $("wsel").value !== "custom");
 document.querySelectorAll("[name=mode]").forEach(r => r.onchange = () => {
   const auto = document.querySelector("[name=mode]:checked").value === "auto";
   $("gridOpts").classList.toggle("hide", auto); $("autoOpts").classList.toggle("hide", !auto);
@@ -167,20 +182,58 @@ function gridBoxes(r, c) {
   return out;
 }
 
-function render(box, tw, th, fit) {
-  const [x0, y0, x1, y1] = box, sw = x1 - x0, sh = y1 - y0;
-  let ow = sw, oh = sh;
-  if (tw && th) { ow = tw; oh = th; } else if (tw) { ow = tw; oh = Math.round(sh * tw / sw); } else if (th) { oh = th; ow = Math.round(sw * th / sh); }
+// perbesar bertahap (max 2x per langkah) agar lebih halus daripada sekali lompat
+function scaleTo(src, sx, sy, sw, sh, ow, oh) {
+  let cur = src, cx = sx, cy = sy, cw = sw, ch = sh;
+  while (ow > cw * 2 || oh > ch * 2) {
+    const nw = Math.min(ow, Math.round(cw * 2)), nh = Math.min(oh, Math.round(ch * 2));
+    const t = document.createElement("canvas"); t.width = nw; t.height = nh;
+    const g = t.getContext("2d"); g.imageSmoothingQuality = "high"; g.drawImage(cur, cx, cy, cw, ch, 0, 0, nw, nh);
+    cur = t; cx = 0; cy = 0; cw = nw; ch = nh;
+  }
   const c = document.createElement("canvas"); c.width = ow; c.height = oh;
-  const g = c.getContext("2d"); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = "high";
-  if (tw && th && fit === "cover") {
-    const sc = Math.max(ow / sw, oh / sh), cw = ow / sc, ch = oh / sc;
-    g.drawImage(img, x0 + (sw - cw) / 2, y0 + (sh - ch) / 2, cw, ch, 0, 0, ow, oh);
-  } else if (tw && th && fit === "contain") {
-    g.fillStyle = "#fff"; g.fillRect(0, 0, ow, oh);
-    const sc = Math.min(ow / sw, oh / sh), dw = sw * sc, dh = sh * sc;
-    g.drawImage(img, x0, y0, sw, sh, (ow - dw) / 2, (oh - dh) / 2, dw, dh);
-  } else g.drawImage(img, x0, y0, sw, sh, 0, 0, ow, oh);
+  const g = c.getContext("2d"); g.imageSmoothingQuality = "high"; g.drawImage(cur, cx, cy, cw, ch, 0, 0, ow, oh);
+  return c;
+}
+
+function unsharp(c, amount) {
+  if (amount <= 0) return c;
+  const w = c.width, h = c.height, b = document.createElement("canvas"); b.width = w; b.height = h;
+  const bg = b.getContext("2d"); bg.filter = `blur(${Math.max(0.8, Math.min(w, h) / 1500)}px)`; bg.drawImage(c, 0, 0);
+  const g = c.getContext("2d"), a = g.getImageData(0, 0, w, h), bl = bg.getImageData(0, 0, w, h), k = amount / 100 * 1.2;
+  for (let i = 0; i < a.data.length; i += 4) for (let j = 0; j < 3; j++) {
+    const v = a.data[i + j] + k * (a.data[i + j] - bl.data[i + j]); a.data[i + j] = v < 0 ? 0 : v > 255 ? 255 : v;
+  }
+  g.putImageData(a, 0, 0); return c;
+}
+
+function render(box, opt) {
+  const [x0, y0, x1, y1] = box, sw = x1 - x0, sh = y1 - y0;
+  const r = opt.ratio || sw / sh;                       // lebar / tinggi target
+  const cover = opt.fit === "cover" && opt.ratio;
+  let ow = opt.width || (cover ? Math.round(Math.min(sw, sh * r)) : (r >= sw / sh ? Math.round(sh * r) : sw));
+  if (!opt.width && !opt.ratio) ow = sw;
+  const oh = Math.round(ow / r);
+  let c;
+  const ratioSame = Math.abs(r - sw / sh) < 0.005 || !opt.ratio;
+  if (ratioSame || opt.fit === "stretch") c = scaleTo(img, x0, y0, sw, sh, ow, oh);
+  else if (opt.fit === "cover") {
+    const cw = Math.min(sw, sh * r), ch = cw / r;
+    c = scaleTo(img, Math.round(x0 + (sw - cw) / 2), Math.round(y0 + (sh - ch) / 2), Math.round(cw), Math.round(ch), ow, oh);
+  } else {
+    c = document.createElement("canvas"); c.width = ow; c.height = oh;
+    const g = c.getContext("2d");
+    if (opt.fit === "white") { g.fillStyle = "#fff"; g.fillRect(0, 0, ow, oh); }
+    else { // latar: foto yang sama di-crop memenuhi kanvas lalu di-blur
+      const cw = Math.min(sw, sh * r), ch = cw / r;
+      const bgc = scaleTo(img, Math.round(x0 + (sw - cw) / 2), Math.round(y0 + (sh - ch) / 2), Math.round(cw), Math.round(ch), Math.round(ow / 4), Math.round(oh / 4));
+      g.filter = `blur(${Math.round(ow / 60)}px)`; g.drawImage(bgc, -ow * 0.05, -oh * 0.05, ow * 1.1, oh * 1.1); g.filter = "none";
+      g.fillStyle = "rgba(0,0,0,.12)"; g.fillRect(0, 0, ow, oh);
+    }
+    const sc = Math.min(ow / sw, oh / sh), dw = Math.round(sw * sc), dh = Math.round(sh * sc);
+    g.drawImage(scaleTo(img, x0, y0, sw, sh, dw, dh), Math.round((ow - dw) / 2), Math.round((oh - dh) / 2));
+  }
+  if (ow > sw * 1.05) unsharp(c, opt.sharp);
   return c;
 }
 
@@ -202,12 +255,12 @@ $("go").onclick = async () => {
     boxes = gridBoxes(r, c);
   }
   boxes = boxes.map(b => [b[0] + pad, b[1] + pad, b[2] - pad, b[3] - pad]).filter(b => b[2] - b[0] > 0 && b[3] - b[1] > 0);
-  const tw = +$("w").value || 0, th = +$("h").value || 0, fit = $("fit").value, fmt = $("fmt").value, q = +$("q").value || 95;
+  const opt = { ratio: +$("ratio").value, width: $("wsel").value === "custom" ? +$("wc").value : +$("wsel").value, fit: $("fit").value, sharp: +$("sharp").value || 0 }, fmt = $("fmt").value, q = +$("q").value || 95;
   const ext = fmt === "jpeg" ? "jpg" : fmt;
   $("out").innerHTML = ""; results = [];
   $("go").disabled = true;
   for (let i = 0; i < boxes.length; i++) {
-    const cv = render(boxes[i], tw, th, fit), blob = await blobOf(cv, fmt, q);
+    const cv = render(boxes[i], opt), blob = await blobOf(cv, fmt, q);
     const name = `${baseName}_${String(i + 1).padStart(2, "0")}.${ext}`, url = URL.createObjectURL(blob);
     results.push({ name, blob });
     const el = document.createElement("div"); el.className = "it";
