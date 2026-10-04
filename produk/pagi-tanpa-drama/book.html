@@ -82,7 +82,7 @@ body{font-family:'Poppins',sans-serif;font-size:9.4pt;line-height:1.52;color:var
 .t-dark{--bg:linear-gradient(170deg,#1E1B19 0%,#2c2422 100%);--fg:#FFF6E8;--mut:#b9a99a;--a:#FFD23F;--hl:#E5392F;--bandbg:linear-gradient(90deg,#FFD23F,#FFB02E);--bandfg:#1E1B19;--blob1:#E5392F;--blob2:#FFD23F;--tint:#FFF3D6}
 /* tipografi */
 h2{font-family:'Anton';font-weight:400;font-size:17.5pt;line-height:1.12;margin:5mm 0 2.6mm;letter-spacing:.4px;text-transform:uppercase;break-after:avoid}
-h2 span{background:linear-gradient(transparent 58%,var(--hl) 58%);padding:0 1.2mm;margin-left:-1.2mm;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+h2 span{box-shadow:inset 0 -.42em 0 var(--hl);padding:0 1.2mm;margin-left:-1.2mm;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 h2:first-child{margin-top:0}
 h3{font-size:10.4pt;font-weight:700;margin:3.4mm 0 1.2mm}
 p{margin:0 0 2.4mm}
@@ -180,8 +180,8 @@ td.b{font-weight:700}
 .t-night p,.t-night li{color:#FFF6E8}
 .t-night .card p,.t-night .card li,.t-night table,.t-night td{color:var(--ink)}
 .t-night .tip div{color:var(--ink)}
-.t-night h2 span{background:linear-gradient(transparent 58%,#A92A24 58%)}
-.t-dark h2 span{background:linear-gradient(transparent 58%,#A92A24 58%)}
+.t-night h2 span{box-shadow:inset 0 -.42em 0 #A92A24}
+.t-dark h2 span{box-shadow:inset 0 -.42em 0 #A92A24}
 .t-dark p,.t-dark li{color:#FFF6E8}
 .t-dark .card p,.t-dark .card li{color:var(--ink)}
 .lic .two li,.lic .two p{color:var(--ink)}
