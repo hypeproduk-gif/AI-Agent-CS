@@ -1,0 +1,29 @@
+name: Shopee Trending Harian
+on:
+  schedule:
+    - cron: '7 0 * * *' # 07:07 WIB
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: node shopee-trending/index.js
+        env:
+          SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+          SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+          KEYWORDS: ${{ vars.SHOPEE_KEYWORDS }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      # Snapshot harus disimpan supaya bisa hitung penjualan 1d/3d/7d besoknya.
+      - run: |
+          git config user.name "shopee-trending-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add shopee-trending/data
+          git commit -m "snapshot shopee $(date +%F)" || exit 0
+          git push
