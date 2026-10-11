@@ -1,10 +1,8 @@
 // Logika murni: tanda tangan API, hitung tren dari snapshot, skor "worth it" untuk konten affiliate.
 
-const crypto = require('crypto');
-
 // Shopee Affiliate Open API: Signature = SHA256(appId + timestamp + payload + secret)
 function signHeader(appId, secret, payload, ts = Math.floor(Date.now() / 1000)) {
-  const sig = crypto.createHash('sha256').update(`${appId}${ts}${payload}${secret}`).digest('hex');
+  const sig = require('crypto').createHash('sha256').update(`${appId}${ts}${payload}${secret}`).digest('hex');
   return `SHA256 Credential=${appId}, Timestamp=${ts}, Signature=${sig}`;
 }
 

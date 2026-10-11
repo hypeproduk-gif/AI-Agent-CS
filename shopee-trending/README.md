@@ -20,3 +20,11 @@ node shopee-trending/index.js --report   # laporan dari snapshot saja
 node shopee-trending/test.js
 ```
 Laporan lengkap (JSON) tersimpan di `data/latest-report.json`.
+
+## Mode Bookmarklet (tanpa Open API)
+1. n8n → Import `n8n/shopee-trending.workflow.json` → **Activate**. Salin Production URL webhook `Terima Halaman`.
+2. `node shopee-trending/build-n8n.js <URL webhook>` → isi `shopee-trending/bookmarklet.txt` jadi URL bookmark.
+3. Chrome → buat bookmark baru → Name `Shopee Trending`, URL = isi `bookmarklet.txt`.
+4. Tiap hari: buka **Penawaran Produk** (urutkan terlaris/komisi), scroll biar produk termuat, klik bookmark → laporan masuk Telegram.
+
+Snapshot disimpan di static data workflow (30 hari). Angka terjual di dasbor sering dibulatkan ("1RB+"), jadi tren produk kecil kurang presisi.
