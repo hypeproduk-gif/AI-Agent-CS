@@ -25,3 +25,8 @@ Bot memantau posisi perps kamu dan otomatis memasang Take Profit & Stop Loss
 maks 1 posisi per coin, isolated margin. TP/SL otomatis dipasang setelah entry.
 Default: margin $5 x3 leverage (~$15 posisi; minimum Hyperliquid $10).
 Jalankan **salah satu** saja: `auto_trader.py` (sudah termasuk TP/SL) atau `tpsl_bot.py`.
+
+## Backtest (data mainnet, tanpa uang)
+`python backtest.py` — simulasi strategi di harga mainnet asli N hari ke belakang
+(`BT_DAYS=7` default). Pakai pengaturan `.env` yang sama. Coba ganti `ENTRY_MODE`,
+`INTERVAL`, `TP_PCT`, `SL_PCT` lalu bandingkan hasilnya sebelum live.
