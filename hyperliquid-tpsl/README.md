@@ -19,3 +19,9 @@ Bot memantau posisi perps kamu dan otomatis memasang Take Profit & Stop Loss
 - Kalau kamu menambah size posisi, hapus TP/SL lama agar bot memasang ulang sesuai size baru.
 
 ⚠️ Jangan pernah commit file `.env`. Trading leverage berisiko tinggi.
+
+## Auto trader (buka posisi otomatis)
+`python auto_trader.py` — strategi EMA 9/21 cross + filter RSI di candle 15m,
+maks 1 posisi per coin, isolated margin. TP/SL otomatis dipasang setelah entry.
+Default: margin $5 x3 leverage (~$15 posisi; minimum Hyperliquid $10).
+Jalankan **salah satu** saja: `auto_trader.py` (sudah termasuk TP/SL) atau `tpsl_bot.py`.
