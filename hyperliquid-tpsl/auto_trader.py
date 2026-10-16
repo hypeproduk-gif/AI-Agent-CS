@@ -3,14 +3,14 @@
 Strategi: EMA cross di candle yang sudah close.
 - EMA cepat memotong ke atas EMA lambat (dan RSI < 70)  -> LONG
 - EMA cepat memotong ke bawah EMA lambat (dan RSI > 30) -> SHORT
-Maks 1 posisi per coin. Setelah entry, TP/SL dipasang oleh tpsl_bot.tick().
+Bisa banyak coin (COINS=BTC,ETH). Maks 1 posisi per coin. Setelah entry, TP/SL dipasang oleh tpsl_bot.tick().
 """
 import os
 import time
 
 from tpsl_bot import ACCOUNT, POLL, SZ_DECIMALS, TESTNET, exchange, info, tick
 
-COIN = os.environ.get("COIN", "BTC")
+COINS = [c.strip().upper() for c in os.environ.get("COINS", os.environ.get("COIN", "BTC")).split(",") if c.strip()]
 INTERVAL = os.environ.get("INTERVAL", "15m")
 MARGIN_USD = float(os.environ.get("MARGIN_USD", "5"))
 LEVERAGE = int(os.environ.get("LEVERAGE", "3"))
@@ -39,9 +39,9 @@ def rsi(values, n=14):
     return 100.0 if losses == 0 else 100 - 100 / (1 + gains / losses)
 
 
-def signal():
+def signal(coin):
     now = int(time.time() * 1000)
-    candles = info.candles_snapshot(COIN, INTERVAL, now - INTERVAL_MS * 200, now)
+    candles = info.candles_snapshot(coin, INTERVAL, now - INTERVAL_MS * 200, now)
     closes = [float(c["c"]) for c in candles[:-1]]  # buang candle yang belum close
     fast, slow = ema(closes, EMA_FAST), ema(closes, EMA_SLOW)
     r = rsi(closes)
@@ -52,33 +52,36 @@ def signal():
     return None, closes[-1]
 
 
-def has_position():
+def has_position(coin):
     for ap in info.user_state(ACCOUNT)["assetPositions"]:
-        if ap["position"]["coin"] == COIN and float(ap["position"]["szi"]) != 0:
+        if ap["position"]["coin"] == coin and float(ap["position"]["szi"]) != 0:
             return True
     return False
 
 
-def open_position(side, px):
+def open_position(coin, side, px):
     notional = max(MARGIN_USD * LEVERAGE, MIN_NOTIONAL)
-    sz = round(notional / px, SZ_DECIMALS[COIN])
-    res = exchange.market_open(COIN, side == "long", sz, None, 0.01)
-    print(f"[{COIN}] OPEN {side.upper()} size {sz} (~${notional:.2f}): {res}")
+    sz = round(notional / px, SZ_DECIMALS[coin])
+    res = exchange.market_open(coin, side == "long", sz, None, 0.01)
+    print(f"[{coin}] OPEN {side.upper()} size {sz} (~${notional:.2f}): {res}")
 
 
 if __name__ == "__main__":
-    print(f"Auto trader {COIN} {INTERVAL} ({'TESTNET' if TESTNET else 'MAINNET'}) "
-          f"margin ${MARGIN_USD} x{LEVERAGE}")
-    exchange.update_leverage(LEVERAGE, COIN, is_cross=False)
-    last_candle = None
+    print(f"Auto trader {','.join(COINS)} {INTERVAL} ({'TESTNET' if TESTNET else 'MAINNET'}) "
+          f"margin ${MARGIN_USD} x{LEVERAGE} per coin")
+    for coin in COINS:
+        exchange.update_leverage(LEVERAGE, coin, is_cross=False)
+    last_candle = {}
     while True:
         try:
             candle_id = int(time.time() * 1000) // INTERVAL_MS
-            if candle_id != last_candle and not has_position():
-                side, px = signal()
-                last_candle = candle_id  # cek sinyal 1x per candle
+            for coin in COINS:
+                if last_candle.get(coin) == candle_id or has_position(coin):
+                    continue
+                side, px = signal(coin)
+                last_candle[coin] = candle_id  # cek sinyal 1x per candle
                 if side:
-                    open_position(side, px)
+                    open_position(coin, side, px)
                     time.sleep(3)
             tick()  # pasang TP/SL untuk posisi yang belum punya
         except Exception as e:
