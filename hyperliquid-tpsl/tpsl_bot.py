@@ -13,6 +13,8 @@ from hyperliquid.exchange import Exchange
 from hyperliquid.info import Info
 from hyperliquid.utils import constants
 
+from notify import notify
+
 
 def env(name, default=None):
     v = os.environ.get(name, default)
@@ -61,7 +63,9 @@ def place(coin, is_long, size, trigger_px, kind):
         {"trigger": {"triggerPx": px, "isMarket": True, "tpsl": kind}},
         reduce_only=True,
     )
-    print(f"[{coin}] pasang {kind.upper()} @ {px} size {size}: {res}")
+    ok = res.get("status") == "ok" and "error" not in str(res.get("response"))
+    label = "Take Profit" if kind == "tp" else "Stop Loss"
+    notify(f"{'✅' if ok else '⚠️'} [{coin}] pasang {label} @ {px}" + ("" if ok else f"\n{res}"))
 
 
 def tick():

@@ -8,6 +8,7 @@ Bisa banyak coin (COINS=BTC,ETH). Maks 1 posisi per coin. Setelah entry, TP/SL d
 import os
 import time
 
+from notify import notify
 from tpsl_bot import ACCOUNT, POLL, SZ_DECIMALS, TESTNET, exchange, info, tick
 
 COINS = [c.strip().upper() for c in os.environ.get("COINS", os.environ.get("COIN", "BTC")).split(",") if c.strip()]
@@ -52,31 +53,46 @@ def signal(coin):
     return None, closes[-1]
 
 
-def has_position(coin):
-    for ap in info.user_state(ACCOUNT)["assetPositions"]:
-        if ap["position"]["coin"] == coin and float(ap["position"]["szi"]) != 0:
-            return True
-    return False
+def open_coins():
+    return {ap["position"]["coin"] for ap in info.user_state(ACCOUNT)["assetPositions"]
+            if float(ap["position"]["szi"]) != 0}
+
+
+def report_closed(coin):
+    fills = [f for f in info.user_fills(ACCOUNT) if f["coin"] == coin]
+    if not fills:
+        return notify(f"🔒 [{coin}] posisi tertutup")
+    last = max(fills, key=lambda f: f["time"])
+    pnl = float(last.get("closedPnl", 0)) - float(last.get("fee", 0))
+    notify(f"{'🟢 PROFIT' if pnl >= 0 else '🔴 LOSS'} [{coin}] posisi tertutup @ {last['px']}\n"
+           f"PnL: {pnl:+.4f} USDC")
 
 
 def open_position(coin, side, px):
     notional = max(MARGIN_USD * LEVERAGE, MIN_NOTIONAL)
     sz = round(notional / px, SZ_DECIMALS[coin])
     res = exchange.market_open(coin, side == "long", sz, None, 0.01)
-    print(f"[{coin}] OPEN {side.upper()} size {sz} (~${notional:.2f}): {res}")
+    ok = res.get("status") == "ok" and "error" not in str(res.get("response"))
+    notify(f"{'🚀' if ok else '⚠️'} [{coin}] OPEN {side.upper()} size {sz} (~${notional:.2f})"
+           + ("" if ok else f"\n{res}"))
 
 
 if __name__ == "__main__":
-    print(f"Auto trader {','.join(COINS)} {INTERVAL} ({'TESTNET' if TESTNET else 'MAINNET'}) "
-          f"margin ${MARGIN_USD} x{LEVERAGE} per coin")
+    notify(f"🤖 Auto trader jalan: {','.join(COINS)} {INTERVAL} ({'TESTNET' if TESTNET else 'MAINNET'}) "
+           f"margin ${MARGIN_USD} x{LEVERAGE} per coin")
     for coin in COINS:
         exchange.update_leverage(LEVERAGE, coin, is_cross=False)
     last_candle = {}
+    prev_open = open_coins()
+    last_error = None
     while True:
         try:
+            now_open = open_coins()
+            for coin in prev_open - now_open:
+                report_closed(coin)
             candle_id = int(time.time() * 1000) // INTERVAL_MS
             for coin in COINS:
-                if last_candle.get(coin) == candle_id or has_position(coin):
+                if last_candle.get(coin) == candle_id or coin in now_open:
                     continue
                 side, px = signal(coin)
                 last_candle[coin] = candle_id  # cek sinyal 1x per candle
@@ -84,6 +100,10 @@ if __name__ == "__main__":
                     open_position(coin, side, px)
                     time.sleep(3)
             tick()  # pasang TP/SL untuk posisi yang belum punya
+            prev_open = open_coins()
+            last_error = None
         except Exception as e:
-            print("error:", e)
+            if str(e) != last_error:  # jangan spam error yang sama
+                notify(f"⚠️ error: {e}")
+                last_error = str(e)
         time.sleep(POLL)
