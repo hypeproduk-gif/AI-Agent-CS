@@ -17,6 +17,8 @@ MARGIN_USD = float(os.environ.get("MARGIN_USD", "5"))
 LEVERAGE = int(os.environ.get("LEVERAGE", "3"))
 EMA_FAST = int(os.environ.get("EMA_FAST", "9"))
 EMA_SLOW = int(os.environ.get("EMA_SLOW", "21"))
+# cross = entry hanya saat EMA berpotongan (jarang); trend = entry kapan saja searah tren (sering)
+ENTRY_MODE = os.environ.get("ENTRY_MODE", "cross").lower()
 HEARTBEAT_MIN = int(os.environ.get("HEARTBEAT_MIN", "60"))  # laporan rutin ke Telegram, 0 = mati
 MIN_NOTIONAL = 10.5  # minimum order Hyperliquid $10
 
@@ -44,14 +46,24 @@ def rsi(values, n=14):
 def signal(coin):
     now = int(time.time() * 1000)
     candles = info.candles_snapshot(coin, INTERVAL, now - INTERVAL_MS * 200, now)
-    closes = [float(c["c"]) for c in candles[:-1]]  # buang candle yang belum close
+    closes = [float(c["c"]) for c in candles if c["t"] + INTERVAL_MS <= now]  # hanya candle yang sudah close
     fast, slow = ema(closes, EMA_FAST), ema(closes, EMA_SLOW)
     r = rsi(closes)
-    if fast[-2] <= slow[-2] and fast[-1] > slow[-1] and r < 70:
-        return "long", closes[-1]
-    if fast[-2] >= slow[-2] and fast[-1] < slow[-1] and r > 30:
-        return "short", closes[-1]
-    return None, closes[-1]
+    up_now, up_prev = fast[-1] > slow[-1], fast[-2] > slow[-2]
+    side = None
+    if ENTRY_MODE == "trend":
+        if up_now and r < 70:
+            side = "long"
+        elif not up_now and r > 30:
+            side = "short"
+    else:
+        if up_now and not up_prev and r < 70:
+            side = "long"
+        elif not up_now and up_prev and r > 30:
+            side = "short"
+    print(f"[{coin}] close {closes[-1]} EMA{EMA_FAST}={fast[-1]:.4f} EMA{EMA_SLOW}={slow[-1]:.4f} "
+          f"RSI={r:.0f} -> {side or 'tidak ada sinyal'}")
+    return side, closes[-1]
 
 
 def open_coins():
@@ -79,7 +91,7 @@ def open_position(coin, side, px):
 
 
 if __name__ == "__main__":
-    notify(f"🤖 Auto trader jalan: {','.join(COINS)} {INTERVAL} ({'TESTNET' if TESTNET else 'MAINNET'}) "
+    notify(f"🤖 Auto trader jalan: {','.join(COINS)} {INTERVAL} mode {ENTRY_MODE} ({'TESTNET' if TESTNET else 'MAINNET'}) "
            f"margin ${MARGIN_USD} x{LEVERAGE} per coin")
     for coin in COINS:
         exchange.update_leverage(LEVERAGE, coin, is_cross=False)
