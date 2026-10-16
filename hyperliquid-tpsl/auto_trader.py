@@ -17,6 +17,7 @@ MARGIN_USD = float(os.environ.get("MARGIN_USD", "5"))
 LEVERAGE = int(os.environ.get("LEVERAGE", "3"))
 EMA_FAST = int(os.environ.get("EMA_FAST", "9"))
 EMA_SLOW = int(os.environ.get("EMA_SLOW", "21"))
+HEARTBEAT_MIN = int(os.environ.get("HEARTBEAT_MIN", "60"))  # laporan rutin ke Telegram, 0 = mati
 MIN_NOTIONAL = 10.5  # minimum order Hyperliquid $10
 
 INTERVAL_MS = {"1m": 60, "5m": 300, "15m": 900, "1h": 3600, "4h": 14400}[INTERVAL] * 1000
@@ -85,6 +86,7 @@ if __name__ == "__main__":
     last_candle = {}
     prev_open = open_coins()
     last_error = None
+    last_beat = time.time()
     while True:
         try:
             now_open = open_coins()
@@ -102,6 +104,11 @@ if __name__ == "__main__":
             tick()  # pasang TP/SL untuk posisi yang belum punya
             prev_open = open_coins()
             last_error = None
+            if HEARTBEAT_MIN and time.time() - last_beat >= HEARTBEAT_MIN * 60:
+                value = float(info.user_state(ACCOUNT)["marginSummary"]["accountValue"])
+                notify(f"💓 Bot masih jalan. Posisi terbuka: {', '.join(sorted(prev_open)) or 'tidak ada'}\n"
+                       f"Saldo akun: {value:.2f} USDC")
+                last_beat = time.time()
         except Exception as e:
             if str(e) != last_error:  # jangan spam error yang sama
                 notify(f"⚠️ error: {e}")
