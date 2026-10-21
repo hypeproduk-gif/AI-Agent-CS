@@ -1019,6 +1019,9 @@
         0
       ],
       "name": "Kirim WhatsApp",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000,
       "id": "aics-34",
       "credentials": {
         "httpHeaderAuth": {

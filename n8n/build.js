@@ -329,7 +329,7 @@ const nodes = [
       ],
     },
     options: {},
-  }),
+  }, { retryOnFail: true, maxTries: 3, waitBetweenTries: 3000 }),
 
   ifNode('Order Baru?', 0, 0, "={{ Boolean($json.order) }}"),
   node('Catat Order', 'n8n-nodes-base.dataTable', 1.1, 0, {
