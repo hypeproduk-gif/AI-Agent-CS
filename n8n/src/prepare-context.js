@@ -68,7 +68,8 @@ function isClosingMessage(text) {
 }
 
 function normalizeIncoming(body) {
-  const text = String(body.message || '').trim();
+  // NFKC: huruf "font WA" (𝐡𝐚𝐥𝐨, 𝘩𝘢𝘭𝘰, ｈａｌｏ) jadi huruf biasa supaya terbaca AI & pola kata kunci.
+  const text = String(body.message || '').normalize('NFKC').trim();
   if (text) return text;
   return MEDIA_LABELS[body.messageType] || '[Lead mengirim pesan non-teks]';
 }
