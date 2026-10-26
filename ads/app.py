@@ -121,7 +121,7 @@ def make_image(data):
         return path
     foto_path, inf_path = dump(data.get("foto"), "_produk"), dump(data.get("influencer"), "_influencer")
     img = g.ai_scene(data.get("prompt", ""), str(foto_path) if foto_path else None, raise_errors=True,
-                     influencer_path=str(inf_path) if inf_path else None, scene_type=data.get("scene_type"))
+                     influencer_path=str(inf_path) if inf_path else None, scene_type=data.get("scene_type"), show_face=data.get("show_face"))
     if img is None:
         raise RuntimeError("Gemini tidak mengembalikan gambar.")
     name = f"{uuid.uuid4().hex[:10]}.png"

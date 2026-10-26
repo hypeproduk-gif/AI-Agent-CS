@@ -180,26 +180,41 @@ PAGAR KEJUJURAN:
 - value_shock: hanya harga/promo di brief, bandingkan dengan nilai per pemakaian/hari.
 - emotional_story/curated_discovery: persona ilustratif boleh, jangan disajikan sebagai testimoni asli.
 
-VISUAL = TikTok UGC asli (foto smartphone natural, candid). Tiap creative punya scene_type, sebar per batch kira-kira:
-35% influencer (wajah influencer dari image A, produk dari image B; variasikan outfit: piyama/kaos rumah/tank top/sweater/hoodie/outfit kasual; rambut: tergerai/ponytail/messy bun/soft waves/belah samping; ekspresi: senyum natural/kaget/penasaran/review jujur/excited/rekomendasi),
-25% product_pov (tanpa wajah: produk di rak kamar mandi/wastafel/meja rias/di samping barang harian),
-20% texture_demo (macro tangan: mencolek, mengoleskan ke lengan, membuka kemasan, swirl tekstur),
-10% lifestyle (produk di meja rias/dekat cermin/meja samping tempat tidur),
-10% unboxing (membuka paket, mengeluarkan produk, memegang produk dekat kamera).
-Pilih scene_type yang paling cocok dengan angle (demonstration_proof -> texture_demo/influencer, hidden_gem -> product_pov, curated_discovery -> unboxing, dst) dan momen CEP.
+VISUAL: pilih visual_format yang paling convert untuk angle + CEP ini. Variasikan format dalam satu batch (jangan >2 creative dengan format sama).
+FORMAT FOTO (needs_photo=true, foto AI gaya UGC smartphone, caption ala TikTok ditempel otomatis):
+- selfie_review: influencer selfie sambil pegang produk, ekspresi review jujur/kaget (show_face=true)
+- mirror_selfie: selfie di cermin kamar/kamar mandi, produk di tangan (show_face=true)
+- problem_closeup: momen masalah nyata di CEP (mis. melihat kulit kusam di cermin lift), produk boleh tidak tampil
+- demo_in_action: tangan memakai produk / macro tekstur / hasil langsung terlihat (show_face=false)
+- product_in_life: produk di lokasi persis momen CEP (meja kantor, tas, wastafel, mobil) tanpa wajah
+- cod_unboxing: paket kurir COD baru datang, plastik/kardus dibuka, produk dikeluarkan (sangat relevan pembeli Indonesia)
+- before_after_split: satu foto terbelah kiri-kanan kondisi sebelum vs sesudah (JANGAN untuk kesehatan/berat badan)
+- offer_flatlay: flat lay semua isi paket + bonus terlihat jelas (cocok value_shock)
+- reaction_meme: ekspresi lucu/relatable orang Indonesia sehari-hari terkait masalah (show_face=true)
+FORMAT DESAIN (needs_photo=false, dirender sebagai grafis, sering paling murah CPA):
+- notes: tangkapan layar iPhone Notes, judul = hook, isi 3-5 poin (isi field notes)
+- tweet: postingan X/Threads gaya curhat orang biasa (isi field tweet), tanpa angka like/retweet palsu
+- callouts: produk di tengah dengan 3-4 label manfaat bergaris penunjuk (isi field callouts)
+- comparison: tabel kita vs yang lain (isi field comparison)
+- testimonial: kartu ulasan, HANYA kutipan asli dari brief (isi field quote)
+- offer_stack: "Yang kamu dapat" daftar isi paket + bonus + baris harga promo (isi offer_items, price_line)
+Boleh mengusulkan format lain yang terbukti convert di Meta Ads (tulis namanya di visual_format, needs_photo sesuai).
+Foto: influencer dari image A (wajah sama) bila show_face=true, produk dari image B persis aslinya. Variasikan outfit, rambut, ekspresi, pose, sudut kamera, lokasi.
 image_prompt: bahasa Inggris, detail (scene, outfit, rambut, ekspresi, pose, sudut kamera, lokasi, cahaya), vertical 9:16 smartphone photo, tanpa teks.
 video_prompt: bahasa Inggris, 7-10 detik vertical 9:16, sebut camera style (selfie vlog/mirror selfie/POV/tripod talking review/handheld close-up/walking lifestyle) dan motion yang sesuai scene.
 script: SATU kalimat bahasa Indonesia, natural dan ngobrol, gaya hook beda-beda (curiosity/honest reaction/first impression/problem solution/recommendation).`;
 
 const CREATIVE_SHAPE = `{"creatives":[{
  "psych_angle":"id angle","angle":"nama angle singkat (CEP x psikologi)",
- "awareness":"problem|solution|product","layout":"hero|testimonial|split|comparison",
+ "awareness":"problem|solution|product","layout":"photo|hero|testimonial|split|comparison|notes|tweet|callouts|offer_stack",
  "hook":"≤8 kata","subhead":"≤14 kata","bullets":["≤5 kata","≤5 kata","≤5 kata"],
  "badge":"≤3 kata","cta":"≤3 kata",
  "quote":{"text":"","name":""},"split":{"left_label":"","left":"","right_label":"","right":""},
  "comparison":{"them_label":"","them":["","",""],"us_label":"","us":["","",""]},
  "palette":{"bg1":"#hex","bg2":"#hex","accent":"#hex","text":"#hex"},
- "scene_type":"influencer|product_pov|texture_demo|lifestyle|unboxing",
+ "visual_format":"salah satu format di atas atau usulan baru","needs_photo":true,"show_face":true,
+ "notes":{"title":"","items":["",""]},"tweet":{"name":"nama orang biasa","handle":"@...","text":""},
+ "callouts":["≤4 kata","≤4 kata","≤4 kata","≤4 kata"],"offer_items":["",""],"price_line":"",
  "image_prompt":"English, detail sesuai aturan VISUAL",
  "video_prompt":"English, 7-10 detik, camera style + motion",
  "script":"1 kalimat Indonesia",
@@ -207,7 +222,7 @@ const CREATIVE_SHAPE = `{"creatives":[{
  "visual_brief":"arahan foto/video untuk tim konten: momen CEP, setting, pose, properti. Tulis [PRODUK ASLI] di setiap bagian yang wajib pakai foto/video produk asli",
  "primary_text":"versi panjang","primary_text_short":"≤125 karakter",
  "headlines":["","",""],"description":"≤25 karakter"}]}
-Isi quote/split/comparison hanya sesuai layout-nya.`;
+Isi field khusus (quote/split/comparison/notes/tweet/callouts/offer_items) hanya sesuai format-nya. Format foto: layout "photo". Format desain: layout = nama format desain.`;
 
 const $ = s => document.querySelector(s);
 const store = {
@@ -340,7 +355,9 @@ function render(cv, c, fmt, idx){
   const ai = c.scene_url && scenes[c.scene_url];
   const scene = ai || (lifes.length ? lifes[idx % lifes.length] : null);
   const skipProduct = ai ? c.scene_has_product : scene && $("#lifeHasProduct").checked;
-  if (scene){ cover(x, scene, W, H); return renderUGC(x, c, fmt, W, H, acc) } else {
+  const design = c.needs_photo === false || ["notes","tweet","callouts","offer_stack"].includes(c.layout);
+  if (c.layout === "notes") return renderNotes(x, c, fmt, W, H, acc);
+  if (scene && !design){ cover(x, scene, W, H); return renderUGC(x, c, fmt, W, H, acc) } else {
     const g = x.createLinearGradient(0,0,0,H); g.addColorStop(0,bg1); g.addColorStop(1,bg2); x.fillStyle = g; x.fillRect(0,0,W,H);
   }
   const put = box => { if (!skipProduct) product(x, box) };
@@ -352,7 +369,36 @@ function render(cv, c, fmt, idx){
   if (c.subhead && layout !== "testimonial"){ [L, s, lh] = fit(x, c.subhead, cw, H*.08, 46, 600); y = lines(x, L, s, lh, m, y, cw, txt, "center", true, 600) + 20 }
   const ctaH = 120, bodyB = bottom - ctaH - 30, half = (cw - 20)/2;
 
-  if (layout === "split" && c.split?.left){
+  if (layout === "tweet" && c.tweet?.text){
+    const T = c.tweet, cx0 = m - 10, cw2 = W - 2*cx0;
+    x.font = F(44, 600); const L2 = wrap(x, T.text, cw2 - 80), h = 170 + L2.length*60;
+    const yy = Math.max(y, (y + bodyB - h)/2);
+    rr(x, cx0, yy, cx0 + cw2, yy + h, 30, "#ffffff");
+    x.beginPath(); x.arc(cx0 + 70, yy + 70, 34, 0, Math.PI*2); x.fillStyle = acc; x.fill();
+    x.font = F(34); x.fillStyle = inkOn(acc); x.textBaseline = "middle"; x.fillText((T.name||"A")[0].toUpperCase(), cx0 + 58, yy + 72);
+    x.textBaseline = "top"; x.fillStyle = "#111"; x.font = F(36); x.fillText(T.name || "", cx0 + 120, yy + 38);
+    x.fillStyle = "#6b6b6b"; x.font = F(30, 500); x.fillText(T.handle || "", cx0 + 120, yy + 80);
+    x.fillStyle = "#111"; x.font = F(44, 600); L2.forEach((l, i) => x.fillText(l, cx0 + 40, yy + 140 + i*60));
+  } else if (layout === "callouts" && c.callouts?.length){
+    const cxp = W/2, cyp = (y + bodyB)/2, pw = cw*.42, ph = (bodyB - y)*.8;
+    put([cxp - pw/2, cyp - ph/2, cxp + pw/2, cyp + ph/2]);
+    c.callouts.slice(0,4).forEach((t, i) => {
+      const left = i % 2 === 0, ly = y + (bodyB - y)*(i < 2 ? .22 : .68), lx = left ? m : W - m;
+      x.font = F(34); const L2 = wrap(x, t, cw*.27), bw = Math.max(...L2.map(l => x.measureText(l).width)) + 40, bh = L2.length*42 + 24;
+      const bx = left ? lx : lx - bw;
+      x.strokeStyle = acc; x.lineWidth = 5; x.beginPath(); x.moveTo(left ? bx + bw : bx, ly + bh/2); x.lineTo(cxp + (left ? -pw*.25 : pw*.25), cyp + (i < 2 ? -ph*.15 : ph*.15)); x.stroke();
+      rr(x, bx, ly, bx + bw, ly + bh, 18, acc);
+      x.fillStyle = inkOn(acc); x.textBaseline = "top"; L2.forEach((l, k) => x.fillText(l, bx + 20, ly + 14 + k*42));
+    });
+  } else if (layout === "offer_stack" && c.offer_items?.length){
+    const items = c.offer_items.slice(0,5), h = 110 + items.length*74 + (c.price_line ? 110 : 0);
+    const yy = Math.max(y, bodyB - h - (foto ? 300 : 0));
+    rr(x, m, yy, W - m, yy + h, 30, "rgba(255,255,255,.95)");
+    x.font = F(36); x.fillStyle = "#111"; x.textBaseline = "top"; x.fillText("YANG KAMU DAPAT", m + 40, yy + 36);
+    items.forEach((t, i) => { x.font = F(38, 600); x.fillStyle = "#111"; x.fillText(`✓ ${t}`, m + 40, yy + 110 + i*74) });
+    if (c.price_line){ x.font = F(54); x.fillStyle = hex(p.bg2, "#c0392b"); x.fillText(c.price_line, m + 40, yy + 120 + items.length*74) }
+    if (yy + h + 40 < bodyB) put([m, yy + h + 30, W - m, bodyB]);
+  } else if (layout === "split" && c.split?.left){
     const S = c.split;
     [[S.left_label||"SEBELUM", S.left, "#5a5a5a"], [S.right_label||"SESUDAH", S.right, acc]].forEach(([lab, t, col], i) => {
       const X = m + i*(half+20); rr(x, X, y, X+half, bodyB, 28, col);
@@ -383,6 +429,21 @@ function render(cv, c, fmt, idx){
     for (const b of bl){ pill(x, W/2, yy, `✓ ${b}`, 36, "rgba(0,0,0,.6)", "#fff", 30, 14, 600); yy += 78 }
   }
   pill(x, W/2, bottom - ctaH, `${c.cta || "Pesan Sekarang"} →`, 50, acc, inkOn(acc), 60, 26);
+}
+
+// iPhone Notes: grafis polos yang terasa organik, sering menang CPA.
+function renderNotes(x, c, fmt, W, H, acc){
+  const [st, sb] = SAFE[fmt], top = H*st, bottom = H*(1-sb), m = 80;
+  x.fillStyle = "#fbf8ef"; x.fillRect(0, 0, W, H);
+  x.font = F(40, 600); x.fillStyle = "#d9a300"; x.textBaseline = "top"; x.fillText("‹ Notes", m - 20, top - 70 > 20 ? top - 70 : 30);
+  const N = c.notes || {}, title = N.title || c.hook;
+  let [L, s, lh] = fit(x, title, W - 2*m, H*.2, 84);
+  let y = lines(x, L, s, lh, m, top, W - 2*m, "#111111", "left", false) + 30;
+  for (const it of (N.items || c.bullets || []).slice(0,6)){
+    [L, s, lh] = fit(x, `• ${it}`, W - 2*m, 220, 56, 500);
+    y = lines(x, L, s, lh, m, y, W - 2*m, "#2b2b2b", "left", false, 500) + 18;
+  }
+  pill(x, W/2, bottom - 110, `${c.cta || "Pesan Sekarang"} →`, 44, acc, inkOn(acc), 52, 22);
 }
 
 // Foto sebagai background: gaya native UGC (caption ala TikTok/Reels), foto tetap jadi bintang.
@@ -471,7 +532,7 @@ Balas hanya JSON dengan bentuk:\n${CREATIVE_SHAPE}`);
         store.set("hooks", [...store.get("hooks", []), ...fresh.map(c => c.hook)].slice(-500));
         save(); drawMain();
         if (LOCAL && $("#autoAi").checked && (keyState.GEMINI_API_KEY || keyState.OPENROUTER_API_KEY)){
-          for (const [k, c] of fresh.entries()){
+          for (const [k, c] of fresh.filter(c => c.needs_photo !== false).entries()){
             status(`${$("#status").dataset.base} · foto AI ${k+1}/${fresh.length}...`);
             try { await aiScene(c) } catch(err){ aiFails.push(err.message) }
             if (ctl?.signal.aborted) throw {code:"cancelled"};
@@ -493,7 +554,8 @@ function loadScene(url){
 }
 async function aiScene(c){
   const r = await fetch("/api/image", {method:"POST", headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({prompt: c.image_prompt || c.visual_brief || c.hook, foto: fotoData, influencer: inflData, scene_type: c.scene_type, slug: plan.slug})});
+    body: JSON.stringify({prompt: c.image_prompt || c.visual_brief || c.hook, foto: fotoData, influencer: inflData,
+      scene_type: c.visual_format || c.scene_type, show_face: c.show_face !== false, slug: plan.slug})});
   const j = await r.json(); if (!r.ok) throw new Error(j.error || r.status);
   await loadScene(j.url); c.scene_url = j.url; c.scene_has_product = j.has_product; save();
 }
@@ -510,7 +572,7 @@ function card(c, idx){
   const el = document.createElement("article"); el.className = "card";
   el.innerHTML = `<div class="prev"><canvas data-f="9x16" aria-label="Preview 9:16"></canvas><canvas data-f="4x5" aria-label="Preview 4:5"></canvas></div>
   <div class="meta">
-    <div class="pills"><span class="pill a">${esc(c.psych_angle)}</span><span class="pill">${esc(c.scene_type || c.layout)}</span><span class="pill">${esc(c.awareness)}-aware</span></div>
+    <div class="pills"><span class="pill a">${esc(c.psych_angle)}</span><span class="pill">${esc(c.visual_format || c.scene_type || c.layout)}</span><span class="pill">${esc(c.awareness)}-aware</span></div>
     <input class="hook" type="text" id="hook-${c.id}" value="${esc(c.hook)}" aria-label="Hook">
     <div class="vb"><b>Brief visual:</b> ${esc(c.visual_brief).replace(/\[PRODUK ASLI\]/g,"<mark>[PRODUK ASLI]</mark>")}</div>
     <details><summary>Primary text</summary><p class="copy">${esc(c.primary_text)}</p><button class="mini" data-copy="pt">Salin</button>
@@ -602,7 +664,7 @@ $("#btnZip").onclick = async () => {
   if (!plan?.creatives.length) return;
   $("#btnZip").disabled = true; status("Menyusun ZIP...");
   const zip = new JSZip(), cv = document.createElement("canvas");
-  const head = ["file","cep","psych_angle","layout","awareness","hook","primary_text","primary_text_short","headline_1","headline_2","headline_3","description","cta","visual_brief","scene_type","image_prompt","video_prompt","script","tiktok_caption"];
+  const head = ["file","cep","psych_angle","layout","awareness","hook","primary_text","primary_text_short","headline_1","headline_2","headline_3","description","cta","visual_brief","visual_format","image_prompt","video_prompt","script","tiktok_caption"];
   const rows = [head.join(",")], md = [`# Creative ${plan.slug}\n`, "## CEP", ...plan.strategy.ceps.map(c => `- **${c.id}**: ${c.moment} (${c.trigger||""})`), ""];
   let idx = 0;
   for (const cep of plan.strategy.ceps) for (const c of plan.creatives.filter(o => o.cep === cep.id)){
@@ -610,8 +672,8 @@ $("#btnZip").onclick = async () => {
     for (const f of ["9x16","4x5"]){ render(cv, c, f, idx); zip.file(`${base}-${f}.png`, await new Promise(r => cv.toBlob(r, "image/png"))) }
     idx++;
     const h = c.headlines || [];
-    rows.push([base, c.cep, c.psych_angle, c.layout, c.awareness, c.hook, c.primary_text, c.primary_text_short, h[0], h[1], h[2], c.description, c.cta, c.visual_brief, c.scene_type, c.image_prompt, c.video_prompt, c.script, `${c.tiktok_caption||""} ${(c.hashtags||[]).join(" ")}`].map(csvCell).join(","));
-    md.push(`## ${base}\n**Hook:** ${c.hook}\n\n**Brief visual:** ${c.visual_brief||""}\n\n**Primary text:**\n\n${c.primary_text}\n\n**Pendek:** ${c.primary_text_short}\n\n**Headlines:**\n${h.map(x => "- "+x).join("\n")}\n\n**Description:** ${c.description}\n\n**Scene:** ${c.scene_type||""}\n\n**Image prompt:** ${c.image_prompt||""}\n\n**Video prompt:** ${c.video_prompt||""}\n\n**Script:** ${c.script||""}\n\n**Caption TikTok:** ${c.tiktok_caption||""} ${(c.hashtags||[]).join(" ")}\n`);
+    rows.push([base, c.cep, c.psych_angle, c.layout, c.awareness, c.hook, c.primary_text, c.primary_text_short, h[0], h[1], h[2], c.description, c.cta, c.visual_brief, c.visual_format || c.scene_type, c.image_prompt, c.video_prompt, c.script, `${c.tiktok_caption||""} ${(c.hashtags||[]).join(" ")}`].map(csvCell).join(","));
+    md.push(`## ${base}\n**Hook:** ${c.hook}\n\n**Brief visual:** ${c.visual_brief||""}\n\n**Primary text:**\n\n${c.primary_text}\n\n**Pendek:** ${c.primary_text_short}\n\n**Headlines:**\n${h.map(x => "- "+x).join("\n")}\n\n**Description:** ${c.description}\n\n**Format:** ${c.visual_format||c.scene_type||""}\n\n**Image prompt:** ${c.image_prompt||""}\n\n**Video prompt:** ${c.video_prompt||""}\n\n**Script:** ${c.script||""}\n\n**Caption TikTok:** ${c.tiktok_caption||""} ${(c.hashtags||[]).join(" ")}\n`);
   }
   zip.file("copy.csv", "﻿" + rows.join("\n")); zip.file("copy.md", md.join("\n"));
   await saveFile(`${plan.slug}-creative.zip`, await zip.generateAsync({type:"blob"}));

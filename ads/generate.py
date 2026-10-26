@@ -155,13 +155,13 @@ def _part(path):
     return {"inline_data": {"mime_type": mime, "data": base64.b64encode(Path(path).read_bytes()).decode()}}
 
 
-def ai_scene(prompt, foto_path, raise_errors=False, influencer_path=None, scene_type=None):
+def ai_scene(prompt, foto_path, raise_errors=False, influencer_path=None, scene_type=None, show_face=None):
     """Foto scene UGC via Gemini (Nano Banana).
     Referensi: image A = influencer (wajah dipertahankan), image B = produk asli (tidak boleh diubah)."""
     key, orkey = os.environ.get("GEMINI_API_KEY"), os.environ.get("OPENROUTER_API_KEY")
     if not key and not orkey:
         return None
-    face = scene_type in (None, "influencer")
+    face = show_face if show_face is not None else scene_type in (None, "influencer", "selfie_review", "mirror_selfie", "reaction_meme")
     parts, refs = [], []
     if influencer_path and face:
         refs.append("Image A is the influencer: keep the SAME facial identity (face shape, skin tone, features). "
@@ -174,7 +174,7 @@ def ai_scene(prompt, foto_path, raise_errors=False, influencer_path=None, scene_
         parts.append(_part(foto_path))
     else:
         refs.append("Do NOT show any product, packaging or brand; leave clear space in the middle of the frame.")
-    scene = SCENES.get(scene_type or "influencer", "")
+    scene = SCENES.get(scene_type or "influencer", "") or (f"Format: {scene_type.replace('_', ' ')}." if scene_type else "")
     parts.insert(0, {"text": f"{scene}\n{prompt}\n\n{' '.join(refs)}\n{UGC_STYLE}"})
     try:
         if orkey:  # OpenRouter: model Nano Banana yang sama, saldo prabayar (tanpa billing Google)
