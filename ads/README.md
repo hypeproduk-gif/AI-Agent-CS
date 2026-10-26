@@ -1,17 +1,19 @@
 # Generator Creative Meta Ads
 
-Brief produk → 15 creative unik (6 CEP × 15 angle psikologi) (gambar **9:16** + **4:5**) + primary text panjang/pendek + 3 headline + description.
+Brief produk → 6 CEP × 15 angle psikologi = **90 creative unik** (gambar **9:16** + **4:5**) + primary text panjang/pendek + 3 headline + description.
 
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
 export OPENAI_API_KEY=sk-...        # opsional: foto scene AI sebagai background
 python3 ads/generate.py ads/briefs/contoh-salglow.txt --foto produk.png --jumlah 15
-# hanya angle tertentu:
+# hemat: CEP tertentu saja, atau angle tertentu:
+python3 ads/generate.py ads/briefs/x.txt --foto x.png --cep 1,3
+
 python3 ads/generate.py ads/briefs/x.txt --foto x.png --jumlah 6 --angle fomo,regret_trigger,value_shock
 ```
 
 Hasil di `ads/output/<produk>/`:
-- `01-9x16.png`, `01-4x5.png`, … — siap upload (Reels/Stories & Feed)
+- `cep1-01-9x16.png`, `cep1-01-4x5.png` … `cep6-15-4x5.png` (180 gambar) — siap upload (Reels/Stories & Feed)
 - `copy.md` — strategi + copy per creative
 - `copy.csv` — kolom `cep` & `psych_angle` untuk membaca angle pemenang di Ads Manager; untuk bulk upload / tracking
 - `plan.json` — bisa diedit lalu render ulang: `--dari-json ads/output/<produk>/plan.json`

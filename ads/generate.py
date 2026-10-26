@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generator creative Meta Ads: brief produk -> gambar 9:16 & 4:5 + primary text + headline.
 
-  python3 ads/generate.py ads/briefs/produk.txt --foto foto.png [--jumlah 15] [--angle fomo,regret]
+  python3 ads/generate.py ads/briefs/produk.txt --foto foto.png [--jumlah 15] [--cep 1,3] [--angle fomo,regret]
 
 Env: ANTHROPIC_API_KEY (wajib), OPENAI_API_KEY (opsional, untuk foto scene AI).
 """
@@ -82,22 +82,35 @@ SCHEMA = """Balas HANYA JSON valid:
 Isi quote/split/comparison hanya sesuai layout-nya (lainnya boleh kosong)."""
 
 
-def claude(brief, n, avoid, angles=None):
+def call(user, max_tokens=32000):
     key = os.environ.get("ANTHROPIC_API_KEY") or sys.exit("ANTHROPIC_API_KEY belum di-set")
-    pick = f"Pakai HANYA angle psikologi ini: {', '.join(angles)}. " if angles else "Sebar ke sebanyak mungkin dari 15 angle psikologi (n>=15: semua dipakai). "
-    user = (f"BRIEF PRODUK:\n{brief}\n\nPetakan 6 CEP, lalu buat {n} creative. {pick}"
-            "Pasangkan tiap angle dengan CEP yang paling cocok, sebar merata ke semua CEP, tidak ada pasangan CEP x angle yang kembar, "
-            "pakai minimal 3 layout berbeda.\n")
-    if avoid:
-        user += "Hook yang SUDAH pernah dipakai (jangan diulang/dimirip-miripkan):\n- " + "\n- ".join(avoid[-80:]) + "\n"
-    user += "\n" + SCHEMA
-    body = json.dumps({"model": MODEL, "max_tokens": 32000, "system": SYSTEM,
+    body = json.dumps({"model": MODEL, "max_tokens": max_tokens, "system": SYSTEM,
                        "messages": [{"role": "user", "content": user}]}).encode()
     req = urllib.request.Request("https://api.anthropic.com/v1/messages", body, {
         "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"})
-    with urllib.request.urlopen(req, timeout=600) as r:
+    with urllib.request.urlopen(req, timeout=900) as r:
         text = "".join(b.get("text", "") for b in json.load(r)["content"])
     return json.loads(text[text.find("{"): text.rfind("}") + 1])
+
+
+def plan_strategy(brief):
+    return call(f"BRIEF PRODUK:\n{brief}\n\nTahap 1: isi HANYA slug dan strategy (tepat 6 CEP, id cep1..cep6, "
+                "masing-masing momen yang benar-benar berbeda). creatives = [].\n\n" + SCHEMA, 8000)
+
+
+def plan_cep(brief, strategy, cep, n, avoid, angles=None):
+    pick = (f"Pakai angle psikologi ini: {', '.join(angles)}." if angles else
+            "Pakai ke-15 angle psikologi, masing-masing tepat 1 kali.")
+    user = (f"BRIEF PRODUK:\n{brief}\n\nSTRATEGI:\n{json.dumps(strategy, ensure_ascii=False)}\n\n"
+            f"Tahap 2: buat {n} creative KHUSUS untuk CEP {cep['id']}: \"{cep.get('moment')}\" ({cep.get('trigger')}). {pick} "
+            "Semua hook, visual, dan copy berangkat dari momen CEP ini. Pakai minimal 3 layout berbeda. "
+            "Isi creatives saja (slug/strategy boleh kosong).\n")
+    if avoid:
+        user += "Hook yang SUDAH dipakai (jangan diulang/dimirip-miripkan):\n- " + "\n- ".join(avoid[-120:]) + "\n"
+    out = call(user + "\n" + SCHEMA)["creatives"]
+    for c in out:
+        c["cep"] = cep["id"]
+    return out
 
 
 def ai_scene(prompt, fmt):
@@ -291,7 +304,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("brief", help="file .txt berisi nama produk, fitur, benefit, harga, testimoni, dll")
     ap.add_argument("--foto", help="foto produk (PNG transparan paling bagus)")
-    ap.add_argument("--jumlah", type=int, default=15)
+    ap.add_argument("--jumlah", type=int, default=15, help="creative per CEP")
+    ap.add_argument("--cep", help="hanya CEP tertentu, mis. 1,3 (default: semua 6)")
     ap.add_argument("--angle", help="batasi angle psikologi, pisah koma (mis. fomo,regret_trigger,value_shock)")
     ap.add_argument("--no-ai-image", action="store_true", help="jangan generate scene AI walau OPENAI_API_KEY ada")
     ap.add_argument("--dari-json", help="render ulang dari plan.json tanpa memanggil Claude")
@@ -299,20 +313,37 @@ def main():
 
     brief = Path(a.brief).read_text(encoding="utf-8")
     hist = json.loads(HISTORY.read_text()) if HISTORY.exists() else []
-    plan = json.loads(Path(a.dari_json).read_text()) if a.dari_json else claude(brief, a.jumlah, hist, a.angle.split(",") if a.angle else None)
+    angles = a.angle.split(",") if a.angle else None
+    if a.dari_json:
+        plan = json.loads(Path(a.dari_json).read_text())
+    else:
+        plan = plan_strategy(brief)
+        plan["creatives"] = []
     slug = re.sub(r"[^a-z0-9-]+", "-", plan.get("slug", Path(a.brief).stem).lower()).strip("-")
     out = OUT / slug
     out.mkdir(parents=True, exist_ok=True)
+    if not a.dari_json:
+        ceps = plan["strategy"]["ceps"]
+        if a.cep:
+            ceps = [ceps[int(k) - 1] for k in a.cep.split(",")]
+        for cep in ceps:
+            print(f"Menulis creative {cep['id']}: {cep.get('moment')}")
+            new = plan_cep(brief, plan["strategy"], cep, a.jumlah, hist + [c["hook"] for c in plan["creatives"]], angles)
+            plan["creatives"] += new
+            (out / "plan.json").write_text(json.dumps(plan, ensure_ascii=False, indent=2))
     (out / "plan.json").write_text(json.dumps(plan, ensure_ascii=False, indent=2))
     foto = Image.open(a.foto).convert("RGBA") if a.foto else None
 
     rows, md = [], [f"# Creative {slug}\n", "## Strategi\n```json\n" + json.dumps(plan.get("strategy", {}), ensure_ascii=False, indent=2) + "\n```\n"]
+    count = {}
     for i, c in enumerate(plan["creatives"], 1):
+        cep = c.get("cep") or "cep"
+        count[cep] = count.get(cep, 0) + 1
         print(f"[{i}/{len(plan['creatives'])}] {c.get('angle')} ({c.get('layout')})")
         scene = None if a.no_ai_image else ai_scene(c.get("image_prompt", ""), "9x16")
         files = []
         for fmt in SIZES:
-            p = out / f"{i:02d}-{fmt}.png"
+            p = out / f"{cep}-{count[cep]:02d}-{fmt}.png"
             render(c, fmt, foto, scene).save(p, optimize=True)
             files.append(p.name)
         rows.append({"no": i, "cep": c.get("cep"), "psych_angle": c.get("psych_angle"), "angle": c.get("angle"), "framework": c.get("framework"), "awareness": c.get("awareness"),
