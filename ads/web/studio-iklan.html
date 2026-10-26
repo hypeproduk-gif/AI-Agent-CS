@@ -115,6 +115,24 @@ label.upl:focus-within,label.upl:focus-visible{outline:2px solid var(--accent)}
     <button class="primary" id="btnStrategy">Petakan 6 CEP</button>
   </section>
 
+  <section class="box" id="refBox" hidden>
+    <h2>Referensi creative (winning)</h2>
+    <span class="hint">Upload 1-3 creative yang terbukti winning. Gambar baru dibuat AI dengan gaya yang sama untuk produkmu.</span>
+    <input type="file" id="refs" accept="image/*" multiple aria-label="Creative referensi">
+    <div class="thumbs" id="refThumbs"></div>
+    <button id="btnStyle">Analisa gaya</button>
+    <p class="hint" id="styleSum"></p>
+    <label class="lbl" for="styleDna">DNA gaya (boleh diedit)</label>
+    <textarea id="styleDna" style="min-height:120px" placeholder="Muncul setelah Analisa gaya"></textarea>
+    <label class="lbl" for="engine">Mesin gambar</label>
+    <select id="engine" style="font:inherit;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)">
+      <option value="auto">Otomatis (GPT Image bila ada key OpenAI)</option>
+      <option value="gpt">GPT Image (ChatGPT): rapi, teks paling akurat</option>
+      <option value="nano">Nano Banana (Gemini): paling realistis</option>
+    </select>
+    <label class="row hint"><input type="checkbox" id="mk45" checked> Buat juga versi 4:5 (biaya gambar 2x)</label>
+  </section>
+
   <section class="box">
     <h2>2 · Angle psikologi</h2>
     <div class="chips" id="angles"></div>
@@ -125,7 +143,7 @@ label.upl:focus-within,label.upl:focus-visible{outline:2px solid var(--accent)}
     </div>
     <label class="lbl">CEP yang dibuat</label>
     <div class="chips" id="cepPick"><span class="hint">Petakan CEP dulu.</span></div>
-    <label class="row hint" id="autoAiRow" hidden><input type="checkbox" id="autoAi" checked> Buat foto AI (Gemini) otomatis untuk tiap creative</label>
+    <label class="row hint" id="autoAiRow" hidden><input type="checkbox" id="autoAi" checked> Buat gambar AI otomatis untuk tiap creative</label>
     <button class="primary" id="btnGen" disabled>Buat creative</button>
     <button id="btnStop" hidden>Stop</button>
     <div class="status" id="status" role="status"></div>
@@ -224,7 +242,7 @@ const CREATIVE_SHAPE = `{"creatives":[{
  "visual_format":"salah satu format di atas atau usulan baru","needs_photo":true,"show_face":true,"image_style":"ugc|polished",
  "notes":{"title":"","items":["",""]},"tweet":{"name":"nama orang biasa","handle":"@...","text":""},
  "callouts":["≤4 kata","≤4 kata","≤4 kata","≤4 kata"],"offer_items":["",""],"price_line":"",
- "image_prompt":"English, detail sesuai aturan VISUAL",
+ "image_prompt":"English, detail sesuai aturan VISUAL","creative_brief":"English, hanya bila ada GAYA REFERENSI",
  "video_prompt":"English, 7-10 detik, camera style + motion",
  "script":"1 kalimat Indonesia",
  "tiktok_caption":"1 baris caption natural","hashtags":["#a","#b","#c"],
@@ -243,6 +261,8 @@ let plan = store.get("plan", null);           // {slug, strategy:{...,ceps:[]}, 
 let foto = null, fotoData = null, inflData = null, lifes = [];
 const LOCAL = !window.claude && /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
 const scenes = {};   // url -> Image
+let refData = store.get("refs", []);          // creative referensi (dikecilkan) untuk mesin gambar
+const styleOn = () => LOCAL && refData.length && $("#styleDna").value.trim();
 let pickedAngles = new Set(store.get("angles", ANGLES.map(a => a[0])));
 let pickedCeps = new Set(store.get("ceps", []));
 
@@ -361,6 +381,8 @@ function render(cv, c, fmt, idx){
   const [W, H] = SIZES[fmt]; cv.width = W; cv.height = H;
   const x = cv.getContext("2d"), p = c.palette || {};
   const bg1 = hex(p.bg1,"#1e1e3c"), bg2 = hex(p.bg2,"#0a0a14"), acc = hex(p.accent,"#ffc800"), txt = hex(p.text,"#ffffff");
+  const fin = c.final?.[fmt] && scenes[c.final[fmt]];
+  if (fin){ cover(x, fin, W, H); return }
   const ai = c.scene_url && scenes[c.scene_url];
   const scene = ai || (lifes.length ? lifes[idx % lifes.length] : null);
   const skipProduct = ai ? c.scene_has_product : scene && $("#lifeHasProduct").checked;
@@ -535,12 +557,22 @@ Buat ${batch.length} creative KHUSUS untuk CEP ${cep.id}: "${cep.moment}" (${cep
 Satu creative per angle psikologi berikut, urut: ${batch.join(", ")}.
 Semua hook, visual brief, dan copy berangkat dari momen CEP ini. Variasikan layout (hero/testimonial/split/comparison).
 ${used.length ? "Hook yang SUDAH dipakai (jangan diulang/dimirip-miripkan):\n- " + used.join("\n- ") : ""}
+${styleOn() ? `GAYA REFERENSI (winning ads) yang WAJIB diikuti gambar: ${$("#styleDna").value}
+Untuk tiap creative isi juga "creative_brief": English, 60-120 kata, deskripsi gambar iklan utuh yang mengikuti gaya referensi di atas
+untuk angle & momen CEP ini (scene, orang/produk, komposisi, warna, elemen grafis, posisi teks). Sesuaikan panjang hook/subhead/badge dengan kepadatan teks gaya referensi.` : ""}
 Balas hanya JSON dengan bentuk:\n${CREATIVE_SHAPE}`);
         const fresh = (r?.creatives || []).map(c => ({...c, cep: cep.id, id: crypto.randomUUID()}));
         plan.creatives.push(...fresh);
         store.set("hooks", [...store.get("hooks", []), ...fresh.map(c => c.hook)].slice(-500));
         save(); drawMain();
-        if (LOCAL && $("#autoAi").checked && (keyState.GEMINI_API_KEY || keyState.OPENROUTER_API_KEY || keyState.OPENAI_API_KEY)){
+        if (styleOn() && $("#autoAi").checked){
+          for (const [k, c] of fresh.entries()){
+            status(`${$("#status").dataset.base} · creative AI ${k+1}/${fresh.length}...`);
+            try { await aiCreativeAll(c) } catch(err){ aiFails.push(err.message) }
+            if (ctl?.signal.aborted) throw {code:"cancelled"};
+          }
+          drawMain();
+        } else if (LOCAL && $("#autoAi").checked && (keyState.GEMINI_API_KEY || keyState.OPENROUTER_API_KEY || keyState.OPENAI_API_KEY)){
           for (const [k, c] of fresh.filter(c => c.needs_photo !== false).entries()){
             status(`${$("#status").dataset.base} · foto AI ${k+1}/${fresh.length}...`);
             try { await aiScene(c) } catch(err){ aiFails.push(err.message) }
@@ -569,6 +601,54 @@ async function aiScene(c){
   await loadScene(j.url); c.scene_url = j.url; c.scene_has_product = j.has_product; save();
 }
 
+// ---------- creative AI bergaya referensi ----------
+function shrink(file, max=1024){
+  return loadImg(file).then(img => {
+    const s = Math.min(1, max/Math.max(img.width, img.height)), cv = document.createElement("canvas");
+    cv.width = Math.round(img.width*s); cv.height = Math.round(img.height*s);
+    cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+    return cv.toDataURL("image/jpeg", .85);
+  });
+}
+function drawRefs(){
+  $("#refThumbs").replaceChildren(...refData.map(u => { const t = new Image(); t.src = u; t.alt = "Referensi"; return t }));
+}
+$("#refs").onchange = async e => {
+  refData = await Promise.all([...e.target.files].slice(0,3).map(f => shrink(f)));
+  store.set("refs", refData); drawRefs();
+};
+$("#styleDna").value = store.get("styleDna", "");
+$("#styleSum").textContent = store.get("styleSum", "");
+$("#styleDna").addEventListener("input", e => store.set("styleDna", e.target.value));
+$("#engine").value = store.get("engine", "auto");
+$("#engine").onchange = e => store.set("engine", e.target.value);
+$("#btnStyle").onclick = async () => {
+  if (!refData.length) return status("Upload creative referensi dulu.", true);
+  $("#btnStyle").disabled = true; status("Claude sedang membaca gaya referensi...");
+  try {
+    const r = await fetch("/api/style", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({refs: refData})});
+    const j = await r.json(); if (!r.ok) throw new Error(j.error || r.status);
+    $("#styleDna").value = j.style_dna || ""; $("#styleSum").textContent = j.ringkasan || "";
+    store.set("styleDna", j.style_dna || ""); store.set("styleSum", j.ringkasan || "");
+    status("Gaya referensi siap. Creative berikutnya dibuat dengan gaya ini.");
+  } catch(err){ status(`Analisa gaya gagal: ${err.message}`, true) }
+  finally { $("#btnStyle").disabled = false }
+};
+async function aiCreative(c, fmt){
+  const texts = [`Headline: "${c.hook}"`, c.subhead && `Subheadline: "${c.subhead}"`, c.badge && `Badge: "${c.badge}"`,
+    `CTA button: "${c.cta || "Pesan Sekarang"}"`].filter(Boolean).join(" | ");
+  const brief = `${c.creative_brief || c.image_prompt || c.visual_brief}\nOn-image text (exactly, nothing else): ${texts}`;
+  const r = await fetch("/api/creative", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({
+    refs: refData, foto: fotoData, influencer: inflData, show_face: c.show_face !== false, style_dna: $("#styleDna").value,
+    brief, fmt, engine: $("#engine").value, slug: plan.slug, id: c.id})});
+  const j = await r.json(); if (!r.ok) throw new Error(j.error || r.status);
+  await loadScene(j.url); c.final = {...(c.final || {}), [fmt]: j.url}; save();
+}
+async function aiCreativeAll(c){
+  await aiCreative(c, "9x16");
+  if ($("#mk45").checked) await aiCreative(c, "4x5");
+}
+
 // ---------- gallery ----------
 const esc = s => String(s ?? "").replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
 async function copy(text, btn){
@@ -594,7 +674,7 @@ function card(c, idx){
     <details open><summary>Headline & description</summary>
       ${(c.headlines||[]).map((h,i) => `<div class="hl"><span>${esc(h)}</span><button class="mini" data-copy="h${i}">Salin</button></div>`).join("")}
       <div class="hl"><span>${esc(c.description)}</span><button class="mini" data-copy="d">Salin</button></div></details>
-    <div class="row"><button class="mini" data-ai ${LOCAL ? "" : "hidden"}>${c.scene_url ? "Ulangi foto AI" : "Buat foto AI"}</button><label class="mini upl" tabindex="0">Upload foto<input type="file" accept="image/*" hidden data-up></label><button class="mini" data-dl="9x16">PNG 9:16</button><button class="mini" data-dl="4x5">PNG 4:5</button></div>
+    <div class="row"><button class="mini" data-cr ${LOCAL ? "" : "hidden"}>${c.final ? "Ulangi creative AI" : "Creative AI (gaya referensi)"}</button><button class="mini" data-ai ${LOCAL ? "" : "hidden"}>${c.scene_url ? "Ulangi foto AI" : "Buat foto AI"}</button><label class="mini upl" tabindex="0">Upload foto<input type="file" accept="image/*" hidden data-up></label><button class="mini" data-dl="9x16">PNG 9:16</button><button class="mini" data-dl="4x5">PNG 4:5</button></div>
   </div>`;
   const draw = () => el.querySelectorAll("canvas").forEach(cv => render(cv, c, cv.dataset.f, idx));
   draw();
@@ -607,6 +687,14 @@ function card(c, idx){
     const cv = el.querySelector(`canvas[data-f="${b.dataset.dl}"]`);
     await saveFile(`${fileBase(c)}-${b.dataset.dl}.png`, await new Promise(r => cv.toBlob(r, "image/png")));
   });
+  el.querySelector("[data-cr]").onclick = async e => {
+    if (!styleOn()) return status("Upload referensi lalu klik Analisa gaya dulu.", true);
+    const b = e.target; b.disabled = true; b.textContent = "Membuat creative...";
+    try { await aiCreativeAll(c); draw(); b.textContent = "Ulangi creative AI" }
+    catch(err){ b.textContent = "Coba lagi"; status(`Creative AI gagal: ${err.message}`, true) }
+    finally { b.disabled = false }
+  };
+  for (const u of Object.values(c.final || {})) if (!scenes[u]) loadScene(u).then(draw).catch(() => {});
   el.querySelector("[data-up]").onchange = async e => {
     const f = e.target.files[0]; if (!f) return;
     try {
@@ -699,7 +787,8 @@ function showKeys(st){
   if (plan) $("#btnGen").disabled = !a;
 }
 async function bootLocal(){
-  $("#autoAiRow").hidden = $("#infl").hidden = $("#inflLbl").hidden = false;
+  $("#autoAiRow").hidden = $("#infl").hidden = $("#inflLbl").hidden = $("#refBox").hidden = false;
+  drawRefs();
   sample = { json: async (prompt, opts={}) => {
     ctl = ctl || new AbortController();
     const r = await fetch("/api/claude", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({prompt}), signal: opts.signal});

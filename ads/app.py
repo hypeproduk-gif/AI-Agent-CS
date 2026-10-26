@@ -83,6 +83,10 @@ class Handler(SimpleHTTPRequestHandler):
                 return self.send_json({"result": g.call(data["prompt"], system="Balas hanya JSON valid.")})
             if self.path == "/api/upload":
                 return self.send_json(save_upload(data))
+            if self.path == "/api/style":
+                return self.send_json(analyze_style(data))
+            if self.path == "/api/creative":
+                return self.send_json(make_creative(data))
             if self.path == "/api/image":
                 return self.send_json(make_image(data))
             self.send_error(404)
@@ -104,6 +108,78 @@ def save_upload(data):
     name = f"up-{uuid.uuid4().hex[:10]}.{'png' if m.group(1) == 'png' else 'jpg'}"
     (out / name).write_bytes(base64.b64decode(m.group(2)))
     return {"url": f"/output/{slug}/scenes/{name}"}
+
+
+def _slug(data):
+    return re.sub(r"[^a-z0-9-]+", "-", (data.get("slug") or "produk").lower()).strip("-") or "produk"
+
+
+def _dump(dataurl, path_noext):
+    m = re.match(r"data:image/(\w+);base64,(.*)", dataurl or "", re.S)
+    if not m:
+        return None
+    path = path_noext.with_suffix(".png" if m.group(1) == "png" else ".jpg")
+    path.write_bytes(base64.b64decode(m.group(2)))
+    return path
+
+
+def analyze_style(data):
+    """Claude membaca creative referensi (winning ads) dan merumuskan 'DNA gaya' visualnya."""
+    imgs = []
+    for u in (data.get("refs") or [])[:6]:
+        m = re.match(r"data:(image/(?:png|jpeg|webp|gif));base64,(.*)", u, re.S)
+        if m:
+            imgs.append((m.group(1), m.group(2)))
+    if not imgs:
+        raise RuntimeError("Upload minimal 1 creative referensi.")
+    return g.call(STYLE_PROMPT, 4000, system="Kamu art director Meta Ads. Balas hanya JSON valid.", images=imgs)
+
+
+STYLE_PROMPT = """Gambar-gambar ini adalah creative iklan yang terbukti winning. Rumuskan DNA gaya visualnya
+supaya bisa ditiru untuk produk LAIN tanpa menjiplak brand, produk, orang, atau teksnya.
+Balas JSON:
+{"ringkasan": "3-5 kalimat bahasa Indonesia untuk pemilik bisnis: kenapa gaya ini menarik dan apa cirinya",
+ "style_dna": "English, 120-200 words: format (photo/UGC/graphic/collage/screenshot), composition & layout grid, where the product and person sit, camera & lighting, color palette (hex), typography style (weight, case, outline, highlight boxes, stickers), text placement & amount, graphic elements (arrows, badges, emojis, price tags, borders), overall mood",
+ "text_slots": ["jenis teks yang biasanya muncul, mis. headline besar atas, badge harga, CTA bawah"]}"""
+
+
+def make_creative(data):
+    """Creative utuh bergaya referensi: referensi gaya + produk asli + (opsional) wajah influencer."""
+    slug = _slug(data)
+    out = g.OUT / slug / "final"
+    out.mkdir(parents=True, exist_ok=True)
+    tmp = g.OUT / slug / "refs"
+    tmp.mkdir(parents=True, exist_ok=True)
+    refs = [p for i, u in enumerate((data.get("refs") or [])[:3]) if (p := _dump(u, tmp / f"style{i}"))]
+    prod = _dump(data.get("foto"), tmp / "produk")
+    face = _dump(data.get("influencer"), tmp / "influencer") if data.get("show_face", True) else None
+    order, labels = [], []
+    if refs:
+        labels.append(f"Images 1-{len(refs)} are STYLE REFERENCES (winning ads): copy their visual style, layout, typography "
+                      "treatment and mood, but NEVER their brand, product, people or words.")
+        order += refs
+    if prod:
+        labels.append(f"Image {len(order) + 1} is the PRODUCT: show it EXACTLY as is (shape, color, label, logo), clearly visible.")
+        order.append(prod)
+    if face:
+        labels.append(f"Image {len(order) + 1} is the INFLUENCER: if a person appears, keep this exact facial identity.")
+        order.append(face)
+    fmt = data.get("fmt", "9x16")
+    aspect = {"9x16": "9:16", "4x5": "4:5"}[fmt]
+    safe = ("Keep ALL text and the product inside the central area: nothing important in the top 14% or bottom 20% "
+            "(Reels/Stories UI covers them)." if fmt == "9x16" else "Keep a small margin around all text.")
+    prompt = (f"Create ONE finished, ready-to-run Meta ad creative, vertical {aspect}.\n{' '.join(labels)}\n\n"
+              f"STYLE DNA to follow:\n{data.get('style_dna', '')}\n\nTHIS CREATIVE:\n{data.get('brief', '')}\n\n"
+              f"Write every on-image text in Indonesian EXACTLY as given (correct spelling, no extra words, no fake numbers or logos). "
+              f"{safe} Text must be large and readable on a phone.")
+    img = g.ai_creative(prompt, [str(p) for p in order], aspect, data.get("engine", "auto"))
+    W, H = (1080, 1920) if fmt == "9x16" else (1080, 1350)
+    s = max(W / img.width, H / img.height)
+    img = img.resize((round(img.width * s), round(img.height * s)))
+    l, t = (img.width - W) // 2, (img.height - H) // 2
+    name = f"{data.get('id', uuid.uuid4().hex)[:12]}-{fmt}-{uuid.uuid4().hex[:6]}.png"
+    img.crop((l, t, l + W, t + H)).save(out / name)
+    return {"url": f"/output/{slug}/final/{name}"}
 
 
 def make_image(data):

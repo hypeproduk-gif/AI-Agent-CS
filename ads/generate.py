@@ -82,11 +82,13 @@ SCHEMA = """Balas HANYA JSON valid:
 Isi quote/split/comparison hanya sesuai layout-nya (lainnya boleh kosong)."""
 
 
-def call(user, max_tokens=32000, system=None):
+def call(user, max_tokens=32000, system=None, images=None):
     """Streaming + retry: koneksi tidak diam lama (router/ISP sering memutus request panjang)."""
     key = os.environ.get("ANTHROPIC_API_KEY") or sys.exit("ANTHROPIC_API_KEY belum di-set")
     body = json.dumps({"model": MODEL, "max_tokens": max_tokens, "system": system or SYSTEM, "stream": True,
-                       "messages": [{"role": "user", "content": user}]}).encode()
+                       "messages": [{"role": "user", "content": [
+                           {"type": "image", "source": {"type": "base64", "media_type": m, "data": d}} for m, d in images or []]
+                           + [{"type": "text", "text": user}]}]}).encode()
     for attempt in range(1, 5):
         req = urllib.request.Request("https://api.anthropic.com/v1/messages", body, {
             "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"})
@@ -198,10 +200,10 @@ def ai_scene(prompt, foto_path, raise_errors=False, influencer_path=None, scene_
         return None
 
 
-def _openai(parts, key):
+def _openai(parts, key, size="1024x1536"):
     """GPT Image (images/edits) dengan foto referensi influencer + produk."""
     model = os.environ.get("OPENAI_IMAGE_MODEL", "gpt-image-1")
-    fields = {"model": model, "prompt": parts[0]["text"], "size": "1024x1536", "quality": "high", "n": "1"}
+    fields = {"model": model, "prompt": parts[0]["text"], "size": size, "quality": os.environ.get("OPENAI_IMAGE_QUALITY", "high"), "n": "1"}
     images = [(base64.b64decode(p["inline_data"]["data"]), p["inline_data"]["mime_type"]) for p in parts[1:]]
     if not images:
         body = json.dumps(fields | {"n": 1}).encode()
@@ -221,13 +223,34 @@ def _openai(parts, key):
         return Image.open(io.BytesIO(base64.b64decode(json.load(r)["data"][0]["b64_json"]))).convert("RGB")
 
 
-def _openrouter(parts, key, model=None):
+ASPECT_GPT = {"9:16": "1024x1536", "4:5": "1024x1536", "1:1": "1024x1024"}
+
+
+def ai_creative(prompt, images, aspect="9:16", engine="auto"):
+    """Creative utuh (gambar + teks) dari prompt + gambar referensi berurutan. engine: auto | gpt | nano."""
+    key, orkey, oakey = (os.environ.get(k) for k in ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "OPENAI_API_KEY"))
+    parts = [{"text": prompt}] + [_part(p) for p in images]
+    try:
+        if engine == "gpt" or (engine == "auto" and oakey):
+            if not oakey:
+                raise RuntimeError("API key OpenAI belum diisi.")
+            return _openai(parts, oakey, ASPECT_GPT.get(aspect, "1024x1536"))
+        if orkey:
+            return _openrouter(parts, orkey, aspect=aspect)
+        if key:
+            return _gemini(parts, key, aspect=aspect)
+        raise RuntimeError("API key Gemini / OpenRouter belum diisi.")
+    except urllib.error.HTTPError as e:
+        raise RuntimeError(f"{e} {e.read().decode(errors='replace')[:300]}")
+
+
+def _openrouter(parts, key, model=None, aspect="9:16"):
     content = [{"type": "text", "text": parts[0]["text"]}] + [
         {"type": "image_url", "image_url": {"url": f"data:{p['inline_data']['mime_type']};base64,{p['inline_data']['data']}"}}
         for p in parts[1:]]
     body = json.dumps({"model": model or os.environ.get("OPENROUTER_IMAGE_MODEL", "google/gemini-2.5-flash-image"),
                        "messages": [{"role": "user", "content": content}],
-                       "modalities": ["image", "text"], "image_config": {"aspect_ratio": "9:16"}}).encode()
+                       "modalities": ["image", "text"], "image_config": {"aspect_ratio": aspect}}).encode()
     req = urllib.request.Request("https://openrouter.ai/api/v1/chat/completions", body,
                                  {"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=300) as r:
@@ -238,10 +261,10 @@ def _openrouter(parts, key, model=None):
     raise ValueError("respons tanpa gambar")
 
 
-def _gemini(parts, key):
+def _gemini(parts, key, aspect="9:16"):
     model = os.environ.get("IMAGE_MODEL", "gemini-2.5-flash-image")
     body = json.dumps({"contents": [{"parts": parts}], "generationConfig": {
-        "responseModalities": ["IMAGE"], "imageConfig": {"aspectRatio": "9:16"}}}).encode()
+        "responseModalities": ["IMAGE"], "imageConfig": {"aspectRatio": aspect}}}).encode()
     req = urllib.request.Request(f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent", body,
                                  {"x-goog-api-key": key, "Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=300) as r:
