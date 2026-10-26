@@ -195,7 +195,19 @@ TEXT_RULES = ("Spell every Indonesian word correctly. Never print the brief, emo
               "No extra words, no fake numbers, no watermark.")
 SAFE_TEXT = {"9:16": "Keep ALL text, logo and CTA inside the central 80% of the width and away from the top 14% and bottom 18% "
                      "(the image will be trimmed at the sides and covered by app UI).",
-             "4:5": "Keep a comfortable margin around all text.", "1:1": "Keep a comfortable margin around all text."}
+             "4:5": "The image will be trimmed to 4:5: keep ALL text, logo and CTA away from the top 10% and bottom 10%, "
+                    "with a comfortable side margin.",
+             "1:1": "Keep a comfortable margin around all text."}
+MIRIP = {
+    "pola": ("Use REFERENCE IMAGE 1 only as a PATTERN: copy its visual language (type of headline treatment with a highlighted "
+             "word, handwritten note, benefit pills, CTA button, typography style, color palette, premium mood and polish) "
+             "but build a NEW composition, a NEW setting/location, new camera angle, new pose and props that fit the idea below. "
+             "Do NOT recreate the reference's background, set, mirror, pose or framing."),
+    "mirip": ("Make a sibling of REFERENCE IMAGE 1: similar layout zones and the same typography style, colors and mood, "
+              "but a different scene, pose and props that fit the idea below."),
+    "sama": ("Keep the SAME layout, set and composition as REFERENCE IMAGE 1. Change only the words and the person's "
+             "expression and pose to fit the idea below."),
+}
 
 
 def batch_prompt(data, aspect, has_refs):
@@ -213,12 +225,10 @@ def batch_prompt(data, aspect, has_refs):
                      "text block (headline max 5 words, sub line max 4 words, handwritten note max 8 words, benefit pills max 3 "
                      "words each, CTA max 3 words).")
         scene = brief
-    if has_refs and data.get("lock_layout", True):
-        head = ("Create a NEW ad that is a faithful sibling of REFERENCE IMAGE 1: keep the SAME layout and grid, the same position, "
-                "size, font style and colors of every text block (headline, highlighted word, sub line, handwritten note, benefit "
-                "pills with icons, brand logo, CTA button), the same color palette, lighting, set design and premium mood, the same "
-                "person (face, hijab/hair style) and the exact same product. Change ONLY the words and the person's expression, "
-                "pose and small scene details so they express this idea:")
+    mirip = data.get("mirip", "pola")
+    if has_refs and mirip in MIRIP:
+        head = (MIRIP[mirip] + " Keep the exact same product (shape, label, colors) and, if a person appears, the same model's "
+                "face. Idea / scene:")
     else:
         head = "Create a finished Meta ad image for this idea:"
     return (f"{head}\n{scene}\n\n{text_part}\n\n" + (f"Extra notes: {note}\n\n" if note else "")
@@ -234,7 +244,7 @@ IDE:
 
 Balas JSON: {{"items":[{{"headline":"maks 5 kata","highlight":"1 kata dari headline","sub":"maks 4 kata","note":"maks 8 kata",
 "pill_1":"maks 3 kata","pill_2":"maks 3 kata","pill_3":"maks 3 kata","cta":"maks 3 kata",
-"scene":"English, 1-2 kalimat: ekspresi, pose, detail adegan sesuai emosi"}}]}} urut sesuai ide."""
+"scene":"English, 2-3 kalimat: lokasi/setting BARU yang cocok dengan emosi (mis. kamar tidur malam, mobil, kantor, kamar mandi pagi), sudut kamera, pose, ekspresi, properti"}}]}} urut sesuai ide."""
 
 
 def make_copy(data):

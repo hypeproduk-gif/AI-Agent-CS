@@ -93,7 +93,12 @@ Close-up tangan meneteskan serum ke punggung tangan, cahaya pagi"></textarea>
     <span class="hint">Foto produk, wajah model, atau creative winning untuk ditiru gayanya. Urutannya = gambar referensi 1, 2, 3…</span>
     <input type="file" id="refs" accept="image/*" multiple aria-label="Gambar referensi">
     <div class="thumbs" id="thumbs"></div>
-    <label class="row hint"><input type="checkbox" id="lock" checked> Tiru layout gambar referensi 1 persis (ganti teks & ekspresi saja)</label>
+    <label class="lbl" for="mirip">Seberapa mirip dengan referensi 1</label>
+    <select id="mirip">
+      <option value="pola" selected>Tiru pola & gaya saja: scene baru sesuai brief</option>
+      <option value="mirip">Mirip: zona layout sama, scene beda</option>
+      <option value="sama">Hampir sama: hanya teks & ekspresi berubah</option>
+    </select>
   </section>
 
   <section class="box">
@@ -153,6 +158,8 @@ $("#engine").value = store.get("engine", "gpt");
 for (const id of ["engine", "variasi"]) $("#"+id).addEventListener("change", e => { store.set(id, e.target.value); updateCount() });
 $("#variasi").value = store.get("variasi", "1");
 $("#quality").value = store.get("quality", "medium");
+$("#mirip").value = store.get("mirip", "pola");
+$("#mirip").addEventListener("change", e => store.set("mirip", e.target.value));
 $("#quality").addEventListener("change", e => { store.set("quality", e.target.value); updateCount() });
 for (const id of ["a916", "a45", "a11"]) $("#"+id).addEventListener("change", updateCount);
 $("#briefs").addEventListener("input", updateCount);
@@ -201,7 +208,7 @@ async function runOne(job){
   job.state = "run"; job.error = ""; paint(job);
   try {
     const r = await fetch("/api/batch", {method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({prompt: job.prompt, copy: job.copy, lock_layout: $("#lock").checked, note: $("#note").value, refs, aspect: job.aspect, engine: $("#engine").value, quality: $("#quality").value})});
+      body: JSON.stringify({prompt: job.prompt, copy: job.copy, mirip: $("#mirip").value, note: $("#note").value, refs, aspect: job.aspect, engine: $("#engine").value, quality: $("#quality").value})});
     const j = await r.json(); if (!r.ok) throw new Error(j.error || r.status);
     job.url = j.url; job.state = "ok";
   } catch(e){ job.state = "err"; job.error = e.message }

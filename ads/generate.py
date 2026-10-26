@@ -223,7 +223,7 @@ def _openai(parts, key, size="1024x1536", quality=None, model=None):
         return Image.open(io.BytesIO(base64.b64decode(json.load(r)["data"][0]["b64_json"]))).convert("RGB")
 
 
-ASPECT_GPT = {"9:16": "1024x1536", "4:5": "1024x1024", "1:1": "1024x1024"}  # 4:5 dipotong dari persegi
+ASPECT_GPT = {"9:16": "1024x1536", "4:5": "1024x1536", "1:1": "1024x1024"}  # 9:16 & 4:5 dipotong tipis dari 2:3
 
 
 def ai_creative(prompt, images, aspect="9:16", engine="auto", quality=None):
