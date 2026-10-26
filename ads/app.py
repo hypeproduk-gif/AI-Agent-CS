@@ -16,7 +16,7 @@ import generate as g  # noqa: E402
 ENV = ROOT / ".env"
 PAGE = ROOT / "web" / "studio-iklan.html"
 PORT = int(os.environ.get("PORT", 8765))
-KEYS = ("ANTHROPIC_API_KEY", "GEMINI_API_KEY", "OPENROUTER_API_KEY")
+KEYS = ("ANTHROPIC_API_KEY", "GEMINI_API_KEY", "OPENROUTER_API_KEY", "OPENAI_API_KEY")
 
 
 def load_env():
@@ -107,8 +107,8 @@ def save_upload(data):
 
 
 def make_image(data):
-    if not (os.environ.get("GEMINI_API_KEY") or os.environ.get("OPENROUTER_API_KEY")):
-        raise RuntimeError("API key Gemini / OpenRouter belum diisi.")
+    if not any(os.environ.get(k) for k in KEYS[1:]):
+        raise RuntimeError("API key foto AI (Gemini / OpenRouter / OpenAI) belum diisi.")
     slug = re.sub(r"[^a-z0-9-]+", "-", (data.get("slug") or "produk").lower()).strip("-") or "produk"
     out = g.OUT / slug / "scenes"
     out.mkdir(parents=True, exist_ok=True)
@@ -121,7 +121,7 @@ def make_image(data):
         return path
     foto_path, inf_path = dump(data.get("foto"), "_produk"), dump(data.get("influencer"), "_influencer")
     img = g.ai_scene(data.get("prompt", ""), str(foto_path) if foto_path else None, raise_errors=True,
-                     influencer_path=str(inf_path) if inf_path else None, scene_type=data.get("scene_type"), show_face=data.get("show_face"))
+                     influencer_path=str(inf_path) if inf_path else None, scene_type=data.get("scene_type"), show_face=data.get("show_face"), style=data.get("image_style") or "ugc")
     if img is None:
         raise RuntimeError("Gemini tidak mengembalikan gambar.")
     name = f"{uuid.uuid4().hex[:10]}.png"

@@ -92,6 +92,8 @@ label.upl:focus-within,label.upl:focus-visible{outline:2px solid var(--accent)}
     <input type="text" id="kAnth" autocomplete="off" placeholder="kosongkan jika sudah tersimpan">
     <label class="lbl" for="kGem">Gemini (aistudio.google.com/apikey)</label>
     <input type="text" id="kGem" autocomplete="off" placeholder="kosongkan jika sudah tersimpan">
+    <label class="lbl" for="kOa">OpenAI / ChatGPT (platform.openai.com/api-keys) · foto marketing yang rapi</label>
+    <input type="text" id="kOa" autocomplete="off" placeholder="kosongkan jika sudah tersimpan">
     <label class="lbl" for="kOr">OpenRouter (openrouter.ai/keys) · foto AI tanpa billing Google</label>
     <input type="text" id="kOr" autocomplete="off" placeholder="kosongkan jika sudah tersimpan">
     <button id="btnKeys">Simpan key</button>
@@ -191,6 +193,13 @@ FORMAT FOTO (needs_photo=true, foto AI gaya UGC smartphone, caption ala TikTok d
 - before_after_split: satu foto terbelah kiri-kanan kondisi sebelum vs sesudah (JANGAN untuk kesehatan/berat badan)
 - offer_flatlay: flat lay semua isi paket + bonus terlihat jelas (cocok value_shock)
 - reaction_meme: ekspresi lucu/relatable orang Indonesia sehari-hari terkait masalah (show_face=true)
+FORMAT FOTO MARKETING (needs_photo=true, image_style="polished", foto iklan rapi & cantik):
+- hero_studio: produk sebagai bintang di set studio bergaya (podium, bayangan dramatis, warna brand)
+- ingredient_splash: produk dikelilingi bahan aktif/tekstur visual (cipratan, buah, daun, kristal)
+- model_glam: model (wajah influencer bila show_face=true) dengan produk, pencahayaan beauty campaign
+- lifestyle_editorial: suasana lifestyle aspiratif ala majalah dengan produk
+- offer_flatlay juga boleh polished.
+Semua format foto lain di atas = image_style "ugc". Campur ugc dan polished dalam satu batch; UGC untuk kepercayaan, polished untuk daya tarik visual dan penawaran.
 FORMAT DESAIN (needs_photo=false, dirender sebagai grafis, sering paling murah CPA):
 - notes: tangkapan layar iPhone Notes, judul = hook, isi 3-5 poin (isi field notes)
 - tweet: postingan X/Threads gaya curhat orang biasa (isi field tweet), tanpa angka like/retweet palsu
@@ -212,7 +221,7 @@ const CREATIVE_SHAPE = `{"creatives":[{
  "quote":{"text":"","name":""},"split":{"left_label":"","left":"","right_label":"","right":""},
  "comparison":{"them_label":"","them":["","",""],"us_label":"","us":["","",""]},
  "palette":{"bg1":"#hex","bg2":"#hex","accent":"#hex","text":"#hex"},
- "visual_format":"salah satu format di atas atau usulan baru","needs_photo":true,"show_face":true,
+ "visual_format":"salah satu format di atas atau usulan baru","needs_photo":true,"show_face":true,"image_style":"ugc|polished",
  "notes":{"title":"","items":["",""]},"tweet":{"name":"nama orang biasa","handle":"@...","text":""},
  "callouts":["≤4 kata","≤4 kata","≤4 kata","≤4 kata"],"offer_items":["",""],"price_line":"",
  "image_prompt":"English, detail sesuai aturan VISUAL",
@@ -531,7 +540,7 @@ Balas hanya JSON dengan bentuk:\n${CREATIVE_SHAPE}`);
         plan.creatives.push(...fresh);
         store.set("hooks", [...store.get("hooks", []), ...fresh.map(c => c.hook)].slice(-500));
         save(); drawMain();
-        if (LOCAL && $("#autoAi").checked && (keyState.GEMINI_API_KEY || keyState.OPENROUTER_API_KEY)){
+        if (LOCAL && $("#autoAi").checked && (keyState.GEMINI_API_KEY || keyState.OPENROUTER_API_KEY || keyState.OPENAI_API_KEY)){
           for (const [k, c] of fresh.filter(c => c.needs_photo !== false).entries()){
             status(`${$("#status").dataset.base} · foto AI ${k+1}/${fresh.length}...`);
             try { await aiScene(c) } catch(err){ aiFails.push(err.message) }
@@ -555,7 +564,7 @@ function loadScene(url){
 async function aiScene(c){
   const r = await fetch("/api/image", {method:"POST", headers:{"Content-Type":"application/json"},
     body: JSON.stringify({prompt: c.image_prompt || c.visual_brief || c.hook, foto: fotoData, influencer: inflData,
-      scene_type: c.visual_format || c.scene_type, show_face: c.show_face !== false, slug: plan.slug})});
+      scene_type: c.visual_format || c.scene_type, show_face: c.show_face !== false, image_style: c.image_style || "ugc", slug: plan.slug})});
   const j = await r.json(); if (!r.ok) throw new Error(j.error || r.status);
   await loadScene(j.url); c.scene_url = j.url; c.scene_has_product = j.has_product; save();
 }
@@ -572,7 +581,7 @@ function card(c, idx){
   const el = document.createElement("article"); el.className = "card";
   el.innerHTML = `<div class="prev"><canvas data-f="9x16" aria-label="Preview 9:16"></canvas><canvas data-f="4x5" aria-label="Preview 4:5"></canvas></div>
   <div class="meta">
-    <div class="pills"><span class="pill a">${esc(c.psych_angle)}</span><span class="pill">${esc(c.visual_format || c.scene_type || c.layout)}</span><span class="pill">${esc(c.awareness)}-aware</span></div>
+    <div class="pills"><span class="pill a">${esc(c.psych_angle)}</span><span class="pill">${esc(c.visual_format || c.scene_type || c.layout)}${c.image_style === "polished" ? " · polished" : ""}</span><span class="pill">${esc(c.awareness)}-aware</span></div>
     <input class="hook" type="text" id="hook-${c.id}" value="${esc(c.hook)}" aria-label="Hook">
     <div class="vb"><b>Brief visual:</b> ${esc(c.visual_brief).replace(/\[PRODUK ASLI\]/g,"<mark>[PRODUK ASLI]</mark>")}</div>
     <details><summary>Primary text</summary><p class="copy">${esc(c.primary_text)}</p><button class="mini" data-copy="pt">Salin</button>
@@ -685,7 +694,7 @@ let keyState = {}, aiFails = [];
 function showKeys(st){
   keyState = st;
   const a = st.ANTHROPIC_API_KEY, g = st.GEMINI_API_KEY || st.OPENROUTER_API_KEY;
-  $("#keysState").textContent = `Anthropic: ${a ? "tersimpan ✓" : "belum diisi"} · Foto AI: ${st.OPENROUTER_API_KEY ? "OpenRouter ✓" : st.GEMINI_API_KEY ? "Gemini ✓" : "belum diisi (foto AI nonaktif)"}`;
+  $("#keysState").textContent = `Anthropic: ${a ? "tersimpan ✓" : "belum diisi"} · Foto realistis: ${st.OPENROUTER_API_KEY ? "OpenRouter ✓" : st.GEMINI_API_KEY ? "Gemini ✓" : st.OPENAI_API_KEY ? "pakai OpenAI" : "belum diisi"} · Foto marketing: ${st.OPENAI_API_KEY ? "OpenAI ✓" : "pakai Nano Banana"}`;
   $("#keysBox").hidden = false;
   if (plan) $("#btnGen").disabled = !a;
 }
@@ -702,8 +711,8 @@ async function bootLocal(){
 }
 $("#btnKeys").onclick = async () => {
   const r = await fetch("/api/keys", {method:"POST", headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ANTHROPIC_API_KEY: $("#kAnth").value.trim(), GEMINI_API_KEY: $("#kGem").value.trim(), OPENROUTER_API_KEY: $("#kOr").value.trim()})});
-  $("#kAnth").value = $("#kGem").value = $("#kOr").value = ""; showKeys(await r.json()); status("Key tersimpan.");
+    body: JSON.stringify({ANTHROPIC_API_KEY: $("#kAnth").value.trim(), GEMINI_API_KEY: $("#kGem").value.trim(), OPENROUTER_API_KEY: $("#kOr").value.trim(), OPENAI_API_KEY: $("#kOa").value.trim()})});
+  $("#kAnth").value = $("#kGem").value = $("#kOr").value = $("#kOa").value = ""; showKeys(await r.json()); status("Key tersimpan.");
 };
 
 // ---------- boot ----------

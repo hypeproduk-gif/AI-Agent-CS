@@ -5,7 +5,7 @@
 
 Env: ANTHROPIC_API_KEY (wajib), GEMINI_API_KEY (opsional, foto scene UGC dari foto produk asli).
 """
-import argparse, base64, csv, io, json, os, re, sys, time, urllib.error, urllib.request
+import argparse, base64, csv, io, json, os, re, sys, time, urllib.error, urllib.request, uuid
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
@@ -155,12 +155,18 @@ def _part(path):
     return {"inline_data": {"mime_type": mime, "data": base64.b64encode(Path(path).read_bytes()).decode()}}
 
 
-def ai_scene(prompt, foto_path, raise_errors=False, influencer_path=None, scene_type=None, show_face=None):
-    """Foto scene UGC via Gemini (Nano Banana).
+POLISHED_STYLE = ("Vertical 9:16 high-end marketing photo for a Meta ad: polished art direction, clean bold composition, "
+                  "studio or styled set, beautiful lighting, rich but brand-appropriate colors, premium e-commerce look. "
+                  "No text, no captions, no watermark. Keep the top 25% of the frame clean for a headline.")
+
+
+def ai_scene(prompt, foto_path, raise_errors=False, influencer_path=None, scene_type=None, show_face=None, style="ugc"):
+    """Foto scene via Nano Banana (realistis/UGC) atau GPT Image (marketing rapi, style="polished").
     Referensi: image A = influencer (wajah dipertahankan), image B = produk asli (tidak boleh diubah)."""
-    key, orkey = os.environ.get("GEMINI_API_KEY"), os.environ.get("OPENROUTER_API_KEY")
-    if not key and not orkey:
+    key, orkey, oakey = (os.environ.get(k) for k in ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "OPENAI_API_KEY"))
+    if not (key or orkey or oakey):
         return None
+    polished = style == "polished"
     face = show_face if show_face is not None else scene_type in (None, "influencer", "selfie_review", "mirror_selfie", "reaction_meme")
     parts, refs = [], []
     if influencer_path and face:
@@ -175,8 +181,12 @@ def ai_scene(prompt, foto_path, raise_errors=False, influencer_path=None, scene_
     else:
         refs.append("Do NOT show any product, packaging or brand; leave clear space in the middle of the frame.")
     scene = SCENES.get(scene_type or "influencer", "") or (f"Format: {scene_type.replace('_', ' ')}." if scene_type else "")
-    parts.insert(0, {"text": f"{scene}\n{prompt}\n\n{' '.join(refs)}\n{UGC_STYLE}"})
+    parts.insert(0, {"text": f"{scene}\n{prompt}\n\n{' '.join(refs)}\n{POLISHED_STYLE if polished else UGC_STYLE}"})
     try:
+        if oakey and (polished or not (key or orkey)):  # GPT Image: marketing yang rapi
+            return _openai(parts, oakey)
+        if orkey and polished and os.environ.get("OPENROUTER_POLISHED_MODEL"):
+            return _openrouter(parts, orkey, os.environ["OPENROUTER_POLISHED_MODEL"])
         if orkey:  # OpenRouter: model Nano Banana yang sama, saldo prabayar (tanpa billing Google)
             return _openrouter(parts, orkey)
         return _gemini(parts, key)
@@ -188,11 +198,34 @@ def ai_scene(prompt, foto_path, raise_errors=False, influencer_path=None, scene_
         return None
 
 
-def _openrouter(parts, key):
+def _openai(parts, key):
+    """GPT Image (images/edits) dengan foto referensi influencer + produk."""
+    model = os.environ.get("OPENAI_IMAGE_MODEL", "gpt-image-1")
+    fields = {"model": model, "prompt": parts[0]["text"], "size": "1024x1536", "quality": "high", "n": "1"}
+    images = [(base64.b64decode(p["inline_data"]["data"]), p["inline_data"]["mime_type"]) for p in parts[1:]]
+    if not images:
+        body = json.dumps(fields | {"n": 1}).encode()
+        req = urllib.request.Request("https://api.openai.com/v1/images/generations", body,
+                                     {"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+    else:
+        b = uuid.uuid4().hex
+        chunks = [f'--{b}\r\nContent-Disposition: form-data; name="{k}"\r\n\r\n{v}\r\n'.encode() for k, v in fields.items()]
+        for i, (data, mime) in enumerate(images):
+            ext = "png" if mime.endswith("png") else "jpg"
+            chunks.append(f'--{b}\r\nContent-Disposition: form-data; name="image[]"; filename="ref{i}.{ext}"\r\n'
+                          f"Content-Type: {mime}\r\n\r\n".encode() + data + b"\r\n")
+        body = b"".join(chunks) + f"--{b}--\r\n".encode()
+        req = urllib.request.Request("https://api.openai.com/v1/images/edits", body,
+                                     {"Authorization": f"Bearer {key}", "Content-Type": f"multipart/form-data; boundary={b}"})
+    with urllib.request.urlopen(req, timeout=300) as r:
+        return Image.open(io.BytesIO(base64.b64decode(json.load(r)["data"][0]["b64_json"]))).convert("RGB")
+
+
+def _openrouter(parts, key, model=None):
     content = [{"type": "text", "text": parts[0]["text"]}] + [
         {"type": "image_url", "image_url": {"url": f"data:{p['inline_data']['mime_type']};base64,{p['inline_data']['data']}"}}
         for p in parts[1:]]
-    body = json.dumps({"model": os.environ.get("OPENROUTER_IMAGE_MODEL", "google/gemini-2.5-flash-image"),
+    body = json.dumps({"model": model or os.environ.get("OPENROUTER_IMAGE_MODEL", "google/gemini-2.5-flash-image"),
                        "messages": [{"role": "user", "content": content}],
                        "modalities": ["image", "text"], "image_config": {"aspect_ratio": "9:16"}}).encode()
     req = urllib.request.Request("https://openrouter.ai/api/v1/chat/completions", body,
