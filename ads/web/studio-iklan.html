@@ -83,6 +83,16 @@ summary{cursor:pointer;font-weight:700;font-size:13px}
 
 <div class="wrap">
 <aside>
+  <section class="box" id="keysBox" hidden>
+    <h2>API key</h2>
+    <span class="hint" id="keysState"></span>
+    <label class="lbl" for="kAnth">Anthropic (sk-ant-api03-...)</label>
+    <input type="text" id="kAnth" autocomplete="off" placeholder="kosongkan jika sudah tersimpan">
+    <label class="lbl" for="kGem">Gemini (aistudio.google.com/apikey)</label>
+    <input type="text" id="kGem" autocomplete="off" placeholder="kosongkan jika sudah tersimpan">
+    <button id="btnKeys">Simpan key</button>
+  </section>
+
   <section class="box">
     <h2>1 · Brief produk</h2>
     <label class="lbl" for="brief">Nama, harga, target, fitur, benefit, testimoni asli, izin, larangan klaim</label>
@@ -107,6 +117,7 @@ summary{cursor:pointer;font-weight:700;font-size:13px}
     </div>
     <label class="lbl">CEP yang dibuat</label>
     <div class="chips" id="cepPick"><span class="hint">Petakan CEP dulu.</span></div>
+    <label class="row hint" id="autoAiRow" hidden><input type="checkbox" id="autoAi" checked> Buat foto AI (Gemini) otomatis untuk tiap creative</label>
     <button class="primary" id="btnGen" disabled>Buat creative</button>
     <button id="btnStop" hidden>Stop</button>
     <div class="status" id="status" role="status"></div>
@@ -171,6 +182,7 @@ const CREATIVE_SHAPE = `{"creatives":[{
  "quote":{"text":"","name":""},"split":{"left_label":"","left":"","right_label":"","right":""},
  "comparison":{"them_label":"","them":["","",""],"us_label":"","us":["","",""]},
  "palette":{"bg1":"#hex","bg2":"#hex","accent":"#hex","text":"#hex"},
+ "image_prompt":"English: UGC photo of the exact CEP moment for this angle (who, where, time of day, emotion, what they do with the product). No text.",
  "visual_brief":"arahan foto/video untuk tim konten: momen CEP, setting, pose, properti. Tulis [PRODUK ASLI] di setiap bagian yang wajib pakai foto/video produk asli",
  "primary_text":"versi panjang","primary_text_short":"≤125 karakter",
  "headlines":["","",""],"description":"≤25 karakter"}]}
@@ -183,7 +195,9 @@ const store = {
 };
 let sample = null, downloads = null, ctl = null;
 let plan = store.get("plan", null);           // {slug, strategy:{...,ceps:[]}, creatives:[]}
-let foto = null, lifes = [];
+let foto = null, fotoData = null, lifes = [];
+const LOCAL = !window.claude && /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+const scenes = {};   // url -> Image
 let pickedAngles = new Set(store.get("angles", ANGLES.map(a => a[0])));
 let pickedCeps = new Set(store.get("ceps", []));
 
@@ -221,7 +235,12 @@ function drawCepPick(){
 
 // ---------- images ----------
 function loadImg(file){ return new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = URL.createObjectURL(file) }) }
-$("#foto").onchange = async e => { foto = e.target.files[0] ? await loadImg(e.target.files[0]) : null; renderAll() };
+$("#foto").onchange = async e => {
+  const f = e.target.files[0];
+  foto = f ? await loadImg(f) : null;
+  fotoData = f ? await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(f) }) : null;
+  renderAll();
+};
 $("#life").onchange = async e => {
   lifes = await Promise.all([...e.target.files].map(loadImg));
   $("#thumbs").replaceChildren(...lifes.map(i => { const t = new Image(); t.src = i.src; t.alt = ""; return t }));
@@ -293,8 +312,9 @@ function render(cv, c, fmt, idx){
   const [W, H] = SIZES[fmt]; cv.width = W; cv.height = H;
   const x = cv.getContext("2d"), p = c.palette || {};
   const bg1 = hex(p.bg1,"#1e1e3c"), bg2 = hex(p.bg2,"#0a0a14"), acc = hex(p.accent,"#ffc800"), txt = hex(p.text,"#ffffff");
-  const scene = lifes.length ? lifes[idx % lifes.length] : null;
-  const skipProduct = scene && $("#lifeHasProduct").checked;
+  const ai = c.scene_url && scenes[c.scene_url];
+  const scene = ai || (lifes.length ? lifes[idx % lifes.length] : null);
+  const skipProduct = ai ? c.scene_has_product : scene && $("#lifeHasProduct").checked;
   if (scene){
     cover(x, scene, W, H);
     const g = x.createLinearGradient(0,0,0,H);
@@ -398,6 +418,14 @@ Balas hanya JSON dengan bentuk:\n${CREATIVE_SHAPE}`);
         plan.creatives.push(...fresh);
         store.set("hooks", [...store.get("hooks", []), ...fresh.map(c => c.hook)].slice(-500));
         save(); drawMain();
+        if (LOCAL && $("#autoAi").checked && keyState.GEMINI_API_KEY){
+          for (const [k, c] of fresh.entries()){
+            status(`${$("#status").dataset.base} · foto AI ${k+1}/${fresh.length}...`);
+            try { await aiScene(c) } catch(err){ status(`Foto AI gagal: ${err.message}`, true) }
+            if (ctl?.signal.aborted) throw {code:"cancelled"};
+          }
+          drawMain();
+        }
       }
     }
     status(`Selesai. ${plan.creatives.length} creative.`);
@@ -406,6 +434,17 @@ Balas hanya JSON dengan bentuk:\n${CREATIVE_SHAPE}`);
 };
 
 function save(){ store.set("plan", plan) }
+
+// ---------- foto AI (lokal) ----------
+function loadScene(url){
+  return new Promise((ok, no) => { const i = new Image(); i.onload = () => { scenes[url] = i; ok(i) }; i.onerror = no; i.src = url });
+}
+async function aiScene(c){
+  const r = await fetch("/api/image", {method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({prompt: c.image_prompt || c.visual_brief || c.hook, foto: fotoData, slug: plan.slug})});
+  const j = await r.json(); if (!r.ok) throw new Error(j.error || r.status);
+  await loadScene(j.url); c.scene_url = j.url; c.scene_has_product = j.has_product; save();
+}
 
 // ---------- gallery ----------
 const esc = s => String(s ?? "").replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
@@ -427,7 +466,7 @@ function card(c, idx){
     <details open><summary>Headline & description</summary>
       ${(c.headlines||[]).map((h,i) => `<div class="hl"><span>${esc(h)}</span><button class="mini" data-copy="h${i}">Salin</button></div>`).join("")}
       <div class="hl"><span>${esc(c.description)}</span><button class="mini" data-copy="d">Salin</button></div></details>
-    <div class="row"><button class="mini" data-dl="9x16">PNG 9:16</button><button class="mini" data-dl="4x5">PNG 4:5</button></div>
+    <div class="row"><button class="mini" data-ai ${LOCAL ? "" : "hidden"}>${c.scene_url ? "Ulangi foto AI" : "Buat foto AI"}</button><button class="mini" data-dl="9x16">PNG 9:16</button><button class="mini" data-dl="4x5">PNG 4:5</button></div>
   </div>`;
   const draw = () => el.querySelectorAll("canvas").forEach(cv => render(cv, c, cv.dataset.f, idx));
   draw();
@@ -439,6 +478,13 @@ function card(c, idx){
     const cv = el.querySelector(`canvas[data-f="${b.dataset.dl}"]`);
     await saveFile(`${fileBase(c)}-${b.dataset.dl}.png`, await new Promise(r => cv.toBlob(r, "image/png")));
   });
+  el.querySelector("[data-ai]").onclick = async e => {
+    const b = e.target; b.disabled = true; b.textContent = "Membuat foto...";
+    try { await aiScene(c); draw(); b.textContent = "Ulangi foto AI" }
+    catch(err){ b.textContent = "Coba lagi"; status(`Foto AI gagal: ${err.message}`, true) }
+    finally { b.disabled = false }
+  };
+  if (c.scene_url && !scenes[c.scene_url]) loadScene(c.scene_url).then(draw).catch(() => {});
   el._draw = draw;
   return el;
 }
@@ -474,7 +520,10 @@ function renderAll(){ document.querySelectorAll(".card").forEach(c => c._draw?.(
 
 // ---------- download ----------
 async function saveFile(name, data){
-  if (!downloads) return status("Download tidak tersedia di tampilan ini.", true);
+  if (!downloads){
+    const a = document.createElement("a"); a.href = URL.createObjectURL(data instanceof Blob ? data : new Blob([data]));
+    a.download = name; document.body.append(a); a.click(); a.remove(); return status(`Tersimpan: ${name}`);
+  }
   try { await downloads.save({filename: name, data}); status(`Tersimpan: ${name}`) }
   catch(e){ status(e?.code === "declined" ? "Download dibatalkan." : `Download gagal (${e?.code || e?.message}).`, e?.code !== "declined") }
 }
@@ -499,11 +548,38 @@ $("#btnZip").onclick = async () => {
   $("#btnZip").disabled = false;
 };
 
+// ---------- mode lokal (python3 ads/app.py) ----------
+let keyState = {};
+function showKeys(st){
+  keyState = st;
+  const a = st.ANTHROPIC_API_KEY, g = st.GEMINI_API_KEY;
+  $("#keysState").textContent = `Anthropic: ${a ? "tersimpan ✓" : "belum diisi"} · Gemini: ${g ? "tersimpan ✓" : "belum diisi (foto AI nonaktif)"}`;
+  $("#keysBox").hidden = false;
+  if (plan) $("#btnGen").disabled = !a;
+}
+async function bootLocal(){
+  $("#autoAiRow").hidden = false;
+  sample = { json: async (prompt, opts={}) => {
+    ctl = ctl || new AbortController();
+    const r = await fetch("/api/claude", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({prompt}), signal: opts.signal});
+    const j = await r.json(); if (!r.ok) throw {message: j.error || r.status};
+    return j.result;
+  }};
+  try { showKeys(await (await fetch("/api/status")).json()) } catch { status("Server lokal tidak menjawab. Jalankan lagi: python3 ads/app.py", true) }
+  if (!keyState.ANTHROPIC_API_KEY) status("Isi API key Anthropic dulu di kotak API key.", true);
+}
+$("#btnKeys").onclick = async () => {
+  const r = await fetch("/api/keys", {method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ANTHROPIC_API_KEY: $("#kAnth").value.trim(), GEMINI_API_KEY: $("#kGem").value.trim()})});
+  $("#kAnth").value = $("#kGem").value = ""; showKeys(await r.json()); status("Key tersimpan.");
+};
+
 // ---------- boot ----------
 drawAngles();
 (async () => {
   try { await document.fonts.load(F(80)); await document.fonts.load(F(40, 600)) } catch {}
   if (plan){ drawCepPick(); drawMain() }
+  if (LOCAL) return bootLocal();
   const c = window.claude;
   if (!c?.use){ status("Buka halaman ini di claude.ai agar Claude bisa menulis creative.", true); return }
   [sample, downloads] = await Promise.all([c.use("sample"), c.use("downloads")]);

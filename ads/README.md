@@ -42,3 +42,8 @@ Dengan `GEMINI_API_KEY` + `--foto`, foto produk asli dikirim sebagai referensi d
 (iPhone, cahaya natural, orang & setting Indonesia) di momen CEP, dengan produk asli dipegang/dipakai — bukan produk karangan.
 Tanpa `--foto`, scene dibuat tanpa produk dan muncul slot [PRODUK ASLI].
 Model default `gemini-2.5-flash-image`; untuk kualitas lebih tinggi: `export IMAGE_MODEL=gemini-3-pro-image-preview`.
+
+## Versi web lokal (dengan foto AI Gemini)
+Mac: klik dua kali `ads/Buka Studio Iklan.command`, atau di Terminal: `python3 ads/app.py`.
+Browser terbuka di http://localhost:8765. Isi API key sekali di kotak **API key** (disimpan di `ads/.env`, tidak ikut ter-commit).
+Gambar AI tersimpan di `ads/output/<produk>/scenes/`.

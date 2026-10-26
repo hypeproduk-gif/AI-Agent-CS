@@ -82,10 +82,10 @@ SCHEMA = """Balas HANYA JSON valid:
 Isi quote/split/comparison hanya sesuai layout-nya (lainnya boleh kosong)."""
 
 
-def call(user, max_tokens=32000):
+def call(user, max_tokens=32000, system=None):
     """Streaming + retry: koneksi tidak diam lama (router/ISP sering memutus request panjang)."""
     key = os.environ.get("ANTHROPIC_API_KEY") or sys.exit("ANTHROPIC_API_KEY belum di-set")
-    body = json.dumps({"model": MODEL, "max_tokens": max_tokens, "system": SYSTEM, "stream": True,
+    body = json.dumps({"model": MODEL, "max_tokens": max_tokens, "system": system or SYSTEM, "stream": True,
                        "messages": [{"role": "user", "content": user}]}).encode()
     for attempt in range(1, 5):
         req = urllib.request.Request("https://api.anthropic.com/v1/messages", body, {
@@ -143,7 +143,7 @@ UGC_STYLE = ("Authentic UGC smartphone photo, shot on iPhone, natural window lig
              "Keep the top 30% of the frame visually calm (wall, sky, soft blur) for headline text.")
 
 
-def ai_scene(prompt, foto_path):
+def ai_scene(prompt, foto_path, raise_errors=False):
     """Foto scene UGC via Gemini (Nano Banana). Foto produk asli dikirim sebagai referensi agar produk tidak dikarang."""
     key = os.environ.get("GEMINI_API_KEY")
     if not key:
@@ -170,6 +170,9 @@ def ai_scene(prompt, foto_path):
                     return Image.open(io.BytesIO(base64.b64decode(data["data"]))).convert("RGB")
         raise ValueError("respons tanpa gambar")
     except Exception as e:
+        if raise_errors:
+            detail = e.read().decode(errors="replace")[:300] if isinstance(e, urllib.error.HTTPError) else ""
+            raise RuntimeError(f"{e} {detail}".strip())
         print(f"  ! gambar AI gagal ({e}), pakai background gradien", file=sys.stderr)
         return None
 
