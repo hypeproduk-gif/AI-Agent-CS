@@ -34,3 +34,12 @@ Hasil (video, thumbnail, caption.json) tersimpan di `output/<waktu>/`.
 
 Catatan: link di caption IG tidak bisa diklik, jadi link Shopee ditaruh di komentar pertama + "link di bio".
 Pastikan Anda punya hak pakai video Pinterest yang direpost.
+
+## Web app (tanpa terminal)
+`app.py` = halaman web: upload video / link Pinterest → preview thumbnail + caption (bisa diedit) → centang FB/IG/Threads → Posting.
+Folder video publik ikut disajikan di `/media/`, jadi isi `PUBLIC_BASE_URL=https://domain-anda/media`.
+
+```bash
+python app.py                     # buka http://IP:8090, login password = APP_PASSWORD
+sudo cp autopost-web.service /etc/systemd/system/ && sudo systemctl enable --now autopost-web
+```

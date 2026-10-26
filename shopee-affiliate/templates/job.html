@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% block body %}
+<p><a href="/">← Kembali</a></p>
+<h1>{{ job.produk }}</h1>
+<div class="row card">
+  <div><label>Thumbnail</label><img src="/job/{{ job.slug }}/file/thumbnail.jpg"></div>
+  <div><label>Video</label><video src="/job/{{ job.slug }}/file/{{ job.video }}" controls></video></div>
+</div>
+<p><b>Headline:</b> {{ job.headline }}</p>
+<form method="post" action="/job/{{ job.slug }}/post" onsubmit="this.classList.add('busy')">
+{% for k, n in platforms.items() %}
+<div class="card">
+  <label><input type="checkbox" name="on_{{ k }}" {% if job.links[k] %}checked{% else %}disabled{% endif %}> {{ n }}
+  <small>{{ job.links[k] or "link Shopee kosong" }}</small></label>
+  <textarea name="text_{{ k }}">{{ job.text[k] }}</textarea>
+  {% if job.status[k] %}<p class="st">Status: {{ job.status[k] }}</p>{% endif %}
+</div>{% endfor %}
+<button>🚀 Posting</button>
+</form>
+{% if job.status.values()|select("in", ["menunggu...", "memproses..."])|list %}
+<script>setTimeout(() => location.reload(), 5000)</script>{% endif %}
+{% endblock %}

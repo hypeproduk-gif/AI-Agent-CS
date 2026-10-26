@@ -1,0 +1,25 @@
+{% extends "base.html" %}{% block body %}
+<h1>🛒 Shopee Affiliate Autopost</h1>
+<form class="card" method="post" action="/generate" enctype="multipart/form-data" onsubmit="this.classList.add('busy')">
+  <label>Video <small>upload file, atau isi link Pinterest</small></label>
+  <input type="file" name="video" accept="video/*">
+  <input type="url" name="pin" placeholder="https://pin.it/..." style="margin-top:8px">
+  <label>Nama / deskripsi produk</label>
+  <input type="text" name="produk" required placeholder="Serum Vitamin C 20ml, bikin glowing">
+  <label>Teks thumbnail <small>(kosongkan = dibuat AI)</small></label>
+  <input type="text" name="judul">
+  <label>Link Shopee <small>dipakai semua platform</small></label>
+  <input type="url" name="shopee" placeholder="https://s.shopee.co.id/...">
+  <details><summary style="margin-top:12px;cursor:pointer">Link beda per platform (Sub ID)</summary>
+  <div class="row">{% for k, n in platforms.items() %}
+    <div><label>{{ n }}</label><input type="url" name="shopee_{{ k }}"></div>{% endfor %}</div>
+  </details>
+  <button>Buat thumbnail & caption</button>
+  <p class="load">⏳ Memproses video & menulis caption… (±30 detik)</p>
+</form>
+<h2>Riwayat</h2>
+<div class="card list">{% for j in jobs %}
+  <a href="/job/{{ j.slug }}">{{ j.slug }} — {{ j.produk }}
+  <span class="st">{% for k, s in j.status.items() %}{{ platforms[k] }}: {{ s[:2] }} {% endfor %}</span></a>
+{% else %}<span class="st">Belum ada.</span>{% endfor %}</div>
+{% endblock %}

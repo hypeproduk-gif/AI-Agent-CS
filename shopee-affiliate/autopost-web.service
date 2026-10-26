@@ -1,0 +1,12 @@
+[Unit]
+Description=Shopee Affiliate Autopost web
+After=network.target
+
+[Service]
+User=filo
+WorkingDirectory=/home/filo/AI-Agent-CS/shopee-affiliate
+ExecStart=/home/filo/AI-Agent-CS/shopee-affiliate/venv/bin/python app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
