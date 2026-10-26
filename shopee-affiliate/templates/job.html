@@ -9,6 +9,11 @@
   <div><label>Video</label><video src="/job/{{ job.slug }}/file/{{ job.video }}" controls></video></div>
 </div>
 <p><b>Headline:</b> {{ job.headline }}</p>
+<form class="card" method="post" action="/job/{{ job.slug }}/recaption" onsubmit="this.classList.add('busy')">
+  <label>Info produk <small>tambah detail lalu buat ulang kalau copy kurang nampol</small></label>
+  <textarea name="info" style="min-height:80px">{{ job.info }}</textarea>
+  <button>🔄 Buat ulang caption</button><p class="load">⏳ Menulis ulang…</p>
+</form>
 <form method="post" action="/job/{{ job.slug }}/post" onsubmit="this.classList.add('busy')">
 {% for k, n in platforms.items() %}
 <div class="card">

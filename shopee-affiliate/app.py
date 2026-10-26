@@ -71,7 +71,7 @@ def generate():
         return "Isi video atau link Pinterest", 400
     for slug, url in sources:
         save(slug, {"slug": slug, "produk": f["produk"], "judul": f.get("judul", ""),
-                    "video": "video.mp4", "links": links, "headline": "", "pin": url,
+                    "video": "video.mp4", "links": links, "info": f.get("info", ""), "headline": "", "pin": url,
                     "text": {k: "" for k in PLATFORMS}, "status": {}, "gen": "antre..."})
     threading.Thread(target=run_generate, args=([s for s, _ in sources],), daemon=True).start()
     return redirect(url_for("job", slug=sources[0][0]) if len(sources) == 1 else url_for("index"))
@@ -86,7 +86,7 @@ def run_generate(slugs: list):
             video = folder / "video.mp4"
             if j["pin"]:
                 video = ap.download_pinterest(j["pin"], folder)
-            cap = ap.make_caption(j["produk"], j["links"]["fb"])
+            cap = ap.make_caption(j["produk"], j["links"]["fb"], j.get("info", ""))
             j["judul"] = j["judul"] or cap["judul"]
             ap.make_thumbnail(video, j["judul"], folder)
             j.update(video=video.name, headline=cap["headline"], gen="",
@@ -107,6 +107,20 @@ def job(slug):
 @login_required
 def job_file(slug, name):
     return send_from_directory(job_dir(slug), name)
+
+
+@app.post("/job/<slug>/recaption")
+@login_required
+def recaption(slug):
+    j = load(slug)
+    j["info"] = request.form.get("info", j.get("info", ""))
+    try:
+        cap = ap.make_caption(j["produk"], j["links"]["fb"], j["info"])
+    except Exception as e:
+        return f"Gagal: {e}", 500
+    j.update(headline=cap["headline"], text={"fb": cap["fb"], "ig": cap["ig"], "threads": cap["threads"]})
+    save(slug, j)
+    return redirect(url_for("job", slug=slug))
 
 
 @app.post("/job/<slug>/post")

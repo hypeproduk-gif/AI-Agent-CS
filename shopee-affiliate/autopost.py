@@ -64,28 +64,55 @@ def make_thumbnail(video: Path, judul: str, folder: Path) -> Path:
     return thumb
 
 
-def make_caption(produk: str, shopee: str) -> dict:
+COPY_SYSTEM = """Kamu copywriter affiliate Shopee Indonesia yang jago bikin orang berhenti scroll,
+merasa "ini gue banget", lalu klik link. Tulis seperti orang biasa yang cerita ke teman, bukan brand.
+
+ATURAN HOOK (baris pertama, maks 12 kata) - pilih yang paling cocok:
+- tuding masalah spesifik: "Muka kusam padahal udah skincare-an tiap hari?"
+- pengakuan/cerita: "Jujur nyesel baru tau ini sekarang..."
+- kontras/kejutan: "Harganya cuma 40rb tapi hasilnya kayak treatment klinik"
+- larangan/peringatan: "Jangan beli serum dulu sebelum liat ini"
+- angka konkret: "3 hari pakai, temen kantor langsung nanya"
+Hook harus menyebut situasi nyata target, bukan kata umum seperti "produk terbaik", "wajib punya".
+
+STRUKTUR caption (PAS):
+1. Hook.
+2. Agitasi: 2-3 baris menggambarkan momen masalah sehari-hari yang menyebalkan/memalukan
+   (detail konkret: tempat, waktu, perasaan, omongan orang).
+3. Solusi: kenalkan produk sebagai hal yang "akhirnya ketemu", 3-4 poin manfaat dengan emoji,
+   tiap poin = hasil yang dirasakan, bukan fitur teknis.
+4. Penguat: harga/promo/rating/jumlah terjual bila diberikan; kalau tidak ada jangan dikarang.
+5. CTA dengan urgensi wajar (stok/promo/flash sale hanya bila diberikan) - ajak klik sekarang.
+
+LARANGAN: klaim medis/menyembuhkan, angka/testimoni palsu, kata "dijamin 100%",
+bahasa kaku/formal, kalimat iklan klise. Kalimat pendek, banyak jeda baris, enak dibaca di HP."""
+
+
+def make_caption(produk: str, shopee: str, info: str = "") -> dict:
     import anthropic
     prompt = (
-        f"Buat caption jualan affiliate Shopee untuk produk: {produk}.\n"
-        "Bahasa Indonesia santai, hook kuat di baris pertama, 3-5 baris manfaat dengan emoji, "
-        "CTA jelas. Jangan klaim berlebihan/medis. Balas JSON saja: "
-        '{"judul": "maks 5 kata untuk thumbnail", "headline": "maks 40 karakter", '
-        '"caption": "...", "threads": "...", "hashtags": ["..."]} '
-        "dengan 8-12 hashtag tanpa tanda #. Field threads: gaya storytelling orang pertama "
-        "(masalah pribadi -> nemu produk -> hasil jujur), obrolan santai tanpa hashtag dan "
-        "tanpa nada iklan, maks 450 karakter."
+        f"Produk: {produk}\n"
+        + (f"Info tambahan (target, masalah, harga, promo, keunggulan): {info}\n" if info else "")
+        + "\nBalas JSON saja dengan field:\n"
+        '- "judul": teks thumbnail maks 5 kata, memancing penasaran (bukan nama produk)\n'
+        '- "headline": maks 40 karakter, untuk baris judul Facebook\n'
+        '- "fb": caption Facebook mengikuti struktur PAS, 80-150 kata, tanpa link dan tanpa hashtag\n'
+        '- "ig": caption Instagram Reels, hook beda dari fb, 60-120 kata, akhiri dengan ajakan '
+        '"komen MAU" atau "cek link di komentar", tanpa link dan tanpa hashtag\n'
+        '- "threads": storytelling orang pertama (masalah pribadi -> nemu produk -> hasil jujur), '
+        "santai seperti curhat, tanpa hashtag, tanpa nada iklan, maks 450 karakter\n"
+        '- "hashtags": 8-12 hashtag relevan tanpa tanda #'
     )
     msg = anthropic.Anthropic().messages.create(
-        model=os.getenv("CLAUDE_MODEL", "claude-haiku-4-5"), max_tokens=800,
-        messages=[{"role": "user", "content": prompt}],
+        model=os.getenv("CLAUDE_MODEL", "claude-sonnet-5-5"), max_tokens=1500,
+        system=COPY_SYSTEM, messages=[{"role": "user", "content": prompt}],
     )
     text = msg.content[0].text
     data = json.loads(text[text.find("{"): text.rfind("}") + 1])
     tags = " ".join("#" + t.lstrip("#") for t in data["hashtags"])
-    data["fb"] = f"{data['headline']}\n\n{data['caption']}\n\n🛒 Cek di sini: {shopee}\n\n{tags}"
-    # IG tidak bisa klik link di caption -> arahkan ke bio
-    data["ig"] = f"{data['caption']}\n\n🛒 Link produk di bio / komentar ya!\n\n{tags}"
+    data["fb"] = f"{data['headline']}\n\n{data['fb']}\n\n🛒 Cek di sini 👉 {shopee}\n\n{tags}"
+    # IG tidak bisa klik link di caption -> link ditaruh di komentar pertama
+    data["ig"] = f"{data['ig']}\n\n{tags}"
     return data
 
 
@@ -171,6 +198,7 @@ def main():
     ap.add_argument("--shopee-threads", help="Link khusus Threads (Sub ID threads)")
     ap.add_argument("--produk", required=True, help="Nama/deskripsi singkat produk")
     ap.add_argument("--judul", help="Teks thumbnail (default: dari AI)")
+    ap.add_argument("--info", default="", help="Target, masalah, harga, promo, keunggulan")
     ap.add_argument("--dry-run", action="store_true", help="Jangan posting")
     ap.add_argument("--only", choices=["fb", "ig", "threads"], help="Posting ke satu platform saja")
     a = ap.parse_args()
@@ -189,7 +217,7 @@ def main():
         shutil.copy(a.video, video)
     else:
         video = download_pinterest(a.pin, folder)
-    print("2/4 Buat caption...");        cap = make_caption(a.produk, links["fb"] or "")
+    print("2/4 Buat caption...");        cap = make_caption(a.produk, links["fb"] or "", a.info)
     print("3/4 Buat thumbnail...");      thumb = make_thumbnail(video, a.judul or cap["judul"], folder)
     (folder / "caption.json").write_text(json.dumps(cap, ensure_ascii=False, indent=2))
     print(f"   hasil di {folder}")
