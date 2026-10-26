@@ -111,6 +111,12 @@ Close-up tangan meneteskan serum ke punggung tangan, cahaya pagi"></textarea>
       <option value="nano">Nano Banana (Gemini): paling realistis</option>
       <option value="auto">Otomatis</option>
     </select>
+    <label class="lbl" for="quality">Kualitas (GPT Image)</label>
+    <select id="quality">
+      <option value="low">Draft: ±US$0,02/gambar, untuk cek ide</option>
+      <option value="medium" selected>Hemat: ±US$0,06/gambar, cukup untuk iklan</option>
+      <option value="high">Terbaik: ±US$0,25/gambar, detail & teks paling tajam</option>
+    </select>
     <button class="primary" id="btnGo">Buat semua gambar</button>
     <button id="btnStop" hidden>Stop</button>
     <div class="status" id="status" role="status"></div>
@@ -136,12 +142,15 @@ const store = {
   set(k, v){ try{ localStorage.setItem("batch:"+k, JSON.stringify(v)) }catch{} }
 };
 let refs = store.get("refs", []), jobs = [], stop = false;
-const COST = {gpt: .25, nano: .04, auto: .25};
+const GPT = {low: .02, medium: .06, high: .25};
+const perImage = () => $("#engine").value === "nano" ? .04 : GPT[$("#quality").value];
 
 for (const id of ["briefs", "note"]){ $("#"+id).value = store.get(id, ""); $("#"+id).addEventListener("input", e => store.set(id, e.target.value)) }
 $("#engine").value = store.get("engine", "gpt");
 for (const id of ["engine", "variasi"]) $("#"+id).addEventListener("change", e => { store.set(id, e.target.value); updateCount() });
 $("#variasi").value = store.get("variasi", "1");
+$("#quality").value = store.get("quality", "medium");
+$("#quality").addEventListener("change", e => { store.set("quality", e.target.value); updateCount() });
 for (const id of ["a916", "a45", "a11"]) $("#"+id).addEventListener("change", updateCount);
 $("#briefs").addEventListener("input", updateCount);
 
@@ -153,7 +162,7 @@ function parseBriefs(){
 const aspects = () => [["a916","9:16"],["a45","4:5"],["a11","1:1"]].filter(([id]) => $("#"+id).checked).map(a => a[1]);
 function updateCount(){
   const n = parseBriefs().length * aspects().length * +$("#variasi").value;
-  $("#btnGo").textContent = n ? `Buat ${n} gambar (±US$${(n*COST[$("#engine").value]).toFixed(2)})` : "Buat semua gambar";
+  $("#btnGo").textContent = n ? `Buat ${n} gambar (±US$${(n*perImage()).toFixed(2)})` : "Buat semua gambar";
 }
 
 function shrink(file, max=1024){
@@ -189,7 +198,7 @@ async function runOne(job){
   job.state = "run"; job.error = ""; paint(job);
   try {
     const r = await fetch("/api/batch", {method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({prompt: job.prompt, note: $("#note").value, refs, aspect: job.aspect, engine: $("#engine").value})});
+      body: JSON.stringify({prompt: job.prompt, note: $("#note").value, refs, aspect: job.aspect, engine: $("#engine").value, quality: $("#quality").value})});
     const j = await r.json(); if (!r.ok) throw new Error(j.error || r.status);
     job.url = j.url; job.state = "ok";
   } catch(e){ job.state = "err"; job.error = e.message }

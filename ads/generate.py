@@ -200,10 +200,10 @@ def ai_scene(prompt, foto_path, raise_errors=False, influencer_path=None, scene_
         return None
 
 
-def _openai(parts, key, size="1024x1536"):
+def _openai(parts, key, size="1024x1536", quality=None):
     """GPT Image (images/edits) dengan foto referensi influencer + produk."""
     model = os.environ.get("OPENAI_IMAGE_MODEL", "gpt-image-1")
-    fields = {"model": model, "prompt": parts[0]["text"], "size": size, "quality": os.environ.get("OPENAI_IMAGE_QUALITY", "high"), "n": "1"}
+    fields = {"model": model, "prompt": parts[0]["text"], "size": size, "quality": quality or os.environ.get("OPENAI_IMAGE_QUALITY", "high"), "n": "1"}
     images = [(base64.b64decode(p["inline_data"]["data"]), p["inline_data"]["mime_type"]) for p in parts[1:]]
     if not images:
         body = json.dumps(fields | {"n": 1}).encode()
@@ -226,7 +226,7 @@ def _openai(parts, key, size="1024x1536"):
 ASPECT_GPT = {"9:16": "1024x1536", "4:5": "1024x1024", "1:1": "1024x1024"}  # 4:5 dipotong dari persegi
 
 
-def ai_creative(prompt, images, aspect="9:16", engine="auto"):
+def ai_creative(prompt, images, aspect="9:16", engine="auto", quality=None):
     """Creative utuh (gambar + teks) dari prompt + gambar referensi berurutan. engine: auto | gpt | nano."""
     key, orkey, oakey = (os.environ.get(k) for k in ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "OPENAI_API_KEY"))
     parts = [{"text": prompt}] + [_part(p) for p in images]
@@ -234,7 +234,7 @@ def ai_creative(prompt, images, aspect="9:16", engine="auto"):
         if engine == "gpt" or (engine == "auto" and oakey):
             if not oakey:
                 raise RuntimeError("API key OpenAI belum diisi.")
-            return _openai(parts, oakey, ASPECT_GPT.get(aspect, "1024x1536"))
+            return _openai(parts, oakey, ASPECT_GPT.get(aspect, "1024x1536"), quality)
         if orkey:
             return _openrouter(parts, orkey, aspect=aspect)
         if key:

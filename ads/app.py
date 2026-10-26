@@ -201,7 +201,8 @@ def make_batch(data):
         f"\n\nVertical {aspect} image. Reference images are attached in order; follow what the text says about them "
         "(e.g. use the product exactly as shown, keep the person's face, copy the visual style). "
         "Any on-image text must be spelled exactly as written in the brief.")
-    img = g.ai_creative(prompt, [str(p) for p in refs], aspect, data.get("engine", "auto"))
+    q = data.get("quality") if data.get("quality") in ("low", "medium", "high") else None
+    img = g.ai_creative(prompt, [str(p) for p in refs], aspect, data.get("engine", "auto"), q)
     W, H = SIZES.get(aspect, (1080, 1920))
     s = max(W / img.width, H / img.height)
     img = img.resize((round(img.width * s), round(img.height * s)))
