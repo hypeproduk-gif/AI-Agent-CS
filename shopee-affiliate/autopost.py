@@ -4,6 +4,8 @@ Pakai:
   python autopost.py --pin https://pin.it/xxxx --shopee https://s.shopee.co.id/xxxx \
       --produk "Serum Vitamin C" [--judul "Glowing 7 Hari"] [--dry-run]
   python autopost.py --video video-saya.mp4 --shopee ... --produk "..."   # video sendiri
+  python autopost.py --video v.mp4 --shopee-fb LINK1 --shopee-ig LINK2 --shopee-threads LINK3 \
+      --produk "..."   # link beda per platform untuk tracking Sub ID
 """
 import argparse, json, os, shutil, subprocess, sys, time
 from pathlib import Path
@@ -163,12 +165,20 @@ def main():
     src = ap.add_mutually_exclusive_group(required=True)
     src.add_argument("--pin", help="Link video Pinterest")
     src.add_argument("--video", help="File video sendiri (mp4)")
-    ap.add_argument("--shopee", required=True, help="Link Shopee affiliate")
+    ap.add_argument("--shopee", help="Link Shopee affiliate (dipakai semua platform)")
+    ap.add_argument("--shopee-fb", help="Link khusus Facebook (Sub ID fb)")
+    ap.add_argument("--shopee-ig", help="Link khusus Instagram (Sub ID ig)")
+    ap.add_argument("--shopee-threads", help="Link khusus Threads (Sub ID threads)")
     ap.add_argument("--produk", required=True, help="Nama/deskripsi singkat produk")
     ap.add_argument("--judul", help="Teks thumbnail (default: dari AI)")
     ap.add_argument("--dry-run", action="store_true", help="Jangan posting")
     ap.add_argument("--only", choices=["fb", "ig", "threads"], help="Posting ke satu platform saja")
     a = ap.parse_args()
+    links = {k: getattr(a, f"shopee_{k}") or a.shopee for k in ("fb", "ig", "threads")}
+    needed = [a.only] if a.only else ["fb", "ig", "threads"]
+    missing = [k for k in needed if not links[k]]
+    if missing:
+        ap.error(f"link Shopee belum diisi untuk: {', '.join(missing)} (pakai --shopee atau --shopee-<platform>)")
 
     slug = time.strftime("%Y%m%d-%H%M%S")
     folder = OUT / slug
@@ -179,7 +189,7 @@ def main():
         shutil.copy(a.video, video)
     else:
         video = download_pinterest(a.pin, folder)
-    print("2/4 Buat caption...");        cap = make_caption(a.produk, a.shopee)
+    print("2/4 Buat caption...");        cap = make_caption(a.produk, links["fb"] or "")
     print("3/4 Buat thumbnail...");      thumb = make_thumbnail(video, a.judul or cap["judul"], folder)
     (folder / "caption.json").write_text(json.dumps(cap, ensure_ascii=False, indent=2))
     print(f"   hasil di {folder}")
@@ -189,12 +199,12 @@ def main():
     if a.only in (None, "fb"):
         print("   Facebook:", post_facebook(video, thumb, cap["fb"]))
     if a.only in (None, "ig"):
-        print("   Instagram:", post_instagram(video, thumb, cap["ig"], slug, a.shopee))
+        print("   Instagram:", post_instagram(video, thumb, cap["ig"], slug, links["ig"]))
     if a.only == "threads" or (a.only is None and os.getenv("THREADS_TOKEN")):
         if a.only == "threads":  # file publik biasanya disalin oleh langkah IG
             pub = Path(os.getenv("PUBLIC_DIR", "./public")); pub.mkdir(parents=True, exist_ok=True)
             shutil.copy(video, pub / f"{slug}.mp4")
-        print("   Threads:", post_threads(slug, cap["threads"], a.shopee))
+        print("   Threads:", post_threads(slug, cap["threads"], links["threads"]))
 
 
 if __name__ == "__main__":

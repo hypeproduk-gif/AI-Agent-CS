@@ -17,10 +17,18 @@ cp .env.example .env              # isi token
 python autopost.py --pin https://pin.it/xxxx --shopee https://s.shopee.co.id/xxxx --produk "Serum Vitamin C" --dry-run
 python autopost.py --pin ... --shopee ... --produk "..."          # posting FB + IG
 ```
-Batch dari CSV (`batch.csv.example`):
+### Tracking per platform (Sub ID)
+Di Shopee Affiliate → Custom Link, buat 3 link untuk produk yang sama dengan Sub ID `fb`, `ig`, `threads`:
 ```bash
-tail -n +2 batch.csv | while IFS=, read pin shopee produk judul; do
-  python autopost.py --pin "$pin" --shopee "$shopee" --produk "$produk" ${judul:+--judul "$judul"}; done
+python autopost.py --video v.mp4 --shopee-fb LINK_FB --shopee-ig LINK_IG --shopee-threads LINK_TH --produk "..."
+```
+Setelah 2–4 minggu, bandingkan komisi per Sub ID di laporan Shopee Affiliate.
+
+Batch dari CSV (`batch.csv.example`, kolom judul boleh kosong):
+```bash
+tail -n +2 batch.csv | while IFS=, read video fb ig th produk judul; do
+  python autopost.py --video "$video" --shopee-fb "$fb" --shopee-ig "$ig" --shopee-threads "$th" \
+    --produk "$produk" ${judul:+--judul "$judul"}; done
 ```
 Hasil (video, thumbnail, caption.json) tersimpan di `output/<waktu>/`.
 
