@@ -138,25 +138,44 @@ def plan_cep(brief, strategy, cep, n, avoid, angles=None):
     return out
 
 
-UGC_STYLE = ("Authentic UGC smartphone photo, shot on iPhone, natural window light, slightly imperfect framing, "
-             "real Indonesian person and real everyday setting, not a studio ad, no text, no captions, no watermark. "
-             "Keep the top 30% of the frame visually calm (wall, sky, soft blur) for headline text.")
+UGC_STYLE = ("Vertical 9:16 portrait smartphone photo, natural lighting, candid moment, authentic TikTok UGC style, "
+             "slightly imperfect framing, real everyday Indonesian setting, not a studio ad. No text, no captions, no watermark. "
+             "Keep the top 25% of the frame visually calm for a caption.")
+SCENES = {
+    "influencer": "Influencer scene: the person holds, uses or recommends the product, face visible.",
+    "product_pov": "Product POV scene: do NOT show any face; the product is the hero on a real surface (bathroom shelf, sink, vanity, next to daily items).",
+    "texture_demo": "Hand / texture demo: macro smartphone close-up of a hand using the product (scooping, applying, opening, texture). No face.",
+    "lifestyle": "Lifestyle environment: the product placed naturally in a lived-in setting (vanity desk, near mirror, bedside table, bag). No face needed.",
+    "unboxing": "Unboxing / interaction: hands opening the package, taking the product out, or holding it close to the camera.",
+}
 
 
-def ai_scene(prompt, foto_path, raise_errors=False):
-    """Foto scene UGC via Gemini (Nano Banana). Foto produk asli dikirim sebagai referensi agar produk tidak dikarang."""
+def _part(path):
+    mime = "image/png" if str(path).lower().endswith(".png") else "image/jpeg"
+    return {"inline_data": {"mime_type": mime, "data": base64.b64encode(Path(path).read_bytes()).decode()}}
+
+
+def ai_scene(prompt, foto_path, raise_errors=False, influencer_path=None, scene_type=None):
+    """Foto scene UGC via Gemini (Nano Banana).
+    Referensi: image A = influencer (wajah dipertahankan), image B = produk asli (tidak boleh diubah)."""
     key = os.environ.get("GEMINI_API_KEY")
     if not key:
         return None
+    face = scene_type in (None, "influencer")
+    parts, refs = [], []
+    if influencer_path and face:
+        refs.append("Image A is the influencer: keep the SAME facial identity (face shape, skin tone, features). "
+                    "Vary outfit, hairstyle, expression, pose and camera angle as the scene describes.")
+        parts.append(_part(influencer_path))
     if foto_path:
-        ins = ("Use the product in the reference image EXACTLY as it is (same shape, color, label, logo; do not redesign or add text to it). "
-               "Place it naturally in the scene, held or used by the person or on a surface, clearly visible in the middle of the frame. ")
+        label = "Image B" if len(parts) else "The reference image"
+        refs.append(f"{label} is the product: use it EXACTLY as shown (same shape, color, label, logo; never redesign it or add text). "
+                    "Make it clearly visible.")
+        parts.append(_part(foto_path))
     else:
-        ins = "Do NOT show any product, packaging, or brand. Leave clear empty space in the middle of the frame. "
-    parts = [{"text": f"{prompt}\n\n{ins}{UGC_STYLE}"}]
-    if foto_path:
-        mime = "image/png" if foto_path.lower().endswith(".png") else "image/jpeg"
-        parts.append({"inline_data": {"mime_type": mime, "data": base64.b64encode(Path(foto_path).read_bytes()).decode()}})
+        refs.append("Do NOT show any product, packaging or brand; leave clear space in the middle of the frame.")
+    scene = SCENES.get(scene_type or "influencer", "")
+    parts.insert(0, {"text": f"{scene}\n{prompt}\n\n{' '.join(refs)}\n{UGC_STYLE}"})
     model = os.environ.get("IMAGE_MODEL", "gemini-2.5-flash-image")
     body = json.dumps({"contents": [{"parts": parts}], "generationConfig": {
         "responseModalities": ["IMAGE"], "imageConfig": {"aspectRatio": "9:16"}}}).encode()

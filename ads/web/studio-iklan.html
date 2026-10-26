@@ -100,6 +100,8 @@ summary{cursor:pointer;font-weight:700;font-size:13px}
     <span class="hint">Teks awal adalah contoh. Ganti dengan produkmu.</span>
     <label class="lbl" for="foto">Foto produk (PNG transparan paling rapi)</label>
     <input type="file" id="foto" accept="image/*">
+    <label class="lbl" for="infl" id="inflLbl" hidden>Foto influencer / model (image A, untuk foto AI)</label>
+    <input type="file" id="infl" accept="image/*" hidden>
     <label class="lbl" for="life">Foto lifestyle / UGC asli (opsional, boleh banyak)</label>
     <input type="file" id="life" accept="image/*" multiple>
     <div class="thumbs" id="thumbs"></div>
@@ -172,7 +174,18 @@ PAGAR KEJUJURAN:
 - authority: hanya jika brief menyebut ahli/sertifikasi nyata; kalau tidak, jadikan edukasi "cara ahli memilih bahan X".
 - instant_gratification/shock_result/transformation: hasil realistis sesuai brief, bukan janji instan; kesehatan/berat badan tanpa before-after.
 - value_shock: hanya harga/promo di brief, bandingkan dengan nilai per pemakaian/hari.
-- emotional_story/curated_discovery: persona ilustratif boleh, jangan disajikan sebagai testimoni asli.`;
+- emotional_story/curated_discovery: persona ilustratif boleh, jangan disajikan sebagai testimoni asli.
+
+VISUAL = TikTok UGC asli (foto smartphone natural, candid). Tiap creative punya scene_type, sebar per batch kira-kira:
+35% influencer (wajah influencer dari image A, produk dari image B; variasikan outfit: piyama/kaos rumah/tank top/sweater/hoodie/outfit kasual; rambut: tergerai/ponytail/messy bun/soft waves/belah samping; ekspresi: senyum natural/kaget/penasaran/review jujur/excited/rekomendasi),
+25% product_pov (tanpa wajah: produk di rak kamar mandi/wastafel/meja rias/di samping barang harian),
+20% texture_demo (macro tangan: mencolek, mengoleskan ke lengan, membuka kemasan, swirl tekstur),
+10% lifestyle (produk di meja rias/dekat cermin/meja samping tempat tidur),
+10% unboxing (membuka paket, mengeluarkan produk, memegang produk dekat kamera).
+Pilih scene_type yang paling cocok dengan angle (demonstration_proof -> texture_demo/influencer, hidden_gem -> product_pov, curated_discovery -> unboxing, dst) dan momen CEP.
+image_prompt: bahasa Inggris, detail (scene, outfit, rambut, ekspresi, pose, sudut kamera, lokasi, cahaya), vertical 9:16 smartphone photo, tanpa teks.
+video_prompt: bahasa Inggris, 7-10 detik vertical 9:16, sebut camera style (selfie vlog/mirror selfie/POV/tripod talking review/handheld close-up/walking lifestyle) dan motion yang sesuai scene.
+script: SATU kalimat bahasa Indonesia, natural dan ngobrol, gaya hook beda-beda (curiosity/honest reaction/first impression/problem solution/recommendation).`;
 
 const CREATIVE_SHAPE = `{"creatives":[{
  "psych_angle":"id angle","angle":"nama angle singkat (CEP x psikologi)",
@@ -182,7 +195,11 @@ const CREATIVE_SHAPE = `{"creatives":[{
  "quote":{"text":"","name":""},"split":{"left_label":"","left":"","right_label":"","right":""},
  "comparison":{"them_label":"","them":["","",""],"us_label":"","us":["","",""]},
  "palette":{"bg1":"#hex","bg2":"#hex","accent":"#hex","text":"#hex"},
- "image_prompt":"English: UGC photo of the exact CEP moment for this angle (who, where, time of day, emotion, what they do with the product). No text.",
+ "scene_type":"influencer|product_pov|texture_demo|lifestyle|unboxing",
+ "image_prompt":"English, detail sesuai aturan VISUAL",
+ "video_prompt":"English, 7-10 detik, camera style + motion",
+ "script":"1 kalimat Indonesia",
+ "tiktok_caption":"1 baris caption natural","hashtags":["#a","#b","#c"],
  "visual_brief":"arahan foto/video untuk tim konten: momen CEP, setting, pose, properti. Tulis [PRODUK ASLI] di setiap bagian yang wajib pakai foto/video produk asli",
  "primary_text":"versi panjang","primary_text_short":"≤125 karakter",
  "headlines":["","",""],"description":"≤25 karakter"}]}
@@ -195,7 +212,7 @@ const store = {
 };
 let sample = null, downloads = null, ctl = null;
 let plan = store.get("plan", null);           // {slug, strategy:{...,ceps:[]}, creatives:[]}
-let foto = null, fotoData = null, lifes = [];
+let foto = null, fotoData = null, inflData = null, lifes = [];
 const LOCAL = !window.claude && /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
 const scenes = {};   // url -> Image
 let pickedAngles = new Set(store.get("angles", ANGLES.map(a => a[0])));
@@ -240,6 +257,10 @@ $("#foto").onchange = async e => {
   foto = f ? await loadImg(f) : null;
   fotoData = f ? await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(f) }) : null;
   renderAll();
+};
+$("#infl").onchange = e => {
+  const f = e.target.files[0]; if (!f){ inflData = null; return }
+  const fr = new FileReader(); fr.onload = () => inflData = fr.result; fr.readAsDataURL(f);
 };
 $("#life").onchange = async e => {
   lifes = await Promise.all([...e.target.files].map(loadImg));
@@ -468,7 +489,7 @@ function loadScene(url){
 }
 async function aiScene(c){
   const r = await fetch("/api/image", {method:"POST", headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({prompt: c.image_prompt || c.visual_brief || c.hook, foto: fotoData, slug: plan.slug})});
+    body: JSON.stringify({prompt: c.image_prompt || c.visual_brief || c.hook, foto: fotoData, influencer: inflData, scene_type: c.scene_type, slug: plan.slug})});
   const j = await r.json(); if (!r.ok) throw new Error(j.error || r.status);
   await loadScene(j.url); c.scene_url = j.url; c.scene_has_product = j.has_product; save();
 }
@@ -485,11 +506,16 @@ function card(c, idx){
   const el = document.createElement("article"); el.className = "card";
   el.innerHTML = `<div class="prev"><canvas data-f="9x16" aria-label="Preview 9:16"></canvas><canvas data-f="4x5" aria-label="Preview 4:5"></canvas></div>
   <div class="meta">
-    <div class="pills"><span class="pill a">${esc(c.psych_angle)}</span><span class="pill">${esc(c.layout)}</span><span class="pill">${esc(c.awareness)}-aware</span></div>
+    <div class="pills"><span class="pill a">${esc(c.psych_angle)}</span><span class="pill">${esc(c.scene_type || c.layout)}</span><span class="pill">${esc(c.awareness)}-aware</span></div>
     <input class="hook" type="text" id="hook-${c.id}" value="${esc(c.hook)}" aria-label="Hook">
     <div class="vb"><b>Brief visual:</b> ${esc(c.visual_brief).replace(/\[PRODUK ASLI\]/g,"<mark>[PRODUK ASLI]</mark>")}</div>
     <details><summary>Primary text</summary><p class="copy">${esc(c.primary_text)}</p><button class="mini" data-copy="pt">Salin</button>
       <p class="copy"><b>Pendek:</b> ${esc(c.primary_text_short)}</p><button class="mini" data-copy="ps">Salin</button></details>
+    <details><summary>Prompt foto & video, script, caption TikTok</summary>
+      <p class="copy"><b>Image prompt:</b> ${esc(c.image_prompt)}</p><button class="mini" data-copy="ip">Salin</button>
+      <p class="copy"><b>Video prompt:</b> ${esc(c.video_prompt)}</p><button class="mini" data-copy="vp">Salin</button>
+      <p class="copy"><b>Script:</b> ${esc(c.script)}</p><button class="mini" data-copy="sc">Salin</button>
+      <p class="copy"><b>Caption:</b> ${esc(c.tiktok_caption)} ${esc((c.hashtags||[]).join(" "))}</p><button class="mini" data-copy="tc">Salin</button></details>
     <details open><summary>Headline & description</summary>
       ${(c.headlines||[]).map((h,i) => `<div class="hl"><span>${esc(h)}</span><button class="mini" data-copy="h${i}">Salin</button></div>`).join("")}
       <div class="hl"><span>${esc(c.description)}</span><button class="mini" data-copy="d">Salin</button></div></details>
@@ -498,9 +524,10 @@ function card(c, idx){
   const draw = () => el.querySelectorAll("canvas").forEach(cv => render(cv, c, cv.dataset.f, idx));
   draw();
   el.querySelector(".hook").addEventListener("change", e => { c.hook = e.target.value; save(); draw() });
-  const src = {pt:() => c.primary_text, ps:() => c.primary_text_short, d:() => c.description};
+  const src = {pt:() => c.primary_text, ps:() => c.primary_text_short, d:() => c.description, ip:() => c.image_prompt,
+    vp:() => c.video_prompt, sc:() => c.script, tc:() => `${c.tiktok_caption||""} ${(c.hashtags||[]).join(" ")}`};
   el.querySelectorAll("[data-copy]").forEach(b => b.onclick = () => {
-    const k = b.dataset.copy; copy(k[0]==="h" && k!=="h" ? c.headlines[+k.slice(1)] : src[k](), b) });
+    const k = b.dataset.copy; copy(/^h\d$/.test(k) ? c.headlines[+k.slice(1)] : src[k](), b) });
   el.querySelectorAll("[data-dl]").forEach(b => b.onclick = async () => {
     const cv = el.querySelector(`canvas[data-f="${b.dataset.dl}"]`);
     await saveFile(`${fileBase(c)}-${b.dataset.dl}.png`, await new Promise(r => cv.toBlob(r, "image/png")));
@@ -559,7 +586,7 @@ $("#btnZip").onclick = async () => {
   if (!plan?.creatives.length) return;
   $("#btnZip").disabled = true; status("Menyusun ZIP...");
   const zip = new JSZip(), cv = document.createElement("canvas");
-  const head = ["file","cep","psych_angle","layout","awareness","hook","primary_text","primary_text_short","headline_1","headline_2","headline_3","description","cta","visual_brief"];
+  const head = ["file","cep","psych_angle","layout","awareness","hook","primary_text","primary_text_short","headline_1","headline_2","headline_3","description","cta","visual_brief","scene_type","image_prompt","video_prompt","script","tiktok_caption"];
   const rows = [head.join(",")], md = [`# Creative ${plan.slug}\n`, "## CEP", ...plan.strategy.ceps.map(c => `- **${c.id}**: ${c.moment} (${c.trigger||""})`), ""];
   let idx = 0;
   for (const cep of plan.strategy.ceps) for (const c of plan.creatives.filter(o => o.cep === cep.id)){
@@ -567,8 +594,8 @@ $("#btnZip").onclick = async () => {
     for (const f of ["9x16","4x5"]){ render(cv, c, f, idx); zip.file(`${base}-${f}.png`, await new Promise(r => cv.toBlob(r, "image/png"))) }
     idx++;
     const h = c.headlines || [];
-    rows.push([base, c.cep, c.psych_angle, c.layout, c.awareness, c.hook, c.primary_text, c.primary_text_short, h[0], h[1], h[2], c.description, c.cta, c.visual_brief].map(csvCell).join(","));
-    md.push(`## ${base}\n**Hook:** ${c.hook}\n\n**Brief visual:** ${c.visual_brief||""}\n\n**Primary text:**\n\n${c.primary_text}\n\n**Pendek:** ${c.primary_text_short}\n\n**Headlines:**\n${h.map(x => "- "+x).join("\n")}\n\n**Description:** ${c.description}\n`);
+    rows.push([base, c.cep, c.psych_angle, c.layout, c.awareness, c.hook, c.primary_text, c.primary_text_short, h[0], h[1], h[2], c.description, c.cta, c.visual_brief, c.scene_type, c.image_prompt, c.video_prompt, c.script, `${c.tiktok_caption||""} ${(c.hashtags||[]).join(" ")}`].map(csvCell).join(","));
+    md.push(`## ${base}\n**Hook:** ${c.hook}\n\n**Brief visual:** ${c.visual_brief||""}\n\n**Primary text:**\n\n${c.primary_text}\n\n**Pendek:** ${c.primary_text_short}\n\n**Headlines:**\n${h.map(x => "- "+x).join("\n")}\n\n**Description:** ${c.description}\n\n**Scene:** ${c.scene_type||""}\n\n**Image prompt:** ${c.image_prompt||""}\n\n**Video prompt:** ${c.video_prompt||""}\n\n**Script:** ${c.script||""}\n\n**Caption TikTok:** ${c.tiktok_caption||""} ${(c.hashtags||[]).join(" ")}\n`);
   }
   zip.file("copy.csv", "﻿" + rows.join("\n")); zip.file("copy.md", md.join("\n"));
   await saveFile(`${plan.slug}-creative.zip`, await zip.generateAsync({type:"blob"}));
@@ -585,7 +612,7 @@ function showKeys(st){
   if (plan) $("#btnGen").disabled = !a;
 }
 async function bootLocal(){
-  $("#autoAiRow").hidden = false;
+  $("#autoAiRow").hidden = $("#infl").hidden = $("#inflLbl").hidden = false;
   sample = { json: async (prompt, opts={}) => {
     ctl = ctl || new AbortController();
     const r = await fetch("/api/claude", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({prompt}), signal: opts.signal});

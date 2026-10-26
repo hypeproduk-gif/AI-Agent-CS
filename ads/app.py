@@ -97,13 +97,16 @@ def make_image(data):
     slug = re.sub(r"[^a-z0-9-]+", "-", (data.get("slug") or "produk").lower()).strip("-") or "produk"
     out = g.OUT / slug / "scenes"
     out.mkdir(parents=True, exist_ok=True)
-    foto_path = None
-    if data.get("foto"):
-        m = re.match(r"data:image/(\w+);base64,(.*)", data["foto"], re.S)
-        if m:
-            foto_path = out / f"_produk.{'png' if m.group(1) == 'png' else 'jpg'}"
-            foto_path.write_bytes(base64.b64decode(m.group(2)))
-    img = g.ai_scene(data.get("prompt", ""), str(foto_path) if foto_path else None, raise_errors=True)
+    def dump(dataurl, name):
+        m = re.match(r"data:image/(\w+);base64,(.*)", dataurl or "", re.S)
+        if not m:
+            return None
+        path = out / f"{name}.{'png' if m.group(1) == 'png' else 'jpg'}"
+        path.write_bytes(base64.b64decode(m.group(2)))
+        return path
+    foto_path, inf_path = dump(data.get("foto"), "_produk"), dump(data.get("influencer"), "_influencer")
+    img = g.ai_scene(data.get("prompt", ""), str(foto_path) if foto_path else None, raise_errors=True,
+                     influencer_path=str(inf_path) if inf_path else None, scene_type=data.get("scene_type"))
     if img is None:
         raise RuntimeError("Gemini tidak mengembalikan gambar.")
     name = f"{uuid.uuid4().hex[:10]}.png"
