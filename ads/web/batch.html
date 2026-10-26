@@ -93,6 +93,7 @@ Close-up tangan meneteskan serum ke punggung tangan, cahaya pagi"></textarea>
     <span class="hint">Foto produk, wajah model, atau creative winning untuk ditiru gayanya. Urutannya = gambar referensi 1, 2, 3…</span>
     <input type="file" id="refs" accept="image/*" multiple aria-label="Gambar referensi">
     <div class="thumbs" id="thumbs"></div>
+    <label class="row hint"><input type="checkbox" id="lock" checked> Tiru layout gambar referensi 1 persis (ganti teks & ekspresi saja)</label>
   </section>
 
   <section class="box">
@@ -118,6 +119,7 @@ Close-up tangan meneteskan serum ke punggung tangan, cahaya pagi"></textarea>
       <option value="medium" selected>Hemat: cukup untuk iklan</option>
       <option value="high">Terbaik: detail & teks paling tajam</option>
     </select>
+    <label class="row hint"><input type="checkbox" id="useClaude" checked> Tulis copy dulu dengan Claude (ejaan lebih rapi, ±Rp50/gambar, butuh saldo Anthropic)</label>
     <button class="primary" id="btnGo">Buat semua gambar</button>
     <button id="btnStop" hidden>Stop</button>
     <div class="status" id="status" role="status"></div>
@@ -186,7 +188,7 @@ function card(job){
 function paint(job){
   const ph = `<div class="ph ${job.aspect === "4:5" ? "r45" : ""}">${job.state === "run" ? "Membuat gambar..." : job.state === "err" ? `<span class="err">Gagal: ${esc(job.error)}</span>` : "Antre"}</div>`;
   job.el.innerHTML = `<div class="pic">${job.url ? `<img src="${job.url}" alt="">` : ph}</div>
-    <div class="meta"><p>${esc(job.n)}. [${job.aspect}] ${esc(job.prompt)}</p>
+    <div class="meta"><p>${esc(job.n)}. [${job.aspect}] ${esc(job.copy ? `${job.copy.headline} · ${job.copy.sub}` : job.prompt)}</p>
     <div class="row">${job.url ? `<button class="mini" data-dl>Download</button>` : ""}<button class="mini" data-redo ${job.state === "run" ? "disabled" : ""}>${job.url ? "Buat ulang" : "Coba lagi"}</button></div></div>`;
   job.el.querySelector("[data-dl]")?.addEventListener("click", () => download(job.url, fname(job)));
   job.el.querySelector("[data-redo]").onclick = () => { job.url = null; runAll([job]) };
@@ -199,7 +201,7 @@ async function runOne(job){
   job.state = "run"; job.error = ""; paint(job);
   try {
     const r = await fetch("/api/batch", {method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({prompt: job.prompt, note: $("#note").value, refs, aspect: job.aspect, engine: $("#engine").value, quality: $("#quality").value})});
+      body: JSON.stringify({prompt: job.prompt, copy: job.copy, lock_layout: $("#lock").checked, note: $("#note").value, refs, aspect: job.aspect, engine: $("#engine").value, quality: $("#quality").value})});
     const j = await r.json(); if (!r.ok) throw new Error(j.error || r.status);
     job.url = j.url; job.state = "ok";
   } catch(e){ job.state = "err"; job.error = e.message }
@@ -220,13 +222,21 @@ function progress(done){
   if (done) status(err ? `Selesai dengan ${err} gagal. Contoh error: ${jobs.find(j => j.state === "err").error}` : "Selesai. Klik Download semua (ZIP).", !!err);
 }
 
-$("#btnGo").onclick = () => {
+$("#btnGo").onclick = async () => {
   const briefs = parseBriefs(), asp = aspects(), v = +$("#variasi").value;
   if (!briefs.length) return status("Tulis minimal 1 brief.", true);
   if (!asp.length) return status("Pilih minimal 1 ukuran.", true);
   jobs = []; let n = 0;
-  for (const p of briefs) for (let k = 0; k < v; k++) for (const a of asp) jobs.push({n: ++n, prompt: p + (v > 1 ? ` (variasi ${k+1}, buat berbeda dari variasi lain)` : ""), aspect: a, state: "wait"});
+  for (const p of briefs) for (let k = 0; k < v; k++) for (const a of asp) jobs.push({n: ++n, base: p, prompt: p + (v > 1 ? ` (variasi ${k+1}, buat berbeda dari variasi lain)` : ""), aspect: a, state: "wait"});
   $("#grid").replaceChildren(...jobs.map(card));
+  if ($("#useClaude").checked){
+    status("Claude menulis copy untuk tiap brief...");
+    try {
+      const r = await fetch("/api/copy", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({briefs, note: $("#note").value})});
+      const j = await r.json(); if (!r.ok) throw new Error(j.error || r.status);
+      for (const job of jobs) job.copy = j.items?.[briefs.indexOf(job.base)] || null;
+    } catch(e){ status(`Copy Claude gagal (${e.message.slice(0,120)}). Lanjut tanpa Claude: AI gambar menulis copy sendiri.`, true) }
+  }
   status(`Membuat ${jobs.length} gambar, 3 sekaligus...`); runAll(jobs);
 };
 $("#btnStop").onclick = () => { stop = true; status("Berhenti setelah gambar yang sedang dibuat selesai.") };

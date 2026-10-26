@@ -86,6 +86,8 @@ class Handler(SimpleHTTPRequestHandler):
                 return self.send_json(save_upload(data))
             if self.path == "/api/style":
                 return self.send_json(analyze_style(data))
+            if self.path == "/api/copy":
+                return self.send_json(make_copy(data))
             if self.path == "/api/batch":
                 return self.send_json(make_batch(data))
             if self.path == "/api/creative":
@@ -189,6 +191,60 @@ def make_creative(data):
 SIZES = {"9:16": (1080, 1920), "4:5": (1080, 1350), "1:1": (1080, 1080)}
 
 
+TEXT_RULES = ("Spell every Indonesian word correctly. Never print the brief, emotion labels, arrows or instructions as text. "
+              "No extra words, no fake numbers, no watermark.")
+SAFE_TEXT = {"9:16": "Keep ALL text, logo and CTA inside the central 80% of the width and away from the top 14% and bottom 18% "
+                     "(the image will be trimmed at the sides and covered by app UI).",
+             "4:5": "Keep a comfortable margin around all text.", "1:1": "Keep a comfortable margin around all text."}
+
+
+def batch_prompt(data, aspect, has_refs):
+    note, brief, copy = data.get("note", "").strip(), data.get("prompt", "").strip(), data.get("copy") or {}
+    if copy:
+        label = {"headline": "Headline", "sub": "Sub line", "note": "Handwritten note", "pill_1": "Benefit pill 1",
+                 "pill_2": "Benefit pill 2", "pill_3": "Benefit pill 3", "cta": "CTA button"}
+        texts = "\n".join(f'- {label[k]}: "{copy[k]}"' for k in label if copy.get(k))
+        if copy.get("highlight"):
+            texts += f'\n(Highlight the word "{copy["highlight"]}" inside the headline; do not print it separately.)'
+        text_part = f"Use EXACTLY these on-image texts (and no others):\n{texts}"
+        scene = copy.get("scene") or brief
+    else:
+        text_part = ("The brief below is an IDEA/EMOTION, not the copy. Write your own short, natural Indonesian ad copy for each "
+                     "text block (headline max 5 words, sub line max 4 words, handwritten note max 8 words, benefit pills max 3 "
+                     "words each, CTA max 3 words).")
+        scene = brief
+    if has_refs and data.get("lock_layout", True):
+        head = ("Create a NEW ad that is a faithful sibling of REFERENCE IMAGE 1: keep the SAME layout and grid, the same position, "
+                "size, font style and colors of every text block (headline, highlighted word, sub line, handwritten note, benefit "
+                "pills with icons, brand logo, CTA button), the same color palette, lighting, set design and premium mood, the same "
+                "person (face, hijab/hair style) and the exact same product. Change ONLY the words and the person's expression, "
+                "pose and small scene details so they express this idea:")
+    else:
+        head = "Create a finished Meta ad image for this idea:"
+    return (f"{head}\n{scene}\n\n{text_part}\n\n" + (f"Extra notes: {note}\n\n" if note else "")
+            + f"Format: {aspect}. {SAFE_TEXT.get(aspect, '')} {TEXT_RULES}")
+
+
+COPY_PROMPT = """Kamu copywriter iklan Meta Ads Indonesia. Ubah tiap ide/emosi di bawah menjadi copy untuk SATU gambar iklan
+yang tata letaknya mengikuti creative referensi (headline besar dengan 1 kata yang di-highlight, sub line, catatan tulisan tangan,
+3 pill manfaat, CTA). Bahasa Indonesia sehari-hari, ejaan benar, singkat, jangan klaim berlebihan atau angka palsu.
+{note}
+IDE:
+{ideas}
+
+Balas JSON: {{"items":[{{"headline":"maks 5 kata","highlight":"1 kata dari headline","sub":"maks 4 kata","note":"maks 8 kata",
+"pill_1":"maks 3 kata","pill_2":"maks 3 kata","pill_3":"maks 3 kata","cta":"maks 3 kata",
+"scene":"English, 1-2 kalimat: ekspresi, pose, detail adegan sesuai emosi"}}]}} urut sesuai ide."""
+
+
+def make_copy(data):
+    ideas = data.get("briefs") or []
+    note = data.get("note", "").strip()
+    r = g.call(COPY_PROMPT.format(ideas="\n".join(f"{i + 1}. {b}" for i, b in enumerate(ideas)),
+                                  note=f"Catatan produk/gaya: {note}" if note else ""), 8000, system="Balas hanya JSON valid.")
+    return {"items": r.get("items", [])}
+
+
 def make_batch(data):
     """Satu gambar dari satu brief + gambar referensi bebas (produk/model/gaya). Tanpa Claude."""
     rid = uuid.uuid4().hex[:8]  # nama file unik: beberapa gambar dibuat bersamaan
@@ -198,11 +254,7 @@ def make_batch(data):
     tmp.mkdir(exist_ok=True)
     refs = [p for i, u in enumerate((data.get("refs") or [])[:6]) if (p := _dump(u, tmp / f"{rid}-ref{i}"))]
     aspect = data.get("aspect", "9:16")
-    note = data.get("note", "").strip()
-    prompt = (f"{note}\n\n" if note else "") + data.get("prompt", "") + (
-        f"\n\nVertical {aspect} image. Reference images are attached in order; follow what the text says about them "
-        "(e.g. use the product exactly as shown, keep the person's face, copy the visual style). "
-        "Any on-image text must be spelled exactly as written in the brief.")
+    prompt = batch_prompt(data, aspect, bool(refs))
     q = data.get("quality") if data.get("quality") in ("low", "medium", "high") else None
     img = g.ai_creative(prompt, [str(p) for p in refs], aspect, data.get("engine", "auto"), q)
     W, H = SIZES.get(aspect, (1080, 1920))
