@@ -107,15 +107,16 @@ Close-up tangan meneteskan serum ke punggung tangan, cahaya pagi"></textarea>
     <select id="variasi"><option>1</option><option>2</option><option>3</option><option>4</option></select>
     <label class="lbl" for="engine">Mesin</label>
     <select id="engine">
-      <option value="gpt">GPT Image (ChatGPT): rapi, teks akurat</option>
+      <option value="gpt">GPT Image 1.5 (ChatGPT): paling rapi, teks akurat</option>
+      <option value="gptmini">GPT Image Mini: jauh lebih murah, kualitas sedikit di bawah</option>
       <option value="nano">Nano Banana (Gemini): paling realistis</option>
       <option value="auto">Otomatis</option>
     </select>
     <label class="lbl" for="quality">Kualitas (GPT Image)</label>
     <select id="quality">
-      <option value="low">Draft: ±US$0,02/gambar, untuk cek ide</option>
-      <option value="medium" selected>Hemat: ±US$0,06/gambar, cukup untuk iklan</option>
-      <option value="high">Terbaik: ±US$0,25/gambar, detail & teks paling tajam</option>
+      <option value="low">Draft: termurah, untuk cek ide</option>
+      <option value="medium" selected>Hemat: cukup untuk iklan</option>
+      <option value="high">Terbaik: detail & teks paling tajam</option>
     </select>
     <button class="primary" id="btnGo">Buat semua gambar</button>
     <button id="btnStop" hidden>Stop</button>
@@ -142,8 +143,8 @@ const store = {
   set(k, v){ try{ localStorage.setItem("batch:"+k, JSON.stringify(v)) }catch{} }
 };
 let refs = store.get("refs", []), jobs = [], stop = false;
-const GPT = {low: .02, medium: .06, high: .25};
-const perImage = () => $("#engine").value === "nano" ? .04 : GPT[$("#quality").value];
+const GPT = {low: .02, medium: .06, high: .25}, MINI = {low: .01, medium: .02, high: .06};
+const perImage = () => ({nano: () => .04, gptmini: () => MINI[$("#quality").value]}[$("#engine").value] || (() => GPT[$("#quality").value]))();
 
 for (const id of ["briefs", "note"]){ $("#"+id).value = store.get(id, ""); $("#"+id).addEventListener("input", e => store.set(id, e.target.value)) }
 $("#engine").value = store.get("engine", "gpt");
