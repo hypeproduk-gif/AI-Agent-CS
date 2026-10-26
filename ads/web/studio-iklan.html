@@ -1,0 +1,513 @@
+<title>Studio Iklan Meta</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+/* Layout: kolom kiri = brief & kontrol, kanan = galeri creative; di HP menumpuk. */
+:root{
+  --bg:#f6f4f1; --panel:#ffffff; --ink:#1d1a1f; --muted:#6c6570; --line:#e3ded8;
+  --accent:#d6402b; --accent-ink:#ffffff; --chip:#efeae4; --ok:#2f7d4f; --warn:#b26a00;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#151316; --panel:#1f1c21; --ink:#f1ede8; --muted:#a59da8; --line:#34303a;
+  --accent:#f0603f; --accent-ink:#1a0f0c; --chip:#2a262e; --ok:#5fc48a; --warn:#f0a542; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#151316; --panel:#1f1c21; --ink:#f1ede8; --muted:#a59da8; --line:#34303a;
+  --accent:#f0603f; --accent-ink:#1a0f0c; --chip:#2a262e; --ok:#5fc48a; --warn:#f0a542; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:900px){.wrap{grid-template-columns:minmax(0,1fr)}}
+header.top{max-width:1320px;margin:0 auto 20px;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,40px);letter-spacing:-.02em;margin:0;text-wrap:balance}
+.tag{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.04em}
+aside{position:sticky;top:12px;display:flex;flex-direction:column;gap:14px}
+@media (max-width:900px){aside{position:static}}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.box h2{font-family:var(--display);font-size:18px;margin:0;font-weight:800}
+label.lbl{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+textarea,input[type=text],input[type=number]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+textarea{min-height:230px;resize:vertical;font-size:14px}
+textarea:focus,input:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:inherit;font-weight:700;border-radius:10px;border:1px solid var(--line);background:var(--chip);color:var(--ink);padding:9px 14px;cursor:pointer}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+button:disabled{opacity:.5;cursor:not-allowed}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12.5px;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--chip);border:1px solid var(--line);cursor:pointer;user-select:none}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.hint{font-size:13px;color:var(--muted)}
+.status{font-family:var(--mono);font-size:12.5px;color:var(--muted);white-space:pre-wrap}
+.status.err{color:var(--accent)}
+.thumbs{display:flex;gap:6px;flex-wrap:wrap}
+.thumbs img{width:52px;height:52px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+main{display:flex;flex-direction:column;gap:22px;min-width:0}
+.cep{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.cep b{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.cep p{margin:0;font-size:13.5px}
+.cep small{grid-column:2;color:var(--muted)}
+.strategy dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0;font-size:14px}
+.strategy dt{font-weight:700;color:var(--muted)}
+.strategy dd{margin:0}
+.group h3{font-family:var(--display);font-size:20px;margin:0 0 4px}
+.group .moment{color:var(--muted);margin:0 0 12px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.card .prev{display:grid;grid-template-columns:9fr 8fr;gap:6px;padding:10px;background:var(--chip);align-items:end}
+.card canvas{width:100%;height:auto;border-radius:6px;display:block}
+.card .meta{padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.pills{display:flex;flex-wrap:wrap;gap:5px}
+.pill{font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:6px;background:var(--chip);color:var(--muted)}
+.pill.a{background:var(--ink);color:var(--bg)}
+.card input.hook{font-weight:800;font-family:var(--display);font-size:16px}
+details{border-top:1px solid var(--line);padding-top:8px}
+summary{cursor:pointer;font-weight:700;font-size:13px}
+.copy{white-space:pre-wrap;font-size:13.5px;margin:6px 0 0;overflow-wrap:anywhere}
+.hl{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;padding:3px 0;border-bottom:1px dashed var(--line)}
+.mini{font-size:12px;padding:4px 9px}
+.empty{border:1.5px dashed var(--line);border-radius:14px;padding:28px;color:var(--muted);text-align:center}
+.vb{font-size:13px;background:var(--bg);border-radius:8px;padding:8px 10px;overflow-wrap:anywhere}
+.vb mark{background:var(--accent);color:var(--accent-ink);border-radius:4px;padding:0 4px;font-weight:700}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="top">
+  <h1>Studio Iklan Meta</h1>
+  <span class="tag">BRIEF → 6 CEP × 15 ANGLE → 9:16 + 4:5 + COPY + HEADLINE</span>
+</header>
+
+<div class="wrap">
+<aside>
+  <section class="box">
+    <h2>1 · Brief produk</h2>
+    <label class="lbl" for="brief">Nama, harga, target, fitur, benefit, testimoni asli, izin, larangan klaim</label>
+    <textarea id="brief"></textarea>
+    <span class="hint">Teks awal adalah contoh. Ganti dengan produkmu.</span>
+    <label class="lbl" for="foto">Foto produk (PNG transparan paling rapi)</label>
+    <input type="file" id="foto" accept="image/*">
+    <label class="lbl" for="life">Foto lifestyle / UGC asli (opsional, boleh banyak)</label>
+    <input type="file" id="life" accept="image/*" multiple>
+    <div class="thumbs" id="thumbs"></div>
+    <label class="row hint"><input type="checkbox" id="lifeHasProduct" checked> Foto lifestyle sudah memperlihatkan produk</label>
+    <button class="primary" id="btnStrategy">Petakan 6 CEP</button>
+  </section>
+
+  <section class="box">
+    <h2>2 · Angle psikologi</h2>
+    <div class="chips" id="angles"></div>
+    <div class="row">
+      <button class="mini" id="allAngles">Semua</button>
+      <button class="mini" id="noAngles">Kosongkan</button>
+      <span class="hint" id="angleCount"></span>
+    </div>
+    <label class="lbl">CEP yang dibuat</label>
+    <div class="chips" id="cepPick"><span class="hint">Petakan CEP dulu.</span></div>
+    <button class="primary" id="btnGen" disabled>Buat creative</button>
+    <button id="btnStop" hidden>Stop</button>
+    <div class="status" id="status" role="status"></div>
+  </section>
+
+  <section class="box">
+    <h2>3 · Ambil hasil</h2>
+    <button id="btnZip" disabled>Download semua (ZIP)</button>
+    <span class="hint">Isi ZIP: gambar 9:16 & 4:5, copy.csv, copy.md.</span>
+  </section>
+</aside>
+
+<main id="main">
+  <div class="empty" id="empty">Isi brief lalu klik <b>Petakan 6 CEP</b>. Strategi, CEP, lalu creative per CEP akan muncul di sini. Hook di tiap kartu bisa diedit dan gambarnya langsung ikut berubah.</div>
+</main>
+</div>
+
+<script>
+const ANGLES = [
+ ["fomo","FOMO"],["instant_gratification","Instant Gratification"],["curiosity_gap","Curiosity Gap"],
+ ["shock_result","Shock Result"],["social_proof","Social Proof"],["authority","Authority"],
+ ["hidden_gem","Hidden Gem"],["relatable_pain","Relatable Pain"],["transformation","Transformation"],
+ ["value_shock","Value Shock"],["curated_discovery","Curated Discovery"],["emotional_story","Emotional Story"],
+ ["comparison_curiosity","Comparison"],["demonstration_proof","Demonstration"],["regret_trigger","Regret Trigger"]];
+
+const EXAMPLE = `Nama produk: SalGlow Serum
+Kategori: skincare (serum wajah)
+Harga: Rp149.000 | Promo B1G1 Rp149.000 (beli 1 gratis 1)
+Target: wanita 20-35, kulit kusam & bekas jerawat, kerja/kuliah, sering kena matahari
+Fitur: Niacinamide 5%, Alpha Arbutin 2%, tekstur ringan cepat meresap, 20ml
+Benefit: mencerahkan kulit kusam, menyamarkan bekas jerawat, makeup lebih nempel
+Bukti/testimoni (asli): "Bekas jerawatku pudar dalam 3 minggu" - Rina, Bekasi
+Status izin: BPOM terdaftar
+Garansi/bonus: COD, gratis ongkir, bonus pouch
+Larangan klaim: jangan bilang "putih permanen", jangan janji hasil instan`;
+
+const RULES = `Kamu media buyer + direct-response copywriter Meta Ads Indonesia dengan rekam jejak ROAS tinggi untuk objective PURCHASE.
+- Satu creative = satu angle = satu pesan. Hook berhenti-scroll dalam 1 detik (≤8 kata, spesifik, bukan generik).
+- Angle WAJIB lahir dari detail unik produk ini (bahan, angka, momen pakai, keberatan khas target). Kalau hook bisa dipakai produk lain, buang.
+- Copy bahasa Indonesia sehari-hari, ngobrol. Primary text: hook di baris 1, lalu masalah -> solusi -> bukti -> penawaran -> CTA. Pakai baris kosong, emoji secukupnya.
+- Headline ≤40 karakter, fokus benefit/penawaran. Description ≤25 karakter.
+- Kepatuhan Meta: jangan menyinggung atribut pribadi, jangan klaim medis/hasil instan/garansi palsu, patuhi larangan klaim di brief.
+- Testimoni HANYA dari kutipan di brief. Tanpa testimoni di brief, jangan pakai layout testimonial.
+- Jangan mengarang angka, sertifikasi, atau harga yang tidak ada di brief.
+
+CEP (Category Entry Points) = momen/situasi nyata saat target teringat butuh kategori produk ini (KAPAN, DI MANA, BERSAMA SIAPA, KARENA APA, PERASAAN APA). Spesifik ke target di brief.
+
+15 ANGLE PSIKOLOGI (id): fomo, instant_gratification, curiosity_gap, shock_result, social_proof, authority, hidden_gem, relatable_pain, transformation, value_shock, curated_discovery, emotional_story, comparison_curiosity, demonstration_proof, regret_trigger. Hook gaya orang pertama/UGC yang natural.
+
+PAGAR KEJUJURAN:
+- fomo/social_proof: klaim viral/sold out/jumlah pembeli hanya jika ADA di brief.
+- authority: hanya jika brief menyebut ahli/sertifikasi nyata; kalau tidak, jadikan edukasi "cara ahli memilih bahan X".
+- instant_gratification/shock_result/transformation: hasil realistis sesuai brief, bukan janji instan; kesehatan/berat badan tanpa before-after.
+- value_shock: hanya harga/promo di brief, bandingkan dengan nilai per pemakaian/hari.
+- emotional_story/curated_discovery: persona ilustratif boleh, jangan disajikan sebagai testimoni asli.`;
+
+const CREATIVE_SHAPE = `{"creatives":[{
+ "psych_angle":"id angle","angle":"nama angle singkat (CEP x psikologi)",
+ "awareness":"problem|solution|product","layout":"hero|testimonial|split|comparison",
+ "hook":"≤8 kata","subhead":"≤14 kata","bullets":["≤5 kata","≤5 kata","≤5 kata"],
+ "badge":"≤3 kata","cta":"≤3 kata",
+ "quote":{"text":"","name":""},"split":{"left_label":"","left":"","right_label":"","right":""},
+ "comparison":{"them_label":"","them":["","",""],"us_label":"","us":["","",""]},
+ "palette":{"bg1":"#hex","bg2":"#hex","accent":"#hex","text":"#hex"},
+ "visual_brief":"arahan foto/video untuk tim konten: momen CEP, setting, pose, properti. Tulis [PRODUK ASLI] di setiap bagian yang wajib pakai foto/video produk asli",
+ "primary_text":"versi panjang","primary_text_short":"≤125 karakter",
+ "headlines":["","",""],"description":"≤25 karakter"}]}
+Isi quote/split/comparison hanya sesuai layout-nya.`;
+
+const $ = s => document.querySelector(s);
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d }catch{ return d } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)) }catch{} }
+};
+let sample = null, downloads = null, ctl = null;
+let plan = store.get("plan", null);           // {slug, strategy:{...,ceps:[]}, creatives:[]}
+let foto = null, lifes = [];
+let pickedAngles = new Set(store.get("angles", ANGLES.map(a => a[0])));
+let pickedCeps = new Set(store.get("ceps", []));
+
+$("#brief").value = store.get("brief", EXAMPLE);
+$("#brief").addEventListener("input", e => store.set("brief", e.target.value));
+
+// ---------- angle chips ----------
+function drawAngles(){
+  $("#angles").replaceChildren(...ANGLES.map(([id, name]) => {
+    const b = document.createElement("span");
+    b.className = "chip"; b.tabIndex = 0; b.textContent = name; b.setAttribute("role","button");
+    b.setAttribute("aria-pressed", pickedAngles.has(id));
+    const t = () => { pickedAngles.has(id) ? pickedAngles.delete(id) : pickedAngles.add(id); store.set("angles",[...pickedAngles]); drawAngles() };
+    b.onclick = t; b.onkeydown = e => { if (e.key===" "||e.key==="Enter"){ e.preventDefault(); t() } };
+    return b;
+  }));
+  $("#angleCount").textContent = `${pickedAngles.size} angle × ${pickedCeps.size} CEP = ${pickedAngles.size*pickedCeps.size} creative`;
+}
+$("#allAngles").onclick = () => { pickedAngles = new Set(ANGLES.map(a=>a[0])); store.set("angles",[...pickedAngles]); drawAngles() };
+$("#noAngles").onclick = () => { pickedAngles.clear(); store.set("angles",[]); drawAngles() };
+
+function drawCepPick(){
+  const ceps = plan?.strategy?.ceps || [];
+  if (!ceps.length) return;
+  $("#cepPick").replaceChildren(...ceps.map(c => {
+    const b = document.createElement("span");
+    b.className = "chip"; b.tabIndex = 0; b.setAttribute("role","button"); b.title = c.moment;
+    b.textContent = c.id.toUpperCase(); b.setAttribute("aria-pressed", pickedCeps.has(c.id));
+    const t = () => { pickedCeps.has(c.id) ? pickedCeps.delete(c.id) : pickedCeps.add(c.id); store.set("ceps",[...pickedCeps]); drawCepPick(); drawAngles() };
+    b.onclick = t; b.onkeydown = e => { if (e.key===" "||e.key==="Enter"){ e.preventDefault(); t() } };
+    return b;
+  }));
+  $("#btnGen").disabled = !sample;
+}
+
+// ---------- images ----------
+function loadImg(file){ return new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = URL.createObjectURL(file) }) }
+$("#foto").onchange = async e => { foto = e.target.files[0] ? await loadImg(e.target.files[0]) : null; renderAll() };
+$("#life").onchange = async e => {
+  lifes = await Promise.all([...e.target.files].map(loadImg));
+  $("#thumbs").replaceChildren(...lifes.map(i => { const t = new Image(); t.src = i.src; t.alt = ""; return t }));
+  renderAll();
+};
+$("#lifeHasProduct").onchange = renderAll;
+
+// ---------- render (port dari generate.py) ----------
+const SIZES = {"9x16":[1080,1920],"4x5":[1080,1350]};
+const SAFE = {"9x16":[.14,.20],"4x5":[.05,.06]};
+const F = (px, w=800) => `${w} ${px}px "Plus Jakarta Sans", sans-serif`;
+const hex = (h, d) => /^#?[0-9a-f]{6}$/i.test(h||"") ? "#"+h.replace("#","") : d;
+const lum = h => { const n = parseInt(h.slice(1),16); return ((n>>16)&255)+((n>>8)&255)+(n&255) };
+const inkOn = h => lum(h) > 450 ? "#191919" : "#ffffff";
+
+function wrap(x, text, maxw){
+  const out = []; let cur = "";
+  for (const w of String(text||"").split(/\s+/).filter(Boolean)){
+    const t = cur ? cur+" "+w : w;
+    if (x.measureText(t).width <= maxw || !cur) cur = t; else { out.push(cur); cur = w }
+  }
+  return cur ? [...out, cur] : out;
+}
+function fit(x, text, maxw, maxh, start, w=800, lh=1.12){
+  for (let s = start; s > 24; s -= 4){
+    x.font = F(s, w); const L = wrap(x, text, maxw);
+    if (L.length*s*lh <= maxh && L.every(l => x.measureText(l).width <= maxw)) return [L, s, Math.round(s*lh)];
+  }
+  x.font = F(24, w); return [wrap(x, text, maxw), 24, 27];
+}
+function lines(x, L, size, lh, X, y, w, fill, align="center", shadow=true, weight=800){
+  x.font = F(size, weight); x.fillStyle = fill; x.textBaseline = "top";
+  for (const l of L){
+    const tx = align === "center" ? X + (w - x.measureText(l).width)/2 : X;
+    if (shadow){ x.save(); x.fillStyle = "rgba(0,0,0,.45)"; x.fillText(l, tx+3, y+3); x.restore(); x.fillStyle = fill }
+    x.fillText(l, tx, y); y += lh;
+  }
+  return y;
+}
+function rr(x, a, b, c, d, r, fill, stroke){
+  x.beginPath(); x.roundRect(a, b, c-a, d-b, r);
+  if (fill){ x.fillStyle = fill; x.fill() }
+  if (stroke){ x.strokeStyle = stroke; x.lineWidth = 4; x.stroke() }
+}
+function pill(x, cx, y, text, size, bg, fg, px=36, py=18, w=800){
+  x.font = F(size, w); const tw = x.measureText(text).width, h = size + py*2;
+  rr(x, cx - tw/2 - px, y, cx + tw/2 + px, y + h, h/2, bg);
+  x.fillStyle = fg; x.textBaseline = "top"; x.fillText(text, cx - tw/2, y + py - size*.04);
+  return y + h;
+}
+function cover(x, img, W, H){
+  const s = Math.max(W/img.width, H/img.height), w = img.width*s, h = img.height*s;
+  x.drawImage(img, (W-w)/2, (H-h)/2, w, h);
+}
+function product(x, box){
+  const [a, b, c, d] = box.map(Math.round);
+  if (c - a < 40 || d - b < 40) return;
+  if (!foto){
+    rr(x, a, b, c, d, 24, "rgba(0,0,0,.28)", "rgba(255,255,255,.9)");
+    const s = Math.min(44, Math.floor((c-a)/9)); x.font = F(s); x.fillStyle = "#fff"; x.textBaseline = "top";
+    const t = "[PRODUK ASLI]"; x.fillText(t, (a+c-x.measureText(t).width)/2, (b+d-s)/2); return;
+  }
+  const s = Math.min((c-a)/foto.width, (d-b)/foto.height), w = foto.width*s, h = foto.height*s;
+  x.save(); x.shadowColor = "rgba(0,0,0,.4)"; x.shadowBlur = 36; x.shadowOffsetY = 22;
+  x.drawImage(foto, a + (c-a-w)/2, b + (d-b-h)/2, w, h); x.restore();
+}
+
+function render(cv, c, fmt, idx){
+  const [W, H] = SIZES[fmt]; cv.width = W; cv.height = H;
+  const x = cv.getContext("2d"), p = c.palette || {};
+  const bg1 = hex(p.bg1,"#1e1e3c"), bg2 = hex(p.bg2,"#0a0a14"), acc = hex(p.accent,"#ffc800"), txt = hex(p.text,"#ffffff");
+  const scene = lifes.length ? lifes[idx % lifes.length] : null;
+  const skipProduct = scene && $("#lifeHasProduct").checked;
+  if (scene){
+    cover(x, scene, W, H);
+    const g = x.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,"rgba(0,0,0,.7)"); g.addColorStop(.35,"rgba(0,0,0,.1)"); g.addColorStop(.62,"rgba(0,0,0,.1)"); g.addColorStop(1,"rgba(0,0,0,.75)");
+    x.fillStyle = g; x.fillRect(0,0,W,H);
+  } else {
+    const g = x.createLinearGradient(0,0,0,H); g.addColorStop(0,bg1); g.addColorStop(1,bg2); x.fillStyle = g; x.fillRect(0,0,W,H);
+  }
+  const put = box => { if (!skipProduct) product(x, box) };
+  const [st, sb] = SAFE[fmt], top = H*st, bottom = H*(1-sb), m = 70, cw = W - 2*m, layout = c.layout || "hero";
+  let y = top;
+  if (c.badge) y = pill(x, W/2, y, c.badge.toUpperCase(), 34, acc, inkOn(acc)) + 28;
+  let [L, s, lh] = fit(x, c.hook, cw, H*(fmt==="9x16"?.2:.22), 112);
+  y = lines(x, L, s, lh, m, y, cw, txt) + 24;
+  if (c.subhead && layout !== "testimonial"){ [L, s, lh] = fit(x, c.subhead, cw, H*.08, 46, 600); y = lines(x, L, s, lh, m, y, cw, txt, "center", true, 600) + 20 }
+  const ctaH = 120, bodyB = bottom - ctaH - 30, half = (cw - 20)/2;
+
+  if (layout === "split" && c.split?.left){
+    const S = c.split;
+    [[S.left_label||"SEBELUM", S.left, "#5a5a5a"], [S.right_label||"SESUDAH", S.right, acc]].forEach(([lab, t, col], i) => {
+      const X = m + i*(half+20); rr(x, X, y, X+half, bodyB, 28, col);
+      x.font = F(38); x.fillStyle = inkOn(col); x.textBaseline = "top"; x.fillText(String(lab).toUpperCase(), X+28, y+24);
+      const [L2, s2, lh2] = fit(x, t, half-56, (bodyB-y)*.45, 44, 600); lines(x, L2, s2, lh2, X+28, y+90, half-56, inkOn(col), "left", false, 600);
+    });
+    put([m+half-140, bodyB-380, m+half+160, bodyB-20]);
+  } else if (layout === "comparison" && c.comparison?.us?.length){
+    const C = c.comparison;
+    [[C.them_label||"Yang lain", C.them||[], "×", "#3a3a3a"], [C.us_label||"Kami", C.us, "✓", acc]].forEach(([lab, items, mk, col], i) => {
+      const X = m + i*(half+20); rr(x, X, y, X+half, bodyB, 28, col);
+      x.font = F(38); x.fillStyle = inkOn(col); x.textBaseline = "top"; x.fillText(String(lab).toUpperCase(), X+28, y+24);
+      let yy = y + 100;
+      for (const it of items.slice(0,4)){ const [L2, s2, lh2] = fit(x, `${mk} ${it}`, half-56, 140, 40, 600); yy = lines(x, L2, s2, lh2, X+28, yy, half-56, inkOn(col), "left", false, 600) + 22 }
+    });
+  } else if (layout === "testimonial" && c.quote?.text){
+    const cardB = bodyB - (bodyB - y)*.42;
+    rr(x, m, y, W-m, cardB, 32, "rgba(255,255,255,.94)");
+    x.font = F(48); x.fillStyle = "#ffb000"; x.textBaseline = "top"; x.fillText("★★★★★", m+40, y+30);
+    const [L2, s2, lh2] = fit(x, `“${c.quote.text}”`, cw-80, cardB-y-200, 56);
+    const yy = lines(x, L2, s2, lh2, m+40, y+110, cw-80, "#191919", "left", false);
+    x.font = F(36, 600); x.fillStyle = "#5a5a5a"; x.fillText(`— ${c.quote.name||""}`, m+40, yy+16);
+    put([m, cardB+20, W-m, bodyB]);
+  } else {
+    const bl = (c.bullets||[]).filter(Boolean).slice(0,3), blH = bl.length*78;
+    put([m, y, W-m, bodyB-blH-20]);
+    let yy = bodyB - blH;
+    for (const b of bl){ pill(x, W/2, yy, `✓ ${b}`, 36, "rgba(0,0,0,.6)", "#fff", 30, 14, 600); yy += 78 }
+  }
+  pill(x, W/2, bottom - ctaH, `${c.cta || "Pesan Sekarang"} →`, 50, acc, inkOn(acc), 60, 26);
+}
+
+// ---------- Claude ----------
+const status = (t, err=false) => { $("#status").textContent = t; $("#status").classList.toggle("err", err) };
+const ERR = {not_granted:"Akses ke Claude ditolak. Muat ulang halaman lalu izinkan.", rate_limited:"Terlalu banyak permintaan. Tunggu sebentar lalu coba lagi.",
+  invalid_json:"Jawaban Claude tidak lengkap. Coba lagi atau kurangi jumlah angle.", cancelled:"Dihentikan."};
+const errText = e => ERR[e?.code] || `Gagal: ${e?.message || e}`;
+
+async function ask(prompt){
+  ctl = new AbortController(); $("#btnStop").hidden = false;
+  try { return await sample.json(prompt, {modelTier:"complex", signal:ctl.signal, cache:false,
+    onText: ({text}) => { $("#status").textContent = $("#status").dataset.base + ` · ${text.length} karakter` }}) }
+  finally { $("#btnStop").hidden = true }
+}
+$("#btnStop").onclick = () => ctl?.abort();
+
+$("#btnStrategy").onclick = async () => {
+  if (!sample) return status("Claude tidak tersedia di tampilan ini. Buka halaman ini di claude.ai.", true);
+  const brief = $("#brief").value.trim(); if (!brief) return status("Brief masih kosong.", true);
+  $("#btnStrategy").disabled = true; $("#status").dataset.base = "Memetakan CEP..."; status("Memetakan CEP...");
+  try {
+    const r = await ask(`${RULES}\n\nBRIEF PRODUK:\n${brief}\n\nTugas: buat strategi dan petakan TEPAT 6 CEP (id cep1..cep6) yang momennya benar-benar berbeda.
+Balas hanya JSON: {"slug":"nama-produk-kebab","strategy":{"ceps":[{"id":"cep1","moment":"situasi spesifik","trigger":"yang dirasakan/dipikirkan"}],"avatar":"","core_desire":"","main_pain":"","objections":["",""],"usp":"","offer":""}}`);
+    if (!r?.strategy?.ceps?.length) throw {message:"strategi kosong"};
+    plan = {slug: r.slug || "produk", strategy: r.strategy, creatives: []};
+    pickedCeps = new Set(r.strategy.ceps.map(c => c.id)); store.set("ceps",[...pickedCeps]);
+    save(); drawCepPick(); drawAngles(); drawMain(); status("CEP siap. Pilih angle & CEP, lalu klik Buat creative.");
+  } catch(e){ status(errText(e), true) }
+  finally { $("#btnStrategy").disabled = false }
+};
+
+$("#btnGen").onclick = async () => {
+  if (!plan) return;
+  const angles = ANGLES.map(a=>a[0]).filter(a => pickedAngles.has(a));
+  const ceps = plan.strategy.ceps.filter(c => pickedCeps.has(c.id));
+  if (!angles.length || !ceps.length) return status("Pilih minimal 1 angle dan 1 CEP.", true);
+  const brief = $("#brief").value.trim(), hist = store.get("hooks", []);
+  $("#btnGen").disabled = $("#btnStrategy").disabled = true;
+  try {
+    for (const cep of ceps){
+      for (let i = 0; i < angles.length; i += 5){         // 5 angle per panggilan agar jawaban tidak terpotong
+        const batch = angles.slice(i, i+5);
+        const used = [...hist, ...plan.creatives.map(c => c.hook)].slice(-150);
+        $("#status").dataset.base = `${cep.id.toUpperCase()} · angle ${i+1}-${i+batch.length} dari ${angles.length}`;
+        status($("#status").dataset.base + " · Claude sedang berpikir...");
+        const r = await ask(`${RULES}\n\nBRIEF PRODUK:\n${brief}\n\nSTRATEGI:\n${JSON.stringify(plan.strategy)}\n
+Buat ${batch.length} creative KHUSUS untuk CEP ${cep.id}: "${cep.moment}" (${cep.trigger||""}).
+Satu creative per angle psikologi berikut, urut: ${batch.join(", ")}.
+Semua hook, visual brief, dan copy berangkat dari momen CEP ini. Variasikan layout (hero/testimonial/split/comparison).
+${used.length ? "Hook yang SUDAH dipakai (jangan diulang/dimirip-miripkan):\n- " + used.join("\n- ") : ""}
+Balas hanya JSON dengan bentuk:\n${CREATIVE_SHAPE}`);
+        const fresh = (r?.creatives || []).map(c => ({...c, cep: cep.id, id: crypto.randomUUID()}));
+        plan.creatives.push(...fresh);
+        store.set("hooks", [...store.get("hooks", []), ...fresh.map(c => c.hook)].slice(-500));
+        save(); drawMain();
+      }
+    }
+    status(`Selesai. ${plan.creatives.length} creative.`);
+  } catch(e){ status(errText(e), e?.code !== "cancelled") }
+  finally { $("#btnGen").disabled = $("#btnStrategy").disabled = false; $("#btnZip").disabled = !plan.creatives.length }
+};
+
+function save(){ store.set("plan", plan) }
+
+// ---------- gallery ----------
+const esc = s => String(s ?? "").replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+async function copy(text, btn){
+  try { await navigator.clipboard.writeText(text); btn.textContent = "Tersalin" } catch { btn.textContent = "Gagal salin" }
+  setTimeout(() => btn.textContent = "Salin", 1400);
+}
+const fileBase = c => { const list = plan.creatives.filter(o => o.cep === c.cep); return `${c.cep}-${String(list.indexOf(c)+1).padStart(2,"0")}-${c.psych_angle||"angle"}` };
+
+function card(c, idx){
+  const el = document.createElement("article"); el.className = "card";
+  el.innerHTML = `<div class="prev"><canvas data-f="9x16" aria-label="Preview 9:16"></canvas><canvas data-f="4x5" aria-label="Preview 4:5"></canvas></div>
+  <div class="meta">
+    <div class="pills"><span class="pill a">${esc(c.psych_angle)}</span><span class="pill">${esc(c.layout)}</span><span class="pill">${esc(c.awareness)}-aware</span></div>
+    <input class="hook" type="text" id="hook-${c.id}" value="${esc(c.hook)}" aria-label="Hook">
+    <div class="vb"><b>Brief visual:</b> ${esc(c.visual_brief).replace(/\[PRODUK ASLI\]/g,"<mark>[PRODUK ASLI]</mark>")}</div>
+    <details><summary>Primary text</summary><p class="copy">${esc(c.primary_text)}</p><button class="mini" data-copy="pt">Salin</button>
+      <p class="copy"><b>Pendek:</b> ${esc(c.primary_text_short)}</p><button class="mini" data-copy="ps">Salin</button></details>
+    <details open><summary>Headline & description</summary>
+      ${(c.headlines||[]).map((h,i) => `<div class="hl"><span>${esc(h)}</span><button class="mini" data-copy="h${i}">Salin</button></div>`).join("")}
+      <div class="hl"><span>${esc(c.description)}</span><button class="mini" data-copy="d">Salin</button></div></details>
+    <div class="row"><button class="mini" data-dl="9x16">PNG 9:16</button><button class="mini" data-dl="4x5">PNG 4:5</button></div>
+  </div>`;
+  const draw = () => el.querySelectorAll("canvas").forEach(cv => render(cv, c, cv.dataset.f, idx));
+  draw();
+  el.querySelector(".hook").addEventListener("change", e => { c.hook = e.target.value; save(); draw() });
+  const src = {pt:() => c.primary_text, ps:() => c.primary_text_short, d:() => c.description};
+  el.querySelectorAll("[data-copy]").forEach(b => b.onclick = () => {
+    const k = b.dataset.copy; copy(k[0]==="h" && k!=="h" ? c.headlines[+k.slice(1)] : src[k](), b) });
+  el.querySelectorAll("[data-dl]").forEach(b => b.onclick = async () => {
+    const cv = el.querySelector(`canvas[data-f="${b.dataset.dl}"]`);
+    await saveFile(`${fileBase(c)}-${b.dataset.dl}.png`, await new Promise(r => cv.toBlob(r, "image/png")));
+  });
+  el._draw = draw;
+  return el;
+}
+
+const EMPTY = document.getElementById("empty");
+function drawMain(){
+  const main = $("#main");
+  if (!plan){ main.replaceChildren(EMPTY); return }
+  const S = plan.strategy, parts = [];
+  const st = document.createElement("section"); st.className = "box strategy";
+  st.innerHTML = `<h2>Strategi · ${esc(plan.slug)}</h2><dl>
+    <dt>Avatar</dt><dd>${esc(S.avatar)}</dd><dt>Keinginan</dt><dd>${esc(S.core_desire)}</dd>
+    <dt>Pain</dt><dd>${esc(S.main_pain)}</dd><dt>Keberatan</dt><dd>${esc((S.objections||[]).join(" · "))}</dd>
+    <dt>USP</dt><dd>${esc(S.usp)}</dd><dt>Offer</dt><dd>${esc(S.offer)}</dd></dl>
+    <div style="display:grid;gap:8px">${S.ceps.map(c => `<div class="cep"><b>${esc(c.id.toUpperCase())}</b><p>${esc(c.moment)}</p><small>${esc(c.trigger)}</small></div>`).join("")}</div>
+    <div class="row"><button class="mini" id="reset">Mulai produk baru</button></div>`;
+  parts.push(st);
+  let idx = 0;
+  for (const cep of S.ceps){
+    const list = plan.creatives.filter(c => c.cep === cep.id);
+    if (!list.length) continue;
+    const g = document.createElement("section"); g.className = "group";
+    g.innerHTML = `<h3>${esc(cep.id.toUpperCase())} · ${list.length} creative</h3><p class="moment">${esc(cep.moment)}</p>`;
+    const grid = document.createElement("div"); grid.className = "grid";
+    list.forEach(c => grid.append(card(c, idx++)));
+    g.append(grid); parts.push(g);
+  }
+  main.replaceChildren(...parts);
+  $("#reset").onclick = () => { plan = null; save(); drawMain(); $("#cepPick").innerHTML = '<span class="hint">Petakan CEP dulu.</span>'; $("#btnGen").disabled = true; $("#btnZip").disabled = true; status("") };
+  $("#btnZip").disabled = !plan.creatives.length;
+}
+function renderAll(){ document.querySelectorAll(".card").forEach(c => c._draw?.()) }
+
+// ---------- download ----------
+async function saveFile(name, data){
+  if (!downloads) return status("Download tidak tersedia di tampilan ini.", true);
+  try { await downloads.save({filename: name, data}); status(`Tersimpan: ${name}`) }
+  catch(e){ status(e?.code === "declined" ? "Download dibatalkan." : `Download gagal (${e?.code || e?.message}).`, e?.code !== "declined") }
+}
+const csvCell = v => `"${String(v ?? "").replace(/"/g,'""')}"`;
+$("#btnZip").onclick = async () => {
+  if (!plan?.creatives.length) return;
+  $("#btnZip").disabled = true; status("Menyusun ZIP...");
+  const zip = new JSZip(), cv = document.createElement("canvas");
+  const head = ["file","cep","psych_angle","layout","awareness","hook","primary_text","primary_text_short","headline_1","headline_2","headline_3","description","cta","visual_brief"];
+  const rows = [head.join(",")], md = [`# Creative ${plan.slug}\n`, "## CEP", ...plan.strategy.ceps.map(c => `- **${c.id}**: ${c.moment} (${c.trigger||""})`), ""];
+  let idx = 0;
+  for (const cep of plan.strategy.ceps) for (const c of plan.creatives.filter(o => o.cep === cep.id)){
+    const base = fileBase(c);
+    for (const f of ["9x16","4x5"]){ render(cv, c, f, idx); zip.file(`${base}-${f}.png`, await new Promise(r => cv.toBlob(r, "image/png"))) }
+    idx++;
+    const h = c.headlines || [];
+    rows.push([base, c.cep, c.psych_angle, c.layout, c.awareness, c.hook, c.primary_text, c.primary_text_short, h[0], h[1], h[2], c.description, c.cta, c.visual_brief].map(csvCell).join(","));
+    md.push(`## ${base}\n**Hook:** ${c.hook}\n\n**Brief visual:** ${c.visual_brief||""}\n\n**Primary text:**\n\n${c.primary_text}\n\n**Pendek:** ${c.primary_text_short}\n\n**Headlines:**\n${h.map(x => "- "+x).join("\n")}\n\n**Description:** ${c.description}\n`);
+  }
+  zip.file("copy.csv", "﻿" + rows.join("\n")); zip.file("copy.md", md.join("\n"));
+  await saveFile(`${plan.slug}-creative.zip`, await zip.generateAsync({type:"blob"}));
+  $("#btnZip").disabled = false;
+};
+
+// ---------- boot ----------
+drawAngles();
+(async () => {
+  try { await document.fonts.load(F(80)); await document.fonts.load(F(40, 600)) } catch {}
+  if (plan){ drawCepPick(); drawMain() }
+  const c = window.claude;
+  if (!c?.use){ status("Buka halaman ini di claude.ai agar Claude bisa menulis creative.", true); return }
+  [sample, downloads] = await Promise.all([c.use("sample"), c.use("downloads")]);
+  if (!sample) status("Claude tidak tersedia di tampilan ini.", true);
+  if (plan) $("#btnGen").disabled = !sample;
+})();
+</script>
