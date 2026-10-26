@@ -63,7 +63,7 @@ class Handler(SimpleHTTPRequestHandler):
                 return self.send_error(404)
             body = p.read_bytes()
             self.send_response(200)
-            self.send_header("Content-Type", "image/png")
+            self.send_header("Content-Type", "image/jpeg" if p.suffix == ".jpg" else "image/png")
             self.send_header("Content-Length", str(len(body)))
             self.end_headers()
             self.wfile.write(body)
@@ -81,6 +81,8 @@ class Handler(SimpleHTTPRequestHandler):
             if self.path == "/api/claude":
                 # prompt dari halaman sudah memuat aturan lengkap
                 return self.send_json({"result": g.call(data["prompt"], system="Balas hanya JSON valid.")})
+            if self.path == "/api/upload":
+                return self.send_json(save_upload(data))
             if self.path == "/api/image":
                 return self.send_json(make_image(data))
             self.send_error(404)
@@ -89,6 +91,19 @@ class Handler(SimpleHTTPRequestHandler):
         except Exception as e:
             traceback.print_exc()
             self.send_json({"error": str(e)}, 500)
+
+
+def save_upload(data):
+    """Foto hasil Gem / foto asli untuk satu creative."""
+    slug = re.sub(r"[^a-z0-9-]+", "-", (data.get("slug") or "produk").lower()).strip("-") or "produk"
+    m = re.match(r"data:image/(\w+);base64,(.*)", data.get("data") or "", re.S)
+    if not m:
+        raise RuntimeError("File bukan gambar.")
+    out = g.OUT / slug / "scenes"
+    out.mkdir(parents=True, exist_ok=True)
+    name = f"up-{uuid.uuid4().hex[:10]}.{'png' if m.group(1) == 'png' else 'jpg'}"
+    (out / name).write_bytes(base64.b64decode(m.group(2)))
+    return {"url": f"/output/{slug}/scenes/{name}"}
 
 
 def make_image(data):

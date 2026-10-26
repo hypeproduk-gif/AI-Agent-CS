@@ -70,6 +70,8 @@ summary{cursor:pointer;font-weight:700;font-size:13px}
 .copy{white-space:pre-wrap;font-size:13.5px;margin:6px 0 0;overflow-wrap:anywhere}
 .hl{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;padding:3px 0;border-bottom:1px dashed var(--line)}
 .mini{font-size:12px;padding:4px 9px}
+label.upl{font-weight:700;border-radius:10px;border:1px solid var(--line);background:var(--chip);cursor:pointer;display:inline-block}
+label.upl:focus-within,label.upl:focus-visible{outline:2px solid var(--accent)}
 .empty{border:1.5px dashed var(--line);border-radius:14px;padding:28px;color:var(--muted);text-align:center}
 .vb{font-size:13px;background:var(--bg);border-radius:8px;padding:8px 10px;overflow-wrap:anywhere}
 .vb mark{background:var(--accent);color:var(--accent-ink);border-radius:4px;padding:0 4px;font-weight:700}
@@ -519,7 +521,7 @@ function card(c, idx){
     <details open><summary>Headline & description</summary>
       ${(c.headlines||[]).map((h,i) => `<div class="hl"><span>${esc(h)}</span><button class="mini" data-copy="h${i}">Salin</button></div>`).join("")}
       <div class="hl"><span>${esc(c.description)}</span><button class="mini" data-copy="d">Salin</button></div></details>
-    <div class="row"><button class="mini" data-ai ${LOCAL ? "" : "hidden"}>${c.scene_url ? "Ulangi foto AI" : "Buat foto AI"}</button><button class="mini" data-dl="9x16">PNG 9:16</button><button class="mini" data-dl="4x5">PNG 4:5</button></div>
+    <div class="row"><button class="mini" data-ai ${LOCAL ? "" : "hidden"}>${c.scene_url ? "Ulangi foto AI" : "Buat foto AI"}</button><label class="mini upl" tabindex="0">Upload foto<input type="file" accept="image/*" hidden data-up></label><button class="mini" data-dl="9x16">PNG 9:16</button><button class="mini" data-dl="4x5">PNG 4:5</button></div>
   </div>`;
   const draw = () => el.querySelectorAll("canvas").forEach(cv => render(cv, c, cv.dataset.f, idx));
   draw();
@@ -532,6 +534,18 @@ function card(c, idx){
     const cv = el.querySelector(`canvas[data-f="${b.dataset.dl}"]`);
     await saveFile(`${fileBase(c)}-${b.dataset.dl}.png`, await new Promise(r => cv.toBlob(r, "image/png")));
   });
+  el.querySelector("[data-up]").onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try {
+      if (LOCAL){
+        const data = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(f) });
+        const r = await fetch("/api/upload", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({slug: plan.slug, data})});
+        const j = await r.json(); if (!r.ok) throw new Error(j.error || r.status);
+        c.scene_url = j.url;
+      } else c.scene_url = URL.createObjectURL(f);   // di claude.ai: hanya selama halaman terbuka
+      c.scene_has_product = true; await loadScene(c.scene_url); save(); draw();
+    } catch(err){ status(`Upload gagal: ${err.message}`, true) }
+  };
   el.querySelector("[data-ai]").onclick = async e => {
     const b = e.target; b.disabled = true; b.textContent = "Membuat foto...";
     try { await aiScene(c); draw(); b.textContent = "Ulangi foto AI" }
