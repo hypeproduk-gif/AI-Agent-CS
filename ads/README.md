@@ -31,4 +31,6 @@ Hasil di `ads/output/<produk>/`:
 ## Tips brief (makin spesifik, makin convert)
 Tulis: nama, harga & promo, target (siapa, momen masalahnya), fitur dengan angka, benefit, testimoni **asli**,
 izin (BPOM/Halal), garansi/bonus, dan **larangan klaim**. Testimoni tidak akan dikarang bila tidak ada di brief.
+Tanpa `--foto`, gambar berisi kotak **[PRODUK ASLI]** sebagai slot foto produk asli (tempel di Canva/CapCut).
+Setiap creative juga punya **brief visual** untuk tim konten; bagian bertanda [PRODUK ASLI] wajib pakai foto/video produk asli.
 Foto produk PNG transparan (remove.bg) memberi hasil paling rapi.

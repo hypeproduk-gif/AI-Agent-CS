@@ -71,6 +71,7 @@ SCHEMA = """Balas HANYA JSON valid:
    "split": {"left_label": "", "left": "", "right_label": "", "right": ""},
    "comparison": {"them_label": "", "them": ["","",""], "us_label": "", "us": ["","",""]},
    "palette": {"bg1": "#hex", "bg2": "#hex", "accent": "#hex", "text": "#hex"},
+   "visual_brief": "arahan foto/video untuk tim konten (Indonesia): momen CEP, setting, pose, properti. Tulis [PRODUK ASLI] di setiap bagian yang WAJIB pakai foto/video produk asli (dipegang, dipakai, dites, teksturnya, kemasannya)",
    "image_prompt": "English, photoreal scene for this angle, vertical, no text, no logos, leave empty space top",
    "primary_text": "versi panjang",
    "primary_text_short": "versi ≤125 karakter",
@@ -188,9 +189,16 @@ def pill(d, cx, y, text, f, bg, fg, pad=(36, 18)):
 
 
 def paste_product(canvas, foto, box):
-    if not foto:
-        return
     x0, y0, x1, y1 = map(int, box)
+    if not foto:  # slot kosong untuk ditempel foto asli di Canva/CapCut
+        layer = Image.new("RGBA", canvas.size, (0, 0, 0, 0))
+        ImageDraw.Draw(layer).rounded_rectangle((x0, y0, x1, y1), 24, fill=(0, 0, 0, 70), outline=(255, 255, 255, 230), width=4)
+        canvas.alpha_composite(layer)
+        d = ImageDraw.Draw(canvas)
+        f = font(min(44, (x1 - x0) // 9))
+        t = "[PRODUK ASLI]"
+        d.text(((x0 + x1 - d.textlength(t, font=f)) / 2, (y0 + y1 - f.size) / 2), t, font=f, fill=(255, 255, 255))
+        return
     p = foto.copy()
     p.thumbnail((x1 - x0, y1 - y0), Image.LANCZOS)
     px, py = x0 + (x1 - x0 - p.width) // 2, y0 + (y1 - y0 - p.height) // 2
@@ -243,7 +251,7 @@ def render(c, fmt, foto, scene):
             fl = font(38); d.text((x + 28, y + 24), lab.upper(), font=fl, fill=ink(col))
             ft, ls, lh2 = fit(d, t, half - 56, (body_bottom - y) * 0.45, 44, bold=False)
             draw_lines(d, ls, ft, lh2, x + 28, y + 90, half - 56, ink(col), "left", False)
-        if foto:
+        if True:
             paste_product(canvas, foto, (m + half - 140, body_bottom - 380, m + half + 160, body_bottom - 20))
     elif layout == "comparison" and c.get("comparison", {}).get("us"):
         cp = c["comparison"]; half = (cw - 20) / 2
@@ -258,7 +266,7 @@ def render(c, fmt, foto, scene):
                 yy = draw_lines(d, ls, ft, lh2, x + 28, yy, half - 56, ink(col), "left", False) + 22
     elif layout == "testimonial" and c.get("quote", {}).get("text"):
         q = c["quote"]
-        card_b = body_bottom if not foto else body_bottom - (body_bottom - y) * 0.42
+        card_b = body_bottom - (body_bottom - y) * 0.42
         d.rounded_rectangle((m, y, W - m, card_b), 32, fill=(255, 255, 255, 238))
         d.text((m + 40, y + 30), "★★★★★", font=font(48), fill=(255, 176, 0))
         ft, ls, lh2 = fit(d, f"“{q['text']}”", cw - 80, card_b - y - 200, 56, bold=True)
@@ -311,9 +319,9 @@ def main():
                      "image_9x16": files[0], "image_4x5": files[1], "primary_text": c.get("primary_text"),
                      "primary_text_short": c.get("primary_text_short"),
                      **{f"headline_{k + 1}": h for k, h in enumerate(c.get("headlines", [])[:3])},
-                     "description": c.get("description"), "cta": c.get("cta")})
+                     "description": c.get("description"), "visual_brief": c.get("visual_brief"), "cta": c.get("cta")})
         md.append(f"## {i}. {c.get('angle')}\nCEP `{c.get('cep')}` · angle `{c.get('psych_angle')}` · {c.get('framework')} / {c.get('awareness')}-aware\n\n"
-                  f"Gambar: `{files[0]}`, `{files[1]}`\n\n**Primary text:**\n\n{c.get('primary_text')}\n\n"
+                  f"Gambar: `{files[0]}`, `{files[1]}`\n\n**Brief visual:** {c.get('visual_brief', '')}\n\n**Primary text:**\n\n{c.get('primary_text')}\n\n"
                   f"**Short:** {c.get('primary_text_short')}\n\n**Headlines:**\n" +
                   "".join(f"- {h}\n" for h in c.get("headlines", [])) + f"\n**Description:** {c.get('description')}\n")
         hist.append(c["hook"])
