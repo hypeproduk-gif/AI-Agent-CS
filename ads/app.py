@@ -50,7 +50,7 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         if self.path in ("/", "/index.html", "/studio"):
-            body = (PAGE if self.path == "/studio" else BATCH).read_bytes()
+            body = (PAGE if self.path == "/studio" or not BATCH.exists() else BATCH).read_bytes()
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))
