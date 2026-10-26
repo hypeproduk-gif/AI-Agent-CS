@@ -158,8 +158,8 @@ def _part(path):
 def ai_scene(prompt, foto_path, raise_errors=False, influencer_path=None, scene_type=None):
     """Foto scene UGC via Gemini (Nano Banana).
     Referensi: image A = influencer (wajah dipertahankan), image B = produk asli (tidak boleh diubah)."""
-    key = os.environ.get("GEMINI_API_KEY")
-    if not key:
+    key, orkey = os.environ.get("GEMINI_API_KEY"), os.environ.get("OPENROUTER_API_KEY")
+    if not key and not orkey:
         return None
     face = scene_type in (None, "influencer")
     parts, refs = [], []
@@ -176,24 +176,47 @@ def ai_scene(prompt, foto_path, raise_errors=False, influencer_path=None, scene_
         refs.append("Do NOT show any product, packaging or brand; leave clear space in the middle of the frame.")
     scene = SCENES.get(scene_type or "influencer", "")
     parts.insert(0, {"text": f"{scene}\n{prompt}\n\n{' '.join(refs)}\n{UGC_STYLE}"})
-    model = os.environ.get("IMAGE_MODEL", "gemini-2.5-flash-image")
-    body = json.dumps({"contents": [{"parts": parts}], "generationConfig": {
-        "responseModalities": ["IMAGE"], "imageConfig": {"aspectRatio": "9:16"}}}).encode()
-    req = urllib.request.Request(f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent", body,
-                                 {"x-goog-api-key": key, "Content-Type": "application/json"})
     try:
-        with urllib.request.urlopen(req, timeout=300) as r:
-            for part in json.load(r)["candidates"][0]["content"]["parts"]:
-                data = part.get("inline_data") or part.get("inlineData")
-                if data:
-                    return Image.open(io.BytesIO(base64.b64decode(data["data"]))).convert("RGB")
-        raise ValueError("respons tanpa gambar")
+        if orkey:  # OpenRouter: model Nano Banana yang sama, saldo prabayar (tanpa billing Google)
+            return _openrouter(parts, orkey)
+        return _gemini(parts, key)
     except Exception as e:
         if raise_errors:
             detail = e.read().decode(errors="replace")[:300] if isinstance(e, urllib.error.HTTPError) else ""
             raise RuntimeError(f"{e} {detail}".strip())
         print(f"  ! gambar AI gagal ({e}), pakai background gradien", file=sys.stderr)
         return None
+
+
+def _openrouter(parts, key):
+    content = [{"type": "text", "text": parts[0]["text"]}] + [
+        {"type": "image_url", "image_url": {"url": f"data:{p['inline_data']['mime_type']};base64,{p['inline_data']['data']}"}}
+        for p in parts[1:]]
+    body = json.dumps({"model": os.environ.get("OPENROUTER_IMAGE_MODEL", "google/gemini-2.5-flash-image"),
+                       "messages": [{"role": "user", "content": content}],
+                       "modalities": ["image", "text"], "image_config": {"aspect_ratio": "9:16"}}).encode()
+    req = urllib.request.Request("https://openrouter.ai/api/v1/chat/completions", body,
+                                 {"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=300) as r:
+        res = json.load(r)
+    for im in res["choices"][0]["message"].get("images") or []:
+        url = im["image_url"]["url"]
+        return Image.open(io.BytesIO(base64.b64decode(url.split(",", 1)[1]))).convert("RGB")
+    raise ValueError("respons tanpa gambar")
+
+
+def _gemini(parts, key):
+    model = os.environ.get("IMAGE_MODEL", "gemini-2.5-flash-image")
+    body = json.dumps({"contents": [{"parts": parts}], "generationConfig": {
+        "responseModalities": ["IMAGE"], "imageConfig": {"aspectRatio": "9:16"}}}).encode()
+    req = urllib.request.Request(f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent", body,
+                                 {"x-goog-api-key": key, "Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=300) as r:
+        for part in json.load(r)["candidates"][0]["content"]["parts"]:
+            data = part.get("inline_data") or part.get("inlineData")
+            if data:
+                return Image.open(io.BytesIO(base64.b64decode(data["data"]))).convert("RGB")
+    raise ValueError("respons tanpa gambar")
 
 
 # ---------- render ----------

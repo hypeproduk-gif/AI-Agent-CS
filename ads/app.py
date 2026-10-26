@@ -16,7 +16,7 @@ import generate as g  # noqa: E402
 ENV = ROOT / ".env"
 PAGE = ROOT / "web" / "studio-iklan.html"
 PORT = int(os.environ.get("PORT", 8765))
-KEYS = ("ANTHROPIC_API_KEY", "GEMINI_API_KEY")
+KEYS = ("ANTHROPIC_API_KEY", "GEMINI_API_KEY", "OPENROUTER_API_KEY")
 
 
 def load_env():
@@ -107,8 +107,8 @@ def save_upload(data):
 
 
 def make_image(data):
-    if not os.environ.get("GEMINI_API_KEY"):
-        raise RuntimeError("API key Gemini belum diisi.")
+    if not (os.environ.get("GEMINI_API_KEY") or os.environ.get("OPENROUTER_API_KEY")):
+        raise RuntimeError("API key Gemini / OpenRouter belum diisi.")
     slug = re.sub(r"[^a-z0-9-]+", "-", (data.get("slug") or "produk").lower()).strip("-") or "produk"
     out = g.OUT / slug / "scenes"
     out.mkdir(parents=True, exist_ok=True)

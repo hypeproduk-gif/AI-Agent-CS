@@ -92,6 +92,8 @@ label.upl:focus-within,label.upl:focus-visible{outline:2px solid var(--accent)}
     <input type="text" id="kAnth" autocomplete="off" placeholder="kosongkan jika sudah tersimpan">
     <label class="lbl" for="kGem">Gemini (aistudio.google.com/apikey)</label>
     <input type="text" id="kGem" autocomplete="off" placeholder="kosongkan jika sudah tersimpan">
+    <label class="lbl" for="kOr">OpenRouter (openrouter.ai/keys) · foto AI tanpa billing Google</label>
+    <input type="text" id="kOr" autocomplete="off" placeholder="kosongkan jika sudah tersimpan">
     <button id="btnKeys">Simpan key</button>
   </section>
 
@@ -468,7 +470,7 @@ Balas hanya JSON dengan bentuk:\n${CREATIVE_SHAPE}`);
         plan.creatives.push(...fresh);
         store.set("hooks", [...store.get("hooks", []), ...fresh.map(c => c.hook)].slice(-500));
         save(); drawMain();
-        if (LOCAL && $("#autoAi").checked && keyState.GEMINI_API_KEY){
+        if (LOCAL && $("#autoAi").checked && (keyState.GEMINI_API_KEY || keyState.OPENROUTER_API_KEY)){
           for (const [k, c] of fresh.entries()){
             status(`${$("#status").dataset.base} · foto AI ${k+1}/${fresh.length}...`);
             try { await aiScene(c) } catch(err){ aiFails.push(err.message) }
@@ -620,8 +622,8 @@ $("#btnZip").onclick = async () => {
 let keyState = {}, aiFails = [];
 function showKeys(st){
   keyState = st;
-  const a = st.ANTHROPIC_API_KEY, g = st.GEMINI_API_KEY;
-  $("#keysState").textContent = `Anthropic: ${a ? "tersimpan ✓" : "belum diisi"} · Gemini: ${g ? "tersimpan ✓" : "belum diisi (foto AI nonaktif)"}`;
+  const a = st.ANTHROPIC_API_KEY, g = st.GEMINI_API_KEY || st.OPENROUTER_API_KEY;
+  $("#keysState").textContent = `Anthropic: ${a ? "tersimpan ✓" : "belum diisi"} · Foto AI: ${st.OPENROUTER_API_KEY ? "OpenRouter ✓" : st.GEMINI_API_KEY ? "Gemini ✓" : "belum diisi (foto AI nonaktif)"}`;
   $("#keysBox").hidden = false;
   if (plan) $("#btnGen").disabled = !a;
 }
@@ -638,8 +640,8 @@ async function bootLocal(){
 }
 $("#btnKeys").onclick = async () => {
   const r = await fetch("/api/keys", {method:"POST", headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ANTHROPIC_API_KEY: $("#kAnth").value.trim(), GEMINI_API_KEY: $("#kGem").value.trim()})});
-  $("#kAnth").value = $("#kGem").value = ""; showKeys(await r.json()); status("Key tersimpan.");
+    body: JSON.stringify({ANTHROPIC_API_KEY: $("#kAnth").value.trim(), GEMINI_API_KEY: $("#kGem").value.trim(), OPENROUTER_API_KEY: $("#kOr").value.trim()})});
+  $("#kAnth").value = $("#kGem").value = $("#kOr").value = ""; showKeys(await r.json()); status("Key tersimpan.");
 };
 
 // ---------- boot ----------
