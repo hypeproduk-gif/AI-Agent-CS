@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Batch Gambar Iklan</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Plus+Jakarta+Sans:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Plus+Jakarta+Sans:wght@400;600;700&family=JetBrains+Mono:wght@500&family=DM+Serif+Display&family=Caveat:wght@600&family=Montserrat:wght@500;700;800&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 /* Layout: kiri = input (brief, referensi, opsi), kanan = galeri hasil; di HP menumpuk. */
@@ -124,7 +124,13 @@ Close-up tangan meneteskan serum ke punggung tangan, cahaya pagi"></textarea>
       <option value="medium" selected>Hemat: cukup untuk iklan</option>
       <option value="high">Terbaik: detail & teks paling tajam</option>
     </select>
-    <label class="row hint"><input type="checkbox" id="useClaude" checked> Tulis copy dulu dengan Claude (ejaan lebih rapi, ±Rp50/gambar, butuh saldo Anthropic)</label>
+    <label class="row hint"><input type="checkbox" id="overlay" checked> Teks ditulis sistem: tanpa typo, tidak terpotong (AI hanya membuat foto)</label>
+    <div class="row" id="ovOpts">
+      <label class="hint" for="brand">Nama brand</label><input type="text" id="brand" placeholder="mis. FILO" style="width:9em">
+      <label class="hint" for="accent">Warna aksen</label><input type="color" id="accent" value="#7a1a2c">
+      <label class="hint" for="side">Teks di</label><select id="side" style="width:auto"><option value="left">kiri</option><option value="right">kanan</option></select>
+    </div>
+    <label class="row hint"><input type="checkbox" id="useClaude" checked> Tulis copy dulu dengan AI (Claude; bila saldo habis otomatis pakai OpenAI)</label>
     <button class="primary" id="btnGo">Buat semua gambar</button>
     <button id="btnStop" hidden>Stop</button>
     <div class="status" id="status" role="status"></div>
@@ -159,6 +165,10 @@ for (const id of ["engine", "variasi"]) $("#"+id).addEventListener("change", e =
 $("#variasi").value = store.get("variasi", "1");
 $("#quality").value = store.get("quality", "medium");
 $("#mirip").value = store.get("mirip", "pola");
+for (const id of ["brand", "accent", "side"]){ $("#"+id).value = store.get(id, $("#"+id).value); $("#"+id).addEventListener("change", e => store.set(id, e.target.value)) }
+$("#overlay").checked = store.get("overlay", true);
+$("#overlay").addEventListener("change", e => { store.set("overlay", e.target.checked); $("#ovOpts").hidden = !e.target.checked; if (e.target.checked) $("#useClaude").checked = true });
+$("#ovOpts").hidden = !$("#overlay").checked;
 $("#mirip").addEventListener("change", e => store.set("mirip", e.target.value));
 $("#quality").addEventListener("change", e => { store.set("quality", e.target.value); updateCount() });
 for (const id of ["a916", "a45", "a11"]) $("#"+id).addEventListener("change", updateCount);
@@ -204,13 +214,99 @@ const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;
 const fname = j => `${String(j.n).padStart(3,"0")}-${j.aspect.replace(":","x")}.png`;
 function download(url, name){ const a = document.createElement("a"); a.href = url; a.download = name; document.body.append(a); a.click(); a.remove() }
 
+// ---------- teks ditulis sistem di atas foto AI ----------
+const SZ = {"9:16": [1080,1920], "4:5": [1080,1350], "1:1": [1080,1080]};
+const SAFE = {"9:16": [.14,.80], "4:5": [.07,.93], "1:1": [.07,.93]};
+const ser = px => `${px}px "DM Serif Display", Georgia, serif`;
+const sans = (px, w=700) => `${w} ${px}px Montserrat, "Plus Jakarta Sans", sans-serif`;
+const hand = px => `600 ${px}px Caveat, cursive`;
+function wrapW(x, text, maxw){
+  const out = []; let cur = "";
+  for (const w of String(text||"").split(/\s+/).filter(Boolean)){ const t = cur ? cur+" "+w : w;
+    if (x.measureText(t).width <= maxw || !cur) cur = t; else { out.push(cur); cur = w } }
+  return cur ? [...out, cur] : out;
+}
+function rrect(x, a, b, w, h, r, fill){ x.beginPath(); x.roundRect(a, b, w, h, r); x.fillStyle = fill; x.fill() }
+function shade(hex, k){ const n = parseInt(hex.slice(1),16), f = c => Math.max(0, Math.min(255, Math.round(c*k)));
+  return `rgb(${f(n>>16&255)},${f(n>>8&255)},${f(n&255)})` }
+
+async function compose(url, c, aspect){
+  try { await Promise.all([ser(80), sans(40), hand(50)].map(f => document.fonts.load(f))) } catch {}
+  const img = await new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = url });
+  const [W, H] = SZ[aspect] || SZ["9:16"], cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+  const x = cv.getContext("2d"), acc = $("#accent").value || "#7a1a2c", cream = "#f7ecdd", left = $("#side").value !== "right";
+  const sc = Math.max(W/img.width, H/img.height); x.drawImage(img, (W-img.width*sc)/2, (H-img.height*sc)/2, img.width*sc, img.height*sc);
+  const g = x.createLinearGradient(left ? 0 : W, 0, left ? W*.62 : W*.38, 0);
+  g.addColorStop(0, "rgba(18,10,12,.82)"); g.addColorStop(.6, "rgba(18,10,12,.45)"); g.addColorStop(1, "rgba(18,10,12,0)");
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  const [st, sb] = SAFE[aspect] || SAFE["9:16"], m = W*.065, colW = W*.47, X = left ? m : W - m - colW;
+  let y = H*st; x.textBaseline = "top";
+
+  // headline serif, kata kunci di-highlight
+  const hl = String(c.highlight||"").toLowerCase().replace(/[^\p{L}\p{N}]/gu,"");
+  // ruang vertikal: headline mengecil sampai semua blok muat di atas CTA
+  const subPx = Math.round(W*.038), np = Math.round(W*.052), ph = Math.round(W*.085), pf = Math.round(ph*.34);
+  const pills = [c.pill_1, c.pill_2, c.pill_3].filter(Boolean), bottom = H*sb, ctaH = Math.round(H*.058);
+  x.font = sans(subPx, 800); const subL = c.sub ? wrapW(x, c.sub.toUpperCase(), colW) : [];
+  x.font = hand(np); const noteL = c.note ? wrapW(x, c.note, colW*.95) : [];
+  const fixedH = (subL.length ? subL.length*subPx*1.3 + subPx*.6 : 0) + (noteL.length ? noteL.length*np*1.05 + W*.05 : 0)
+               + pills.length*(ph+14) + ctaH + H*.04;
+  const room = bottom - y - fixedH;
+  let size = 150, L;
+  for (; size > 48; size -= 4){ x.font = ser(size); L = wrapW(x, String(c.headline||"").toUpperCase(), colW*1.04);
+    if (L.length <= 5 && L.length*size*1.02 + size*.25 <= room) break }
+  x.font = ser(size);
+  for (const line of L){
+    let cx = X;
+    for (const [i, w] of line.split(" ").entries()){
+      const word = (i ? " " : "") + w, ww = x.measureText(word).width;
+      if (hl && w.toLowerCase().replace(/[^\p{L}\p{N}]/gu,"") === hl){
+        const sp = i ? x.measureText(" ").width : 0;
+        x.save(); x.translate(cx + sp - size*.12, y + size*.08); x.rotate(-.015);
+        rrect(x, 0, 0, ww - sp + size*.24, size*1.02, size*.08, acc); x.restore();
+      }
+      x.fillStyle = cream; x.fillText(word, cx, y + size*.1); cx += ww;
+    }
+    y += size*1.02;
+  }
+  y += size*.25;
+  if (subL.length){ x.font = sans(subPx, 800); x.fillStyle = cream; for (const l of subL){ x.fillText(l, X, y); y += subPx*1.3 } y += subPx*.6 }
+  if (c.note){
+    x.save(); x.translate(X, y); x.rotate(-.05); x.font = hand(np); x.fillStyle = cream;
+    let yy = 0; for (const l of noteL){ x.fillText(l, 0, yy); yy += np*1.05 }
+    x.strokeStyle = cream; x.lineWidth = 3; x.beginPath(); x.moveTo(0, yy + 6); x.quadraticCurveTo(colW*.4, yy - 4, colW*.8, yy + 4); x.stroke();
+    x.restore(); y += yy + W*.05;
+  }
+  // pill manfaat
+  let py = y;
+  for (const t of pills){
+    x.font = sans(pf, 700); const tw = Math.min(colW - ph, x.measureText(t).width);
+    rrect(x, X, py, ph + 28 + tw + 28, ph, ph/2, "rgba(250,242,232,.93)");
+    x.beginPath(); x.arc(X + ph/2, py + ph/2, ph*.36, 0, Math.PI*2); x.fillStyle = acc; x.fill();
+    x.fillStyle = cream; x.font = sans(Math.round(ph*.4), 800); x.textAlign = "center"; x.fillText("✦", X + ph/2, py + ph*.3); x.textAlign = "left";
+    x.fillStyle = "#2a1a1d"; x.font = sans(pf, 700); x.fillText(t, X + ph + 28, py + (ph - pf)/2, colW - ph - 28);
+    py += ph + 14;
+  }
+  // brand + CTA
+  const brand = $("#brand").value.trim();
+  if (brand){ x.font = ser(Math.round(H*.045)); x.fillStyle = cream; x.fillText(brand.toUpperCase(), X, bottom - ctaH*.95) }
+  const cta = `${String(c.cta || "Pesan Sekarang").toUpperCase()}  →`; x.font = sans(Math.round(ctaH*.36), 700);
+  const cw = x.measureText(cta).width + ctaH*1.1, cxx = left ? W - m - cw : m, cy = bottom - ctaH;
+  const cg = x.createLinearGradient(cxx, cy, cxx + cw, cy + ctaH); cg.addColorStop(0, shade(acc, 1.25)); cg.addColorStop(1, shade(acc, .8));
+  x.save(); x.shadowColor = "rgba(0,0,0,.35)"; x.shadowBlur = 24; rrect(x, cxx, cy, cw, ctaH, ctaH/2, cg); x.restore();
+  x.fillStyle = cream; x.fillText(cta, cxx + ctaH*.55, cy + (ctaH - ctaH*.36)/2);
+  return URL.createObjectURL(await new Promise(r => cv.toBlob(r, "image/png")));
+}
+
 async function runOne(job){
   job.state = "run"; job.error = ""; paint(job);
   try {
     const r = await fetch("/api/batch", {method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({prompt: job.prompt, copy: job.copy, mirip: $("#mirip").value, note: $("#note").value, refs, aspect: job.aspect, engine: $("#engine").value, quality: $("#quality").value})});
+      body: JSON.stringify({prompt: job.prompt, copy: job.copy, overlay: $("#overlay").checked && !!job.copy, text_side: $("#side").value, mirip: $("#mirip").value, note: $("#note").value, refs, aspect: job.aspect, engine: $("#engine").value, quality: $("#quality").value})});
     const j = await r.json(); if (!r.ok) throw new Error(j.error || r.status);
-    job.url = j.url; job.state = "ok";
+    job.raw = j.url;
+    job.url = $("#overlay").checked && job.copy ? await compose(j.url, job.copy, job.aspect) : j.url;
+    job.state = "ok";
   } catch(e){ job.state = "err"; job.error = e.message }
   paint(job); progress();
 }
@@ -236,13 +332,19 @@ $("#btnGo").onclick = async () => {
   jobs = []; let n = 0;
   for (const p of briefs) for (let k = 0; k < v; k++) for (const a of asp) jobs.push({n: ++n, base: p, prompt: p + (v > 1 ? ` (variasi ${k+1}, buat berbeda dari variasi lain)` : ""), aspect: a, state: "wait"});
   $("#grid").replaceChildren(...jobs.map(card));
+  if ($("#overlay").checked) $("#useClaude").checked = true;
   if ($("#useClaude").checked){
     status("Claude menulis copy untuk tiap brief...");
     try {
       const r = await fetch("/api/copy", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({briefs, note: $("#note").value})});
       const j = await r.json(); if (!r.ok) throw new Error(j.error || r.status);
       for (const job of jobs) job.copy = j.items?.[briefs.indexOf(job.base)] || null;
-    } catch(e){ status(`Copy Claude gagal (${e.message.slice(0,120)}). Lanjut tanpa Claude: AI gambar menulis copy sendiri.`, true) }
+      for (const job of jobs) paint(job);
+      status(`Copy ditulis ${j.by || "AI"}. Membuat ${jobs.length} foto...`);
+    } catch(e){
+      if ($("#overlay").checked){ $("#btnGo").disabled = false; return status(`Gagal menulis copy: ${e.message.slice(0,200)}`, true) }
+      status(`Copy AI gagal (${e.message.slice(0,120)}). Lanjut: AI gambar menulis copy sendiri.`, true);
+    }
   }
   status(`Membuat ${jobs.length} gambar, 3 sekaligus...`); runAll(jobs);
 };

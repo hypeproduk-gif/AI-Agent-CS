@@ -200,6 +200,29 @@ def ai_scene(prompt, foto_path, raise_errors=False, influencer_path=None, scene_
         return None
 
 
+def openai_json(prompt, system="Reply with valid JSON only."):
+    """Teks JSON via OpenAI (cadangan bila saldo Anthropic habis)."""
+    key = os.environ.get("OPENAI_API_KEY")
+    if not key:
+        raise RuntimeError("API key OpenAI belum diisi.")
+    last = None
+    for model in [os.environ.get("OPENAI_TEXT_MODEL"), "gpt-4.1-mini", "gpt-4o-mini", "gpt-5-mini"]:
+        if not model:
+            continue
+        body = json.dumps({"model": model, "response_format": {"type": "json_object"},
+                           "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}]}).encode()
+        req = urllib.request.Request("https://api.openai.com/v1/chat/completions", body,
+                                     {"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+        try:
+            with urllib.request.urlopen(req, timeout=180) as r:
+                return json.loads(json.load(r)["choices"][0]["message"]["content"])
+        except urllib.error.HTTPError as e:
+            last = f"{model}: {e.code} {e.read().decode(errors='replace')[:200]}"
+            if e.code not in (400, 403, 404):
+                break
+    raise RuntimeError(f"OpenAI teks gagal ({last})")
+
+
 def _openai(parts, key, size="1024x1536", quality=None, model=None):
     """GPT Image (images/edits) dengan foto referensi influencer + produk."""
     model = model or os.environ.get("OPENAI_IMAGE_MODEL", "gpt-image-1.5")

@@ -212,7 +212,15 @@ MIRIP = {
 
 def batch_prompt(data, aspect, has_refs):
     note, brief, copy = data.get("note", "").strip(), data.get("prompt", "").strip(), data.get("copy") or {}
-    if copy:
+    if data.get("overlay"):
+        side = "left" if data.get("text_side", "left") == "left" else "right"
+        other = "right" if side == "left" else "left"
+        text_part = (f"Do NOT render ANY text, letters, numbers, logos, stickers or UI in the image: all text is added later. "
+                     f"Composition: put the person and the product in the {other} 58% of the frame; keep the {side} 42% a calm, "
+                     f"slightly darker, uncluttered continuation of the same scene (soft background) for the headline. "
+                     f"Product clearly visible with its real label facing the camera, copied exactly from the reference.")
+        scene = copy.get("scene") or brief
+    elif copy:
         label = {"headline": "Headline", "sub": "Sub line", "note": "Handwritten note", "pill_1": "Benefit pill 1",
                  "pill_2": "Benefit pill 2", "pill_3": "Benefit pill 3", "cta": "CTA button"}
         texts = "\n".join(f'- {label[k]}: "{copy[k]}"' for k in label if copy.get(k))
@@ -232,7 +240,7 @@ def batch_prompt(data, aspect, has_refs):
     else:
         head = "Create a finished Meta ad image for this idea:"
     return (f"{head}\n{scene}\n\n{text_part}\n\n" + (f"Extra notes: {note}\n\n" if note else "")
-            + f"Format: {aspect}. {SAFE_TEXT.get(aspect, '')} {TEXT_RULES}")
+            + (f"Format: {aspect}." if data.get("overlay") else f"Format: {aspect}. {SAFE_TEXT.get(aspect, '')} {TEXT_RULES}"))
 
 
 COPY_PROMPT = """Kamu copywriter iklan Meta Ads Indonesia. Ubah tiap ide/emosi di bawah menjadi copy untuk SATU gambar iklan
@@ -250,9 +258,16 @@ Balas JSON: {{"items":[{{"headline":"maks 5 kata","highlight":"1 kata dari headl
 def make_copy(data):
     ideas = data.get("briefs") or []
     note = data.get("note", "").strip()
-    r = g.call(COPY_PROMPT.format(ideas="\n".join(f"{i + 1}. {b}" for i, b in enumerate(ideas)),
-                                  note=f"Catatan produk/gaya: {note}" if note else ""), 8000, system="Balas hanya JSON valid.")
-    return {"items": r.get("items", [])}
+    prompt = COPY_PROMPT.format(ideas="\n".join(f"{i + 1}. {b}" for i, b in enumerate(ideas)),
+                                note=f"Catatan produk/gaya: {note}" if note else "")
+    try:
+        if not os.environ.get("ANTHROPIC_API_KEY"):
+            raise RuntimeError("no anthropic key")
+        r, by = g.call(prompt, 8000, system="Balas hanya JSON valid."), "Claude"
+    except (SystemExit, Exception) as e:  # saldo Anthropic habis / error -> pakai OpenAI
+        print(f"  copy via Claude gagal ({e}); pakai OpenAI", file=sys.stderr)
+        r, by = g.openai_json(prompt), "OpenAI"
+    return {"items": r.get("items", []), "by": by}
 
 
 def make_batch(data):
