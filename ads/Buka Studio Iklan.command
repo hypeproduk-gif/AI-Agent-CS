@@ -3,7 +3,8 @@
 cd "$(dirname "$0")"
 U=https://raw.githubusercontent.com/hypeproduk-gif/AI-Agent-CS/claude/zen-curie-gae18v/ads
 echo "Cek update..."
-for f in app.py generate.py web/studio-iklan.html "Buka Studio Iklan.command"; do
+mkdir -p web
+for f in app.py generate.py web/studio-iklan.html web/batch.html "Buka Studio Iklan.command"; do
   curl -fsSL "$U/${f// /%20}" -o "$f.new" && mv "$f.new" "$f" || rm -f "$f.new"
 done
 chmod +x "Buka Studio Iklan.command"

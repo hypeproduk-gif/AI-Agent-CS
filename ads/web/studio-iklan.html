@@ -81,6 +81,7 @@ label.upl:focus-within,label.upl:focus-visible{outline:2px solid var(--accent)}
 <header class="top">
   <h1>Studio Iklan Meta</h1>
   <span class="tag">BRIEF → 6 CEP × 15 ANGLE → 9:16 + 4:5 + COPY + HEADLINE</span>
+  <a href="/" id="batchLink" hidden style="color:var(--muted);font-size:14px">← Batch Gambar (simpel)</a>
 </header>
 
 <div class="wrap">
@@ -787,6 +788,7 @@ function showKeys(st){
   if (plan) $("#btnGen").disabled = !a;
 }
 async function bootLocal(){
+  $("#batchLink").hidden = false;
   $("#autoAiRow").hidden = $("#infl").hidden = $("#inflLbl").hidden = $("#refBox").hidden = false;
   drawRefs();
   sample = { json: async (prompt, opts={}) => {

@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Batch Gambar Iklan</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Plus+Jakarta+Sans:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+/* Layout: kiri = input (brief, referensi, opsi), kanan = galeri hasil; di HP menumpuk. */
+:root{
+  --bg:#f6f4f1; --panel:#ffffff; --ink:#1d1a1f; --muted:#6c6570; --line:#e3ded8;
+  --accent:#d6402b; --accent-ink:#ffffff; --chip:#efeae4; --ok:#2f7d4f;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#151316; --panel:#1f1c21; --ink:#f1ede8; --muted:#a59da8; --line:#34303a;
+  --accent:#f0603f; --accent-ink:#1a0f0c; --chip:#2a262e; --ok:#5fc48a; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;padding:20px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px))}
+header{max-width:1320px;margin:0 auto 18px;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between}
+h1{font-family:var(--display);font-size:clamp(28px,4vw,40px);letter-spacing:-.02em;margin:0}
+header a{color:var(--muted);font-size:14px}
+.wrap{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:900px){.wrap{grid-template-columns:minmax(0,1fr)}}
+aside{display:flex;flex-direction:column;gap:14px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.box h2{font-family:var(--display);font-size:18px;margin:0}
+label.lbl{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+textarea,input[type=text],select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+textarea{resize:vertical}
+#briefs{min-height:260px;font-size:14px}
+#note{min-height:80px;font-size:14px}
+textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:inherit;font-weight:700;border-radius:10px;border:1px solid var(--line);background:var(--chip);color:var(--ink);padding:9px 14px;cursor:pointer}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent;font-size:16px;padding:13px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.hint{font-size:13px;color:var(--muted)}
+.status{font-family:var(--mono);font-size:12.5px;color:var(--muted);white-space:pre-wrap}
+.status.err{color:var(--accent)}
+.thumbs{display:flex;gap:6px;flex-wrap:wrap}
+.thumbs img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg label{display:flex;gap:6px;align-items:center;font-weight:600;font-size:14px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;cursor:pointer}
+main{min-width:0;display:flex;flex-direction:column;gap:14px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));gap:14px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.item .pic{background:var(--chip);display:grid;place-items:center;color:var(--muted);font-size:13px;padding:0}
+.item img{width:100%;height:auto;display:block}
+.item .ph{aspect-ratio:9/16;display:grid;place-items:center;width:100%;font-family:var(--mono);font-size:12px;text-align:center;padding:12px}
+.item .ph.r45{aspect-ratio:4/5}
+.item .meta{padding:8px 10px;display:flex;flex-direction:column;gap:6px}
+.item p{margin:0;font-size:12.5px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.mini{font-size:12px;padding:4px 9px}
+.err{color:var(--accent)}
+.empty{border:1.5px dashed var(--line);border-radius:14px;padding:28px;color:var(--muted);text-align:center}
+#keysBox[hidden]{display:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>Batch Gambar Iklan</h1>
+  <a href="/studio">Buka Studio lengkap (CEP × angle + copy) →</a>
+</header>
+<div class="wrap">
+<aside>
+  <section class="box" id="keysBox" hidden>
+    <h2>API key gambar</h2>
+    <span class="hint">Isi salah satu. OpenAI = mesin yang sama dengan ChatGPT (platform.openai.com/api-keys).</span>
+    <label class="lbl" for="kOa">OpenAI</label><input type="text" id="kOa" autocomplete="off">
+    <label class="lbl" for="kOr">OpenRouter (Nano Banana)</label><input type="text" id="kOr" autocomplete="off">
+    <button id="btnKeys">Simpan key</button>
+  </section>
+
+  <section class="box">
+    <h2>1 · Brief gambar</h2>
+    <label class="lbl" for="briefs">Satu brief per baris (atau pisahkan brief panjang dengan baris kosong)</label>
+    <textarea id="briefs" placeholder="Contoh:
+Wanita 25 tahun selfie di kamar pagi hari memegang serum dari gambar referensi, teks besar di atas: &quot;Bekas jerawat 2 tahun? Mulai pudar&quot;
+Flat lay 2 botol serum + pouch di meja rias putih, badge kuning &quot;BELI 1 GRATIS 1&quot;
+Close-up tangan meneteskan serum ke punggung tangan, cahaya pagi"></textarea>
+    <label class="lbl" for="note">Catatan untuk semua gambar (opsional)</label>
+    <textarea id="note" placeholder="Mis. gaya UGC TikTok, foto iPhone natural. Produk = gambar referensi 1, wajah model = gambar referensi 2, ikuti gaya gambar referensi 3."></textarea>
+  </section>
+
+  <section class="box">
+    <h2>2 · Gambar referensi</h2>
+    <span class="hint">Foto produk, wajah model, atau creative winning untuk ditiru gayanya. Urutannya = gambar referensi 1, 2, 3…</span>
+    <input type="file" id="refs" accept="image/*" multiple aria-label="Gambar referensi">
+    <div class="thumbs" id="thumbs"></div>
+  </section>
+
+  <section class="box">
+    <h2>3 · Opsi</h2>
+    <label class="lbl">Ukuran</label>
+    <div class="seg">
+      <label><input type="checkbox" id="a916" checked> 9:16 (Reels/Story)</label>
+      <label><input type="checkbox" id="a45"> 4:5 (Feed)</label>
+      <label><input type="checkbox" id="a11"> 1:1</label>
+    </div>
+    <label class="lbl" for="variasi">Variasi per brief</label>
+    <select id="variasi"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+    <label class="lbl" for="engine">Mesin</label>
+    <select id="engine">
+      <option value="gpt">GPT Image (ChatGPT): rapi, teks akurat</option>
+      <option value="nano">Nano Banana (Gemini): paling realistis</option>
+      <option value="auto">Otomatis</option>
+    </select>
+    <button class="primary" id="btnGo">Buat semua gambar</button>
+    <button id="btnStop" hidden>Stop</button>
+    <div class="status" id="status" role="status"></div>
+  </section>
+</aside>
+
+<main>
+  <div class="bar">
+    <span class="hint" id="count">Belum ada gambar.</span>
+    <div class="row">
+      <button id="btnRetry" hidden>Ulangi yang gagal</button>
+      <button id="btnZip" disabled>Download semua (ZIP)</button>
+    </div>
+  </div>
+  <div class="grid" id="grid"><div class="empty">Tulis brief di kiri, upload referensi, lalu klik <b>Buat semua gambar</b>. Hasilnya muncul di sini satu per satu.</div></div>
+</main>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem("batch:"+k); return v ? JSON.parse(v) : d }catch{ return d } },
+  set(k, v){ try{ localStorage.setItem("batch:"+k, JSON.stringify(v)) }catch{} }
+};
+let refs = store.get("refs", []), jobs = [], stop = false;
+const COST = {gpt: .25, nano: .04, auto: .25};
+
+for (const id of ["briefs", "note"]){ $("#"+id).value = store.get(id, ""); $("#"+id).addEventListener("input", e => store.set(id, e.target.value)) }
+$("#engine").value = store.get("engine", "gpt");
+for (const id of ["engine", "variasi"]) $("#"+id).addEventListener("change", e => { store.set(id, e.target.value); updateCount() });
+$("#variasi").value = store.get("variasi", "1");
+for (const id of ["a916", "a45", "a11"]) $("#"+id).addEventListener("change", updateCount);
+$("#briefs").addEventListener("input", updateCount);
+
+function parseBriefs(){
+  const t = $("#briefs").value.trim(); if (!t) return [];
+  const blocks = t.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
+  return blocks.length > 1 ? blocks : t.split("\n").map(l => l.trim()).filter(Boolean);
+}
+const aspects = () => [["a916","9:16"],["a45","4:5"],["a11","1:1"]].filter(([id]) => $("#"+id).checked).map(a => a[1]);
+function updateCount(){
+  const n = parseBriefs().length * aspects().length * +$("#variasi").value;
+  $("#btnGo").textContent = n ? `Buat ${n} gambar (±US$${(n*COST[$("#engine").value]).toFixed(2)})` : "Buat semua gambar";
+}
+
+function shrink(file, max=1024){
+  return new Promise((ok, no) => { const i = new Image(); i.onload = () => {
+    const s = Math.min(1, max/Math.max(i.width, i.height)), cv = document.createElement("canvas");
+    cv.width = Math.round(i.width*s); cv.height = Math.round(i.height*s);
+    cv.getContext("2d").drawImage(i, 0, 0, cv.width, cv.height);
+    ok(cv.toDataURL(file.type === "image/png" ? "image/png" : "image/jpeg", .9));
+  }; i.onerror = no; i.src = URL.createObjectURL(file) });
+}
+function drawRefs(){ $("#thumbs").replaceChildren(...refs.map((u, k) => { const t = new Image(); t.src = u; t.alt = `Referensi ${k+1}`; t.title = `Gambar referensi ${k+1}`; return t })) }
+$("#refs").onchange = async e => { refs = await Promise.all([...e.target.files].slice(0,6).map(f => shrink(f))); store.set("refs", refs); drawRefs() };
+
+const status = (t, err=false) => { $("#status").textContent = t; $("#status").classList.toggle("err", err) };
+
+function card(job){
+  const el = document.createElement("article"); el.className = "item";
+  job.el = el; paint(job); return el;
+}
+function paint(job){
+  const ph = `<div class="ph ${job.aspect === "4:5" ? "r45" : ""}">${job.state === "run" ? "Membuat gambar..." : job.state === "err" ? `<span class="err">Gagal: ${esc(job.error)}</span>` : "Antre"}</div>`;
+  job.el.innerHTML = `<div class="pic">${job.url ? `<img src="${job.url}" alt="">` : ph}</div>
+    <div class="meta"><p>${esc(job.n)}. [${job.aspect}] ${esc(job.prompt)}</p>
+    <div class="row">${job.url ? `<button class="mini" data-dl>Download</button>` : ""}<button class="mini" data-redo ${job.state === "run" ? "disabled" : ""}>${job.url ? "Buat ulang" : "Coba lagi"}</button></div></div>`;
+  job.el.querySelector("[data-dl]")?.addEventListener("click", () => download(job.url, fname(job)));
+  job.el.querySelector("[data-redo]").onclick = () => { job.url = null; runAll([job]) };
+}
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fname = j => `${String(j.n).padStart(3,"0")}-${j.aspect.replace(":","x")}.png`;
+function download(url, name){ const a = document.createElement("a"); a.href = url; a.download = name; document.body.append(a); a.click(); a.remove() }
+
+async function runOne(job){
+  job.state = "run"; job.error = ""; paint(job);
+  try {
+    const r = await fetch("/api/batch", {method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({prompt: job.prompt, note: $("#note").value, refs, aspect: job.aspect, engine: $("#engine").value})});
+    const j = await r.json(); if (!r.ok) throw new Error(j.error || r.status);
+    job.url = j.url; job.state = "ok";
+  } catch(e){ job.state = "err"; job.error = e.message }
+  paint(job); progress();
+}
+async function runAll(list){
+  stop = false; $("#btnGo").disabled = true; $("#btnStop").hidden = false; $("#btnRetry").hidden = true;
+  const queue = [...list], workers = Array.from({length: 3}, async () => {   // 3 gambar sekaligus
+    while (queue.length && !stop) await runOne(queue.shift());
+  });
+  await Promise.all(workers);
+  $("#btnGo").disabled = false; $("#btnStop").hidden = true; progress(true);
+}
+function progress(done){
+  const ok = jobs.filter(j => j.state === "ok").length, err = jobs.filter(j => j.state === "err").length;
+  $("#count").textContent = `${ok}/${jobs.length} gambar jadi` + (err ? ` · ${err} gagal` : "");
+  $("#btnZip").disabled = !ok; $("#btnRetry").hidden = !err || !done;
+  if (done) status(err ? `Selesai dengan ${err} gagal. Contoh error: ${jobs.find(j => j.state === "err").error}` : "Selesai. Klik Download semua (ZIP).", !!err);
+}
+
+$("#btnGo").onclick = () => {
+  const briefs = parseBriefs(), asp = aspects(), v = +$("#variasi").value;
+  if (!briefs.length) return status("Tulis minimal 1 brief.", true);
+  if (!asp.length) return status("Pilih minimal 1 ukuran.", true);
+  jobs = []; let n = 0;
+  for (const p of briefs) for (let k = 0; k < v; k++) for (const a of asp) jobs.push({n: ++n, prompt: p + (v > 1 ? ` (variasi ${k+1}, buat berbeda dari variasi lain)` : ""), aspect: a, state: "wait"});
+  $("#grid").replaceChildren(...jobs.map(card));
+  status(`Membuat ${jobs.length} gambar, 3 sekaligus...`); runAll(jobs);
+};
+$("#btnStop").onclick = () => { stop = true; status("Berhenti setelah gambar yang sedang dibuat selesai.") };
+$("#btnRetry").onclick = () => runAll(jobs.filter(j => j.state === "err"));
+$("#btnZip").onclick = async () => {
+  $("#btnZip").disabled = true; status("Menyusun ZIP...");
+  const zip = new JSZip();
+  for (const j of jobs.filter(j => j.url)) zip.file(fname(j), await (await fetch(j.url)).blob());
+  zip.file("brief.txt", jobs.map(j => `${fname(j)}\t${j.prompt}`).join("\n"));
+  const blob = await zip.generateAsync({type: "blob"}), url = URL.createObjectURL(blob);
+  download(url, `gambar-iklan-${new Date().toISOString().slice(0,10)}.zip`);
+  $("#btnZip").disabled = false; status("ZIP tersimpan di folder Downloads.");
+};
+
+async function keys(){
+  try {
+    const st = await (await fetch("/api/status")).json();
+    $("#keysBox").hidden = !!(st.OPENAI_API_KEY || st.OPENROUTER_API_KEY || st.GEMINI_API_KEY);
+    if (!st.OPENAI_API_KEY && $("#engine").value === "gpt") status("Key OpenAI belum diisi.", true);
+  } catch { status("Server lokal tidak menjawab. Klik dua kali Buka Studio Iklan.command.", true) }
+}
+$("#btnKeys").onclick = async () => {
+  await fetch("/api/keys", {method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({OPENAI_API_KEY: $("#kOa").value.trim(), OPENROUTER_API_KEY: $("#kOr").value.trim()})});
+  $("#kOa").value = $("#kOr").value = ""; status("Key tersimpan."); keys();
+};
+drawRefs(); updateCount(); keys();
+</script>
+</body>
+</html>

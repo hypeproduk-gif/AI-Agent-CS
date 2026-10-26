@@ -5,7 +5,7 @@
 
 API key diisi lewat halaman web (disimpan di ads/.env, tidak ikut ter-commit).
 """
-import base64, json, os, re, sys, threading, traceback, uuid, webbrowser
+import base64, json, os, re, sys, threading, time, traceback, uuid, webbrowser
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -15,6 +15,7 @@ import generate as g  # noqa: E402
 
 ENV = ROOT / ".env"
 PAGE = ROOT / "web" / "studio-iklan.html"
+BATCH = ROOT / "web" / "batch.html"
 PORT = int(os.environ.get("PORT", 8765))
 KEYS = ("ANTHROPIC_API_KEY", "GEMINI_API_KEY", "OPENROUTER_API_KEY", "OPENAI_API_KEY")
 
@@ -48,8 +49,8 @@ class Handler(SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
-        if self.path in ("/", "/index.html"):
-            body = PAGE.read_bytes()
+        if self.path in ("/", "/index.html", "/studio"):
+            body = (PAGE if self.path == "/studio" else BATCH).read_bytes()
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))
@@ -85,6 +86,8 @@ class Handler(SimpleHTTPRequestHandler):
                 return self.send_json(save_upload(data))
             if self.path == "/api/style":
                 return self.send_json(analyze_style(data))
+            if self.path == "/api/batch":
+                return self.send_json(make_batch(data))
             if self.path == "/api/creative":
                 return self.send_json(make_creative(data))
             if self.path == "/api/image":
@@ -180,6 +183,32 @@ def make_creative(data):
     name = f"{data.get('id', uuid.uuid4().hex)[:12]}-{fmt}-{uuid.uuid4().hex[:6]}.png"
     img.crop((l, t, l + W, t + H)).save(out / name)
     return {"url": f"/output/{slug}/final/{name}"}
+
+
+SIZES = {"9:16": (1080, 1920), "4:5": (1080, 1350), "1:1": (1080, 1080)}
+
+
+def make_batch(data):
+    """Satu gambar dari satu brief + gambar referensi bebas (produk/model/gaya). Tanpa Claude."""
+    out = g.OUT / "batch"
+    out.mkdir(parents=True, exist_ok=True)
+    tmp = out / "_refs"
+    tmp.mkdir(exist_ok=True)
+    refs = [p for i, u in enumerate((data.get("refs") or [])[:6]) if (p := _dump(u, tmp / f"ref{i}"))]
+    aspect = data.get("aspect", "9:16")
+    note = data.get("note", "").strip()
+    prompt = (f"{note}\n\n" if note else "") + data.get("prompt", "") + (
+        f"\n\nVertical {aspect} image. Reference images are attached in order; follow what the text says about them "
+        "(e.g. use the product exactly as shown, keep the person's face, copy the visual style). "
+        "Any on-image text must be spelled exactly as written in the brief.")
+    img = g.ai_creative(prompt, [str(p) for p in refs], aspect, data.get("engine", "auto"))
+    W, H = SIZES.get(aspect, (1080, 1920))
+    s = max(W / img.width, H / img.height)
+    img = img.resize((round(img.width * s), round(img.height * s)))
+    l, t = (img.width - W) // 2, (img.height - H) // 2
+    name = f"{time.strftime('%m%d-%H%M%S')}-{uuid.uuid4().hex[:6]}-{aspect.replace(':', 'x')}.png"
+    img.crop((l, t, l + W, t + H)).save(out / name)
+    return {"url": f"/output/batch/{name}"}
 
 
 def make_image(data):
