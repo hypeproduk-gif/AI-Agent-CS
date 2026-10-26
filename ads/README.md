@@ -4,7 +4,7 @@ Brief produk → 6 CEP × 15 angle psikologi = **90 creative unik** (gambar **9:
 
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
-export OPENAI_API_KEY=sk-...        # opsional: foto scene AI sebagai background
+export GEMINI_API_KEY=...           # opsional: foto scene UGC dari foto produk asli (aistudio.google.com)
 python3 ads/generate.py ads/briefs/contoh-salglow.txt --foto produk.png --jumlah 15
 # hemat: CEP tertentu saja, atau angle tertentu:
 python3 ads/generate.py ads/briefs/x.txt --foto x.png --cep 1,3
@@ -36,3 +36,9 @@ izin (BPOM/Halal), garansi/bonus, dan **larangan klaim**. Testimoni tidak akan d
 Tanpa `--foto`, gambar berisi kotak **[PRODUK ASLI]** sebagai slot foto produk asli (tempel di Canva/CapCut).
 Setiap creative juga punya **brief visual** untuk tim konten; bagian bertanda [PRODUK ASLI] wajib pakai foto/video produk asli.
 Foto produk PNG transparan (remove.bg) memberi hasil paling rapi.
+
+## Gambar AI (Gemini / Nano Banana)
+Dengan `GEMINI_API_KEY` + `--foto`, foto produk asli dikirim sebagai referensi dan Gemini membuat foto **gaya UGC**
+(iPhone, cahaya natural, orang & setting Indonesia) di momen CEP, dengan produk asli dipegang/dipakai — bukan produk karangan.
+Tanpa `--foto`, scene dibuat tanpa produk dan muncul slot [PRODUK ASLI].
+Model default `gemini-2.5-flash-image`; untuk kualitas lebih tinggi: `export IMAGE_MODEL=gemini-3-pro-image-preview`.

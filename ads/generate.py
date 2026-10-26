@@ -3,7 +3,7 @@
 
   python3 ads/generate.py ads/briefs/produk.txt --foto foto.png [--jumlah 15] [--cep 1,3] [--angle fomo,regret]
 
-Env: ANTHROPIC_API_KEY (wajib), OPENAI_API_KEY (opsional, untuk foto scene AI).
+Env: ANTHROPIC_API_KEY (wajib), GEMINI_API_KEY (opsional, foto scene UGC dari foto produk asli).
 """
 import argparse, base64, csv, io, json, os, re, sys, urllib.request
 from pathlib import Path
@@ -72,7 +72,7 @@ SCHEMA = """Balas HANYA JSON valid:
    "comparison": {"them_label": "", "them": ["","",""], "us_label": "", "us": ["","",""]},
    "palette": {"bg1": "#hex", "bg2": "#hex", "accent": "#hex", "text": "#hex"},
    "visual_brief": "arahan foto/video untuk tim konten (Indonesia): momen CEP, setting, pose, properti. Tulis [PRODUK ASLI] di setiap bagian yang WAJIB pakai foto/video produk asli (dipegang, dipakai, dites, teksturnya, kemasannya)",
-   "image_prompt": "English, photoreal scene for this angle, vertical, no text, no logos, leave empty space top",
+   "image_prompt": "English: UGC photo of the exact CEP moment for this angle (who, where, time of day, emotion, what they do with the product). For transformation/demonstration show the product in use. No text.",
    "primary_text": "versi panjang",
    "primary_text_short": "versi ≤125 karakter",
    "headlines": ["","",""],
@@ -113,17 +113,37 @@ def plan_cep(brief, strategy, cep, n, avoid, angles=None):
     return out
 
 
-def ai_scene(prompt, fmt):
-    key = os.environ.get("OPENAI_API_KEY")
+UGC_STYLE = ("Authentic UGC smartphone photo, shot on iPhone, natural window light, slightly imperfect framing, "
+             "real Indonesian person and real everyday setting, not a studio ad, no text, no captions, no watermark. "
+             "Keep the top 30% of the frame visually calm (wall, sky, soft blur) for headline text.")
+
+
+def ai_scene(prompt, foto_path):
+    """Foto scene UGC via Gemini (Nano Banana). Foto produk asli dikirim sebagai referensi agar produk tidak dikarang."""
+    key = os.environ.get("GEMINI_API_KEY")
     if not key:
         return None
-    size = "1024x1536"
-    body = json.dumps({"model": os.environ.get("IMAGE_MODEL", "gpt-image-1"), "prompt": prompt, "size": size, "n": 1}).encode()
-    req = urllib.request.Request("https://api.openai.com/v1/images/generations", body, {
-        "Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+    if foto_path:
+        ins = ("Use the product in the reference image EXACTLY as it is (same shape, color, label, logo; do not redesign or add text to it). "
+               "Place it naturally in the scene, held or used by the person or on a surface, clearly visible in the middle of the frame. ")
+    else:
+        ins = "Do NOT show any product, packaging, or brand. Leave clear empty space in the middle of the frame. "
+    parts = [{"text": f"{prompt}\n\n{ins}{UGC_STYLE}"}]
+    if foto_path:
+        mime = "image/png" if foto_path.lower().endswith(".png") else "image/jpeg"
+        parts.append({"inline_data": {"mime_type": mime, "data": base64.b64encode(Path(foto_path).read_bytes()).decode()}})
+    model = os.environ.get("IMAGE_MODEL", "gemini-2.5-flash-image")
+    body = json.dumps({"contents": [{"parts": parts}], "generationConfig": {
+        "responseModalities": ["IMAGE"], "imageConfig": {"aspectRatio": "9:16"}}}).encode()
+    req = urllib.request.Request(f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent", body,
+                                 {"x-goog-api-key": key, "Content-Type": "application/json"})
     try:
         with urllib.request.urlopen(req, timeout=300) as r:
-            return Image.open(io.BytesIO(base64.b64decode(json.load(r)["data"][0]["b64_json"]))).convert("RGB")
+            for part in json.load(r)["candidates"][0]["content"]["parts"]:
+                data = part.get("inline_data") or part.get("inlineData")
+                if data:
+                    return Image.open(io.BytesIO(base64.b64decode(data["data"]))).convert("RGB")
+        raise ValueError("respons tanpa gambar")
     except Exception as e:
         print(f"  ! gambar AI gagal ({e}), pakai background gradien", file=sys.stderr)
         return None
@@ -225,6 +245,8 @@ def paste_product(canvas, foto, box):
 
 
 def render(c, fmt, foto, scene):
+    # produk sudah ada di foto scene (dari referensi) -> jangan tempel lagi
+    put = (lambda box: None) if scene and foto else (lambda box: paste_product(canvas, foto, box))
     W, H = SIZES[fmt]
     pal = c.get("palette", {})
     bg1, bg2 = hexrgb(pal.get("bg1"), (30, 30, 60)), hexrgb(pal.get("bg2"), (10, 10, 20))
@@ -265,7 +287,7 @@ def render(c, fmt, foto, scene):
             ft, ls, lh2 = fit(d, t, half - 56, (body_bottom - y) * 0.45, 44, bold=False)
             draw_lines(d, ls, ft, lh2, x + 28, y + 90, half - 56, ink(col), "left", False)
         if True:
-            paste_product(canvas, foto, (m + half - 140, body_bottom - 380, m + half + 160, body_bottom - 20))
+            put((m + half - 140, body_bottom - 380, m + half + 160, body_bottom - 20))
     elif layout == "comparison" and c.get("comparison", {}).get("us"):
         cp = c["comparison"]; half = (cw - 20) / 2
         for i, (lab, items, mark, col) in enumerate([(cp.get("them_label", "Yang lain"), cp.get("them", []), "×", (60, 60, 60)),
@@ -285,11 +307,11 @@ def render(c, fmt, foto, scene):
         ft, ls, lh2 = fit(d, f"“{q['text']}”", cw - 80, card_b - y - 200, 56, bold=True)
         yy = draw_lines(d, ls, ft, lh2, m + 40, y + 110, cw - 80, (25, 25, 25), "left", False)
         d.text((m + 40, yy + 16), f"— {q.get('name', '')}", font=font(36, False), fill=(90, 90, 90))
-        paste_product(canvas, foto, (m, card_b + 20, W - m, body_bottom))
+        put((m, card_b + 20, W - m, body_bottom))
     else:  # hero
         bl = [b for b in c.get("bullets", []) if b][:3]
         bl_h = len(bl) * 78
-        paste_product(canvas, foto, (m, y, W - m, body_bottom - bl_h - 20))
+        put((m, y, W - m, body_bottom - bl_h - 20))
         yy = body_bottom - bl_h
         for b in bl:
             pill(d, W / 2, yy, f"✓ {b}", font(36, False), (0, 0, 0, 150), (255, 255, 255), (30, 14))
@@ -307,7 +329,7 @@ def main():
     ap.add_argument("--jumlah", type=int, default=15, help="creative per CEP")
     ap.add_argument("--cep", help="hanya CEP tertentu, mis. 1,3 (default: semua 6)")
     ap.add_argument("--angle", help="batasi angle psikologi, pisah koma (mis. fomo,regret_trigger,value_shock)")
-    ap.add_argument("--no-ai-image", action="store_true", help="jangan generate scene AI walau OPENAI_API_KEY ada")
+    ap.add_argument("--no-ai-image", action="store_true", help="jangan generate scene AI walau GEMINI_API_KEY ada")
     ap.add_argument("--dari-json", help="render ulang dari plan.json tanpa memanggil Claude")
     a = ap.parse_args()
 
@@ -340,7 +362,7 @@ def main():
         cep = c.get("cep") or "cep"
         count[cep] = count.get(cep, 0) + 1
         print(f"[{i}/{len(plan['creatives'])}] {c.get('angle')} ({c.get('layout')})")
-        scene = None if a.no_ai_image else ai_scene(c.get("image_prompt", ""), "9x16")
+        scene = None if a.no_ai_image else ai_scene(c.get("image_prompt", ""), a.foto)
         files = []
         for fmt in SIZES:
             p = out / f"{cep}-{count[cep]:02d}-{fmt}.png"
