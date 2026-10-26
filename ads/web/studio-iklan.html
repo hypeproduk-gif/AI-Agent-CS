@@ -315,12 +315,7 @@ function render(cv, c, fmt, idx){
   const ai = c.scene_url && scenes[c.scene_url];
   const scene = ai || (lifes.length ? lifes[idx % lifes.length] : null);
   const skipProduct = ai ? c.scene_has_product : scene && $("#lifeHasProduct").checked;
-  if (scene){
-    cover(x, scene, W, H);
-    const g = x.createLinearGradient(0,0,0,H);
-    g.addColorStop(0,"rgba(0,0,0,.7)"); g.addColorStop(.35,"rgba(0,0,0,.1)"); g.addColorStop(.62,"rgba(0,0,0,.1)"); g.addColorStop(1,"rgba(0,0,0,.75)");
-    x.fillStyle = g; x.fillRect(0,0,W,H);
-  } else {
+  if (scene){ cover(x, scene, W, H); return renderUGC(x, c, fmt, W, H, acc) } else {
     const g = x.createLinearGradient(0,0,0,H); g.addColorStop(0,bg1); g.addColorStop(1,bg2); x.fillStyle = g; x.fillRect(0,0,W,H);
   }
   const put = box => { if (!skipProduct) product(x, box) };
@@ -365,6 +360,37 @@ function render(cv, c, fmt, idx){
   pill(x, W/2, bottom - ctaH, `${c.cta || "Pesan Sekarang"} →`, 50, acc, inkOn(acc), 60, 26);
 }
 
+// Foto sebagai background: gaya native UGC (caption ala TikTok/Reels), foto tetap jadi bintang.
+function caption(x, text, size, cx, y, maxw, bg="#ffffff", fg="#111111"){
+  x.font = F(size); const L = wrap(x, text, maxw), lh = Math.round(size*1.32), pad = size*.32;
+  for (const l of L){
+    const w = x.measureText(l).width;
+    rr(x, cx - w/2 - pad, y, cx + w/2 + pad, y + lh, size*.22, bg);
+    x.fillStyle = fg; x.textBaseline = "middle"; x.fillText(l, cx - w/2, y + lh/2 + size*.04);
+    y += lh;
+  }
+  return y;
+}
+function renderUGC(x, c, fmt, W, H, acc){
+  const [st, sb] = SAFE[fmt], top = H*st, bottom = H*(1-sb), m = 80, cw = W - 2*m;
+  const g = x.createLinearGradient(0, bottom - 320, 0, H);
+  g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(1, "rgba(0,0,0,.55)");
+  x.fillStyle = g; x.fillRect(0, bottom - 320, W, H);
+  let size = fmt === "9x16" ? 64 : 58;
+  x.font = F(size); while (size > 40 && wrap(x, c.hook, cw).length > 3){ size -= 4; x.font = F(size) }
+  caption(x, c.hook, size, W/2, top, cw);
+  let y = bottom - 110;
+  if (c.layout === "testimonial" && c.quote?.text){
+    x.font = F(34, 600); const L = wrap(x, `“${c.quote.text}”`, cw - 60).slice(0, 3), h = 80 + L.length*44;
+    rr(x, m, y - h - 30, W - m, y - 30, 24, "rgba(255,255,255,.93)");
+    x.font = F(30); x.fillStyle = "#ffb000"; x.textBaseline = "top"; x.fillText("★★★★★", m + 30, y - h - 6);
+    x.font = F(34, 600); x.fillStyle = "#111"; L.forEach((l, i) => x.fillText(l, m + 30, y - h + 40 + i*44));
+    y -= h + 50;
+  }
+  if (c.badge){ pill(x, W/2, y - 70, c.badge.toUpperCase(), 32, "#ffffff", "#111111", 28, 14) }
+  pill(x, W/2, bottom - 96, `${c.cta || "Pesan Sekarang"} →`, 44, acc, inkOn(acc), 52, 22);
+}
+
 // ---------- Claude ----------
 const status = (t, err=false) => { $("#status").textContent = t; $("#status").classList.toggle("err", err) };
 const ERR = {not_granted:"Akses ke Claude ditolak. Muat ulang halaman lalu izinkan.", rate_limited:"Terlalu banyak permintaan. Tunggu sebentar lalu coba lagi.",
@@ -400,6 +426,7 @@ $("#btnGen").onclick = async () => {
   const ceps = plan.strategy.ceps.filter(c => pickedCeps.has(c.id));
   if (!angles.length || !ceps.length) return status("Pilih minimal 1 angle dan 1 CEP.", true);
   const brief = $("#brief").value.trim(), hist = store.get("hooks", []);
+  aiFails = [];
   $("#btnGen").disabled = $("#btnStrategy").disabled = true;
   try {
     for (const cep of ceps){
@@ -421,14 +448,14 @@ Balas hanya JSON dengan bentuk:\n${CREATIVE_SHAPE}`);
         if (LOCAL && $("#autoAi").checked && keyState.GEMINI_API_KEY){
           for (const [k, c] of fresh.entries()){
             status(`${$("#status").dataset.base} · foto AI ${k+1}/${fresh.length}...`);
-            try { await aiScene(c) } catch(err){ status(`Foto AI gagal: ${err.message}`, true) }
+            try { await aiScene(c) } catch(err){ aiFails.push(err.message) }
             if (ctl?.signal.aborted) throw {code:"cancelled"};
           }
           drawMain();
         }
       }
     }
-    status(`Selesai. ${plan.creatives.length} creative.`);
+    status(`Selesai. ${plan.creatives.length} creative.` + (aiFails.length ? `\nFoto AI gagal ${aiFails.length}x: ${aiFails[0]}` : ""), aiFails.length > 0);
   } catch(e){ status(errText(e), e?.code !== "cancelled") }
   finally { $("#btnGen").disabled = $("#btnStrategy").disabled = false; $("#btnZip").disabled = !plan.creatives.length }
 };
@@ -549,7 +576,7 @@ $("#btnZip").onclick = async () => {
 };
 
 // ---------- mode lokal (python3 ads/app.py) ----------
-let keyState = {};
+let keyState = {}, aiFails = [];
 function showKeys(st){
   keyState = st;
   const a = st.ANTHROPIC_API_KEY, g = st.GEMINI_API_KEY;
