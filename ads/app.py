@@ -148,14 +148,15 @@ Balas JSON:
 
 def make_creative(data):
     """Creative utuh bergaya referensi: referensi gaya + produk asli + (opsional) wajah influencer."""
+    rid = uuid.uuid4().hex[:8]  # nama file unik: beberapa gambar dibuat bersamaan
     slug = _slug(data)
     out = g.OUT / slug / "final"
     out.mkdir(parents=True, exist_ok=True)
     tmp = g.OUT / slug / "refs"
     tmp.mkdir(parents=True, exist_ok=True)
-    refs = [p for i, u in enumerate((data.get("refs") or [])[:3]) if (p := _dump(u, tmp / f"style{i}"))]
-    prod = _dump(data.get("foto"), tmp / "produk")
-    face = _dump(data.get("influencer"), tmp / "influencer") if data.get("show_face", True) else None
+    refs = [p for i, u in enumerate((data.get("refs") or [])[:3]) if (p := _dump(u, tmp / f"{rid}-style{i}"))]
+    prod = _dump(data.get("foto"), tmp / f"{rid}-produk")
+    face = _dump(data.get("influencer"), tmp / f"{rid}-influencer") if data.get("show_face", True) else None
     order, labels = [], []
     if refs:
         labels.append(f"Images 1-{len(refs)} are STYLE REFERENCES (winning ads): copy their visual style, layout, typography "
@@ -190,11 +191,12 @@ SIZES = {"9:16": (1080, 1920), "4:5": (1080, 1350), "1:1": (1080, 1080)}
 
 def make_batch(data):
     """Satu gambar dari satu brief + gambar referensi bebas (produk/model/gaya). Tanpa Claude."""
+    rid = uuid.uuid4().hex[:8]  # nama file unik: beberapa gambar dibuat bersamaan
     out = g.OUT / "batch"
     out.mkdir(parents=True, exist_ok=True)
     tmp = out / "_refs"
     tmp.mkdir(exist_ok=True)
-    refs = [p for i, u in enumerate((data.get("refs") or [])[:6]) if (p := _dump(u, tmp / f"ref{i}"))]
+    refs = [p for i, u in enumerate((data.get("refs") or [])[:6]) if (p := _dump(u, tmp / f"{rid}-ref{i}"))]
     aspect = data.get("aspect", "9:16")
     note = data.get("note", "").strip()
     prompt = (f"{note}\n\n" if note else "") + data.get("prompt", "") + (
@@ -225,7 +227,8 @@ def make_image(data):
         path = out / f"{name}.{'png' if m.group(1) == 'png' else 'jpg'}"
         path.write_bytes(base64.b64decode(m.group(2)))
         return path
-    foto_path, inf_path = dump(data.get("foto"), "_produk"), dump(data.get("influencer"), "_influencer")
+    rid = uuid.uuid4().hex[:8]
+    foto_path, inf_path = dump(data.get("foto"), f"_{rid}-produk"), dump(data.get("influencer"), f"_{rid}-influencer")
     img = g.ai_scene(data.get("prompt", ""), str(foto_path) if foto_path else None, raise_errors=True,
                      influencer_path=str(inf_path) if inf_path else None, scene_type=data.get("scene_type"), show_face=data.get("show_face"), style=data.get("image_style") or "ugc")
     if img is None:
