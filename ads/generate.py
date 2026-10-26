@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generator creative Meta Ads: brief produk -> gambar 9:16 & 4:5 + primary text + headline.
 
-  python3 ads/generate.py ads/briefs/produk.txt --foto foto.png [--jumlah 6]
+  python3 ads/generate.py ads/briefs/produk.txt --foto foto.png [--jumlah 15] [--angle fomo,regret]
 
 Env: ANTHROPIC_API_KEY (wajib), OPENAI_API_KEY (opsional, untuk foto scene AI).
 """
@@ -24,6 +24,27 @@ Prinsip yang kamu pegang:
 - Satu creative = satu angle = satu pesan. Hook berhenti-scroll dalam 1 detik (≤8 kata, spesifik, bukan generik).
 - Angle WAJIB lahir dari detail unik produk ini (bahan, angka, momen pakai, keberatan khas target). Kalau hook bisa dipakai produk lain, buang.
 - Variasikan tingkat awareness (problem-aware, solution-aware, product-aware) dan framework.
+
+PENDEKATAN CEP (Category Entry Points): sebelum menulis, petakan 6 CEP = momen/situasi nyata saat target
+teringat butuh kategori produk ini (KAPAN, DI MANA, BERSAMA SIAPA, KARENA APA, PERASAAN APA). Contoh skincare:
+"pagi sebelum meeting lihat wajah kusam di cermin lift". CEP harus spesifik ke target di brief, bukan umum.
+Setiap creative = 1 CEP x 1 ANGLE PSIKOLOGI. Momen CEP jadi latar hook, visual (image_prompt), dan copy.
+
+15 ANGLE PSIKOLOGI (impulsive buying) — pakai id persis:
+fomo (takut ketinggalan tren), instant_gratification (hasil cepat terasa), curiosity_gap (info sengaja belum lengkap),
+shock_result (hasil di luar ekspektasi), social_proof (banyak orang pakai), authority (rekomendasi ahli),
+hidden_gem (rahasia yang jarang dibahas), relatable_pain (masalah yang "ini aku banget"),
+transformation (perubahan yang diinginkan), value_shock (harga terasa terlalu murah untuk nilainya),
+curated_discovery (nemu tanpa sengaja, terasa organik), emotional_story (cerita personal/insecure),
+comparison_curiosity (A vs B), demonstration_proof (tes langsung di depan kamera), regret_trigger ("nyesel baru tau").
+Hook ditulis gaya orang pertama/UGC yang natural, bukan bahasa brand.
+
+PAGAR KEJUJURAN per angle (wajib, iklan yang bohong = akun kena banned & refund tinggi):
+- fomo/social_proof: hanya klaim viral/sold out/jumlah pembeli jika ADA di brief; kalau tidak, pakai momen tren tanpa angka palsu.
+- authority: hanya jika brief menyebut ahli/sertifikasi nyata; kalau tidak, jadikan "cara ahli memilih bahan X" (edukasi).
+- instant_gratification/shock_result/transformation: sebut sensasi atau hasil yang realistis sesuai brief, bukan janji instan; untuk kesehatan/berat badan hindari before-after (dilarang Meta).
+- value_shock: hanya harga/promo di brief, bandingkan dengan nilai (per pemakaian, per hari), bukan harga coret palsu.
+- emotional_story/curated_discovery: cerita boleh berupa persona ilustratif, tapi jangan pakai nama & kutipan seolah testimoni asli.
 - Copy bahasa Indonesia sehari-hari, ngobrol, bukan bahasa iklan kaku. Primary text: hook di baris 1 (terlihat sebelum "lihat selengkapnya"), lalu masalah -> solusi -> bukti -> penawaran -> CTA. Pakai baris kosong, emoji secukupnya.
 - Headline ≤40 karakter, fokus benefit/penawaran. Description ≤25 karakter.
 - Kepatuhan Meta: jangan menyinggung atribut pribadi ("Kamu gendut?"), jangan klaim medis/hasil instan/garansi palsu, patuhi larangan klaim di brief.
@@ -33,9 +54,11 @@ Prinsip yang kamu pegang:
 SCHEMA = """Balas HANYA JSON valid:
 {
  "slug": "nama-produk-kebab",
- "strategy": {"avatar": "", "core_desire": "", "main_pain": "", "objections": ["",""], "usp": "", "offer": ""},
+ "strategy": {"ceps": [{"id": "cep1", "moment": "situasi spesifik", "trigger": "yang dirasakan/dipikirkan"}], "avatar": "", "core_desire": "", "main_pain": "", "objections": ["",""], "usp": "", "offer": ""},
  "creatives": [{
-   "angle": "nama angle singkat",
+   "cep": "cep1",
+   "psych_angle": "salah satu id dari 15 angle",
+   "angle": "nama angle singkat (CEP x psikologi)",
    "awareness": "problem|solution|product",
    "framework": "problem_solution|before_after|testimonial|comparison|offer|myth_buster|ugc_callout",
    "layout": "hero|testimonial|split|comparison",
@@ -58,13 +81,16 @@ SCHEMA = """Balas HANYA JSON valid:
 Isi quote/split/comparison hanya sesuai layout-nya (lainnya boleh kosong)."""
 
 
-def claude(brief, n, avoid):
+def claude(brief, n, avoid, angles=None):
     key = os.environ.get("ANTHROPIC_API_KEY") or sys.exit("ANTHROPIC_API_KEY belum di-set")
-    user = f"BRIEF PRODUK:\n{brief}\n\nBuat {n} creative dengan angle BERBEDA satu sama lain dan pakai minimal 3 layout berbeda.\n"
+    pick = f"Pakai HANYA angle psikologi ini: {', '.join(angles)}. " if angles else "Sebar ke sebanyak mungkin dari 15 angle psikologi (n>=15: semua dipakai). "
+    user = (f"BRIEF PRODUK:\n{brief}\n\nPetakan 6 CEP, lalu buat {n} creative. {pick}"
+            "Pasangkan tiap angle dengan CEP yang paling cocok, sebar merata ke semua CEP, tidak ada pasangan CEP x angle yang kembar, "
+            "pakai minimal 3 layout berbeda.\n")
     if avoid:
         user += "Hook yang SUDAH pernah dipakai (jangan diulang/dimirip-miripkan):\n- " + "\n- ".join(avoid[-80:]) + "\n"
     user += "\n" + SCHEMA
-    body = json.dumps({"model": MODEL, "max_tokens": 16000, "system": SYSTEM,
+    body = json.dumps({"model": MODEL, "max_tokens": 32000, "system": SYSTEM,
                        "messages": [{"role": "user", "content": user}]}).encode()
     req = urllib.request.Request("https://api.anthropic.com/v1/messages", body, {
         "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"})
@@ -257,14 +283,15 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("brief", help="file .txt berisi nama produk, fitur, benefit, harga, testimoni, dll")
     ap.add_argument("--foto", help="foto produk (PNG transparan paling bagus)")
-    ap.add_argument("--jumlah", type=int, default=6)
+    ap.add_argument("--jumlah", type=int, default=15)
+    ap.add_argument("--angle", help="batasi angle psikologi, pisah koma (mis. fomo,regret_trigger,value_shock)")
     ap.add_argument("--no-ai-image", action="store_true", help="jangan generate scene AI walau OPENAI_API_KEY ada")
     ap.add_argument("--dari-json", help="render ulang dari plan.json tanpa memanggil Claude")
     a = ap.parse_args()
 
     brief = Path(a.brief).read_text(encoding="utf-8")
     hist = json.loads(HISTORY.read_text()) if HISTORY.exists() else []
-    plan = json.loads(Path(a.dari_json).read_text()) if a.dari_json else claude(brief, a.jumlah, hist)
+    plan = json.loads(Path(a.dari_json).read_text()) if a.dari_json else claude(brief, a.jumlah, hist, a.angle.split(",") if a.angle else None)
     slug = re.sub(r"[^a-z0-9-]+", "-", plan.get("slug", Path(a.brief).stem).lower()).strip("-")
     out = OUT / slug
     out.mkdir(parents=True, exist_ok=True)
@@ -280,12 +307,12 @@ def main():
             p = out / f"{i:02d}-{fmt}.png"
             render(c, fmt, foto, scene).save(p, optimize=True)
             files.append(p.name)
-        rows.append({"no": i, "angle": c.get("angle"), "framework": c.get("framework"), "awareness": c.get("awareness"),
+        rows.append({"no": i, "cep": c.get("cep"), "psych_angle": c.get("psych_angle"), "angle": c.get("angle"), "framework": c.get("framework"), "awareness": c.get("awareness"),
                      "image_9x16": files[0], "image_4x5": files[1], "primary_text": c.get("primary_text"),
                      "primary_text_short": c.get("primary_text_short"),
                      **{f"headline_{k + 1}": h for k, h in enumerate(c.get("headlines", [])[:3])},
                      "description": c.get("description"), "cta": c.get("cta")})
-        md.append(f"## {i}. {c.get('angle')} — {c.get('framework')} / {c.get('awareness')}-aware\n"
+        md.append(f"## {i}. {c.get('angle')}\nCEP `{c.get('cep')}` · angle `{c.get('psych_angle')}` · {c.get('framework')} / {c.get('awareness')}-aware\n\n"
                   f"Gambar: `{files[0]}`, `{files[1]}`\n\n**Primary text:**\n\n{c.get('primary_text')}\n\n"
                   f"**Short:** {c.get('primary_text_short')}\n\n**Headlines:**\n" +
                   "".join(f"- {h}\n" for h in c.get("headlines", [])) + f"\n**Description:** {c.get('description')}\n")
