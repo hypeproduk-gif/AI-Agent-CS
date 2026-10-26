@@ -1,7 +1,8 @@
 {% extends "base.html" %}{% block body %}
 <p><a href="/">← Kembali</a></p>
 <h1>{{ job.produk }}</h1>
-{% if job.gen %}<div class="card">⏳ {{ job.gen }}</div>
+{% if job.gen %}<div class="card">{{ job.gen }}
+{% if job.gen.startswith("❌") %}<form method="post" action="/job/{{ job.slug }}/retry"><button>🔁 Coba lagi</button></form>{% endif %}</div>
 {% if job.gen in ["antre...", "memproses..."] %}<script>setTimeout(() => location.reload(), 5000)</script>{% endif %}
 {% else %}
 <div class="row card">

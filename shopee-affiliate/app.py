@@ -109,6 +109,16 @@ def job_file(slug, name):
     return send_from_directory(job_dir(slug), name)
 
 
+@app.post("/job/<slug>/retry")
+@login_required
+def retry(slug):
+    j = load(slug)
+    j["gen"] = "antre..."
+    save(slug, j)
+    threading.Thread(target=run_generate, args=([slug],), daemon=True).start()
+    return redirect(url_for("job", slug=slug))
+
+
 @app.post("/job/<slug>/recaption")
 @login_required
 def recaption(slug):
