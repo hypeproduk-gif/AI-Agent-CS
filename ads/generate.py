@@ -5,7 +5,7 @@
 
 Env: ANTHROPIC_API_KEY (wajib), GEMINI_API_KEY (opsional, foto scene UGC dari foto produk asli).
 """
-import argparse, base64, csv, io, json, os, re, sys, urllib.request
+import argparse, base64, csv, io, json, os, re, sys, time, urllib.error, urllib.request
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
@@ -83,14 +83,39 @@ Isi quote/split/comparison hanya sesuai layout-nya (lainnya boleh kosong)."""
 
 
 def call(user, max_tokens=32000):
+    """Streaming + retry: koneksi tidak diam lama (router/ISP sering memutus request panjang)."""
     key = os.environ.get("ANTHROPIC_API_KEY") or sys.exit("ANTHROPIC_API_KEY belum di-set")
-    body = json.dumps({"model": MODEL, "max_tokens": max_tokens, "system": SYSTEM,
+    body = json.dumps({"model": MODEL, "max_tokens": max_tokens, "system": SYSTEM, "stream": True,
                        "messages": [{"role": "user", "content": user}]}).encode()
-    req = urllib.request.Request("https://api.anthropic.com/v1/messages", body, {
-        "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"})
-    with urllib.request.urlopen(req, timeout=900) as r:
-        text = "".join(b.get("text", "") for b in json.load(r)["content"])
-    return json.loads(text[text.find("{"): text.rfind("}") + 1])
+    for attempt in range(1, 5):
+        req = urllib.request.Request("https://api.anthropic.com/v1/messages", body, {
+            "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"})
+        try:
+            text = []
+            with urllib.request.urlopen(req, timeout=120) as r:
+                for line in r:
+                    if not line.startswith(b"data:"):
+                        continue
+                    ev = json.loads(line[5:])
+                    if ev.get("type") == "content_block_delta":
+                        text.append(ev["delta"].get("text", ""))
+                        if len(text) % 200 == 0:
+                            print(".", end="", flush=True)
+                    elif ev.get("type") == "error":
+                        raise RuntimeError(ev["error"])
+            print()
+            text = "".join(text)
+            return json.loads(text[text.find("{"): text.rfind("}") + 1])
+        except urllib.error.HTTPError as e:
+            msg = e.read().decode(errors="replace")
+            if e.code in (400, 401, 403, 404):
+                sys.exit(f"Claude API error {e.code}: {msg}")
+            err = f"{e.code} {msg[:200]}"
+        except Exception as e:
+            err = e
+        print(f"\n  ! Claude gagal ({err}), coba lagi {attempt}/4...", file=sys.stderr)
+        time.sleep(5 * attempt)
+    sys.exit("Claude API gagal 4x. Cek koneksi internet / matikan VPN, lalu jalankan ulang.")
 
 
 def plan_strategy(brief):
