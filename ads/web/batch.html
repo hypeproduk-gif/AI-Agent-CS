@@ -113,6 +113,7 @@ Close-up tangan meneteskan serum ke punggung tangan, cahaya pagi"></textarea>
     <select id="variasi"><option>1</option><option>2</option><option>3</option><option>4</option></select>
     <label class="lbl" for="engine">Mesin</label>
     <select id="engine">
+      <option value="chatgpt">Mode ChatGPT: GPT membaca referensi & menyusun prompt sendiri (paling mirip aplikasi ChatGPT)</option>
       <option value="gpt">GPT Image 1.5 (ChatGPT): paling rapi, teks akurat</option>
       <option value="gptmini">GPT Image Mini: jauh lebih murah, kualitas sedikit di bawah</option>
       <option value="nano">Nano Banana (Gemini): paling realistis</option>
@@ -157,10 +158,10 @@ const store = {
 };
 let refs = store.get("refs", []), jobs = [], stop = false;
 const GPT = {low: .02, medium: .06, high: .25}, MINI = {low: .01, medium: .02, high: .06};
-const perImage = () => ({nano: () => .04, gptmini: () => MINI[$("#quality").value]}[$("#engine").value] || (() => GPT[$("#quality").value]))();
+const perImage = () => ({nano: () => .04, gptmini: () => MINI[$("#quality").value], chatgpt: () => GPT[$("#quality").value] + .02}[$("#engine").value] || (() => GPT[$("#quality").value]))();
 
 for (const id of ["briefs", "note"]){ $("#"+id).value = store.get(id, ""); $("#"+id).addEventListener("input", e => store.set(id, e.target.value)) }
-$("#engine").value = store.get("engine", "gpt");
+$("#engine").value = store.get("engine", "chatgpt");
 for (const id of ["engine", "variasi"]) $("#"+id).addEventListener("change", e => { store.set(id, e.target.value); updateCount() });
 $("#variasi").value = store.get("variasi", "1");
 $("#quality").value = store.get("quality", "medium");

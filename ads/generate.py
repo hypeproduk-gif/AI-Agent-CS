@@ -200,6 +200,36 @@ def ai_scene(prompt, foto_path, raise_errors=False, influencer_path=None, scene_
         return None
 
 
+def _chatgpt(parts, key, size="1024x1536", quality=None):
+    """Cara kerja aplikasi ChatGPT: model chat membaca referensi, menyusun prompt sendiri, lalu memanggil image tool."""
+    content = [{"type": "input_text", "text": parts[0]["text"] + "\n\nFirst look carefully at every reference image, then write "
+                "your own rich, natural visual prompt and generate ONE image. Do not ask questions."}]
+    content += [{"type": "input_image", "image_url": f"data:{p['inline_data']['mime_type']};base64,{p['inline_data']['data']}"}
+                for p in parts[1:]]
+    last = None
+    for model in [os.environ.get("OPENAI_CHAT_MODEL"), "gpt-5", "gpt-4.1", "gpt-4.1-mini"]:
+        if not model:
+            continue
+        body = json.dumps({"model": model, "input": [{"role": "user", "content": content}],
+                           "tools": [{"type": "image_generation", "size": size, "quality": quality or "high"}],
+                           "tool_choice": {"type": "image_generation"}}).encode()
+        req = urllib.request.Request("https://api.openai.com/v1/responses", body,
+                                     {"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+        try:
+            with urllib.request.urlopen(req, timeout=600) as r:
+                res = json.load(r)
+        except urllib.error.HTTPError as e:
+            last = f"{model}: {e.code} {e.read().decode(errors='replace')[:200]}"
+            if e.code in (400, 403, 404):
+                continue
+            raise RuntimeError(last)
+        for item in res.get("output", []):
+            if item.get("type") == "image_generation_call" and item.get("result"):
+                return Image.open(io.BytesIO(base64.b64decode(item["result"]))).convert("RGB")
+        last = f"{model}: tidak ada gambar di jawaban"
+    raise RuntimeError(f"Mode ChatGPT gagal ({last})")
+
+
 def openai_json(prompt, system="Reply with valid JSON only."):
     """Teks JSON via OpenAI (cadangan bila saldo Anthropic habis)."""
     key = os.environ.get("OPENAI_API_KEY")
@@ -254,6 +284,10 @@ def ai_creative(prompt, images, aspect="9:16", engine="auto", quality=None):
     key, orkey, oakey = (os.environ.get(k) for k in ("GEMINI_API_KEY", "OPENROUTER_API_KEY", "OPENAI_API_KEY"))
     parts = [{"text": prompt}] + [_part(p) for p in images]
     try:
+        if engine == "chatgpt":
+            if not oakey:
+                raise RuntimeError("API key OpenAI belum diisi.")
+            return _chatgpt(parts, oakey, ASPECT_GPT.get(aspect, "1024x1536"), quality)
         if engine in ("gpt", "gptmini") or (engine == "auto" and oakey):
             if not oakey:
                 raise RuntimeError("API key OpenAI belum diisi.")
