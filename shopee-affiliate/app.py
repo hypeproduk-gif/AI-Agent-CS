@@ -55,30 +55,46 @@ def index():
 @login_required
 def generate():
     f = request.form
-    slug = time.strftime("%Y%m%d-%H%M%S")
-    folder = ap.OUT / slug
-    folder.mkdir(parents=True)
-    try:
-        upload = request.files.get("video")
-        if upload and upload.filename:
+    links = {k: (f.get(f"shopee_{k}") or f.get("shopee") or "").strip() for k in PLATFORMS}
+    sources = []
+    base = time.strftime("%Y%m%d-%H%M%S")
+    for i, up in enumerate(u for u in request.files.getlist("video") if u.filename):
+        folder = ap.OUT / f"{base}-{len(sources) + 1}"
+        folder.mkdir(parents=True)
+        up.save(folder / "video.mp4")
+        sources.append((folder.name, None))
+    for url in f.get("pin", "").split():
+        folder = ap.OUT / f"{base}-{len(sources) + 1}"
+        folder.mkdir(parents=True)
+        sources.append((folder.name, url.strip()))
+    if not sources:
+        return "Isi video atau link Pinterest", 400
+    for slug, url in sources:
+        save(slug, {"slug": slug, "produk": f["produk"], "judul": f.get("judul", ""),
+                    "video": "video.mp4", "links": links, "headline": "", "pin": url,
+                    "text": {k: "" for k in PLATFORMS}, "status": {}, "gen": "antre..."})
+    threading.Thread(target=run_generate, args=([s for s, _ in sources],), daemon=True).start()
+    return redirect(url_for("job", slug=sources[0][0]) if len(sources) == 1 else url_for("index"))
+
+
+def run_generate(slugs: list):
+    for slug in slugs:
+        folder = ap.OUT / slug
+        j = load(slug)
+        j["gen"] = "memproses..."; save(slug, j)
+        try:
             video = folder / "video.mp4"
-            upload.save(video)
-        elif f.get("pin"):
-            video = ap.download_pinterest(f["pin"].strip(), folder)
-        else:
-            return "Isi video atau link Pinterest", 400
-        links = {k: (f.get(f"shopee_{k}") or f.get("shopee") or "").strip() for k in PLATFORMS}
-        cap = ap.make_caption(f["produk"], links["fb"])
-        judul = f.get("judul") or cap["judul"]
-        ap.make_thumbnail(video, judul, folder)
-    except Exception as e:
-        shutil.rmtree(folder, ignore_errors=True)
-        return f"Gagal: {e}", 500
-    save(slug, {"slug": slug, "produk": f["produk"], "judul": judul, "video": video.name,
-                "links": links, "headline": cap["headline"],
-                "text": {"fb": cap["fb"], "ig": cap["ig"], "threads": cap["threads"]},
-                "status": {}})
-    return redirect(url_for("job", slug=slug))
+            if j["pin"]:
+                video = ap.download_pinterest(j["pin"], folder)
+            cap = ap.make_caption(j["produk"], j["links"]["fb"])
+            j["judul"] = j["judul"] or cap["judul"]
+            ap.make_thumbnail(video, j["judul"], folder)
+            j.update(video=video.name, headline=cap["headline"], gen="",
+                     text={"fb": cap["fb"], "ig": cap["ig"], "threads": cap["threads"]})
+        except Exception as e:
+            traceback.print_exc()
+            j["gen"] = f"❌ {e}"[:300]
+        save(slug, j)
 
 
 @app.get("/job/<slug>")

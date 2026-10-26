@@ -1,6 +1,9 @@
 {% extends "base.html" %}{% block body %}
 <p><a href="/">← Kembali</a></p>
 <h1>{{ job.produk }}</h1>
+{% if job.gen %}<div class="card">⏳ {{ job.gen }}</div>
+{% if job.gen in ["antre...", "memproses..."] %}<script>setTimeout(() => location.reload(), 5000)</script>{% endif %}
+{% else %}
 <div class="row card">
   <div><label>Thumbnail</label><img src="/job/{{ job.slug }}/file/thumbnail.jpg"></div>
   <div><label>Video</label><video src="/job/{{ job.slug }}/file/{{ job.video }}" controls></video></div>
@@ -16,6 +19,7 @@
 </div>{% endfor %}
 <button>🚀 Posting</button>
 </form>
+{% endif %}
 {% if job.status.values()|select("in", ["menunggu...", "memproses..."])|list %}
 <script>setTimeout(() => location.reload(), 5000)</script>{% endif %}
 {% endblock %}
