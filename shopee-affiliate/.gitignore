@@ -1,3 +1,4 @@
 .env
 output/
 public/
+__pycache__/
