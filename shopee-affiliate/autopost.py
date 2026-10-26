@@ -3,6 +3,7 @@
 Pakai:
   python autopost.py --pin https://pin.it/xxxx --shopee https://s.shopee.co.id/xxxx \
       --produk "Serum Vitamin C" [--judul "Glowing 7 Hari"] [--dry-run]
+  python autopost.py --video video-saya.mp4 --shopee ... --produk "..."   # video sendiri
 """
 import argparse, json, os, shutil, subprocess, sys, time
 from pathlib import Path
@@ -14,6 +15,7 @@ from PIL import Image, ImageDraw, ImageFont
 load_dotenv()
 OUT = Path("output")
 GRAPH = f"https://graph.facebook.com/{os.getenv('GRAPH_VERSION', 'v21.0')}"
+THREADS = "https://graph.threads.net/v1.0"
 
 
 def download_pinterest(url: str, folder: Path) -> Path:
@@ -66,8 +68,11 @@ def make_caption(produk: str, shopee: str) -> dict:
         f"Buat caption jualan affiliate Shopee untuk produk: {produk}.\n"
         "Bahasa Indonesia santai, hook kuat di baris pertama, 3-5 baris manfaat dengan emoji, "
         "CTA jelas. Jangan klaim berlebihan/medis. Balas JSON saja: "
-        '{"judul": "maks 5 kata untuk thumbnail", "caption": "...", "hashtags": ["..."]} '
-        "dengan 8-12 hashtag tanpa tanda #."
+        '{"judul": "maks 5 kata untuk thumbnail", "headline": "maks 40 karakter", '
+        '"caption": "...", "threads": "...", "hashtags": ["..."]} '
+        "dengan 8-12 hashtag tanpa tanda #. Field threads: gaya storytelling orang pertama "
+        "(masalah pribadi -> nemu produk -> hasil jujur), obrolan santai tanpa hashtag dan "
+        "tanpa nada iklan, maks 450 karakter."
     )
     msg = anthropic.Anthropic().messages.create(
         model=os.getenv("CLAUDE_MODEL", "claude-haiku-4-5"), max_tokens=800,
@@ -76,7 +81,7 @@ def make_caption(produk: str, shopee: str) -> dict:
     text = msg.content[0].text
     data = json.loads(text[text.find("{"): text.rfind("}") + 1])
     tags = " ".join("#" + t.lstrip("#") for t in data["hashtags"])
-    data["fb"] = f"{data['caption']}\n\n🛒 Cek di sini: {shopee}\n\n{tags}"
+    data["fb"] = f"{data['headline']}\n\n{data['caption']}\n\n🛒 Cek di sini: {shopee}\n\n{tags}"
     # IG tidak bisa klik link di caption -> arahkan ke bio
     data["ig"] = f"{data['caption']}\n\n🛒 Link produk di bio / komentar ya!\n\n{tags}"
     return data
@@ -123,19 +128,57 @@ def post_instagram(video: Path, thumb: Path, caption: str, slug: str, shopee: st
     return media_id
 
 
+def post_threads(slug: str, text: str, shopee: str) -> str:
+    uid, token = os.environ["THREADS_USER_ID"], os.environ["THREADS_TOKEN"]
+    base = os.environ["PUBLIC_BASE_URL"].rstrip("/")
+    r = requests.post(f"{THREADS}/{uid}/threads", data={
+        "media_type": "VIDEO", "video_url": f"{base}/{slug}.mp4",
+        "text": text[:500], "access_token": token}, timeout=60)
+    r.raise_for_status()
+    container = r.json()["id"]
+    for _ in range(60):
+        s = requests.get(f"{THREADS}/{container}",
+                         params={"fields": "status,error_message", "access_token": token}).json()
+        if s.get("status") == "FINISHED":
+            break
+        if s.get("status") == "ERROR":
+            raise RuntimeError(f"Threads gagal memproses video: {s}")
+        time.sleep(10)
+    r = requests.post(f"{THREADS}/{uid}/threads_publish",
+                      data={"creation_id": container, "access_token": token}, timeout=60)
+    r.raise_for_status()
+    post_id = r.json()["id"]
+    # link di balasan sendiri agar postingan utama tidak terlihat seperti iklan
+    reply = requests.post(f"{THREADS}/{uid}/threads", data={
+        "media_type": "TEXT", "text": f"Ini link yang aku pakai: {shopee}",
+        "reply_to_id": post_id, "access_token": token}, timeout=60).json()
+    time.sleep(5)
+    requests.post(f"{THREADS}/{uid}/threads_publish",
+                  data={"creation_id": reply["id"], "access_token": token}, timeout=60)
+    return post_id
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--pin", required=True, help="Link video Pinterest")
+    src = ap.add_mutually_exclusive_group(required=True)
+    src.add_argument("--pin", help="Link video Pinterest")
+    src.add_argument("--video", help="File video sendiri (mp4)")
     ap.add_argument("--shopee", required=True, help="Link Shopee affiliate")
     ap.add_argument("--produk", required=True, help="Nama/deskripsi singkat produk")
     ap.add_argument("--judul", help="Teks thumbnail (default: dari AI)")
     ap.add_argument("--dry-run", action="store_true", help="Jangan posting")
-    ap.add_argument("--only", choices=["fb", "ig"], help="Posting ke satu platform saja")
+    ap.add_argument("--only", choices=["fb", "ig", "threads"], help="Posting ke satu platform saja")
     a = ap.parse_args()
 
     slug = time.strftime("%Y%m%d-%H%M%S")
     folder = OUT / slug
-    print("1/4 Download Pinterest...");  video = download_pinterest(a.pin, folder)
+    print("1/4 Ambil video...")
+    if a.video:
+        folder.mkdir(parents=True, exist_ok=True)
+        video = folder / "video.mp4"
+        shutil.copy(a.video, video)
+    else:
+        video = download_pinterest(a.pin, folder)
     print("2/4 Buat caption...");        cap = make_caption(a.produk, a.shopee)
     print("3/4 Buat thumbnail...");      thumb = make_thumbnail(video, a.judul or cap["judul"], folder)
     (folder / "caption.json").write_text(json.dumps(cap, ensure_ascii=False, indent=2))
@@ -147,6 +190,11 @@ def main():
         print("   Facebook:", post_facebook(video, thumb, cap["fb"]))
     if a.only in (None, "ig"):
         print("   Instagram:", post_instagram(video, thumb, cap["ig"], slug, a.shopee))
+    if a.only == "threads" or (a.only is None and os.getenv("THREADS_TOKEN")):
+        if a.only == "threads":  # file publik biasanya disalin oleh langkah IG
+            pub = Path(os.getenv("PUBLIC_DIR", "./public")); pub.mkdir(parents=True, exist_ok=True)
+            shutil.copy(video, pub / f"{slug}.mp4")
+        print("   Threads:", post_threads(slug, cap["threads"], a.shopee))
 
 
 if __name__ == "__main__":

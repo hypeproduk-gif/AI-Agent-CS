@@ -1,6 +1,6 @@
 # Shopee Affiliate Autopost
 
-Alur: **Pinterest video → thumbnail → caption AI (Claude) → posting Facebook Page + Instagram Reels**.
+Alur: **Pinterest / video sendiri → thumbnail → headline + caption AI (Claude) → posting Facebook Page + Instagram Reels + Threads**.
 
 ## Setup
 ```bash
