@@ -3,7 +3,6 @@
 
 const MAX_HISTORY = 30; // pesan terakhir yang dikirim ke Claude
 const STORE_HISTORY = 80; // pesan yang disimpan (riwayat chat 30 hari)
-const MODEL = 'claude-haiku-4-5-20251001';
 const HANDOFF_PAUSE_MINUTES = 30; // setelah ini bot aktif lagi otomatis
 // Nomor yang tidak pernah dibalas bot (mis. nomor notifikasi Scalev).
 const BLOCKED_PHONES = ['6282125784683'];
@@ -137,18 +136,18 @@ const AGREE_PATTERN = /^\s*(ok(e|ey|ee)?|oke+|iya+|iy|ya+|yup|sip+|siap|betul|be
 
 // Setelah ringkasan disetujui, Claude WAJIB memanggil tool. Haiku 4.5: tool_choice "any";
 // model baru menolak tool_choice "any", jadi pakai instruksi tegas di system prompt.
-function buildRequest(system, messages, tools, mustCallTool) {
-  const model = activeModel(MODEL);
-  const params = modelParams(model);
-  const forceAny = mustCallTool && /haiku-4-5/.test(model);
+function buildRequest(staticSystem, dynamicSystem, messages, tools, mustCallTool) {
+  const model = activeModel();
+  const forceAny = mustCallTool && canForceTool(model);
   const note = mustCallTool && !forceAny ? ' LEAD SUDAH MENYETUJUI RINGKASAN: panggil tool buat_order SEKARANG, jangan hanya membalas teks.' : '';
   return {
     model,
-    ...params,
-    system: system + note,
+    ...modelParams(model),
+    system: systemBlocks(staticSystem, dynamicSystem + note),
     messages,
     ...(tools ? { tools } : {}),
     ...(forceAny ? { tool_choice: { type: 'any' } } : {}),
+    cache_control: { type: 'ephemeral' }, // cache riwayat chat juga
   };
 }
 
@@ -180,13 +179,15 @@ function prepareContext(body, row) {
   const patchId = leadOrderId || (scalevId && lastOrder ? scalevId : '');
 
   const tools = orderTools(product);
-  let system = buildSystemPrompt(product) + settingsPrompt() + profilePrompt(profile);
+  // Bagian sama untuk semua lead (di-cache) vs bagian khusus lead ini.
+  let system = buildSystemPrompt(product) + settingsPrompt();
+  let dynamic = profilePrompt(profile);
   if (tools) system += ' ' + ORDER_RULE.split('{BRAND}').join(BRANDS[product] || 'Filomall-Beauty');
   if (tools && lastOrder) {
-    system += ` KONTEKS ORDER: lead ini sudah punya order ${lastOrder} dalam ${SCALEV.duplicateOrderHours} jam terakhir. Kalau lead ingin order/ubah order, sebelum buat_order tanyakan dulu: 'Ini mau ganti order yang tadi, atau tambah order baru kak?' lalu isi jenis_order sesuai jawabannya. Kalau lead jelas minta mengubah order tadi (mis. 'ganti cod aja', 'ganti alamat', 'jadi 2 paket'), itu 'revisi' tanpa perlu bertanya.`;
+    dynamic += ` KONTEKS ORDER: lead ini sudah punya order ${lastOrder} dalam ${SCALEV.duplicateOrderHours} jam terakhir. Kalau lead ingin order/ubah order, sebelum buat_order tanyakan dulu: 'Ini mau ganti order yang tadi, atau tambah order baru kak?' lalu isi jenis_order sesuai jawabannya. Kalau lead jelas minta mengubah order tadi (mis. 'ganti cod aja', 'ganti alamat', 'jadi 2 paket'), itu 'revisi' tanpa perlu bertanya.`;
   }
   if (switchedFrom) {
-    system += ` KONTEKS: Lead baru saja pindah topik dari ${switchedFrom} ke ${product}. Jawab tentang ${product}; jangan lanjut menawarkan ${switchedFrom} kecuali lead menanyakannya lagi.`;
+    dynamic += ` KONTEKS: Lead baru saja pindah topik dari ${switchedFrom} ke ${product}. Jawab tentang ${product}; jangan lanjut menawarkan ${switchedFrom} kecuali lead menanyakannya lagi.`;
   }
 
   return {
@@ -216,6 +217,6 @@ function prepareContext(body, row) {
     messages,
     historyFull: history.slice(-STORE_HISTORY),
     profile,
-    requestBody: buildRequest(system, messages, tools, tools && summaryWasSent(history) && AGREE_PATTERN.test(incoming)),
+    requestBody: buildRequest(system, dynamic, messages, tools, tools && summaryWasSent(history) && AGREE_PATTERN.test(incoming)),
   };
 }

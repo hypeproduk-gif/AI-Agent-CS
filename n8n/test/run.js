@@ -14,6 +14,7 @@ const { prepareContext, parseReply, detectProduct, isClosingMessage, trimHistory
   vm.runInContext('({ prepareContext, parseReply, detectProduct, isClosingMessage, trimHistory, dailyRecap, dueFollowUp, followUpRequest, followUpText, appendFollowUp })', ctx);
 
 let passed = 0;
+const T = (s) => (Array.isArray(s) ? s.map((b) => b.text).join(' ') : s);
 const test = (name, fn) => { fn(); passed++; console.log('ok -', name); };
 
 test('deteksi produk dari chat pertama', () => {
@@ -36,7 +37,7 @@ test('override produk kalau lead ganti topik', () => {
   const r = prepareContext({ phone: '1', message: 'kak kalau bikin CV ada juga?' }, row);
   assert.strictEqual(r.active_product, 'KarierKit');
   assert.strictEqual(r.switchedFrom, 'SalGlow');
-  assert.ok(r.requestBody.system.includes('pindah topik dari SalGlow ke KarierKit'));
+  assert.ok(T(r.requestBody.system).includes('pindah topik dari SalGlow ke KarierKit'));
   const same = prepareContext({ phone: '1', message: 'oke kak' }, row);
   assert.strictEqual(same.active_product, 'SalGlow');
   assert.strictEqual(same.switchedFrom, null);
@@ -60,7 +61,7 @@ test('pesan gambar tidak bikin error', () => {
 test('system prompt aman untuk JSON (ada kutip & enter)', () => {
   const r = prepareContext({ phone: '62812', message: 'halo "kak"\nada?' }, null);
   const parsed = JSON.parse(JSON.stringify(r.requestBody));
-  assert.ok(parsed.system.includes("'Terima kasih sudah menghubungi'"));
+  assert.ok(T(parsed.system).includes("'Terima kasih sudah menghubungi'"));
   assert.strictEqual(parsed.messages[0].content, 'halo "kak"\nada?');
 });
 
@@ -373,7 +374,7 @@ test('kata closing tanpa order TIDAK kirim notif Telegram', () => {
 });
 
 test('prompt jualan: alur, larangan klaim palsu, hitungan hemat benar', () => {
-  const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
+  const sys = T(prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system);
   for (const k of ['PERTANYAAN/KEBERATAN', 'Mau yang mana kak?', 'SINYAL BELI', 'BIAYA COD', 'Ada lagi yang mau ditanyakan sebelum order', 'JANGAN jualan lagi', 'BPOM', 'Rp54.750/pcs', 'Rp69.500/pcs']) assert.ok(sys.includes(k), k);
   assert.strictEqual(219000 / 4, 54750);
   assert.strictEqual(139000 / 2, 69500);
@@ -413,7 +414,7 @@ test('kode pos ambigu → kasih pilihan ke Claude', () => {
 });
 
 test('prompt: larangan basa-basi & syarat alamat', () => {
-  const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
+  const sys = T(prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system);
   for (const k of ['DILARANG: basa-basi', 'baris kosong', 'PAHAMI TYPO', 'MENGARAHKAN', "'Mantap'", "'Yeay'", 'patokan', 'kecamatan', 'supaya paket tidak nyasar di ekspedisi', 'prioritas pengiriman hari ini', 'saya tanyakan ke atasan saya dulu', 'Lengkapi data order dulu ya kak', 'Sudah benar kak? saya proses ya', 'CS Filomall-Beauty', '10.000 pcs', 'Jangan tanya provinsi', 'Kode pos:', 'dipisah koma']) assert.ok(sys.includes(k), k);
 });
 // Workflow dengan fakta produk terisi (BPOM + testimoni) untuk tes.
@@ -432,7 +433,7 @@ test('tanpa data testimoni: prompt tidak menyebutnya, gambar tidak dikirim', () 
   const saved = vm.runInContext('FACTS.SalGlow.testimonials', ctx);
   vm.runInContext('FACTS.SalGlow.testimonials = []', ctx);
   try {
-    const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
+    const sys = T(prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system);
     assert.ok(!sys.includes('TESTIMONI:'));
     assert.ok(!sys.includes('terdaftar dengan nomor'));
   } finally {
@@ -451,7 +452,7 @@ test('24 testimoni Imgur terpasang, link langsung & unik, prompt menawarkan test
   assert.strictEqual(list.length, 24);
   assert.strictEqual(new Set(list).size, 24);
   assert.ok(list.every((u) => /^https:\/\/i\.imgur\.com\/[A-Za-z0-9]{7}\.(jpeg|png)$/.test(u)));
-  const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
+  const sys = T(prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system);
   assert.ok(sys.includes('[TESTIMONI]'));
 });
 
@@ -463,7 +464,7 @@ test('dengan BPOM & testimoni: nomor BPOM di prompt, 3 foto dikirim setelah bala
     row: SALGLOW_ROW,
     http: (name, { body }) => {
       if (name === 'Claude') {
-        sent.push(body.system);
+        sent.push(T(body.system));
         return text('Sudah BPOM NA18230100999 kak, bisa dicek di cekbpom.pom.go.id. Aku kirimin beberapa testimoni ya [TESTIMONI]');
       }
       return { status: true };
@@ -479,7 +480,7 @@ test('dengan BPOM & testimoni: nomor BPOM di prompt, 3 foto dikirim setelah bala
   assert.ok(find('Simpan Histori'));
 });
 test('BPOM belum ada: bot jujur, tidak klaim aman/bebas merkuri, kulit sensitif → tes tempel', () => {
-  const sys = prepareContext({ phone: '1', message: 'udah bpom?' }, null).requestBody.system;
+  const sys = T(prepareContext({ phone: '1', message: 'udah bpom?' }, null).requestBody.system);
   assert.ok(sys.includes('belum terdaftar BPOM'));
   assert.ok(sys.includes('jangan mengelak'));
   assert.ok(sys.includes("JANGAN klaim 'bebas merkuri'"));
@@ -683,7 +684,7 @@ test('follow-up: request Claude diakhiri pesan user + SKIP tidak dikirim', () =>
   const req = followUpRequest({ phone: '1', history: hist }, { stage: 1, elapsedMinutes: 61 });
   assert.strictEqual(req.messages[req.messages.length - 1].role, 'user');
   assert.ok(req.messages[req.messages.length - 1].content.includes('1 jam'));
-  assert.ok(req.system.includes('FOLLOW-UP') && req.system.includes('3-4 benefit'));
+  assert.ok(T(req.system).includes('FOLLOW-UP') && T(req.system).includes('3-4 benefit'));
   assert.strictEqual(followUpText({ content: [{ type: 'text', text: 'SKIP' }] }), null);
   assert.strictEqual(followUpText({ error: { message: 'x' } }), null);
   assert.strictEqual(followUpText({ content: [{ type: 'text', text: 'Kak, masih kepikiran? 😊' }] }), 'Kak, masih kepikiran? 😊');
@@ -761,7 +762,7 @@ test('revisi transfer -> COD: PATCH order yang sama, notif REVISI, tanpa CAPI do
   assert.strictEqual(ask.req('Scalev Update Order'), undefined);
   assert.strictEqual(ask.req('Scalev Buat Order'), undefined);
   assert.ok(ask.toolResults[0].error.includes('tambah order baru'));
-  assert.ok(ask.req('Claude').body.system.includes('KONTEKS ORDER'));
+  assert.ok(T(ask.req('Claude').body.system).includes('KONTEKS ORDER'));
   // Order baru -> POST, order lama tidak diubah
   const baru = scenario({ message: 'order baru kak', row, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod', jenis_order: 'baru' }) });
   assert.strictEqual(baru.req('Scalev Update Order'), undefined);
@@ -785,7 +786,7 @@ test('order lama (> 6 jam) -> order baru, bukan PATCH', () => {
 });
 
 test('prompt: kandungan & rekening transfer', () => {
-  const sys = prepareContext({ phone: '1', message: 'isinya apa' }, null).requestBody.system;
+  const sys = T(prepareContext({ phone: '1', message: 'isinya apa' }, null).requestBody.system);
   for (const k of ['Niacinamide', 'Alpha Arbutin', 'Vitamin A', 'BCA 3890171132', 'Mandiri 1780000592416', 'BRI 657301021749531', 'BNI 0903702142', 'a.n N Hamidah', 'REVISI ORDER']) assert.ok(sys.includes(k), k);
 });
 test('buat_order tanpa ringkasan sebelumnya ditolak (lead harus konfirmasi dulu)', () => {
@@ -797,9 +798,18 @@ test('buat_order tanpa ringkasan sebelumnya ditolak (lead harus konfirmasi dulu)
 });
 test('setelah ringkasan + lead bilang ok: tool_choice any; klaim order tanpa tool diblokir', () => {
   const ctx = prepareContext({ phone: '6281', message: 'ok' }, SALGLOW_ROW);
-  assert.strictEqual(JSON.stringify(ctx.requestBody.tool_choice), '{"type":"any"}');
-  assert.strictEqual(prepareContext({ phone: '6281', message: 'ok tapi ongkirnya berapa?' }, SALGLOW_ROW).requestBody.tool_choice, undefined);
-  assert.strictEqual(prepareContext({ phone: '6281', message: 'ok' }, { ...SALGLOW_ROW, history: '[]' }).requestBody.tool_choice, undefined);
+  const rb = ctx.requestBody;
+  assert.strictEqual(rb.model, 'claude-haiku-5-5');
+  assert.strictEqual(rb.tool_choice, undefined);
+  assert.ok(T(rb.system).includes('LEAD SUDAH MENYETUJUI RINGKASAN'));
+  assert.strictEqual(JSON.stringify(rb.thinking), '{"type":"disabled"}');
+  assert.strictEqual(rb.system[0].cache_control.type, 'ephemeral'); // prompt caching
+  assert.strictEqual(rb.cache_control.type, 'ephemeral');
+  assert.ok(!T(prepareContext({ phone: '6281', message: 'ok tapi ongkirnya berapa?' }, SALGLOW_ROW).requestBody.system).includes('LEAD SUDAH MENYETUJUI'));
+  // Bagian yang di-cache sama untuk lead berbeda (supaya cache kena).
+  const a = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system[0].text;
+  const b = prepareContext({ phone: '2', message: 'harga?' }, { ...SALGLOW_ROW, profile: JSON.stringify({ nama: 'X' }) }).requestBody.system[0].text;
+  assert.strictEqual(a, b);
   const r = scenario({ message: 'ok', first: text('Siap kak.. orderan kakak sudah saya masukkan ke prioritas pengiriman hari ini..') });
   assert.ok(r.req('Kirim WhatsApp').body.message.startsWith('Bentar ya kak'));
   assert.ok(r.req('Telegram Admin').body.includes('BOT ERROR'));
@@ -889,10 +899,10 @@ test('memori: data pelanggan tersimpan dipakai & disimpan dari input tool; >30 h
   const now = new Date().toISOString();
   const profile = JSON.stringify({ nama: 'Midha', alamat: 'Jl. Raya Modern 129A', kelurahan: 'Gunung Anyar Tambak', kecamatan: 'Gununganyar', kota: 'Surabaya' });
   const ctxOk = prepareContext({ phone: '6281', message: 'mau order lagi' }, { ...SALGLOW_ROW, last_chat_at: now, profile });
-  assert.ok(ctxOk.requestBody.system.includes('DATA PELANGGAN TERSIMPAN') && ctxOk.requestBody.system.includes('Jl. Raya Modern 129A'));
+  assert.ok(T(ctxOk.requestBody.system).includes('DATA PELANGGAN TERSIMPAN') && T(ctxOk.requestBody.system).includes('Jl. Raya Modern 129A'));
   const old = new Date(Date.now() - 31 * 86400000).toISOString();
   const ctxOld = prepareContext({ phone: '6281', message: 'halo' }, { ...SALGLOW_ROW, last_chat_at: old, profile });
-  assert.ok(!ctxOld.requestBody.system.includes('DATA PELANGGAN TERSIMPAN'));
+  assert.ok(!T(ctxOld.requestBody.system).includes('DATA PELANGGAN TERSIMPAN'));
   assert.strictEqual(ctxOld.messages.length, 1);
   const r = scenario({ message: 'oke', first: toolUse('cek_ongkir', { paket: 'B1G1', pembayaran: 'cod', kecamatan: 'Wonokromo', kota: 'Surabaya', kelurahan: 'Jagir' }) });
   const saved = JSON.parse(r.req('Simpan Histori').body.profile);
@@ -920,8 +930,8 @@ test('pengaturan admin: model Sonnet, harga, rekening, foto produk, nomor blokir
   assert.strictEqual(req.model, 'claude-sonnet-5-5');
   assert.strictEqual(req.tool_choice, undefined);
   assert.strictEqual(req.output_config.effort, 'low');
-  assert.ok(req.system.includes('LEAD SUDAH MENYETUJUI RINGKASAN'));
-  assert.ok(req.system.includes('BCA 123 a.n Tes') && req.system.includes('B1G1 = Rp149.000'));
+  assert.ok(T(req.system).includes('LEAD SUDAH MENYETUJUI RINGKASAN'));
+  assert.ok(T(req.system).includes('BCA 123 a.n Tes') && T(req.system).includes('B1G1 = Rp149.000'));
   const res = JSON.parse(r.requests.find((q) => q.node === 'Claude Lanjutan').body.messages.slice(-1)[0].content[0].content);
   assert.strictEqual(res.harga_produk, 'Rp149.000');
   const blocked = run(rows, { phone: '6281111', message: 'halo' }, null, text('x'));

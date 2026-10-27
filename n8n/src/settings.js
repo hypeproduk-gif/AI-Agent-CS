@@ -49,11 +49,27 @@ function settingsPrompt() {
   return parts.length ? ' PENGATURAN ADMIN: ' + parts.join(' ') : '';
 }
 
-function activeModel(fallback) {
-  return SETTINGS.model || fallback;
+function activeModel() {
+  return SETTINGS.model || DEFAULT_MODEL;
 }
 
-// Haiku 4.5 boleh tool_choice "any"; model baru (Sonnet/Opus 5.5) menolaknya dan butuh output_config.effort.
+// Model default: Haiku 5.5 (murah). Haiku 4.5 boleh tool_choice "any"; model baru menolaknya.
+const DEFAULT_MODEL = 'claude-haiku-5-5';
+
+function canForceTool(model) {
+  return /haiku-4-5/.test(model);
+}
+
 function modelParams(model) {
-  return /haiku-4-5/.test(model) ? { max_tokens: 500 } : { max_tokens: 4000, output_config: { effort: 'low' } };
+  if (/haiku-4-5/.test(model)) return { max_tokens: 500 };
+  // Haiku 5.5: thinking dimatikan (hemat, chat singkat). Sonnet/Opus 5.5: thinking tidak bisa dimatikan, effort rendah.
+  if (/haiku-5/.test(model)) return { max_tokens: 1000, thinking: { type: 'disabled' }, output_config: { effort: 'low' } };
+  return { max_tokens: 4000, output_config: { effort: 'low' } };
+}
+
+// Prompt caching: bagian system yang sama untuk semua lead di-cache; bagian per-lead di blok kedua.
+function systemBlocks(staticText, dynamicText) {
+  const blocks = [{ type: 'text', text: staticText, cache_control: { type: 'ephemeral' } }];
+  if (dynamicText && dynamicText.trim()) blocks.push({ type: 'text', text: dynamicText.trim() });
+  return blocks;
 }

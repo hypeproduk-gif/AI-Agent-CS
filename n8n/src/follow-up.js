@@ -54,11 +54,11 @@ function followUpRequest(row, due) {
     role: 'user',
     content: `[SISTEM, bukan dari lead] Lead belum membalas selama ${waitLabel(due.elapsedMinutes)}. Tulis follow-up ke-${due.stage + 1} dari ${FU_MINUTES.length}.`,
   });
-  const model = activeModel(MODEL);
+  const model = activeModel();
   return {
     model,
     ...modelParams(model),
-    system: buildSystemPrompt(product) + settingsPrompt() + profilePrompt(parseProfile(row.profile)) + ' ' + FU_RULE,
+    system: systemBlocks(buildSystemPrompt(product) + settingsPrompt(), profilePrompt(parseProfile(row.profile)) + ' ' + FU_RULE),
     messages,
   };
 }

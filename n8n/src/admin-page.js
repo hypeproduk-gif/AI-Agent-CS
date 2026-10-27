@@ -51,9 +51,10 @@ textarea{min-height:84px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10p
 
 <section><h2>Model AI</h2>
 <label>Model</label><select id="model">
-<option value="">Haiku 4.5 (paling hemat)</option>
-<option value="claude-sonnet-5-5">Sonnet 5.5 (lebih pintar, ±2-4x biaya)</option>
-<option value="claude-opus-5-5">Opus 5.5 (paling pintar, ±4-8x biaya)</option>
+<option value="">Haiku 5.5 (paling hemat, default)</option>
+<option value="claude-haiku-4-5-20251001">Haiku 4.5 (versi lama)</option>
+<option value="claude-sonnet-5-5">Sonnet 5.5 (lebih pintar, ±15x biaya Haiku 5.5)</option>
+<option value="claude-opus-5-5">Opus 5.5 (paling pintar, ±30x biaya Haiku 5.5)</option>
 </select></section>
 
 <section><h2>Gaya bahasa</h2>
