@@ -19,6 +19,7 @@ function simulate(workflow, { webhookBody, row, http, tables = {} }) {
   const requests = []; // { node, method, url, body }
   const $ = (name) => ({
     first: () => ({ json: outputs[name][0] }),
+    all: () => (outputs[name] || []).map((json) => ({ json })),
     item: { json: outputs[name] && outputs[name][0] },
     get isExecuted() { return name in outputs; },
   });

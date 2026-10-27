@@ -50,6 +50,7 @@ const TESTIMONI_TOPICS = {
   penuaan: 'kerutan / tanda penuaan',
   tekstur: 'tekstur salep, rasa nyaman dipakai',
   cepat: 'hasil terlihat dalam hitungan hari',
+  produk: 'foto produk / kemasan (kirim kalau lead minta lihat produknya)',
 };
 
 function factsPrompt(product) {
@@ -89,5 +90,7 @@ function pickTestimonials(product, topics = [], count = TESTIMONI_PER_SEND, rand
   const wanted = topics.filter((t) => TESTIMONI_TOPICS[t]);
   const matches = shuffle(list.filter((t) => t.tags.some((tag) => wanted.includes(tag))), random);
   const rest = shuffle(list.filter((t) => !matches.includes(t)), random);
+  // Foto produk: kirim foto produk saja, jangan dicampur testimoni acak.
+  if (wanted.length === 1 && wanted[0] === 'produk' && matches.length) return matches.slice(0, count).map((t) => t.url);
   return matches.concat(rest).slice(0, count).map((t) => t.url);
 }

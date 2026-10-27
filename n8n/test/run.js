@@ -7,7 +7,7 @@ const assert = require('assert');
 
 const ctx = {};
 vm.createContext(ctx);
-for (const f of ['capi.js', 'recap.js', 'report.js', 'product-facts.js', 'prompts.js', 'order-config.js', 'tools.js', 'prepare-context.js', 'parse-reply.js', 'follow-up.js']) {
+for (const f of ['capi.js', 'recap.js', 'report.js', 'settings.js', 'profile.js', 'product-facts.js', 'prompts.js', 'order-config.js', 'tools.js', 'prepare-context.js', 'parse-reply.js', 'follow-up.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'src', f), 'utf8'), ctx);
 }
 const { prepareContext, parseReply, detectProduct, isClosingMessage, trimHistory, dailyRecap, dueFollowUp, followUpRequest, followUpText, appendFollowUp } =
@@ -68,7 +68,7 @@ test('histori dipotong & selalu diawali user', () => {
   const long = [];
   for (let i = 0; i < 30; i++) long.push({ role: i % 2 ? 'assistant' : 'user', content: String(i) });
   const t = trimHistory(long.concat([{ role: 'user', content: 'baru' }]));
-  assert.ok(t.length <= 20);
+  assert.ok(t.length <= 30);
   assert.strictEqual(t[0].role, 'user');
   for (let i = 1; i < t.length; i++) assert.notStrictEqual(t[i].role, t[i - 1].role);
 });
@@ -414,7 +414,7 @@ test('kode pos ambigu → kasih pilihan ke Claude', () => {
 
 test('prompt: larangan basa-basi & syarat alamat', () => {
   const sys = prepareContext({ phone: '1', message: 'halo' }, null).requestBody.system;
-  for (const k of ['DILARANG: basa-basi', 'baris kosong', 'huruf vokal dobel', "'Mantap'", "'Yeay'", 'patokan', 'kecamatan', 'supaya paket tidak nyasar di ekspedisi', 'prioritas pengiriman hari ini', 'saya tanyakan ke atasan saya dulu', 'Lengkapi data order dulu ya kak', 'Sudah benar kak? saya proses ya', 'CS Filomall-Beauty', '10.000 pcs', 'Jangan tanya provinsi', 'Kode pos:', 'dipisah koma']) assert.ok(sys.includes(k), k);
+  for (const k of ['DILARANG: basa-basi', 'baris kosong', 'PAHAMI TYPO', 'MENGARAHKAN', "'Mantap'", "'Yeay'", 'patokan', 'kecamatan', 'supaya paket tidak nyasar di ekspedisi', 'prioritas pengiriman hari ini', 'saya tanyakan ke atasan saya dulu', 'Lengkapi data order dulu ya kak', 'Sudah benar kak? saya proses ya', 'CS Filomall-Beauty', '10.000 pcs', 'Jangan tanya provinsi', 'Kode pos:', 'dipisah koma']) assert.ok(sys.includes(k), k);
 });
 // Workflow dengan fakta produk terisi (BPOM + testimoni) untuk tes.
 function withFacts(wf) {
@@ -694,11 +694,12 @@ test('workflow follow-up: kode node jalan end-to-end', () => {
   const code = (name) => wf.nodes.find((n) => n.name === name).parameters.jsCode;
   const hist = JSON.stringify([{ role: 'user', content: 'halo' }, { role: 'assistant', content: 'halo kak' }]);
   const rows = [{ phone: '62811', history: hist, last_chat_at: new Date(Date.now() - 70 * 60000).toISOString() }, {}];
-  const picked = new Function('$input', code('Pilih Lead FU'))({ all: () => rows.map((json) => ({ json })) });
+  const noSettings = () => ({ all: () => [] });
+  const picked = new Function('$', '$input', code('Pilih Lead FU'))(noSettings, { all: () => rows.map((json) => ({ json })) });
   const h = (Date.now() / 3600000 + 7) % 24;
   if (h >= 21 || h < 7) { assert.strictEqual(picked.length, 0); return; }
   assert.strictEqual(picked.length, 1);
-  const $ = () => ({ all: () => picked });
+  const $ = (n) => ({ all: () => (n === 'Ambil Settings' ? [] : picked) });
   const out = new Function('$', '$input', code('Olah FU'))($, { all: () => [{ json: { content: [{ type: 'text', text: 'Kak, ada yang bisa saya bantu lagi? 😊' }] } }] });
   assert.strictEqual(out[0].json.phone, '62811');
   assert.strictEqual(JSON.parse(out[0].json.history).pop().fu, 0);
@@ -883,5 +884,69 @@ test('konfirmasi revisi parsial setelah ringkasan tetap boleh order; total baru 
   const r2 = scenario({ message: 'Ok', row: { ...SALGLOW_ROW, history: JSON.stringify(hist2) }, first: toolUse('buat_order', { ...ORDER_INPUT, pembayaran: 'cod' }) });
   assert.strictEqual(r2.req('Scalev Buat Order'), undefined); // total terakhir Rp145.000 != COD Rp156.000
   assert.ok(r2.toolResults[0].error.includes('Rp156.000'));
+});
+test('memori: data pelanggan tersimpan dipakai & disimpan dari input tool; >30 hari dilupakan', () => {
+  const now = new Date().toISOString();
+  const profile = JSON.stringify({ nama: 'Midha', alamat: 'Jl. Raya Modern 129A', kelurahan: 'Gunung Anyar Tambak', kecamatan: 'Gununganyar', kota: 'Surabaya' });
+  const ctxOk = prepareContext({ phone: '6281', message: 'mau order lagi' }, { ...SALGLOW_ROW, last_chat_at: now, profile });
+  assert.ok(ctxOk.requestBody.system.includes('DATA PELANGGAN TERSIMPAN') && ctxOk.requestBody.system.includes('Jl. Raya Modern 129A'));
+  const old = new Date(Date.now() - 31 * 86400000).toISOString();
+  const ctxOld = prepareContext({ phone: '6281', message: 'halo' }, { ...SALGLOW_ROW, last_chat_at: old, profile });
+  assert.ok(!ctxOld.requestBody.system.includes('DATA PELANGGAN TERSIMPAN'));
+  assert.strictEqual(ctxOld.messages.length, 1);
+  const r = scenario({ message: 'oke', first: toolUse('cek_ongkir', { paket: 'B1G1', pembayaran: 'cod', kecamatan: 'Wonokromo', kota: 'Surabaya', kelurahan: 'Jagir' }) });
+  const saved = JSON.parse(r.req('Simpan Histori').body.profile);
+  assert.strictEqual(saved.kecamatan, 'Wonokromo');
+  assert.strictEqual(saved.pembayaran, 'cod');
+});
+
+test('font WA (𝐡𝐚𝐥𝐨) dinormalisasi', () => {
+  const c = prepareContext({ phone: '6281', message: '𝐩𝐫𝐨𝐦𝐨 𝘨𝘭𝘰𝘸𝘪𝘯𝘨 ｃｏｄ' }, null);
+  assert.strictEqual(c.incoming, 'promo glowing cod');
+});
+
+test('pengaturan admin: model Sonnet, harga, rekening, foto produk, nomor blokir', () => {
+  const cfg = { model: 'claude-sonnet-5-5', packages: { SalGlow: { B1G1: { price: 149000 } } }, bank_text: 'BCA 123 a.n Tes', blocked: ['081111'],
+    media: [{ url: 'https://n8n.x/webhook/aics-media?f=abc.jpg', tags: ['produk'] }] };
+  const s = scenario({ message: 'ok', first: toolUse('cek_ongkir', { paket: 'B1G1', pembayaran: 'transfer', kecamatan: 'Wonokromo', kota: 'Surabaya' }) });
+  void s;
+  const run = (rowsSettings, body, row, first) => simulate(mainWf(), {
+    webhookBody: { phone: body.phone || '6281', message: body.message, isFromMe: false, isGroup: false }, row, tables: { settings: rowsSettings },
+    http: (name) => ({ Claude: first, 'Claude Lanjutan': text('ok'), 'Scalev Lokasi': LOCATIONS, 'Scalev Kode Pos': POSTAL, 'Scalev Gudang': WAREHOUSES, 'Scalev Kurir': COURIERS })[name] || { status: true },
+  });
+  const rows = [{ key: 'config', value: JSON.stringify(cfg) }];
+  const r = run(rows, { message: 'ok' }, SALGLOW_ROW, toolUse('cek_ongkir', { paket: 'B1G1', pembayaran: 'transfer', kecamatan: 'Wonokromo', kota: 'Surabaya' }));
+  const req = r.requests.find((q) => q.node === 'Claude').body;
+  assert.strictEqual(req.model, 'claude-sonnet-5-5');
+  assert.strictEqual(req.tool_choice, undefined);
+  assert.strictEqual(req.output_config.effort, 'low');
+  assert.ok(req.system.includes('LEAD SUDAH MENYETUJUI RINGKASAN'));
+  assert.ok(req.system.includes('BCA 123 a.n Tes') && req.system.includes('B1G1 = Rp149.000'));
+  const res = JSON.parse(r.requests.find((q) => q.node === 'Claude Lanjutan').body.messages.slice(-1)[0].content[0].content);
+  assert.strictEqual(res.harga_produk, 'Rp149.000');
+  const blocked = run(rows, { phone: '6281111', message: 'halo' }, null, text('x'));
+  assert.ok(!blocked.requests.some((q) => q.node === 'Kirim WhatsApp'));
+  const foto = run(rows, { message: 'ada foto produknya?' }, SALGLOW_ROW, text('Ini kak [TESTIMONI:produk]'));
+  assert.ok(foto.requests.filter((q) => q.node === 'Kirim Gambar').some((q) => q.body.image.includes('aics-media')));
+});
+test('web app admin: password dari tabel, simpan, upload, sajikan file', () => {
+  const wf = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'admin-web-app.workflow.json'), 'utf8'));
+  const code = (n) => wf.nodes.find((x) => x.name === n).parameters.jsCode;
+  assert.ok(!/ADMIN_PASSWORD = '/.test(JSON.stringify(wf)));
+  const pass = 'tes-rahasia';
+  const settings = [{ key: 'admin_password', value: pass }, { key: 'config', value: JSON.stringify({ bonus: 'gratis sunscreen' }) }];
+  const mk = (first) => (n) => ({ first: () => ({ json: first }), all: () => settings.map((json) => ({ json })) });
+  const page = (key) => new Function('$', code('Halaman'))(mk({ query: { key } }))[0].json.html;
+  assert.ok(page('salah').includes('Password salah'));
+  assert.ok(page(pass).includes('Pengaturan AI CS'));
+  const noPass = new Function('$', code('Halaman'))((n) => ({ first: () => ({ json: { query: {} } }), all: () => [] }))[0].json.html;
+  assert.ok(noPass.includes('admin_password'));
+  const save = (body) => new Function('$', code('Cek Simpan'))(mk({ body }))[0].json;
+  assert.strictEqual(save({ key: 'x' }).ok, false);
+  assert.strictEqual(JSON.parse(save({ key: pass, config: { model: 'claude-sonnet-5-5' } }).value).model, 'claude-sonnet-5-5');
+  const up = new Function('$', code('Cek Upload'))(mk({ headers: { host: 'n8n.filodigital.my.id' }, body: { key: pass, name: 'a.jpg', ext: 'jpg', mime: 'image/jpeg', data: 'AAAA' } }))[0].json;
+  assert.ok(up.url.startsWith('https://n8n.filodigital.my.id/webhook/aics-media?f=') && up.url.endsWith('.jpg'));
+  const f = new Function('$input', code('Jadi File'))({ first: () => ({ json: { data: 'AAAA', mime: 'image/jpeg', name: 'a.jpg' } }) })[0];
+  assert.strictEqual(f.binary.data.mimeType, 'image/jpeg');
 });
 console.log(`${passed} tes lulus (final)`);

@@ -24,6 +24,8 @@ const TABLE_IDS = {
   leads_context: 'qZYFr5OtcUD8F8Co',
   lp_attribution: 'ZKK35xdmV3H3E2A4',
   aics_orders: 'JigJfYz6uPh04oCK',
+  settings: 'ISI_ID_TABEL_SETTINGS', // kolom: key, value
+  media: 'ISI_ID_TABEL_MEDIA', // kolom: media_id, name, mime, data
 };
 const CREDENTIALS = {
   anthropic: { httpHeaderAuth: { id: 'Rg3kLQlwRT919UB4', name: 'Anthropic API' } },
@@ -61,6 +63,9 @@ function finalize(wf) {
   return wf;
 }
 const ORDERS_TABLE = tableRef('aics_orders');
+const SETTINGS_TABLE = tableRef('settings');
+const MEDIA_TABLE = tableRef('media');
+const SETTINGS_LOAD = "loadSettings($('Ambil Settings').all().map((i) => i.json));";
 const ATTRIBUTION_TABLE = tableRef('lp_attribution');
 const TELEGRAM_CHAT_ID = '-5439732568';
 const WEBHOOK_PATH = 'f8a25d64-d657-498a-a177-71a844693f42';
@@ -70,17 +75,21 @@ const prepareCode = [
   src('prompts.js'),
   src('order-config.js'),
   src('tools.js'),
+  src('settings.js'),
+  src('profile.js'),
   src('prepare-context.js'),
-  `const body = $('Webhook').first().json.body;
-const first = items.length ? items[0].json : null;
+  `${SETTINGS_LOAD}
+const body = $('Webhook').first().json.body;
+const rows = $('Get row(s)').all();
+const first = rows.length ? rows[0].json : null;
 const row = first && first.phone ? first : null;
 const ctx = prepareContext(body, row);
 return ctx ? [{ json: ctx }] : [];`,
 ].join('\n');
 
 // Kode rantai tool Scalev. Setiap node menyimpan state + body request berikutnya.
-const scalevLib = [src('order-config.js'), src('scalev.js')].join('\n');
-const toolCode = (body) => [scalevLib, body].join('\n');
+const scalevLib = [src('order-config.js'), src('scalev.js'), src('settings.js')].join('\n');
+const toolCode = (body) => [scalevLib, SETTINGS_LOAD, body].join('\n');
 
 const startCode = toolCode(`const ctx = $('Siapkan Konteks').first().json;
 const toolUse = ($input.first().json.content || []).find((c) => c.type === 'tool_use');
@@ -122,7 +131,10 @@ return [{ json: {
 const parseCode = [
   src('product-facts.js'),
   src('parse-reply.js'),
-  `const ctx = $('Siapkan Konteks').first().json;
+  src('settings.js'),
+  src('profile.js'),
+  `${SETTINGS_LOAD}
+const ctx = $('Siapkan Konteks').first().json;
 const parsed = parseReply($input.first().json);
 const orderMade = $('Hasil Tool').isExecuted && $('Hasil Tool').first().json.order;
 if (!orderMade && /prioritas pengiriman|orderan kakak sudah saya (catat|masukkan)|data order sudah masuk/i.test(parsed.reply)) {
@@ -135,7 +147,10 @@ const order = $('Hasil Tool').isExecuted ? $('Hasil Tool').first().json.order : 
 const stored = $('Get row(s)').first().json || {};
 const leadRes = $('Scalev Lead Order').isExecuted ? $('Scalev Lead Order').first().json : {};
 const lead = (leadRes && leadRes.data) || leadRes || {};
-const history = ctx.messages.concat([{ role: 'assistant', content: parsed.reply }]);
+// Riwayat lengkap (30 hari, maks 80 pesan) + data pelanggan dari input tool.
+const history = (ctx.historyFull || ctx.messages).concat([{ role: 'assistant', content: parsed.reply }]).slice(-80);
+const toolInput = $('Mulai Tool').isExecuted ? ($('Mulai Tool').first().json.input || {}) : {};
+const profile = mergeProfile(ctx.profile, toolInput);
 return [{
   json: {
     phone: ctx.phone,
@@ -152,6 +167,7 @@ return [{
     apiError: parsed.apiError,
     reply: parsed.reply,
     history: JSON.stringify(history),
+    profile: JSON.stringify(profile),
     order,
     orderText: order ? (order.revision ? 'REVISI ' : '') + order.orderId + ' (' + (order.method === 'cod' ? 'COD' : 'Transfer') + ', Rp' + order.total.toLocaleString('id-ID') + ')' : '',
     scalev_id: order ? order.id : (lead.id ? 'lead:' + lead.id : (stored.scalev_id || '')),
@@ -227,11 +243,16 @@ const nodes = [
     options: {},
   }),
 
+  node('Ambil Settings', 'n8n-nodes-base.dataTable', 1.1, 330, {
+    operation: 'get',
+    dataTableId: SETTINGS_TABLE,
+    returnAll: true,
+  }, { alwaysOutputData: true, executeOnce: true, y: -150, onError: 'continueRegularOutput' }),
   node('Get row(s)', 'n8n-nodes-base.dataTable', 1.1, 440, {
     operation: 'get',
     dataTableId: DATA_TABLE,
-    filters: { conditions: [{ keyName: 'phone', keyValue: '={{ $json.body.phone }}' }] },
-  }, { alwaysOutputData: true }),
+    filters: { conditions: [{ keyName: 'phone', keyValue: "={{ $('Webhook').item.json.body.phone }}" }] },
+  }, { alwaysOutputData: true, executeOnce: true }),
 
   node('Siapkan Konteks', 'n8n-nodes-base.code', 2, 660, { jsCode: prepareCode }),
 
@@ -407,13 +428,14 @@ return d.testimoni.map((image) => ({ json: { phone: d.phone, image } }));`,
         handoff: "={{ $('Olah Balasan').item.json.pauseBot ? new Date().toISOString() : 'false' }}",
         ref: "={{ $('Olah Balasan').item.json.ref }}",
         scalev_id: "={{ $('Olah Balasan').item.json.scalev_id }}",
+        profile: "={{ $('Olah Balasan').item.json.profile }}",
         last_order_id: "={{ $('Olah Balasan').item.json.last_order_id }}",
         last_order_at: "={{ $('Olah Balasan').item.json.last_order_at }}",
         first_chat_at: "={{ $('Olah Balasan').item.json.first_chat_at }}",
         last_chat_at: "={{ $('Olah Balasan').item.json.last_chat_at }}",
       },
       matchingColumns: [],
-      schema: ['phone', 'active_product', 'history', 'handoff', 'ref', 'scalev_id', 'last_order_id', 'last_order_at', 'first_chat_at', 'last_chat_at'].map(column),
+      schema: ['phone', 'active_product', 'history', 'handoff', 'ref', 'scalev_id', 'profile', 'last_order_id', 'last_order_at', 'first_chat_at', 'last_chat_at'].map(column),
       attemptToConvertTypes: false,
       convertFieldsToString: false,
     },
@@ -452,7 +474,8 @@ const workflow = {
   pinData: {},
   connections: {
     Webhook: link('Hanya Chat Lead'),
-    'Hanya Chat Lead': link('Get row(s)'),
+    'Hanya Chat Lead': link('Ambil Settings'),
+    'Ambil Settings': link('Get row(s)'),
     'Get row(s)': link('Siapkan Konteks'),
     'Siapkan Konteks': link('Bot Dijeda?'),
     'Bot Dijeda?': link('Simpan Saat Jeda', 'Lead Baru?'),
@@ -853,7 +876,7 @@ fs.writeFileSync(recapOut, JSON.stringify(finalize(recapWorkflow), null, 2) + '\
 console.log('Wrote', path.relative(process.cwd(), recapOut));
 
 // Workflow ketujuh: follow-up otomatis lead yang tidak membalas (cek tiap 1 jam).
-const fuLib = ['product-facts.js', 'prompts.js', 'order-config.js', 'tools.js', 'prepare-context.js', 'parse-reply.js', 'follow-up.js'].map(src).join('\n');
+const fuLib = ['product-facts.js', 'prompts.js', 'order-config.js', 'tools.js', 'settings.js', 'profile.js', 'prepare-context.js', 'parse-reply.js', 'follow-up.js'].map(src).join('\n') + '\n' + SETTINGS_LOAD;
 const fuPickCode = fuLib + `
 const now = Date.now();
 return $input.all().map((i) => i.json).filter((r) => r && r.phone).map((row) => {
@@ -874,6 +897,7 @@ const followUpWorkflow = {
     node('Tiap 1 Jam', 'n8n-nodes-base.scheduleTrigger', 1.2, 0, {
       rule: { interval: [{ field: 'hours', hoursInterval: 1 }] },
     }),
+    { ...getAll('Ambil Settings', 110, SETTINGS_TABLE), position: [110, -150] },
     getAll('Ambil Leads', 220, DATA_TABLE),
     node('Pilih Lead FU', 'n8n-nodes-base.code', 2, 440, { jsCode: fuPickCode }),
     node('Claude FU', 'n8n-nodes-base.httpRequest', 4.5, 660, {
@@ -920,7 +944,8 @@ const followUpWorkflow = {
   ].map((n, i) => ({ ...n, id: `aics-fu-${i + 1}` })),
   pinData: {},
   connections: {
-    'Tiap 1 Jam': link('Ambil Leads'),
+    'Tiap 1 Jam': link('Ambil Settings'),
+    'Ambil Settings': link('Ambil Leads'),
     'Ambil Leads': link('Pilih Lead FU'),
     'Pilih Lead FU': link('Claude FU'),
     'Claude FU': link('Olah FU'),
@@ -977,3 +1002,129 @@ return [{ json: { ids, found, missing: wanted.filter((w) => !found.includes(w)) 
 const cleanupOut = path.join(__dirname, 'hapus-order-tes.workflow.json');
 fs.writeFileSync(cleanupOut, JSON.stringify(finalize(cleanupWorkflow), null, 2) + '\n');
 console.log('Wrote', path.relative(process.cwd(), cleanupOut));
+
+// Workflow kesembilan: web app admin (pengaturan + upload gambar/file) dan penyaji file media.
+const adminLib = src('admin-page.js');
+const adminPageCode = adminLib + `
+const q = $('Admin Page').first().json.query || {};
+const rows = $('Ambil Settings').all().map((i) => i.json);
+const pass = adminPassword(rows);
+if (!pass) return [{ json: { html: loginPage('Password belum diatur: tambahkan baris key = admin_password di tabel settings.') } }];
+const row = rows.find((r) => r && r.key === 'config');
+let cfg = {};
+try { cfg = row && row.value ? JSON.parse(row.value) : {}; } catch (e) { cfg = {}; }
+const html = q.key === pass ? adminPage(cfg, q.key) : loginPage(q.key ? 'Password salah' : '');
+return [{ json: { html } }];`;
+const adminSaveCode = adminLib + `
+const body = $('Admin Simpan').first().json.body || {};
+const pass = adminPassword($('Ambil Settings Simpan').all().map((i) => i.json));
+if (!pass || body.key !== pass) return [{ json: { ok: false, error: 'Password salah' } }];
+return [{ json: { ok: true, key: 'config', value: JSON.stringify(body.config || {}) } }];`;
+const adminUploadCode = adminLib + `
+const req = $('Admin Upload').first().json;
+const body = req.body || {};
+const h = req.headers || {};
+const pass = adminPassword($('Ambil Settings Upload').all().map((i) => i.json));
+if (!pass || body.key !== pass) return [{ json: { ok: false, error: 'Password salah' } }];
+const data = String(body.data || '');
+if (!data || data.length > 3 * 1024 * 1024) return [{ json: { ok: false, error: 'File kosong atau terlalu besar' } }];
+const ext = String(body.ext || 'jpg').replace(/[^a-z0-9]/gi, '').slice(0, 5) || 'bin';
+const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const host = h['x-forwarded-host'] || h.host;
+return [{ json: { ok: true, media_id: id, name: String(body.name || id).slice(0, 120), mime: String(body.mime || 'application/octet-stream'), data,
+  url: 'https://' + host + '/webhook/aics-media?f=' + id + '.' + ext } }];`;
+const mediaFileCode = `const row = $input.first().json || {};
+if (!row.data) return [{ json: { error: 'not found' }, binary: { data: { data: Buffer.from('not found').toString('base64'), mimeType: 'text/plain', fileName: 'notfound.txt' } } }];
+return [{ json: {}, binary: { data: { data: row.data, mimeType: row.mime || 'application/octet-stream', fileName: row.name || 'file' } } }];`;
+
+const respond = (name, x, y, params) => node(name, 'n8n-nodes-base.respondToWebhook', 1.1, x, params, { y });
+const respondJson = (name, x, y, body) => respond(name, x, y, { respondWith: 'json', responseBody: body, options: {} });
+
+const adminWorkflow = {
+  name: 'AI Agent CS - Admin Web App',
+  nodes: [
+    node('Admin Page', 'n8n-nodes-base.webhook', 2.1, 0, { httpMethod: 'GET', path: 'aics-admin', responseMode: 'responseNode', options: {} }, { webhookId: 'aics-admin' }),
+    { ...getAll('Ambil Settings', 220, SETTINGS_TABLE), position: [220, 0] },
+    node('Halaman', 'n8n-nodes-base.code', 2, 440, { jsCode: adminPageCode }),
+    respond('Kirim Halaman', 660, 0, {
+      respondWith: 'text',
+      responseBody: '={{ $json.html }}',
+      options: { responseHeaders: { entries: [{ name: 'Content-Type', value: 'text/html; charset=utf-8' }] } },
+    }),
+
+    node('Admin Simpan', 'n8n-nodes-base.webhook', 2.1, 0, { httpMethod: 'POST', path: 'aics-admin-save', responseMode: 'responseNode', options: {} }, { webhookId: 'aics-admin-save', y: 250 }),
+    { ...getAll('Ambil Settings Simpan', 110, SETTINGS_TABLE), position: [110, 250] },
+    node('Cek Simpan', 'n8n-nodes-base.code', 2, 220, { jsCode: adminSaveCode }, { y: 250 }),
+    ifNode('Boleh Simpan?', 440, 250, '={{ $json.ok === true }}'),
+    node('Simpan Settings', 'n8n-nodes-base.dataTable', 1.1, 660, {
+      operation: 'upsert',
+      dataTableId: SETTINGS_TABLE,
+      filters: { conditions: [{ keyName: 'key', keyValue: 'config' }] },
+      columns: {
+        mappingMode: 'defineBelow',
+        value: { key: 'config', value: '={{ $json.value }}' },
+        matchingColumns: [],
+        schema: ['key', 'value'].map(column),
+        attemptToConvertTypes: false,
+        convertFieldsToString: false,
+      },
+      options: {},
+    }, { y: 200 }),
+    respondJson('Simpan OK', 880, 200, '={{ JSON.stringify({ ok: true }) }}'),
+    respondJson('Simpan Ditolak', 660, 350, '={{ JSON.stringify({ ok: false, error: $json.error }) }}'),
+
+    node('Admin Upload', 'n8n-nodes-base.webhook', 2.1, 0, { httpMethod: 'POST', path: 'aics-admin-upload', responseMode: 'responseNode', options: {} }, { webhookId: 'aics-admin-upload', y: 550 }),
+    { ...getAll('Ambil Settings Upload', 110, SETTINGS_TABLE), position: [110, 550] },
+    node('Cek Upload', 'n8n-nodes-base.code', 2, 220, { jsCode: adminUploadCode }, { y: 550 }),
+    ifNode('Boleh Upload?', 440, 550, '={{ $json.ok === true }}'),
+    node('Simpan Media', 'n8n-nodes-base.dataTable', 1.1, 660, {
+      operation: 'insert',
+      dataTableId: MEDIA_TABLE,
+      columns: {
+        mappingMode: 'defineBelow',
+        value: { media_id: '={{ $json.media_id }}', name: '={{ $json.name }}', mime: '={{ $json.mime }}', data: '={{ $json.data }}' },
+        matchingColumns: [],
+        schema: ['media_id', 'name', 'mime', 'data'].map(column),
+        attemptToConvertTypes: false,
+        convertFieldsToString: false,
+      },
+      options: {},
+    }, { y: 500 }),
+    respondJson('Upload OK', 880, 500, "={{ JSON.stringify({ ok: true, url: $('Cek Upload').first().json.url }) }}"),
+    respondJson('Upload Ditolak', 660, 650, '={{ JSON.stringify({ ok: false, error: $json.error }) }}'),
+
+    node('Media', 'n8n-nodes-base.webhook', 2.1, 0, { httpMethod: 'GET', path: 'aics-media', responseMode: 'responseNode', options: {} }, { webhookId: 'aics-media', y: 850 }),
+    node('Cari Media', 'n8n-nodes-base.dataTable', 1.1, 220, {
+      operation: 'get',
+      dataTableId: MEDIA_TABLE,
+      filters: { conditions: [{ keyName: 'media_id', keyValue: "={{ String($json.query.f || '').replace(/\\.[^.]+$/, '') }}" }] },
+    }, { alwaysOutputData: true, y: 850 }),
+    node('Jadi File', 'n8n-nodes-base.code', 2, 440, { jsCode: mediaFileCode }, { y: 850 }),
+    respond('Kirim File', 660, 850, { respondWith: 'binary', options: {} }),
+  ].map((n, i) => ({ ...n, id: `aics-admin-${i + 1}` })),
+  pinData: {},
+  connections: {
+    'Admin Page': link('Ambil Settings'),
+    'Ambil Settings': link('Halaman'),
+    Halaman: link('Kirim Halaman'),
+    'Admin Simpan': link('Ambil Settings Simpan'),
+    'Ambil Settings Simpan': link('Cek Simpan'),
+    'Cek Simpan': link('Boleh Simpan?'),
+    'Boleh Simpan?': link('Simpan Settings', 'Simpan Ditolak'),
+    'Simpan Settings': link('Simpan OK'),
+    'Admin Upload': link('Ambil Settings Upload'),
+    'Ambil Settings Upload': link('Cek Upload'),
+    'Cek Upload': link('Boleh Upload?'),
+    'Boleh Upload?': link('Simpan Media', 'Upload Ditolak'),
+    'Simpan Media': link('Upload OK'),
+    Media: link('Cari Media'),
+    'Cari Media': link('Jadi File'),
+    'Jadi File': link('Kirim File'),
+  },
+  active: false,
+  settings: { executionOrder: 'v1' },
+  tags: [],
+};
+const adminOut = path.join(__dirname, 'admin-web-app.workflow.json');
+fs.writeFileSync(adminOut, JSON.stringify(finalize(adminWorkflow), null, 2) + '\n');
+console.log('Wrote', path.relative(process.cwd(), adminOut));

@@ -54,10 +54,11 @@ function followUpRequest(row, due) {
     role: 'user',
     content: `[SISTEM, bukan dari lead] Lead belum membalas selama ${waitLabel(due.elapsedMinutes)}. Tulis follow-up ke-${due.stage + 1} dari ${FU_MINUTES.length}.`,
   });
+  const model = activeModel(MODEL);
   return {
-    model: MODEL,
-    max_tokens: 300,
-    system: buildSystemPrompt(product) + ' ' + FU_RULE,
+    model,
+    ...modelParams(model),
+    system: buildSystemPrompt(product) + settingsPrompt() + profilePrompt(parseProfile(row.profile)) + ' ' + FU_RULE,
     messages,
   };
 }
@@ -74,5 +75,5 @@ function followUpText(response) {
 function appendFollowUp(rawHistory, text, stage, now = Date.now()) {
   const history = parseHistory(rawHistory);
   history.push({ role: 'assistant', content: text, fu: stage, at: new Date(now).toISOString() });
-  return JSON.stringify(history.slice(-MAX_HISTORY * 2));
+  return JSON.stringify(history.slice(-STORE_HISTORY));
 }

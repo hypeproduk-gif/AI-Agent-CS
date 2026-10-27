@@ -1,9 +1,9 @@
 // Susun konteks untuk Claude dari payload webhook Wablas + baris leads_context.
 // Mengembalikan null kalau bot harus diam (lead sedang ditangani manusia).
 
-const MAX_HISTORY = 20;
+const MAX_HISTORY = 30; // pesan terakhir yang dikirim ke Claude
+const STORE_HISTORY = 80; // pesan yang disimpan (riwayat chat 30 hari)
 const MODEL = 'claude-haiku-4-5-20251001';
-const MAX_TOKENS = 500;
 const HANDOFF_PAUSE_MINUTES = 30; // setelah ini bot aktif lagi otomatis
 // Nomor yang tidak pernah dibalas bot (mis. nomor notifikasi Scalev).
 const BLOCKED_PHONES = ['6282125784683'];
@@ -135,6 +135,23 @@ function summaryTotal(history) {
 // Lead menyetujui ringkasan order ("ok", "iya betul", "sip proses", ...).
 const AGREE_PATTERN = /^\s*(ok(e|ey|ee)?|oke+|iya+|iy|ya+|yup|sip+|siap|betul|benar|bener|lanjut|proses|gas+|boleh|setuju|deal|mantap)\b[^?]{0,40}$/i;
 
+// Setelah ringkasan disetujui, Claude WAJIB memanggil tool. Haiku 4.5: tool_choice "any";
+// model baru menolak tool_choice "any", jadi pakai instruksi tegas di system prompt.
+function buildRequest(system, messages, tools, mustCallTool) {
+  const model = activeModel(MODEL);
+  const params = modelParams(model);
+  const forceAny = mustCallTool && /haiku-4-5/.test(model);
+  const note = mustCallTool && !forceAny ? ' LEAD SUDAH MENYETUJUI RINGKASAN: panggil tool buat_order SEKARANG, jangan hanya membalas teks.' : '';
+  return {
+    model,
+    ...params,
+    system: system + note,
+    messages,
+    ...(tools ? { tools } : {}),
+    ...(forceAny ? { tool_choice: { type: 'any' } } : {}),
+  };
+}
+
 function prepareContext(body, row) {
   const digits = String(body.phone || '').replace(/\D/g, '').replace(/^0/, '62');
   if (BLOCKED_PHONES.includes(digits)) return null;
@@ -144,12 +161,15 @@ function prepareContext(body, row) {
   // konteksnya tidak hilang ketika bot aktif lagi.
   if (isPaused(row)) {
     const kept = parseHistory(row.history).concat([{ role: 'user', content: incoming }]);
-    return { paused: true, phone: body.phone, history: JSON.stringify(kept.slice(-MAX_HISTORY * 2)) };
+    return { paused: true, phone: body.phone, history: JSON.stringify(kept.slice(-STORE_HISTORY)) };
   }
 
   const { product, switchedFrom, ref } = resolveProduct(incoming, row && row.active_product);
-  const history = parseHistory(row && row.history);
+  // Ingatan 30 hari: chat & data pelanggan yang lebih lama dari itu dilupakan.
+  const fresh = Boolean(row && (!row.last_chat_at || isFresh(row.last_chat_at)));
+  const history = fresh ? parseHistory(row.history) : [];
   history.push({ role: 'user', content: incoming });
+  const profile = fresh ? parseProfile(row.profile) : {};
   const messages = trimHistory(history);
 
   // Order Scalev yang bisa di-update (PATCH): order lead (belum lengkap) atau order yang baru dibuat (revisi).
@@ -160,7 +180,7 @@ function prepareContext(body, row) {
   const patchId = leadOrderId || (scalevId && lastOrder ? scalevId : '');
 
   const tools = orderTools(product);
-  let system = buildSystemPrompt(product);
+  let system = buildSystemPrompt(product) + settingsPrompt() + profilePrompt(profile);
   if (tools) system += ' ' + ORDER_RULE.split('{BRAND}').join(BRANDS[product] || 'Filomall-Beauty');
   if (tools && lastOrder) {
     system += ` KONTEKS ORDER: lead ini sudah punya order ${lastOrder} dalam ${SCALEV.duplicateOrderHours} jam terakhir. Kalau lead ingin order/ubah order, sebelum buat_order tanyakan dulu: 'Ini mau ganti order yang tadi, atau tambah order baru kak?' lalu isi jenis_order sesuai jawabannya. Kalau lead jelas minta mengubah order tadi (mis. 'ganti cod aja', 'ganti alamat', 'jadi 2 paket'), itu 'revisi' tanpa perlu bertanya.`;
@@ -194,14 +214,8 @@ function prepareContext(body, row) {
       notes: 'Lead WA baru (belum order)',
     },
     messages,
-    requestBody: {
-      model: MODEL,
-      max_tokens: MAX_TOKENS,
-      system,
-      messages,
-      ...(tools ? { tools } : {}),
-      // Setelah ringkasan disetujui, Claude WAJIB memanggil tool (tidak boleh cuma bilang order sudah masuk).
-      ...(tools && summaryWasSent(history) && AGREE_PATTERN.test(incoming) ? { tool_choice: { type: 'any' } } : {}),
-    },
+    historyFull: history.slice(-STORE_HISTORY),
+    profile,
+    requestBody: buildRequest(system, messages, tools, tools && summaryWasSent(history) && AGREE_PATTERN.test(incoming)),
   };
 }

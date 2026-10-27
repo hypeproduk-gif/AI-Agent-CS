@@ -1,0 +1,725 @@
+{
+  "name": "AI Agent CS - Admin Web App",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "aics-admin",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "name": "Admin Page",
+      "webhookId": "aics-admin",
+      "id": "aics-admin-1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "ISI_ID_TABEL_SETTINGS",
+          "mode": "list",
+          "cachedResultName": "settings",
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ISI_ID_TABEL_SETTINGS"
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        0
+      ],
+      "name": "Ambil Settings",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "id": "aics-admin-2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Halaman web admin AI Agent CS (disajikan oleh webhook n8n). Semua pengaturan disimpan\n// ke Data Table \"settings\" (key = config). Upload gambar/file ke Data Table \"media\".\n\n// Password admin TIDAK disimpan di kode: isi di Data Table \"settings\" baris key = admin_password.\nfunction adminPassword(rows) {\n  const r = (rows || []).find((x) => x && x.key === 'admin_password');\n  return r && String(r.value || '').trim() ? String(r.value).trim() : null;\n}\n\nconst MEDIA_TAGS = ['produk', 'flek', 'bekas_jerawat', 'jerawat', 'kusam', 'kering', 'penuaan', 'tekstur', 'cepat', 'file'];\n\nfunction esc(s) {\n  return String(s == null ? '' : s).replace(/[&<>\"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', \"'\": '&#39;' })[c]);\n}\n\nfunction loginPage(msg) {\n  return `<!doctype html><html lang=\"id\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Admin AI CS</title><style>body{font-family:system-ui,sans-serif;max-width:360px;margin:15vh auto;padding:0 16px}input,button{width:100%;padding:12px;margin-top:8px;font-size:16px;box-sizing:border-box}button{background:#16a34a;color:#fff;border:0;border-radius:8px}</style></head>\n<body><h2>Admin AI CS</h2>${msg ? `<p style=\"color:#b91c1c\">${esc(msg)}</p>` : ''}\n<form method=\"get\"><input type=\"password\" name=\"key\" placeholder=\"Password\" autofocus><button>Masuk</button></form></body></html>`;\n}\n\nfunction adminPage(config, key) {\n  const c = config || {};\n  const pk = (c.packages && c.packages.SalGlow) || {};\n  const json = JSON.stringify(c).replace(/</g, '\\\\u003c');\n  return `<!doctype html><html lang=\"id\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Admin AI CS</title>\n<style>\n:root{--bg:#f6f7f9;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--accent:#16a34a}\n@media (prefers-color-scheme:dark){:root{--bg:#0b0f14;--card:#151b23;--text:#e5e7eb;--muted:#9ca3af;--line:#273040}}\n*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-serif}\nmain{max-width:760px;margin:0 auto;padding:16px 16px 96px}\nh1{font-size:22px;margin:8px 0 4px}p.sub{color:var(--muted);margin:0 0 16px}\nsection{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}\nh2{font-size:16px;margin:0 0 10px}label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}\ninput,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font-size:15px;font-family:inherit}\ntextarea{min-height:84px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end}\n.hint{font-size:12px;color:var(--muted);margin-top:4px}\n.media{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:10px}\n.m{border:1px solid var(--line);border-radius:8px;padding:6px;font-size:12px;word-break:break-all}\n.m img{width:100%;height:110px;object-fit:cover;border-radius:6px}\n.m button{margin-top:4px;width:100%;padding:6px;border:0;border-radius:6px;background:#fee2e2;color:#991b1b}\n.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.tags label{display:flex;gap:4px;align-items:center;margin:0;color:var(--text)}\n.tags input{width:auto}\n.bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:12px 16px;display:flex;gap:10px;justify-content:center}\n.bar button{max-width:360px;width:100%;padding:13px;font-size:16px;border:0;border-radius:10px;background:var(--accent);color:#fff}\n#status{position:fixed;top:12px;left:50%;transform:translateX(-50%);padding:8px 14px;border-radius:8px;background:#111827;color:#fff;display:none}\n</style></head><body><main>\n<h1>Pengaturan AI CS</h1><p class=\"sub\">Ubah lalu klik <b>Simpan</b>. Perubahan langsung dipakai AI di chat berikutnya.</p>\n\n<section><h2>Model AI</h2>\n<label>Model</label><select id=\"model\">\n<option value=\"\">Haiku 4.5 (paling hemat)</option>\n<option value=\"claude-sonnet-5-5\">Sonnet 5.5 (lebih pintar, ±2-4x biaya)</option>\n<option value=\"claude-opus-5-5\">Opus 5.5 (paling pintar, ±4-8x biaya)</option>\n</select></section>\n\n<section><h2>Gaya bahasa</h2>\n<label>Arahan gaya tambahan</label><textarea id=\"tone_notes\" placeholder=\"contoh: selalu sapa dengan nama, jangan pakai emoji, tawarkan paket 4 pcs dulu\"></textarea>\n<label>Nama toko di tanda tangan CS</label><input id=\"brand\" placeholder=\"Filomall-Beauty\"></section>\n\n<section><h2>Produk SalGlow</h2>\n<label>Info produk tambahan / terbaru</label><textarea id=\"product_info\" placeholder=\"kandungan, manfaat, cara pakai, info promo khusus, dll\"></textarea>\n<div class=\"row\"><div><label>Harga Beli 1 Gratis 1 (2 pcs)</label><input id=\"p_B1G1\" inputmode=\"numeric\" placeholder=\"139000\"></div>\n<div><label>Harga Beli 2 Gratis 2 (4 pcs)</label><input id=\"p_B2G2\" inputmode=\"numeric\" placeholder=\"219000\"></div></div>\n<label>Bonus saat ini</label><input id=\"bonus\" placeholder=\"gratis sunscreen + eyeliner\"></section>\n\n<section><h2>Pembayaran</h2>\n<label>Rekening transfer (teks yang dikirim ke pembeli)</label><textarea id=\"bank_text\" placeholder=\"BCA 123... a.n ...\"></textarea>\n<div class=\"hint\">Kosongkan untuk memakai rekening bawaan.</div></section>\n\n<section><h2>Gambar & file</h2>\n<div class=\"hint\">Tag <b>produk</b> = foto produk yang dikirim AI kalau lead minta lihat produk. Tag lain = testimoni sesuai keluhan.</div>\n<label>Upload (jpg/png/webp, atau pdf maks 2 MB)</label><input type=\"file\" id=\"file\" accept=\"image/*,application/pdf\" multiple>\n<div class=\"tags\" id=\"newtags\"></div>\n<div class=\"media\" id=\"media\"></div></section>\n\n<section><h2>Store Scalev</h2>\n<div class=\"row\"><div><label>Store ID (angka)</label><input id=\"store_id\" inputmode=\"numeric\" placeholder=\"99062\"></div>\n<div><label>Store unique ID</label><input id=\"store_uid\" placeholder=\"store_...\"></div></div>\n<div class=\"hint\">Kosongkan untuk memakai store bawaan. Isi kalau pindah store / akun Scalev (ID varian produk harus sama).</div></section>\n\n<section><h2>Nomor diblokir</h2>\n<label>Satu nomor per baris (tidak akan dibalas AI)</label><textarea id=\"blocked\" placeholder=\"6282125784683\"></textarea></section>\n</main>\n<div class=\"bar\"><button id=\"save\">Simpan</button></div><div id=\"status\"></div>\n<script>\nconst KEY = ${JSON.stringify(key)};\nconst TAGS = ${JSON.stringify(MEDIA_TAGS)};\nlet cfg = ${json};\ncfg.media = cfg.media || [];\nconst $ = (id) => document.getElementById(id);\nconst pk = (cfg.packages && cfg.packages.SalGlow) || {};\n$('model').value = cfg.model || '';\n['tone_notes','brand','product_info','bonus','bank_text'].forEach((k) => { $(k).value = cfg[k] || ''; });\n$('p_B1G1').value = (pk.B1G1 && pk.B1G1.price) || '';\n$('p_B2G2').value = (pk.B2G2 && pk.B2G2.price) || '';\n$('store_id').value = (cfg.store && cfg.store.storeId) || '';\n$('store_uid').value = (cfg.store && cfg.store.storeUniqueId) || '';\n$('blocked').value = (cfg.blocked || []).join('\\\\n');\n$('newtags').innerHTML = TAGS.map((t) => '<label><input type=\"checkbox\" value=\"' + t + '\">' + t + '</label>').join('');\nfunction toast(t) { const s = $('status'); s.textContent = t; s.style.display = 'block'; clearTimeout(toast.h); toast.h = setTimeout(() => { s.style.display = 'none'; }, 2500); }\nfunction renderMedia() {\n  $('media').innerHTML = cfg.media.map((m, i) => '<div class=\"m\">' + (/\\\\.(jpe?g|png|webp)$/i.test(m.url) ? '<img src=\"' + m.url + '\">' : '📄 ' + (m.name || 'file')) +\n    '<div>' + (m.tags || []).join(', ') + '</div><button data-i=\"' + i + '\">Hapus</button></div>').join('');\n}\n$('media').addEventListener('click', (e) => { const i = e.target.dataset.i; if (i !== undefined) { cfg.media.splice(Number(i), 1); renderMedia(); toast('Dihapus, klik Simpan'); } });\nrenderMedia();\nfunction shrink(file) {\n  return new Promise((resolve, reject) => {\n    if (!file.type.startsWith('image/')) {\n      if (file.size > 2 * 1024 * 1024) return reject(new Error('File lebih dari 2 MB'));\n      const r = new FileReader(); r.onload = () => resolve({ mime: file.type, data: String(r.result).split(',')[1], ext: (file.name.split('.').pop() || 'bin').toLowerCase() }); r.onerror = reject; r.readAsDataURL(file); return;\n    }\n    const img = new Image(); img.onload = () => {\n      const max = 1280; const s = Math.min(1, max / Math.max(img.width, img.height));\n      const cv = document.createElement('canvas'); cv.width = Math.round(img.width * s); cv.height = Math.round(img.height * s);\n      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);\n      resolve({ mime: 'image/jpeg', data: cv.toDataURL('image/jpeg', 0.82).split(',')[1], ext: 'jpg' });\n    }; img.onerror = reject; img.src = URL.createObjectURL(file);\n  });\n}\n$('file').addEventListener('change', async (e) => {\n  const tags = [...document.querySelectorAll('#newtags input:checked')].map((x) => x.value);\n  for (const f of e.target.files) {\n    try {\n      toast('Upload ' + f.name + '...');\n      const s = await shrink(f);\n      const res = await fetch(location.pathname.replace(/aics-admin$/, 'aics-admin-upload'), { method: 'POST', headers: { 'Content-Type': 'application/json' },\n        body: JSON.stringify({ key: KEY, name: f.name, mime: s.mime, ext: s.ext, data: s.data }) });\n      const out = await res.json();\n      if (!out.url) throw new Error(out.error || 'gagal');\n      cfg.media.push({ url: out.url, name: f.name, tags: tags.length ? tags : ['produk'] });\n      renderMedia();\n    } catch (err) { toast('Gagal upload: ' + err.message); }\n  }\n  e.target.value = ''; toast('Upload selesai, klik Simpan');\n});\n$('save').addEventListener('click', async () => {\n  const num = (v) => Number(String(v).replace(/\\\\D/g, '')) || undefined;\n  cfg.model = $('model').value || undefined;\n  ['tone_notes','brand','product_info','bonus','bank_text'].forEach((k) => { cfg[k] = $(k).value.trim() || undefined; });\n  cfg.packages = { SalGlow: { B1G1: { price: num($('p_B1G1').value) }, B2G2: { price: num($('p_B2G2').value) } } };\n  cfg.store = $('store_id').value && $('store_uid').value ? { storeId: num($('store_id').value), storeUniqueId: $('store_uid').value.trim() } : undefined;\n  cfg.blocked = $('blocked').value.split(/\\\\s+/).map((x) => x.trim()).filter(Boolean);\n  try {\n    const res = await fetch(location.pathname.replace(/aics-admin$/, 'aics-admin-save'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: KEY, config: cfg }) });\n    const out = await res.json(); toast(out.ok ? 'Tersimpan ✅' : 'Gagal: ' + (out.error || res.status));\n  } catch (err) { toast('Gagal: ' + err.message); }\n});\n</script></body></html>`;\n}\n\nconst q = $('Admin Page').first().json.query || {};\nconst rows = $('Ambil Settings').all().map((i) => i.json);\nconst pass = adminPassword(rows);\nif (!pass) return [{ json: { html: loginPage('Password belum diatur: tambahkan baris key = admin_password di tabel settings.') } }];\nconst row = rows.find((r) => r && r.key === 'config');\nlet cfg = {};\ntry { cfg = row && row.value ? JSON.parse(row.value) : {}; } catch (e) { cfg = {}; }\nconst html = q.key === pass ? adminPage(cfg, q.key) : loginPage(q.key ? 'Password salah' : '');\nreturn [{ json: { html } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "name": "Halaman",
+      "id": "aics-admin-3"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.html }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=utf-8"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        0
+      ],
+      "name": "Kirim Halaman",
+      "id": "aics-admin-4"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "aics-admin-save",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        250
+      ],
+      "name": "Admin Simpan",
+      "webhookId": "aics-admin-save",
+      "id": "aics-admin-5"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "ISI_ID_TABEL_SETTINGS",
+          "mode": "list",
+          "cachedResultName": "settings",
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ISI_ID_TABEL_SETTINGS"
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        110,
+        250
+      ],
+      "name": "Ambil Settings Simpan",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "id": "aics-admin-6"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Halaman web admin AI Agent CS (disajikan oleh webhook n8n). Semua pengaturan disimpan\n// ke Data Table \"settings\" (key = config). Upload gambar/file ke Data Table \"media\".\n\n// Password admin TIDAK disimpan di kode: isi di Data Table \"settings\" baris key = admin_password.\nfunction adminPassword(rows) {\n  const r = (rows || []).find((x) => x && x.key === 'admin_password');\n  return r && String(r.value || '').trim() ? String(r.value).trim() : null;\n}\n\nconst MEDIA_TAGS = ['produk', 'flek', 'bekas_jerawat', 'jerawat', 'kusam', 'kering', 'penuaan', 'tekstur', 'cepat', 'file'];\n\nfunction esc(s) {\n  return String(s == null ? '' : s).replace(/[&<>\"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', \"'\": '&#39;' })[c]);\n}\n\nfunction loginPage(msg) {\n  return `<!doctype html><html lang=\"id\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Admin AI CS</title><style>body{font-family:system-ui,sans-serif;max-width:360px;margin:15vh auto;padding:0 16px}input,button{width:100%;padding:12px;margin-top:8px;font-size:16px;box-sizing:border-box}button{background:#16a34a;color:#fff;border:0;border-radius:8px}</style></head>\n<body><h2>Admin AI CS</h2>${msg ? `<p style=\"color:#b91c1c\">${esc(msg)}</p>` : ''}\n<form method=\"get\"><input type=\"password\" name=\"key\" placeholder=\"Password\" autofocus><button>Masuk</button></form></body></html>`;\n}\n\nfunction adminPage(config, key) {\n  const c = config || {};\n  const pk = (c.packages && c.packages.SalGlow) || {};\n  const json = JSON.stringify(c).replace(/</g, '\\\\u003c');\n  return `<!doctype html><html lang=\"id\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Admin AI CS</title>\n<style>\n:root{--bg:#f6f7f9;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--accent:#16a34a}\n@media (prefers-color-scheme:dark){:root{--bg:#0b0f14;--card:#151b23;--text:#e5e7eb;--muted:#9ca3af;--line:#273040}}\n*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-serif}\nmain{max-width:760px;margin:0 auto;padding:16px 16px 96px}\nh1{font-size:22px;margin:8px 0 4px}p.sub{color:var(--muted);margin:0 0 16px}\nsection{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}\nh2{font-size:16px;margin:0 0 10px}label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}\ninput,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font-size:15px;font-family:inherit}\ntextarea{min-height:84px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end}\n.hint{font-size:12px;color:var(--muted);margin-top:4px}\n.media{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:10px}\n.m{border:1px solid var(--line);border-radius:8px;padding:6px;font-size:12px;word-break:break-all}\n.m img{width:100%;height:110px;object-fit:cover;border-radius:6px}\n.m button{margin-top:4px;width:100%;padding:6px;border:0;border-radius:6px;background:#fee2e2;color:#991b1b}\n.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.tags label{display:flex;gap:4px;align-items:center;margin:0;color:var(--text)}\n.tags input{width:auto}\n.bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:12px 16px;display:flex;gap:10px;justify-content:center}\n.bar button{max-width:360px;width:100%;padding:13px;font-size:16px;border:0;border-radius:10px;background:var(--accent);color:#fff}\n#status{position:fixed;top:12px;left:50%;transform:translateX(-50%);padding:8px 14px;border-radius:8px;background:#111827;color:#fff;display:none}\n</style></head><body><main>\n<h1>Pengaturan AI CS</h1><p class=\"sub\">Ubah lalu klik <b>Simpan</b>. Perubahan langsung dipakai AI di chat berikutnya.</p>\n\n<section><h2>Model AI</h2>\n<label>Model</label><select id=\"model\">\n<option value=\"\">Haiku 4.5 (paling hemat)</option>\n<option value=\"claude-sonnet-5-5\">Sonnet 5.5 (lebih pintar, ±2-4x biaya)</option>\n<option value=\"claude-opus-5-5\">Opus 5.5 (paling pintar, ±4-8x biaya)</option>\n</select></section>\n\n<section><h2>Gaya bahasa</h2>\n<label>Arahan gaya tambahan</label><textarea id=\"tone_notes\" placeholder=\"contoh: selalu sapa dengan nama, jangan pakai emoji, tawarkan paket 4 pcs dulu\"></textarea>\n<label>Nama toko di tanda tangan CS</label><input id=\"brand\" placeholder=\"Filomall-Beauty\"></section>\n\n<section><h2>Produk SalGlow</h2>\n<label>Info produk tambahan / terbaru</label><textarea id=\"product_info\" placeholder=\"kandungan, manfaat, cara pakai, info promo khusus, dll\"></textarea>\n<div class=\"row\"><div><label>Harga Beli 1 Gratis 1 (2 pcs)</label><input id=\"p_B1G1\" inputmode=\"numeric\" placeholder=\"139000\"></div>\n<div><label>Harga Beli 2 Gratis 2 (4 pcs)</label><input id=\"p_B2G2\" inputmode=\"numeric\" placeholder=\"219000\"></div></div>\n<label>Bonus saat ini</label><input id=\"bonus\" placeholder=\"gratis sunscreen + eyeliner\"></section>\n\n<section><h2>Pembayaran</h2>\n<label>Rekening transfer (teks yang dikirim ke pembeli)</label><textarea id=\"bank_text\" placeholder=\"BCA 123... a.n ...\"></textarea>\n<div class=\"hint\">Kosongkan untuk memakai rekening bawaan.</div></section>\n\n<section><h2>Gambar & file</h2>\n<div class=\"hint\">Tag <b>produk</b> = foto produk yang dikirim AI kalau lead minta lihat produk. Tag lain = testimoni sesuai keluhan.</div>\n<label>Upload (jpg/png/webp, atau pdf maks 2 MB)</label><input type=\"file\" id=\"file\" accept=\"image/*,application/pdf\" multiple>\n<div class=\"tags\" id=\"newtags\"></div>\n<div class=\"media\" id=\"media\"></div></section>\n\n<section><h2>Store Scalev</h2>\n<div class=\"row\"><div><label>Store ID (angka)</label><input id=\"store_id\" inputmode=\"numeric\" placeholder=\"99062\"></div>\n<div><label>Store unique ID</label><input id=\"store_uid\" placeholder=\"store_...\"></div></div>\n<div class=\"hint\">Kosongkan untuk memakai store bawaan. Isi kalau pindah store / akun Scalev (ID varian produk harus sama).</div></section>\n\n<section><h2>Nomor diblokir</h2>\n<label>Satu nomor per baris (tidak akan dibalas AI)</label><textarea id=\"blocked\" placeholder=\"6282125784683\"></textarea></section>\n</main>\n<div class=\"bar\"><button id=\"save\">Simpan</button></div><div id=\"status\"></div>\n<script>\nconst KEY = ${JSON.stringify(key)};\nconst TAGS = ${JSON.stringify(MEDIA_TAGS)};\nlet cfg = ${json};\ncfg.media = cfg.media || [];\nconst $ = (id) => document.getElementById(id);\nconst pk = (cfg.packages && cfg.packages.SalGlow) || {};\n$('model').value = cfg.model || '';\n['tone_notes','brand','product_info','bonus','bank_text'].forEach((k) => { $(k).value = cfg[k] || ''; });\n$('p_B1G1').value = (pk.B1G1 && pk.B1G1.price) || '';\n$('p_B2G2').value = (pk.B2G2 && pk.B2G2.price) || '';\n$('store_id').value = (cfg.store && cfg.store.storeId) || '';\n$('store_uid').value = (cfg.store && cfg.store.storeUniqueId) || '';\n$('blocked').value = (cfg.blocked || []).join('\\\\n');\n$('newtags').innerHTML = TAGS.map((t) => '<label><input type=\"checkbox\" value=\"' + t + '\">' + t + '</label>').join('');\nfunction toast(t) { const s = $('status'); s.textContent = t; s.style.display = 'block'; clearTimeout(toast.h); toast.h = setTimeout(() => { s.style.display = 'none'; }, 2500); }\nfunction renderMedia() {\n  $('media').innerHTML = cfg.media.map((m, i) => '<div class=\"m\">' + (/\\\\.(jpe?g|png|webp)$/i.test(m.url) ? '<img src=\"' + m.url + '\">' : '📄 ' + (m.name || 'file')) +\n    '<div>' + (m.tags || []).join(', ') + '</div><button data-i=\"' + i + '\">Hapus</button></div>').join('');\n}\n$('media').addEventListener('click', (e) => { const i = e.target.dataset.i; if (i !== undefined) { cfg.media.splice(Number(i), 1); renderMedia(); toast('Dihapus, klik Simpan'); } });\nrenderMedia();\nfunction shrink(file) {\n  return new Promise((resolve, reject) => {\n    if (!file.type.startsWith('image/')) {\n      if (file.size > 2 * 1024 * 1024) return reject(new Error('File lebih dari 2 MB'));\n      const r = new FileReader(); r.onload = () => resolve({ mime: file.type, data: String(r.result).split(',')[1], ext: (file.name.split('.').pop() || 'bin').toLowerCase() }); r.onerror = reject; r.readAsDataURL(file); return;\n    }\n    const img = new Image(); img.onload = () => {\n      const max = 1280; const s = Math.min(1, max / Math.max(img.width, img.height));\n      const cv = document.createElement('canvas'); cv.width = Math.round(img.width * s); cv.height = Math.round(img.height * s);\n      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);\n      resolve({ mime: 'image/jpeg', data: cv.toDataURL('image/jpeg', 0.82).split(',')[1], ext: 'jpg' });\n    }; img.onerror = reject; img.src = URL.createObjectURL(file);\n  });\n}\n$('file').addEventListener('change', async (e) => {\n  const tags = [...document.querySelectorAll('#newtags input:checked')].map((x) => x.value);\n  for (const f of e.target.files) {\n    try {\n      toast('Upload ' + f.name + '...');\n      const s = await shrink(f);\n      const res = await fetch(location.pathname.replace(/aics-admin$/, 'aics-admin-upload'), { method: 'POST', headers: { 'Content-Type': 'application/json' },\n        body: JSON.stringify({ key: KEY, name: f.name, mime: s.mime, ext: s.ext, data: s.data }) });\n      const out = await res.json();\n      if (!out.url) throw new Error(out.error || 'gagal');\n      cfg.media.push({ url: out.url, name: f.name, tags: tags.length ? tags : ['produk'] });\n      renderMedia();\n    } catch (err) { toast('Gagal upload: ' + err.message); }\n  }\n  e.target.value = ''; toast('Upload selesai, klik Simpan');\n});\n$('save').addEventListener('click', async () => {\n  const num = (v) => Number(String(v).replace(/\\\\D/g, '')) || undefined;\n  cfg.model = $('model').value || undefined;\n  ['tone_notes','brand','product_info','bonus','bank_text'].forEach((k) => { cfg[k] = $(k).value.trim() || undefined; });\n  cfg.packages = { SalGlow: { B1G1: { price: num($('p_B1G1').value) }, B2G2: { price: num($('p_B2G2').value) } } };\n  cfg.store = $('store_id').value && $('store_uid').value ? { storeId: num($('store_id').value), storeUniqueId: $('store_uid').value.trim() } : undefined;\n  cfg.blocked = $('blocked').value.split(/\\\\s+/).map((x) => x.trim()).filter(Boolean);\n  try {\n    const res = await fetch(location.pathname.replace(/aics-admin$/, 'aics-admin-save'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: KEY, config: cfg }) });\n    const out = await res.json(); toast(out.ok ? 'Tersimpan ✅' : 'Gagal: ' + (out.error || res.status));\n  } catch (err) { toast('Gagal: ' + err.message); }\n});\n</script></body></html>`;\n}\n\nconst body = $('Admin Simpan').first().json.body || {};\nconst pass = adminPassword($('Ambil Settings Simpan').all().map((i) => i.json));\nif (!pass || body.key !== pass) return [{ json: { ok: false, error: 'Password salah' } }];\nreturn [{ json: { ok: true, key: 'config', value: JSON.stringify(body.config || {}) } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        250
+      ],
+      "name": "Cek Simpan",
+      "id": "aics-admin-7"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "Boleh Simpan?",
+              "leftValue": "={{ $json.ok === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        250
+      ],
+      "name": "Boleh Simpan?",
+      "id": "aics-admin-8"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "ISI_ID_TABEL_SETTINGS",
+          "mode": "list",
+          "cachedResultName": "settings",
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ISI_ID_TABEL_SETTINGS"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "key",
+              "keyValue": "config"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "key": "config",
+            "value": "={{ $json.value }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "key",
+              "displayName": "key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "value",
+              "displayName": "value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        200
+      ],
+      "name": "Simpan Settings",
+      "id": "aics-admin-9"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        200
+      ],
+      "name": "Simpan OK",
+      "id": "aics-admin-10"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false, error: $json.error }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        350
+      ],
+      "name": "Simpan Ditolak",
+      "id": "aics-admin-11"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "aics-admin-upload",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        550
+      ],
+      "name": "Admin Upload",
+      "webhookId": "aics-admin-upload",
+      "id": "aics-admin-12"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "ISI_ID_TABEL_SETTINGS",
+          "mode": "list",
+          "cachedResultName": "settings",
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ISI_ID_TABEL_SETTINGS"
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        110,
+        550
+      ],
+      "name": "Ambil Settings Upload",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "id": "aics-admin-13"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Halaman web admin AI Agent CS (disajikan oleh webhook n8n). Semua pengaturan disimpan\n// ke Data Table \"settings\" (key = config). Upload gambar/file ke Data Table \"media\".\n\n// Password admin TIDAK disimpan di kode: isi di Data Table \"settings\" baris key = admin_password.\nfunction adminPassword(rows) {\n  const r = (rows || []).find((x) => x && x.key === 'admin_password');\n  return r && String(r.value || '').trim() ? String(r.value).trim() : null;\n}\n\nconst MEDIA_TAGS = ['produk', 'flek', 'bekas_jerawat', 'jerawat', 'kusam', 'kering', 'penuaan', 'tekstur', 'cepat', 'file'];\n\nfunction esc(s) {\n  return String(s == null ? '' : s).replace(/[&<>\"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', \"'\": '&#39;' })[c]);\n}\n\nfunction loginPage(msg) {\n  return `<!doctype html><html lang=\"id\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Admin AI CS</title><style>body{font-family:system-ui,sans-serif;max-width:360px;margin:15vh auto;padding:0 16px}input,button{width:100%;padding:12px;margin-top:8px;font-size:16px;box-sizing:border-box}button{background:#16a34a;color:#fff;border:0;border-radius:8px}</style></head>\n<body><h2>Admin AI CS</h2>${msg ? `<p style=\"color:#b91c1c\">${esc(msg)}</p>` : ''}\n<form method=\"get\"><input type=\"password\" name=\"key\" placeholder=\"Password\" autofocus><button>Masuk</button></form></body></html>`;\n}\n\nfunction adminPage(config, key) {\n  const c = config || {};\n  const pk = (c.packages && c.packages.SalGlow) || {};\n  const json = JSON.stringify(c).replace(/</g, '\\\\u003c');\n  return `<!doctype html><html lang=\"id\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Admin AI CS</title>\n<style>\n:root{--bg:#f6f7f9;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--accent:#16a34a}\n@media (prefers-color-scheme:dark){:root{--bg:#0b0f14;--card:#151b23;--text:#e5e7eb;--muted:#9ca3af;--line:#273040}}\n*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-serif}\nmain{max-width:760px;margin:0 auto;padding:16px 16px 96px}\nh1{font-size:22px;margin:8px 0 4px}p.sub{color:var(--muted);margin:0 0 16px}\nsection{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}\nh2{font-size:16px;margin:0 0 10px}label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}\ninput,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font-size:15px;font-family:inherit}\ntextarea{min-height:84px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end}\n.hint{font-size:12px;color:var(--muted);margin-top:4px}\n.media{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:10px}\n.m{border:1px solid var(--line);border-radius:8px;padding:6px;font-size:12px;word-break:break-all}\n.m img{width:100%;height:110px;object-fit:cover;border-radius:6px}\n.m button{margin-top:4px;width:100%;padding:6px;border:0;border-radius:6px;background:#fee2e2;color:#991b1b}\n.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.tags label{display:flex;gap:4px;align-items:center;margin:0;color:var(--text)}\n.tags input{width:auto}\n.bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:12px 16px;display:flex;gap:10px;justify-content:center}\n.bar button{max-width:360px;width:100%;padding:13px;font-size:16px;border:0;border-radius:10px;background:var(--accent);color:#fff}\n#status{position:fixed;top:12px;left:50%;transform:translateX(-50%);padding:8px 14px;border-radius:8px;background:#111827;color:#fff;display:none}\n</style></head><body><main>\n<h1>Pengaturan AI CS</h1><p class=\"sub\">Ubah lalu klik <b>Simpan</b>. Perubahan langsung dipakai AI di chat berikutnya.</p>\n\n<section><h2>Model AI</h2>\n<label>Model</label><select id=\"model\">\n<option value=\"\">Haiku 4.5 (paling hemat)</option>\n<option value=\"claude-sonnet-5-5\">Sonnet 5.5 (lebih pintar, ±2-4x biaya)</option>\n<option value=\"claude-opus-5-5\">Opus 5.5 (paling pintar, ±4-8x biaya)</option>\n</select></section>\n\n<section><h2>Gaya bahasa</h2>\n<label>Arahan gaya tambahan</label><textarea id=\"tone_notes\" placeholder=\"contoh: selalu sapa dengan nama, jangan pakai emoji, tawarkan paket 4 pcs dulu\"></textarea>\n<label>Nama toko di tanda tangan CS</label><input id=\"brand\" placeholder=\"Filomall-Beauty\"></section>\n\n<section><h2>Produk SalGlow</h2>\n<label>Info produk tambahan / terbaru</label><textarea id=\"product_info\" placeholder=\"kandungan, manfaat, cara pakai, info promo khusus, dll\"></textarea>\n<div class=\"row\"><div><label>Harga Beli 1 Gratis 1 (2 pcs)</label><input id=\"p_B1G1\" inputmode=\"numeric\" placeholder=\"139000\"></div>\n<div><label>Harga Beli 2 Gratis 2 (4 pcs)</label><input id=\"p_B2G2\" inputmode=\"numeric\" placeholder=\"219000\"></div></div>\n<label>Bonus saat ini</label><input id=\"bonus\" placeholder=\"gratis sunscreen + eyeliner\"></section>\n\n<section><h2>Pembayaran</h2>\n<label>Rekening transfer (teks yang dikirim ke pembeli)</label><textarea id=\"bank_text\" placeholder=\"BCA 123... a.n ...\"></textarea>\n<div class=\"hint\">Kosongkan untuk memakai rekening bawaan.</div></section>\n\n<section><h2>Gambar & file</h2>\n<div class=\"hint\">Tag <b>produk</b> = foto produk yang dikirim AI kalau lead minta lihat produk. Tag lain = testimoni sesuai keluhan.</div>\n<label>Upload (jpg/png/webp, atau pdf maks 2 MB)</label><input type=\"file\" id=\"file\" accept=\"image/*,application/pdf\" multiple>\n<div class=\"tags\" id=\"newtags\"></div>\n<div class=\"media\" id=\"media\"></div></section>\n\n<section><h2>Store Scalev</h2>\n<div class=\"row\"><div><label>Store ID (angka)</label><input id=\"store_id\" inputmode=\"numeric\" placeholder=\"99062\"></div>\n<div><label>Store unique ID</label><input id=\"store_uid\" placeholder=\"store_...\"></div></div>\n<div class=\"hint\">Kosongkan untuk memakai store bawaan. Isi kalau pindah store / akun Scalev (ID varian produk harus sama).</div></section>\n\n<section><h2>Nomor diblokir</h2>\n<label>Satu nomor per baris (tidak akan dibalas AI)</label><textarea id=\"blocked\" placeholder=\"6282125784683\"></textarea></section>\n</main>\n<div class=\"bar\"><button id=\"save\">Simpan</button></div><div id=\"status\"></div>\n<script>\nconst KEY = ${JSON.stringify(key)};\nconst TAGS = ${JSON.stringify(MEDIA_TAGS)};\nlet cfg = ${json};\ncfg.media = cfg.media || [];\nconst $ = (id) => document.getElementById(id);\nconst pk = (cfg.packages && cfg.packages.SalGlow) || {};\n$('model').value = cfg.model || '';\n['tone_notes','brand','product_info','bonus','bank_text'].forEach((k) => { $(k).value = cfg[k] || ''; });\n$('p_B1G1').value = (pk.B1G1 && pk.B1G1.price) || '';\n$('p_B2G2').value = (pk.B2G2 && pk.B2G2.price) || '';\n$('store_id').value = (cfg.store && cfg.store.storeId) || '';\n$('store_uid').value = (cfg.store && cfg.store.storeUniqueId) || '';\n$('blocked').value = (cfg.blocked || []).join('\\\\n');\n$('newtags').innerHTML = TAGS.map((t) => '<label><input type=\"checkbox\" value=\"' + t + '\">' + t + '</label>').join('');\nfunction toast(t) { const s = $('status'); s.textContent = t; s.style.display = 'block'; clearTimeout(toast.h); toast.h = setTimeout(() => { s.style.display = 'none'; }, 2500); }\nfunction renderMedia() {\n  $('media').innerHTML = cfg.media.map((m, i) => '<div class=\"m\">' + (/\\\\.(jpe?g|png|webp)$/i.test(m.url) ? '<img src=\"' + m.url + '\">' : '📄 ' + (m.name || 'file')) +\n    '<div>' + (m.tags || []).join(', ') + '</div><button data-i=\"' + i + '\">Hapus</button></div>').join('');\n}\n$('media').addEventListener('click', (e) => { const i = e.target.dataset.i; if (i !== undefined) { cfg.media.splice(Number(i), 1); renderMedia(); toast('Dihapus, klik Simpan'); } });\nrenderMedia();\nfunction shrink(file) {\n  return new Promise((resolve, reject) => {\n    if (!file.type.startsWith('image/')) {\n      if (file.size > 2 * 1024 * 1024) return reject(new Error('File lebih dari 2 MB'));\n      const r = new FileReader(); r.onload = () => resolve({ mime: file.type, data: String(r.result).split(',')[1], ext: (file.name.split('.').pop() || 'bin').toLowerCase() }); r.onerror = reject; r.readAsDataURL(file); return;\n    }\n    const img = new Image(); img.onload = () => {\n      const max = 1280; const s = Math.min(1, max / Math.max(img.width, img.height));\n      const cv = document.createElement('canvas'); cv.width = Math.round(img.width * s); cv.height = Math.round(img.height * s);\n      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);\n      resolve({ mime: 'image/jpeg', data: cv.toDataURL('image/jpeg', 0.82).split(',')[1], ext: 'jpg' });\n    }; img.onerror = reject; img.src = URL.createObjectURL(file);\n  });\n}\n$('file').addEventListener('change', async (e) => {\n  const tags = [...document.querySelectorAll('#newtags input:checked')].map((x) => x.value);\n  for (const f of e.target.files) {\n    try {\n      toast('Upload ' + f.name + '...');\n      const s = await shrink(f);\n      const res = await fetch(location.pathname.replace(/aics-admin$/, 'aics-admin-upload'), { method: 'POST', headers: { 'Content-Type': 'application/json' },\n        body: JSON.stringify({ key: KEY, name: f.name, mime: s.mime, ext: s.ext, data: s.data }) });\n      const out = await res.json();\n      if (!out.url) throw new Error(out.error || 'gagal');\n      cfg.media.push({ url: out.url, name: f.name, tags: tags.length ? tags : ['produk'] });\n      renderMedia();\n    } catch (err) { toast('Gagal upload: ' + err.message); }\n  }\n  e.target.value = ''; toast('Upload selesai, klik Simpan');\n});\n$('save').addEventListener('click', async () => {\n  const num = (v) => Number(String(v).replace(/\\\\D/g, '')) || undefined;\n  cfg.model = $('model').value || undefined;\n  ['tone_notes','brand','product_info','bonus','bank_text'].forEach((k) => { cfg[k] = $(k).value.trim() || undefined; });\n  cfg.packages = { SalGlow: { B1G1: { price: num($('p_B1G1').value) }, B2G2: { price: num($('p_B2G2').value) } } };\n  cfg.store = $('store_id').value && $('store_uid').value ? { storeId: num($('store_id').value), storeUniqueId: $('store_uid').value.trim() } : undefined;\n  cfg.blocked = $('blocked').value.split(/\\\\s+/).map((x) => x.trim()).filter(Boolean);\n  try {\n    const res = await fetch(location.pathname.replace(/aics-admin$/, 'aics-admin-save'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: KEY, config: cfg }) });\n    const out = await res.json(); toast(out.ok ? 'Tersimpan ✅' : 'Gagal: ' + (out.error || res.status));\n  } catch (err) { toast('Gagal: ' + err.message); }\n});\n</script></body></html>`;\n}\n\nconst req = $('Admin Upload').first().json;\nconst body = req.body || {};\nconst h = req.headers || {};\nconst pass = adminPassword($('Ambil Settings Upload').all().map((i) => i.json));\nif (!pass || body.key !== pass) return [{ json: { ok: false, error: 'Password salah' } }];\nconst data = String(body.data || '');\nif (!data || data.length > 3 * 1024 * 1024) return [{ json: { ok: false, error: 'File kosong atau terlalu besar' } }];\nconst ext = String(body.ext || 'jpg').replace(/[^a-z0-9]/gi, '').slice(0, 5) || 'bin';\nconst id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);\nconst host = h['x-forwarded-host'] || h.host;\nreturn [{ json: { ok: true, media_id: id, name: String(body.name || id).slice(0, 120), mime: String(body.mime || 'application/octet-stream'), data,\n  url: 'https://' + host + '/webhook/aics-media?f=' + id + '.' + ext } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        550
+      ],
+      "name": "Cek Upload",
+      "id": "aics-admin-14"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "Boleh Upload?",
+              "leftValue": "={{ $json.ok === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        550
+      ],
+      "name": "Boleh Upload?",
+      "id": "aics-admin-15"
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "ISI_ID_TABEL_MEDIA",
+          "mode": "list",
+          "cachedResultName": "media",
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ISI_ID_TABEL_MEDIA"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "media_id": "={{ $json.media_id }}",
+            "name": "={{ $json.name }}",
+            "mime": "={{ $json.mime }}",
+            "data": "={{ $json.data }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "media_id",
+              "displayName": "media_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "mime",
+              "displayName": "mime",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        500
+      ],
+      "name": "Simpan Media",
+      "id": "aics-admin-16"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, url: $('Cek Upload').first().json.url }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        500
+      ],
+      "name": "Upload OK",
+      "id": "aics-admin-17"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false, error: $json.error }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        650
+      ],
+      "name": "Upload Ditolak",
+      "id": "aics-admin-18"
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "aics-media",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        850
+      ],
+      "name": "Media",
+      "webhookId": "aics-media",
+      "id": "aics-admin-19"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "ISI_ID_TABEL_MEDIA",
+          "mode": "list",
+          "cachedResultName": "media",
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ISI_ID_TABEL_MEDIA"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "media_id",
+              "keyValue": "={{ String($json.query.f || '').replace(/\\.[^.]+$/, '') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        850
+      ],
+      "name": "Cari Media",
+      "alwaysOutputData": true,
+      "id": "aics-admin-20"
+    },
+    {
+      "parameters": {
+        "jsCode": "const row = $input.first().json || {};\nif (!row.data) return [{ json: { error: 'not found' }, binary: { data: { data: Buffer.from('not found').toString('base64'), mimeType: 'text/plain', fileName: 'notfound.txt' } } }];\nreturn [{ json: {}, binary: { data: { data: row.data, mimeType: row.mime || 'application/octet-stream', fileName: row.name || 'file' } } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        850
+      ],
+      "name": "Jadi File",
+      "id": "aics-admin-21"
+    },
+    {
+      "parameters": {
+        "respondWith": "binary",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        850
+      ],
+      "name": "Kirim File",
+      "id": "aics-admin-22"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Admin Page": {
+      "main": [
+        [
+          {
+            "node": "Ambil Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Settings": {
+      "main": [
+        [
+          {
+            "node": "Halaman",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Halaman": {
+      "main": [
+        [
+          {
+            "node": "Kirim Halaman",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Admin Simpan": {
+      "main": [
+        [
+          {
+            "node": "Ambil Settings Simpan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Settings Simpan": {
+      "main": [
+        [
+          {
+            "node": "Cek Simpan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cek Simpan": {
+      "main": [
+        [
+          {
+            "node": "Boleh Simpan?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Boleh Simpan?": {
+      "main": [
+        [
+          {
+            "node": "Simpan Settings",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Simpan Ditolak",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simpan Settings": {
+      "main": [
+        [
+          {
+            "node": "Simpan OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Admin Upload": {
+      "main": [
+        [
+          {
+            "node": "Ambil Settings Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Settings Upload": {
+      "main": [
+        [
+          {
+            "node": "Cek Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cek Upload": {
+      "main": [
+        [
+          {
+            "node": "Boleh Upload?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Boleh Upload?": {
+      "main": [
+        [
+          {
+            "node": "Simpan Media",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Upload Ditolak",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simpan Media": {
+      "main": [
+        [
+          {
+            "node": "Upload OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Media": {
+      "main": [
+        [
+          {
+            "node": "Cari Media",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cari Media": {
+      "main": [
+        [
+          {
+            "node": "Jadi File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jadi File": {
+      "main": [
+        [
+          {
+            "node": "Kirim File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}
