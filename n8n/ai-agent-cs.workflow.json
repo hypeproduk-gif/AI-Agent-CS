@@ -65,10 +65,10 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "ISI_ID_TABEL_SETTINGS",
+          "value": "kUnU0PwQqOYThCTD",
           "mode": "list",
           "cachedResultName": "settings",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ISI_ID_TABEL_SETTINGS"
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/kUnU0PwQqOYThCTD"
         },
         "returnAll": true
       },

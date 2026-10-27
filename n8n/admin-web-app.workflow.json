@@ -23,10 +23,10 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "ISI_ID_TABEL_SETTINGS",
+          "value": "kUnU0PwQqOYThCTD",
           "mode": "list",
           "cachedResultName": "settings",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ISI_ID_TABEL_SETTINGS"
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/kUnU0PwQqOYThCTD"
         },
         "returnAll": true
       },
@@ -100,10 +100,10 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "ISI_ID_TABEL_SETTINGS",
+          "value": "kUnU0PwQqOYThCTD",
           "mode": "list",
           "cachedResultName": "settings",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ISI_ID_TABEL_SETTINGS"
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/kUnU0PwQqOYThCTD"
         },
         "returnAll": true
       },
@@ -171,10 +171,10 @@
         "operation": "upsert",
         "dataTableId": {
           "__rl": true,
-          "value": "ISI_ID_TABEL_SETTINGS",
+          "value": "kUnU0PwQqOYThCTD",
           "mode": "list",
           "cachedResultName": "settings",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ISI_ID_TABEL_SETTINGS"
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/kUnU0PwQqOYThCTD"
         },
         "filters": {
           "conditions": [
@@ -279,10 +279,10 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "ISI_ID_TABEL_SETTINGS",
+          "value": "kUnU0PwQqOYThCTD",
           "mode": "list",
           "cachedResultName": "settings",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ISI_ID_TABEL_SETTINGS"
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/kUnU0PwQqOYThCTD"
         },
         "returnAll": true
       },
@@ -350,10 +350,10 @@
         "operation": "insert",
         "dataTableId": {
           "__rl": true,
-          "value": "ISI_ID_TABEL_MEDIA",
+          "value": "2jYriw5gpsDQMcMH",
           "mode": "list",
           "cachedResultName": "media",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ISI_ID_TABEL_MEDIA"
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/2jYriw5gpsDQMcMH"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -472,10 +472,10 @@
         "operation": "get",
         "dataTableId": {
           "__rl": true,
-          "value": "ISI_ID_TABEL_MEDIA",
+          "value": "2jYriw5gpsDQMcMH",
           "mode": "list",
           "cachedResultName": "media",
-          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/ISI_ID_TABEL_MEDIA"
+          "cachedResultUrl": "/projects/K2OXZkkoLw9p8qNz/datatables/2jYriw5gpsDQMcMH"
         },
         "filters": {
           "conditions": [

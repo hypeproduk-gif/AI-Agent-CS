@@ -24,8 +24,8 @@ const TABLE_IDS = {
   leads_context: 'qZYFr5OtcUD8F8Co',
   lp_attribution: 'ZKK35xdmV3H3E2A4',
   aics_orders: 'JigJfYz6uPh04oCK',
-  settings: 'ISI_ID_TABEL_SETTINGS', // kolom: key, value
-  media: 'ISI_ID_TABEL_MEDIA', // kolom: media_id, name, mime, data
+  settings: 'kUnU0PwQqOYThCTD', // kolom: key, value
+  media: '2jYriw5gpsDQMcMH', // kolom: media_id, name, mime, data
 };
 const CREDENTIALS = {
   anthropic: { httpHeaderAuth: { id: 'Rg3kLQlwRT919UB4', name: 'Anthropic API' } },
