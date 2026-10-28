@@ -352,6 +352,26 @@ Text overlay (Bahasa Indonesia, bold white text with black outline, top third, m
 Curiosity element: ${A[0]==="Transformation Desire"?"split before/after with the 'after' side partly hidden":A[0]==="Value Shock"?`small price sticker "${pr||"murah banget"}" next to the product`:A[0]==="Comparison Curiosity"?"two products side by side with a question mark":"red circle or arrow pointing at the product detail"}.
 ${RULES_BASE.replace("The product must appear within the first second. ","").replace(/throughout the video/,"in the image")}
 ${mdl?RULES_MODEL:RULES_NOMODEL}`;
+ // Image ad (feed statis): 3 variasi, model & produk sama dengan video
+ const IMG_BASE=`Static Meta Ads image, authentic UGC smartphone photo look, not a polished studio ad. Setting: ${env}. Lighting: ${lit}.
+Product: ${p}${pdesc!=="the product"?` (${pdesc})`:""}, use PRODUCT_IMAGE as exact reference, label sharp and readable.${mdl?` Person: ${mdesc}, use MODEL_IMAGE as exact face reference (same person as the video).`:""}`;
+ const IMG_END=`${RULES_BASE.replace("The product must appear within the first second. ","").replace(/throughout the video/,"in the image")}
+${mdl?RULES_MODEL:RULES_NOMODEL}
+Text overlay must be in Bahasa Indonesia, short, bold, easy to read on mobile, leave space so text does not cover the face or label.`;
+ const bL=(window.BENLIST||[b]).slice(0,3);
+ s.images=[
+  ["1. Hero (stop scroll) · 4:5 feed",`Aspect ratio 4:5. ${IMG_BASE}
+Composition: ${mdl?`close-up of the person holding the product beside her cheek, ${TH_VIS[H[0]]}`:"hand holding the product close to the camera, background slightly blurred"}, product takes about 35% of the frame.
+Text overlay top: "${s.thumbText}"
+${IMG_END}`],
+  ["2. Manfaat (relate) · 1:1 feed",`Aspect ratio 1:1. ${IMG_BASE}
+Composition: product in the center ${mdl?"held by the person, she looks at the camera with a soft confident smile":"on the surface, a fingertip with a small cream swatch next to it"}, with ${bL.length} small checklist callouts around the product.
+Text overlay: headline "${hk.replace(/[.…]+$/,"")}" and checklist: ${bL.map(x=>`"✔ ${x}"`).join(", ")}.
+${IMG_END}`],
+  ["3. Promo (convert) · 9:16 story",`Aspect ratio 9:16. ${IMG_BASE}
+Composition: ${mdl?"person holding the product toward the lens, excited expression":"hand presenting the product toward the lens"}, product large in the lower-middle area, top area left clean for text.
+Text overlay: big "${pr||"Harga spesial"}"${pro?` with a bright badge "${pro}"`:""}, small line "${hard?"Stok terbatas, klik sekarang":"Cek di keranjang kuning"}".
+${IMG_END}`]];
  s.copy=`${H[1]} ${p} bantu ${b}. ${pr?`Sekarang cuma ${pr}.`:""}${pro?` 🔥 ${pro}!`:""} 👉 Klik Beli Sekarang!`;
  return s}
 // Satu prompt per segmen: tiap klip digenerate terpisah lalu disambung, jadi tiap prompt berdiri sendiri + aturan kesinambungan
@@ -372,8 +392,9 @@ function render(s,i,old){const d=document.createElement("div");d.className="card
  ${s.segs.map((x,k)=>`<p style="margin:10px 0"><b>SEG ${k+1} (${x.t})</b> | <i>${x.type}</i> ${x.vis}${x.exp?` <b>Ekspresi:</b> ${x.exp}`:""} | <b>Intonasi:</b> ${x.into} <b>“${x.line}”</b></p>`).join("")}
  <table><tr><th>Ad copy</th><td>${s.copy}</td></tr></table>
  ${segPrompts(s).map((sp,k)=>`<details style="margin-top:8px"><summary><b>Video Prompt SEG ${k+1}</b> <span class="mut">(${s.segs[k].t} · generate terpisah)</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${sp.replace(/</g,"&lt;")}</pre><button class="sec cp" data-k="${k}" style="width:auto">Copy prompt SEG ${k+1}</button></details>`).join("")}
+ <details style="margin-top:8px"><summary><b>Image Ad Prompts</b> <span class="mut">(3 variasi, model & produk sama)</span></summary>${s.images.map((x,k)=>`<p><b>${x[0]}</b></p><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${x[1].replace(/</g,"&lt;")}</pre><button class="sec ci" data-k="${k}" style="width:auto">Copy image ${k+1}</button>`).join("")}</details>
  <details style="margin-top:8px"><summary><b>Thumbnail Prompt</b> <span class="mut">(teks: “${s.thumbText}”)</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${s.thumb.replace(/</g,"&lt;")}</pre><button class="sec" style="width:auto">Copy thumbnail prompt</button></details>`;
- const SP=segPrompts(s);d.querySelectorAll(".cp").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(SP[+b.dataset.k]));const bt=d.querySelectorAll("details button");bt[bt.length-1].onclick=()=>navigator.clipboard.writeText(s.thumb);
+ const SP=segPrompts(s);d.querySelectorAll(".ci").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(s.images[+b.dataset.k][1]));d.querySelectorAll(".cp").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(SP[+b.dataset.k]));const bt=d.querySelectorAll("details button");bt[bt.length-1].onclick=()=>navigator.clipboard.writeText(s.thumb);
  d.querySelector(".ai").onclick=()=>aiRewrite(s,d);d._s=s;old?old.replaceWith(d):out.prepend(d)}
 function add(c,a,h,t,b){const s=build(c,a,h,t,b);list.push(s);render(s,list.length)}
 const N=()=>NICHE[$("niche").value];
@@ -418,8 +439,8 @@ async function aiAll(){if(!SAMPLE)return alert("AI hanya aktif di link artifact 
  for(const d of [...out.querySelectorAll(".card")].reverse()){if(d._s&&!d._s.ai){await aiRewrite(d._s,d)}}}
 let DL=null;(async()=>{try{DL=await claude.use("downloads")}catch(e){}})();
 function exportCSV(){if(!list.length)return alert("Belum ada scene");
- const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Durasi","Sell","Model","Judul","Script","Ad Copy","Video Prompt","Thumbnail Prompt"];
- const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,s.dur+"s",s.sell,s.model?"YA":"TIDAK",s.title,s.scenes.map(x=>x[0]+" | "+x[1]).join("\n"),s.copy,segPrompts(s).join("\n\n=====\n\n"),s.thumb].map(q).join(","));
+ const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Durasi","Sell","Model","Judul","Script","Ad Copy","Video Prompt","Thumbnail Prompt","Image Prompts"];
+ const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,s.dur+"s",s.sell,s.model?"YA":"TIDAK",s.title,s.scenes.map(x=>x[0]+" | "+x[1]).join("\n"),s.copy,segPrompts(s).join("\n\n=====\n\n"),s.thumb,s.images.map(x=>x[0]+"\n"+x[1]).join("\n\n=====\n\n")].map(q).join(","));
  const csv="﻿"+[hd.join(","),...rows].join("\n");if(DL){DL.save({filename:"scene-meta-ads.csv",data:csv}).catch(()=>{});return}
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
  a.download="scene-meta-ads.csv";a.click()}
