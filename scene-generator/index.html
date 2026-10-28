@@ -26,6 +26,7 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
 <p class="mut">6 CEP × 15 Angle × 50 Hook × 4 Tipe Konten = 18.000 kombinasi. Pilih manual atau acak.</p>
 <div class="card">
  <div class="grid">
+  <div><label>Tipe produk / Niche</label><select id="niche"></select><div class="mut" id="nhint"></div></div>
   <div><label>Nama produk</label><input id="prod" value="Serum Brightening"></div>
   <div><label>Manfaat utama</label><input id="ben" value="kulit cerah dalam 7 hari"></div>
   <div><label>Harga</label><input id="price" value="Rp49.000"></div>
@@ -98,6 +99,68 @@ CONSISTENCY RULES: The product must keep the exact same design from PRODUCT_IMAG
 const RULES_NOMODEL=`Only product and hand interaction. No face, no full human model.`;
 const RULES_MODEL=`MODEL RULES: The model must keep the same face identity from MODEL_IMAGE across all scenes. Facial features, skin tone, and identity must remain consistent. Do NOT change facial structure, do NOT modify identity, do NOT distort facial proportions. Maintain natural realistic skin texture.`;
 const RULES_GLOBAL=`GLOBAL: Authentic TikTok UGC style. Natural lighting. Smartphone camera look. HD quality. Vertical 9:16 video. Duration about 20 seconds.`;
+// Niche: noun (pengganti "skincare"), res (pengganti "Kulitku"), prob (10 hook problem), ang (index angle terbaik), set/pm/hm/cam/lit (opsi paling convert), model (saran model)
+const NICHE={
+ "Skincare":{noun:"skincare",res:"Kulitku",ang:[7,8,13,3,5],model:0,
+  prob:["Kalau kulitmu kusam, coba lihat ini.","Kalau kulitmu kering, kamu harus lihat ini.","Kalau skincare kamu nggak mempan…","Kalau kamu punya masalah kulit ini…","Kalau kulitmu gampang breakout…","Kalau kamu bingung pilih skincare…","Kalau skincare kamu terasa berat…","Kalau kamu cari skincare simple…","Kalau kulitmu gampang iritasi…","Kalau kamu butuh skincare ringan…"],
+  set:["bathroom vanity counter with mirror reflection","minimalist white skincare table with clean beauty setup","bedside night table with soft lamp light"],
+  pm:["product cap opened to reveal texture/inside","product turned to show label","product held close to camera"],
+  hm:["hand squeezing/dropping product onto fingertip or back of hand (texture swatch)","hand applying product on skin","hand opening the cap"],
+  cam:["macro product close-up (texture detail)","close-up product focus","handheld POV view"],lit:["soft natural window light","bright clean beauty lighting"]},
+ "Makeup / Kosmetik":{noun:"makeup",res:"Wajahku",ang:[13,8,12,3,9],model:1,
+  prob:["Kalau makeup kamu gampang luntur…","Kalau lipstik kamu cepat pudar…","Kalau foundation kamu cakey…","Kalau bedak kamu bikin abu-abu…","Kalau kamu malas touch up…","Kalau makeup kamu oxidize…","Kalau kamu cari makeup natural…","Kalau maskara kamu luntur…","Kalau kamu bingung pilih shade…","Kalau kamu butuh makeup tahan lama…"],
+  set:["bedroom vanity mirror with ring light off to the side","bathroom vanity counter with mirror reflection","inside a parked car dashboard area with daylight"],
+  pm:["product cap opened to reveal texture/inside","product placed next to competitor/old product for comparison","product held close to camera"],
+  hm:["hand squeezing/dropping product onto fingertip or back of hand (texture swatch)","hand applying product on skin","hand opening the cap"],
+  cam:["front-camera selfie framing","macro product close-up (texture detail)","close-up product focus"],lit:["soft natural window light","diffused daylight"]},
+ "Fashion / Pakaian":{noun:"baju",res:"Penampilanku",ang:[8,0,9,4,12],model:1,
+  prob:["Kalau kamu bingung mix and match…","Kalau baju kamu gampang kusut…","Kalau bahan bajumu panas…","Kalau kamu susah cari ukuran pas…","Kalau outfit kamu itu-itu aja…","Kalau kamu pengen kelihatan lebih langsing…","Kalau baju kamu cepat melar…","Kalau kamu cari outfit kerja simple…","Kalau kamu takut beli baju online…","Kalau lemari penuh tapi nggak ada yang dipakai…"],
+  set:["bedroom vanity mirror with ring light off to the side","courier package just opened on the bed (unboxing)","cozy bedroom desk with soft aesthetic decor"],
+  pm:["product taken out of shipping package","product held close to camera","product turned to show label"],
+  hm:["hand unboxing product from package","hand presenting product to camera","thumb pointing at key label/claim"],
+  cam:["front-camera selfie framing","handheld POV view","macro product close-up (texture detail)"],lit:["soft natural window light","diffused daylight"]},
+ "Hijab / Muslim Fashion":{noun:"hijab",res:"Penampilanku",ang:[8,4,10,0,11],model:1,
+  prob:["Kalau hijab kamu gampang lepek…","Kalau hijab kamu licin susah dibentuk…","Kalau bahan hijabmu panas…","Kalau kamu buru-buru tiap pagi…","Kalau hijab kamu nerawang…","Kalau pinggiran hijab kamu rusak…","Kalau kamu cari hijab instan rapi…","Kalau kamu bingung warna hijab…","Kalau hijab kamu gampang kusut…","Kalau kamu butuh hijab adem…"],
+  set:["bedroom vanity mirror with ring light off to the side","courier package just opened on the bed (unboxing)","cozy bedroom desk with soft aesthetic decor"],
+  pm:["product taken out of shipping package","product held close to camera","product lifted from table"],
+  hm:["hand unboxing product from package","hand presenting product to camera","hand casually holding product in frame"],
+  cam:["front-camera selfie framing","macro product close-up (texture detail)","handheld POV view"],lit:["soft natural window light","morning sunlight glow"]},
+ "Suplemen / Kesehatan":{noun:"suplemen",res:"Badanku",ang:[7,5,11,14,4],model:0,
+  prob:["Kalau kamu gampang capek…","Kalau kamu sering begadang…","Kalau daya tahan tubuhmu lemah…","Kalau kamu susah tidur…","Kalau kamu sering pegal…","Kalau kamu jarang makan sayur…","Kalau kamu gampang sakit…","Kalau kamu sibuk kerja…","Kalau kamu bingung pilih vitamin…","Kalau kamu butuh energi seharian…"],
+  set:["kitchen marble counter during morning light","modern office work desk with laptop nearby","bedside night table with soft lamp light"],
+  pm:["product turned to show label","product placed beside glass of water","product cap opened to reveal texture/inside"],
+  hm:["hand holding capsule in palm","hand placing capsule next to bottle","thumb pointing at key label/claim"],
+  cam:["close-up product focus","handheld POV view","slightly top-down angle"],lit:["morning sunlight glow","soft natural window light"]},
+ "Makanan & Minuman":{noun:"camilan",res:"Hariku",ang:[1,0,9,4,3],model:0,
+  prob:["Kalau kamu sering lapar tengah malam…","Kalau kamu bosan camilan itu-itu aja…","Kalau kamu cari camilan sehat…","Kalau kamu nggak sempat masak…","Kalau kamu butuh bekal praktis…","Kalau kamu lagi diet tapi pengen ngemil…","Kalau anak kamu susah makan…","Kalau kamu cari oleh-oleh unik…","Kalau kamu ngantuk di kantor…","Kalau kamu suka pedas…"],
+  set:["kitchen marble counter during morning light","cafe table with coffee cup and natural daylight","modern office work desk with laptop nearby"],
+  pm:["product cap opened to reveal texture/inside","product taken out of shipping package","product held close to camera"],
+  hm:["hand opening the cap","hand presenting product to camera","hand picking product up naturally"],
+  cam:["macro product close-up (texture detail)","handheld POV view","close-up product focus"],lit:["morning sunlight glow","warm cozy indoor light"]},
+ "Rumah Tangga":{noun:"alat ini",res:"Rumahku",ang:[13,1,7,3,9],model:0,
+  prob:["Kalau noda susah hilang…","Kalau dapur kamu berantakan…","Kalau kamu capek bersih-bersih…","Kalau lantai kamu kusam…","Kalau rumah kamu sempit…","Kalau kamu sering kehilangan barang…","Kalau kamar mandi kamu berkerak…","Kalau kamu buang waktu tiap pagi…","Kalau bau ruangan nggak hilang…","Kalau kamu cari alat praktis…"],
+  set:["kitchen marble counter during morning light","bathroom vanity counter with mirror reflection","courier package just opened on the bed (unboxing)"],
+  pm:["product pulled into frame in the first second","product held close to camera","product taken out of shipping package"],
+  hm:["hand presenting product to camera","hand picking product up naturally","hand unboxing product from package"],
+  cam:["handheld POV view","over-the-table perspective","close-up product focus"],lit:["diffused daylight","soft natural window light"]},
+ "Gadget & Aksesoris":{noun:"gadget ini",res:"Kerjaku",ang:[13,12,9,6,2],model:0,
+  prob:["Kalau HP kamu cepat lowbat…","Kalau kabel kamu gampang rusak…","Kalau meja kerjamu berantakan…","Kalau earphone kamu suaranya jelek…","Kalau kamu sering lupa charge…","Kalau HP kamu gampang panas…","Kalau kamu kerja dari mana aja…","Kalau kamu suka konten video…","Kalau kamu cari gadget murah tapi bagus…","Kalau casing HP kamu cepat kuning…"],
+  set:["modern office work desk with laptop nearby","inside a parked car dashboard area with daylight","courier package just opened on the bed (unboxing)"],
+  pm:["product taken out of shipping package","product placed next to competitor/old product for comparison","product turned to show label"],
+  hm:["hand unboxing product from package","thumb pointing at key label/claim","fingers rotating the bottle"],
+  cam:["macro product close-up (texture detail)","over-the-table perspective","handheld POV view"],lit:["diffused daylight","soft home ambient lighting"]},
+ "Ibu & Bayi":{noun:"produk bayi",res:"Si kecil",ang:[7,5,11,4,8],model:0,
+  prob:["Kalau kulit bayi kamu gampang ruam…","Kalau si kecil susah tidur…","Kalau si kecil rewel…","Kalau kamu bingung pilih produk bayi…","Kalau popok bikin iritasi…","Kalau si kecil susah makan…","Kalau kamu ibu baru…","Kalau kamu takut bahan kimia…","Kalau si kecil gampang digigit nyamuk…","Kalau kamu butuh yang praktis dibawa…"],
+  set:["cozy bedroom desk with soft aesthetic decor","bedside night table with soft lamp light","open handbag or pouch on a bed, everyday carry"],
+  pm:["product turned to show label","product cap opened to reveal texture/inside","product held close to camera"],
+  hm:["hand squeezing/dropping product onto fingertip or back of hand (texture swatch)","thumb pointing at key label/claim","hand opening the cap"],
+  cam:["close-up product focus","handheld POV view","macro product close-up (texture detail)"],lit:["soft natural window light","warm cozy indoor light"]},
+ "Parfum":{noun:"parfum",res:"Wangiku",ang:[12,9,4,6,3],model:1,
+  prob:["Kalau parfum kamu cepat hilang…","Kalau kamu gampang keringetan…","Kalau parfum kamu bikin pusing…","Kalau kamu cari wangi mewah tapi murah…","Kalau kamu bingung pilih aroma…","Kalau kamu kerja seharian di luar…","Kalau parfum kamu pasaran…","Kalau kamu pengen dipuji wangi…","Kalau kamu mau first date…","Kalau parfum mahal bikin kantong bolong…"],
+  set:["open handbag or pouch on a bed, everyday carry","inside a parked car dashboard area with daylight","bedroom vanity mirror with ring light off to the side"],
+  pm:["product placed next to competitor/old product for comparison","product held close to camera","product slowly rotated"],
+  hm:["hand casually holding product in frame","hand presenting product to camera","fingers rotating the bottle"],
+  cam:["close-up product focus","handheld POV view","slow push-in camera movement"],lit:["soft natural window light","warm cozy indoor light"]}};
 const $=id=>document.getElementById(id),out=$("out");let list=[];
 const fill=(el,arr,f)=>el.innerHTML=arr.map((x,i)=>`<option value="${i}">${f(x,i)}</option>`).join("");
 fill($("cep"),CEP,(x,i)=>`${i+1}. ${x[0]}`);fill($("ang"),ANG,(x,i)=>`${i+1}. ${x[0]}`);
@@ -107,14 +170,14 @@ fill($("hook"),HOOKS,(x,i)=>`[${x[0]}] ${x[1]}`);fill($("tipe"),TIPE,x=>x);
 const rnd=m=>Math.floor(Math.random()*m),pick=(id,a)=>{const v=+$(id).value;return a[v<0?rnd(a.length):v]};
 function build(c,a,h,t,batch){
  const p=$("prod").value||"produk",b=$("ben").value||"hasil terlihat",pr=$("price").value,pro=$("promo").value.trim();
- const C=CEP[c],A=ANG[a],H=HOOKS[h],T=TIPE[t],bd=BODY[T](p,b);
- const s={cep:C[0],angle:A[0],hookType:H[0],hook:H[1],tipe:T,scenes:[
+ const n=N(),hk=(HOOKS[h][0]==="Problem"?n.prob[h%10]:HOOKS[h][1]).replace(/skincare/g,n.noun).replace(/Kulitku/g,n.res),C=CEP[c],A=ANG[a],H=[HOOKS[h][0],hk],T=TIPE[t],bd=BODY[T](p,b);
+ const s={key:[$("niche").value,c,a,h,t].join("|"),niche:$("niche").value,cep:C[0],angle:A[0],hookType:H[0],hook:H[1],tipe:T,scenes:[
   ["0-3s HOOK",`Produk muncul di detik 1. ${H[1]} — visual: ${A[2]}. Teks on-screen besar.`],
   ["3-8s",bd[0]+` (Momen: ${C[1]})`],
   ["8-13s",bd[1]],
   ["13-17s",bd[2]+` Perkuat angle ${A[0]} (${A[1]}).`],
   ["17-20s CTA",`${A[0]==="Value Shock"||C[0]==="Opportunistic"?`Cuma ${pr}!${pro?` ${pro}.`:""} Promo terbatas.`:`${pro?`Promo: ${pro}! `:""}Cek keranjang kuning / klik "Beli Sekarang".`} Produk ${p} di tangan, close-up packaging.`]]};
- const g=(id,arr)=>batch?arr[rnd(arr.length)]:pick(id,arr),mdl=$("model").value==="1";
+ const KM={set:"set",pm:"pm",hm:"hm",cam:"cam",lit:"lit"},g=(id,arr)=>(batch||+$(id).value<0)?nPick(KM[id],arr):pick(id,arr),mdl=$("model").value==="1";
  const shots=[0,1,2,3,4].map(()=>({pm:g("pm",PM),hm:g("hm",HM),cam:g("cam",CAM)}));
  const env=g("set",SET),lit=g("lit",LIT);
  s.prompt=`Vertical 9:16 TikTok UGC video, ~20 seconds, of ${p} (use PRODUCT_IMAGE as exact reference). Setting: ${env}. Lighting: ${lit}. ${mdl?"A person (use MODEL_IMAGE as exact face reference) interacts naturally with the product.":"Only the product and a hand are visible."}
@@ -127,21 +190,27 @@ ${RULES_GLOBAL}`;
  s.copy=`${H[1]} ${p} bantu ${b}. ${pr?`Sekarang cuma ${pr}.`:""}${pro?` 🔥 ${pro}!`:""} 👉 Klik Beli Sekarang!`;
  return s}
 function render(s,i){const d=document.createElement("div");d.className="card";
- d.innerHTML=`<div><span class="tag">#${i}</span><span class="tag">CEP: ${s.cep}</span><span class="tag">Angle: ${s.angle}</span><span class="tag">Hook: ${s.hookType}</span><span class="tag">Konten: ${s.tipe}</span></div>
+ d.innerHTML=`<div><span class="tag">#${i}</span><span class="tag">${s.niche}</span><span class="tag">CEP: ${s.cep}</span><span class="tag">Angle: ${s.angle}</span><span class="tag">Hook: ${s.hookType}</span><span class="tag">Konten: ${s.tipe}</span></div>
  <div class="hook">“${s.hook}”</div><table>${s.scenes.map(x=>`<tr><th>${x[0]}</th><td>${x[1]}</td></tr>`).join("")}
  <tr><th>Ad copy</th><td>${s.copy}</td></tr></table>
  <details style="margin-top:8px"><summary><b>Video AI Prompt</b> <span class="mut">(${s.env} · ${s.lit})</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${s.prompt.replace(/</g,"&lt;")}</pre><button class="sec" style="width:auto">Copy prompt</button></details>`;
  d.querySelector("details button").onclick=()=>navigator.clipboard.writeText(s.prompt);out.prepend(d)}
 function add(c,a,h,t,b){const s=build(c,a,h,t,b);list.push(s);render(s,list.length)}
-const sel=(id,m)=>{const v=+$(id).value;return v<0?rnd(m):v};
+const N=()=>NICHE[$("niche").value];
+const sel=(id,m)=>{const v=+$(id).value;if(v>=0)return v;if(id==="ang"&&Math.random()<.7){const b=N().ang;return b[rnd(b.length)]}return rnd(m)};
+// 70% ambil dari opsi terbaik niche, 30% dari semua opsi (variasi untuk testing)
+const nPick=(k,arr)=>{const b=N()[k];return b&&Math.random()<.7?b[rnd(b.length)]:arr[rnd(arr.length)]};
+$("niche").innerHTML=Object.keys(NICHE).map(k=>`<option>${k}</option>`).join("");
+const nh=()=>{const n=N();$("nhint").textContent="Angle terbaik: "+n.ang.map(i=>ANG[i][0]).join(", ")+(n.model?" · Saran: pakai model":"");$("model").value=n.model};
+$("niche").onchange=nh;nh();
 function gen1(){add(sel("cep",6),sel("ang",15),sel("hook",50),sel("tipe",4))}
-function genBatch(){const n=Math.min(200,+$("n").value||10),seen=new Set(list.map(s=>s.cep+s.angle+s.hook+s.tipe));
+function genBatch(){const n=Math.min(200,+$("n").value||10),seen=new Set(list.map(s=>s.key));
  const r=m=>Math.floor(Math.random()*m);let k=0,g=0;
- while(k<n&&g++<5000){const c=sel("cep",6),a=sel("ang",15),h=sel("hook",50),t=sel("tipe",4),key=CEP[c][0]+ANG[a][0]+HOOKS[h][1]+TIPE[t];
+ while(k<n&&g++<5000){const c=sel("cep",6),a=sel("ang",15),h=sel("hook",50),t=sel("tipe",4),key=[$("niche").value,c,a,h,t].join("|");
   if(seen.has(key))continue;seen.add(key);add(c,a,h,t,1);k++}}
 function exportCSV(){if(!list.length)return alert("Belum ada scene");
- const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["CEP","Angle","Hook Type","Hook","Tipe","Scene 0-3s","Scene 3-8s","Scene 8-13s","Scene 13-17s","CTA 17-20s","Ad Copy","Video Prompt"];
- const rows=list.map(s=>[s.cep,s.angle,s.hookType,s.hook,s.tipe,...s.scenes.map(x=>x[1]),s.copy,s.prompt].map(q).join(","));
+ const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Scene 0-3s","Scene 3-8s","Scene 8-13s","Scene 13-17s","CTA 17-20s","Ad Copy","Video Prompt"];
+ const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,...s.scenes.map(x=>x[1]),s.copy,s.prompt].map(q).join(","));
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["﻿"+[hd.join(","),...rows].join("\n")],{type:"text/csv"}));
  a.download="scene-meta-ads.csv";a.click()}
 </script>
