@@ -384,6 +384,7 @@ Spoken line (Bahasa Indonesia${g.type==="Talking head"?", lip-synced, natural sp
 ${i===0?"The product must be visible in the very first frame.":`CONTINUITY: same ${c.mdl?"person, outfit, hairstyle, ":""}room, lighting, camera style and product position as the end of clip ${i}. No intro, start mid-action.`}${i<n-1?" End on a natural pause so the next clip can continue.":" End with the product clearly facing the camera."}
 ${RULES_BASE.replace("The product must appear within the first second. ","")}
 ${c.mdl?RULES_MODEL:RULES_NOMODEL}
+NO TEXT: Do NOT add any on-screen text, captions, subtitles, titles, stickers, watermarks, logos or graphics to the video. The only text allowed is the original printed label on the product itself.
 ${RULES_GLOBAL} Duration exactly ${len} seconds.`})}
 function render(s,i,old){const d=document.createElement("div");d.className="card";s.no=i;
  d.innerHTML=`<div class="row" style="align-items:center"><div class="hook" style="flex:3">${i}. ${s.title}</div><button class="ai" style="flex:1">${s.ai?"✨ Tulis ulang lagi":"✨ Dialog AI (Opus 5.5)"}</button></div><div class="mut aist"></div>
