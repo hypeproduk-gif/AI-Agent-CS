@@ -40,6 +40,14 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
   <div><label>Gerakan Tangan</label><select id="hm"></select></div>
   <div><label>Angle Kamera</label><select id="cam"></select></div>
   <div><label>Lighting</label><select id="lit"></select></div>
+  <div><label>Durasi video</label><select id="dur">
+   <option value="10">10 detik — awareness / retargeting</option>
+   <option value="15">15 detik ⭐ paling convert (Reels/Stories)</option>
+   <option value="20" selected>20 detik ⭐ paling convert (TikTok/Reels)</option>
+   <option value="30">30 detik — produk butuh edukasi/demo</option>
+   <option value="45">45 detik — testimoni / storytelling</option>
+   <option value="60">60 detik — produk mahal / kompleks</option></select>
+   <div class="mut">Advice: 15–20 detik paling sering convert untuk Meta Ads UGC (hook kuat di 3 detik + CTA sebelum orang skip). Pakai 30–60 detik hanya untuk Education/Testimoni atau produk mahal.</div></div>
   <div><label>Model manusia</label><select id="model"><option value="0">Tanpa model (produk + tangan)</option><option value="1">Pakai model (MODEL_IMAGE)</option></select></div>
   <div><label>Jumlah batch acak</label><input id="n" type="number" value="10" min="1" max="200"></div>
  </div>
@@ -98,7 +106,7 @@ const RULES_BASE=`CRITICAL RULES: The product must appear within the first secon
 CONSISTENCY RULES: The product must keep the exact same design from PRODUCT_IMAGE: same shape, label, color, and packaging. Do NOT modify the product design. Do NOT alter product packaging, logo, text, colors, or label details. The product must remain brand accurate and identical throughout the video.`;
 const RULES_NOMODEL=`Only product and hand interaction. No face, no full human model.`;
 const RULES_MODEL=`MODEL RULES: The model must keep the same face identity from MODEL_IMAGE across all scenes. Facial features, skin tone, and identity must remain consistent. Do NOT change facial structure, do NOT modify identity, do NOT distort facial proportions. Maintain natural realistic skin texture.`;
-const RULES_GLOBAL=`GLOBAL: Authentic TikTok UGC style. Natural lighting. Smartphone camera look. HD quality. Vertical 9:16 video. Duration about 20 seconds.`;
+const RULES_GLOBAL=`GLOBAL: Authentic TikTok UGC style. Natural lighting. Smartphone camera look. HD quality. Vertical 9:16 video. `;
 // Niche: noun (pengganti "skincare"), res (pengganti "Kulitku"), prob (10 hook problem), ang (index angle terbaik), set/pm/hm/cam/lit (opsi paling convert), model (saran model)
 const NICHE={
  "Skincare":{noun:"skincare",res:"Kulitku",ang:[7,8,13,3,5],model:0,
@@ -172,25 +180,28 @@ function build(c,a,h,t,batch){
  const p=$("prod").value||"produk",b=$("ben").value||"hasil terlihat",pr=$("price").value,pro=$("promo").value.trim();
  const n=N(),hk=(HOOKS[h][0]==="Problem"?n.prob[h%10]:HOOKS[h][1]).replace(/skincare/g,n.noun).replace(/Kulitku/g,n.res),C=CEP[c],A=ANG[a],H=[HOOKS[h][0],hk],T=TIPE[t],bd=BODY[T](p,b);
  const s={key:[$("niche").value,c,a,h,t].join("|"),niche:$("niche").value,cep:C[0],angle:A[0],hookType:H[0],hook:H[1],tipe:T,scenes:[
-  ["0-3s HOOK",`Produk muncul di detik 1. ${H[1]} — visual: ${A[2]}. Teks on-screen besar.`],
-  ["3-8s",bd[0]+` (Momen: ${C[1]})`],
-  ["8-13s",bd[1]],
-  ["13-17s",bd[2]+` Perkuat angle ${A[0]} (${A[1]}).`],
-  ["17-20s CTA",`${A[0]==="Value Shock"||C[0]==="Opportunistic"?`Cuma ${pr}!${pro?` ${pro}.`:""} Promo terbatas.`:`${pro?`Promo: ${pro}! `:""}Cek keranjang kuning / klik "Beli Sekarang".`} Produk ${p} di tangan, close-up packaging.`]]};
+  ["HOOK",`Produk muncul di detik 1. ${H[1]} — visual: ${A[2]}. Teks on-screen besar.`],
+  ["",bd[0]+` (Momen: ${C[1]})`],
+  ["",bd[1]],
+  ["",bd[2]+` Perkuat angle ${A[0]} (${A[1]}).`],
+  ["CTA",`${A[0]==="Value Shock"||C[0]==="Opportunistic"?`Cuma ${pr}!${pro?` ${pro}.`:""} Promo terbatas.`:`${pro?`Promo: ${pro}! `:""}Cek keranjang kuning / klik "Beli Sekarang".`} Produk ${p} di tangan, close-up packaging.`]]};
+ const D=+$("dur").value,cut=[0,D<=10?2:3],ctaLen=D<=10?2:D<=20?3:5;
+ [0.33,0.66,1].forEach(f=>cut.push(Math.round(cut[1]+(D-ctaLen-cut[1])*f)));cut.push(D);
+ s.scenes.forEach((x,i)=>x[0]=`${cut[i]}-${cut[i+1]}s${x[0]?" "+x[0]:""}`);s.dur=D;
  const KM={set:"set",pm:"pm",hm:"hm",cam:"cam",lit:"lit"},g=(id,arr)=>(batch||+$(id).value<0)?nPick(KM[id],arr):pick(id,arr),mdl=$("model").value==="1";
  const shots=[0,1,2,3,4].map(()=>({pm:g("pm",PM),hm:g("hm",HM),cam:g("cam",CAM)}));
  const env=g("set",SET),lit=g("lit",LIT);
- s.prompt=`Vertical 9:16 TikTok UGC video, ~20 seconds, of ${p} (use PRODUCT_IMAGE as exact reference). Setting: ${env}. Lighting: ${lit}. ${mdl?"A person (use MODEL_IMAGE as exact face reference) interacts naturally with the product.":"Only the product and a hand are visible."}
+ s.prompt=`Vertical 9:16 TikTok UGC video, ~${D} seconds, of ${p} (use PRODUCT_IMAGE as exact reference). Setting: ${env}. Lighting: ${lit}. ${mdl?"A person (use MODEL_IMAGE as exact face reference) interacts naturally with the product.":"Only the product and a hand are visible."}
 `+s.scenes.map((x,i)=>`[${x[0]}] ${shots[i].cam}; ${shots[i].pm}; ${shots[i].hm}. Story beat: ${x[1]}`).join("\n")+`
-On-screen text (Bahasa Indonesia): "${H[1]}"${pro?` | CTA text overlay at 17-20s: "${pro}"`:""}
+On-screen text (Bahasa Indonesia): "${H[1]}"${pro?` | CTA text overlay at ${cut[4]}-${D}s: "${pro}"`:""}
 ${RULES_BASE}
 ${mdl?RULES_MODEL:RULES_NOMODEL}
-${RULES_GLOBAL}`;
+${RULES_GLOBAL} Duration about ${D} seconds.`;
  s.env=env;s.lit=lit;
  s.copy=`${H[1]} ${p} bantu ${b}. ${pr?`Sekarang cuma ${pr}.`:""}${pro?` 🔥 ${pro}!`:""} 👉 Klik Beli Sekarang!`;
  return s}
 function render(s,i){const d=document.createElement("div");d.className="card";
- d.innerHTML=`<div><span class="tag">#${i}</span><span class="tag">${s.niche}</span><span class="tag">CEP: ${s.cep}</span><span class="tag">Angle: ${s.angle}</span><span class="tag">Hook: ${s.hookType}</span><span class="tag">Konten: ${s.tipe}</span></div>
+ d.innerHTML=`<div><span class="tag">#${i}</span><span class="tag">${s.niche}</span><span class="tag">CEP: ${s.cep}</span><span class="tag">Angle: ${s.angle}</span><span class="tag">Hook: ${s.hookType}</span><span class="tag">Konten: ${s.tipe}</span><span class="tag">${s.dur} detik</span></div>
  <div class="hook">“${s.hook}”</div><table>${s.scenes.map(x=>`<tr><th>${x[0]}</th><td>${x[1]}</td></tr>`).join("")}
  <tr><th>Ad copy</th><td>${s.copy}</td></tr></table>
  <details style="margin-top:8px"><summary><b>Video AI Prompt</b> <span class="mut">(${s.env} · ${s.lit})</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${s.prompt.replace(/</g,"&lt;")}</pre><button class="sec" style="width:auto">Copy prompt</button></details>`;
@@ -209,8 +220,8 @@ function genBatch(){const n=Math.min(200,+$("n").value||10),seen=new Set(list.ma
  while(k<n&&g++<5000){const c=sel("cep",6),a=sel("ang",15),h=sel("hook",50),t=sel("tipe",4),key=[$("niche").value,c,a,h,t].join("|");
   if(seen.has(key))continue;seen.add(key);add(c,a,h,t,1);k++}}
 function exportCSV(){if(!list.length)return alert("Belum ada scene");
- const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Scene 0-3s","Scene 3-8s","Scene 8-13s","Scene 13-17s","CTA 17-20s","Ad Copy","Video Prompt"];
- const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,...s.scenes.map(x=>x[1]),s.copy,s.prompt].map(q).join(","));
+ const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Durasi","Scene 1 Hook","Scene 2","Scene 3","Scene 4","Scene 5 CTA","Ad Copy","Video Prompt"];
+ const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,s.dur+"s",...s.scenes.map(x=>x[1]),s.copy,s.prompt].map(q).join(","));
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["﻿"+[hd.join(","),...rows].join("\n")],{type:"text/csv"}));
  a.download="scene-meta-ads.csv";a.click()}
 </script>
