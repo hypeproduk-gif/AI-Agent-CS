@@ -177,7 +177,7 @@ const NICHE={
   cam:["close-up product focus","handheld POV view","slow push-in camera movement"],lit:["soft natural window light","warm cozy indoor light"]}};
 // Kamus ID→EN untuk deskripsi produk/model (tanpa AI, tanpa token). Frasa panjang dicek duluan.
 const DICT={"muat di telapak tangan":"fits in palm","seukuran jari":"finger-sized","di antara dua ujung jari":"between two fingertips","segenggaman tangan":"fits in one hand","tutup ulir":"screw lid","tutup flip":"flip cap","stiker merah muda":"pink sticker","jatuh alami":"falls naturally","kerutan tipis":"light wrinkles","bahu turun":"drop shoulder","lengan panjang":"long sleeves","lengan pendek":"short sleeves","pinggang karet":"elastic waist","kaki lebar":"wide leg","cepat meresap":"absorbs quickly","tidak lengket":"non-sticky","umur 20an":"in her 20s","umur 30an":"in her 30s","umur 40an":"in her 40s","pertengahan 30an":"mid 30s","kulit sawo matang":"tan skin","kulit kuning langsat":"light olive skin","rambut panjang":"long hair","rambut pendek":"short hair","berhijab":"wearing hijab",
-"toples":"jar","jar":"jar","botol":"bottle","tube":"tube","tabung":"tube","pump":"pump bottle","pipet":"dropper","sachet":"sachet","kotak":"box","dus":"box","pouch":"pouch","kemasan":"packaging","tutup":"lid","label":"label","stiker":"sticker","logo":"logo","segel":"seal",
+"toples":"jar","potnya":"the jar","pot":"jar","produk":"product","hanya":"only","bagian atasnya":"on top","bagian atas":"on top","di bagian atas":"on top","di bagian atasnya":"on top","di atas":"on top","di bawah":"at the bottom","untuk":"for","saja":"only","gram":"g","jar":"jar","botol":"bottle","tube":"tube","tabung":"tube","pump":"pump bottle","pipet":"dropper","sachet":"sachet","kotak":"box","dus":"box","pouch":"pouch","kemasan":"packaging","tutup":"lid","label":"label","stiker":"sticker","logo":"logo","segel":"seal",
 "akrilik":"acrylic","kaca":"glass","plastik":"plastic","aluminium":"aluminum","kertas":"paper","kayu":"wooden","logam":"metal",
 "bening":"clear","transparan":"transparent","doff":"matte","matte":"matte","glossy":"glossy","mengkilap":"shiny","buram":"frosted",
 "putih":"white","hitam":"black","merah":"red","merah muda":"pink","kuning muda":"light yellow","biru muda":"light blue","hijau muda":"light green","abu muda":"light gray","coklat muda":"light brown","biru tua":"dark blue","hijau tua":"dark green","coklat tua":"dark brown","merah tua":"dark red","pink":"pink","kuning":"yellow","hijau":"green","biru":"blue","ungu":"purple","coklat":"brown","cokelat":"brown","abu-abu":"gray","abu":"gray","emas":"gold","perak":"silver","krem":"beige","cream":"cream","nude":"nude","navy":"navy","maroon":"maroon","oranye":"orange",
@@ -215,13 +215,17 @@ fill($("hook"),HOOKS,(x,i)=>`[${x[0]}] ${x[1]}`);fill($("tipe"),TIPE,x=>x);
 [["set",SET],["pm",PM],["hm",HM],["cam",CAM],["lit",LIT]].forEach(([id,a])=>{fill($(id),a,(x,i)=>`${i+1}. ${x}`);$(id).insertAdjacentHTML("afterbegin",'<option value="-1" selected>🎲 Acak</option>')});
 const rnd=m=>Math.floor(Math.random()*m),pick=(id,a)=>{const v=+$(id).value;return a[v<0?rnd(a.length):v]};
 // Dialog per tipe konten: [agitasi/pembuka, perkenalan produk, manfaat] + filler untuk durasi panjang
+// Jembatan setelah hook: menjawab hook dan memperkenalkan produk, supaya dialog nyambung
+const BRIDGE={Problem:p=>`Aku punya solusinya: ${p}.`,Confession:p=>`Tapi setelah aku coba ${p} sendiri, ternyata beda.`,Curiosity:p=>`Jawabannya ${p} ini.`,Result:p=>`Semua ini karena ${p}.`,"Pattern Interrupt":p=>`Ini ${p}, dan aku harus cerita.`};
+const cap=x=>x.charAt(0).toUpperCase()+x.slice(1).replace(/[.\s]+$/,"");
+// Dialog per tipe konten: [setelah hook, produk, manfaat]
 const DIALOG={
- Problem:(p,b)=>["Udah coba macem-macem, tetap aja nggak berubah.",`Ini ${p}. Pakainya gampang, nggak ribet.`,`Bantu ${b}.`],
- Education:(p,b)=>["Ternyata masalahnya sering di cara pakainya.",`${p} ini cukup dipakai tipis, rutin tiap hari.`,`Pelan-pelan hasilnya ${b}.`],
- Manfaat:(p,b)=>[`Yang paling aku suka, ${b}.`,`Plus ${p} ini praktis, gampang dibawa ke mana aja.`,"Pantes banyak yang repeat order."],
- Testimoni:(p,b)=>[`Aku udah pakai ${p} beberapa minggu.`,"Awalnya ragu, tapi aku coba rutin.",`Sekarang beneran ${b}.`]};
+ Problem:(p,b,ht)=>["Aku juga dulu gitu, udah coba macem-macem tapi nggak berubah.",`Sampai akhirnya aku nemu ${p}.`,`${cap(b)}.`],
+ Education:(p,b,ht)=>["Ternyata masalahnya sering di pilihan produknya.",BRIDGE[ht](p),`${cap(b)}. Cukup dipakai tipis, rutin tiap hari.`],
+ Manfaat:(p,b,ht)=>[BRIDGE[ht](p),`${cap(b)}.`,"Pantes banyak yang repeat order."],
+ Testimoni:(p,b,ht)=>[`Aku udah pakai ${p} beberapa minggu.`,"Awalnya ragu, tapi aku coba rutin.",`Sekarang aku ngerasain sendiri: ${b.replace(/[.\s]+$/,"")}.`]};
 // Kalimat tambahan per peran segmen, dipakai sampai dialog cukup untuk durasi segmen
-const EXTRA={hook:["Serius, aku juga awalnya nggak percaya.","Dengerin dulu sebentar ya.","Ini penting banget buat kamu yang punya masalah sama."],
+const EXTRA={hook:["Aku ceritain pengalamanku ya, singkat aja.","Jujur, ini yang bikin aku akhirnya berani beli.","Buat kamu yang punya masalah sama, dengerin sampai habis."],
  0:["Rasanya udah capek banget, mau nyerah aja.","Udah keluar uang banyak tapi hasilnya nihil.","Jujur ini bikin aku nggak pede tiap hari."],
  1:["Cara pakainya cuma beberapa langkah aja.","Teksturnya ringan dan cepat meresap.","Aku pakai rutin, dan ini bagian favoritku."],
  2:["Aku udah buktiin sendiri, sekarang giliran kamu.","Pokoknya kamu wajib coba, nggak bakal nyesel.","Jangan sampai kehabisan kayak aku kemarin."]};
@@ -239,7 +243,7 @@ function build(c,a,h,t,batch){
  const KM={set:"set",pm:"pm",hm:"hm",cam:"cam",lit:"lit"},g=(id,arr)=>(batch||+$(id).value<0)?nPick(KM[id],arr):pick(id,arr),mdl=$("model").value==="1";
  const env=g("set",SET),lit=g("lit",LIT);
  const cta=hard?`${pr?`Cuma ${pr}`:"Harga spesial"}${pro?`, ${pro}`:""}. Klik di bawah sekarang, stok terbatas!`:`${pro?`Lagi ada ${pro}. `:""}Cek sendiri, klik di bawah.`;
- const dl=DIALOG[T](p,b);
+ const dl=DIALOG[T](p,b,H[0]);
  // susun beat: hook, [agitasi, produk, filler...], manfaat+CTA
  const mid=nSeg>=4?[[dl[0],0],[dl[1],1],...FILLER.slice(0,nSeg-4).map(f=>[f,1])]:nSeg===3?[[dl[1],1]]:[];
  // segmen sedikit: gabungkan agitasi & produk supaya alur problem→produk→CTA tetap utuh
@@ -250,7 +254,7 @@ function build(c,a,h,t,batch){
   const vo=!mdl||role===1;
   const st=Math.round(i*segLen),en=Math.round((i+1)*segLen);
   let vis;
-  if(i===0)vis=vo?`${sh.cam}, ${env}, ${lit}. ${pdesc} already in frame in the very first frame, ${sh.hm}, label facing the camera. ${A[2]}.`
+  if(i===0)vis=vo?`${sh.cam}, ${env}, ${lit}. ${pdesc} already in frame in the very first frame, ${sh.hm}, label facing the camera.`
               :`Handheld front-camera selfie, ${env}, ${lit}, ${mdesc}, ${pdesc} already raised beside her cheek in the very first frame, label facing the camera. Real skin texture, no filter.`;
   else if(vo)vis=`Close-up of hands only, ${env}: ${sh.hm}, ${sh.pm}, ${sh.cam}. Label stays sharp and unchanged.`;
   else if(role===2)vis=`Same person, same room, ${sh.hm}, then holding ${pdesc} toward the lens. ${sh.cam}.`;
