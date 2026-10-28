@@ -265,6 +265,20 @@ function build(c,a,h,t,batch){
 ${RULES_BASE}
 ${mdl?RULES_MODEL:RULES_NOMODEL}
 ${RULES_GLOBAL} Duration about ${D} seconds.`;
+ // Thumbnail: frame pertama video (setting, lighting, produk, model sama) + teks kepo pendek
+ const TH_TXT={Confession:"Aku salah soal ini…",Curiosity:"Kenapa semua pakai ini?",Problem:hk.replace(/[.…,]+$/,"").split(" ").slice(0,6).join(" ")+"?",Result:"Hasilnya bikin kaget 😳","Pattern Interrupt":"STOP. Lihat ini dulu"};
+ const TH_VIS={Confession:"slightly embarrassed half-smile, looking at the product",Curiosity:"one eyebrow raised, curious look straight into the lens",Problem:"frustrated expression, finger pointing at the problem area",Result:"genuine shocked face, mouth slightly open, eyes wide",
+  "Pattern Interrupt":"hand raised toward the lens like saying stop, serious look"};
+ s.thumbText=TH_TXT[H[0]];
+ s.thumb=`Vertical 9:16 thumbnail image (also usable 4:5), first frame of the same video. Smartphone photo, authentic TikTok UGC look, not a polished ad.
+Setting: ${env}. Lighting: ${lit}. Same environment and lighting as the video.
+Product: ${pdesc}, use PRODUCT_IMAGE as exact reference, held close to the camera, label sharp, occupying about 30% of the frame.
+${mdl?`Person: ${mdesc}, use MODEL_IMAGE as exact face reference, ${TH_VIS[H[0]]}. Face and product both clearly visible.`:`Only a hand holding the product, ${H[0]==="Problem"?"the problem visible in the background":"slight motion blur on the hand for a candid feel"}.`}
+Scroll-stopping: one strong focal point, high contrast between product and background, slight imperfection (candid, not staged).
+Text overlay (Bahasa Indonesia, bold white text with black outline, top third, max 6 words): "${s.thumbText}"
+Curiosity element: ${A[0]==="Transformation Desire"?"split before/after with the 'after' side partly hidden":A[0]==="Value Shock"?`small price sticker "${pr||"murah banget"}" next to the product`:A[0]==="Comparison Curiosity"?"two products side by side with a question mark":"red circle or arrow pointing at the product detail"}.
+${RULES_BASE.replace("The product must appear within the first second. ","").replace(/throughout the video/,"in the image")}
+${mdl?RULES_MODEL:RULES_NOMODEL}`;
  s.copy=`${H[1]} ${p} bantu ${b}. ${pr?`Sekarang cuma ${pr}.`:""}${pro?` 🔥 ${pro}!`:""} 👉 Klik Beli Sekarang!`;
  return s}
 function render(s,i){const d=document.createElement("div");d.className="card";
@@ -273,8 +287,9 @@ function render(s,i){const d=document.createElement("div");d.className="card";
  <div><span class="tag">${s.niche}</span><span class="tag">CEP: ${s.cep}</span><span class="tag">Angle: ${s.angle}</span></div>
  ${s.segs.map((x,k)=>`<p style="margin:10px 0"><b>SEG ${k+1} (${x.t})</b> | <i>${x.type}</i> ${x.vis}${x.exp?` <b>Ekspresi:</b> ${x.exp}`:""} | <b>Intonasi:</b> ${x.into} <b>“${x.line}”</b></p>`).join("")}
  <table><tr><th>Ad copy</th><td>${s.copy}</td></tr></table>
- <details style="margin-top:8px"><summary><b>Video AI Prompt</b> <span class="mut">(${s.env} · ${s.lit})</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${s.prompt.replace(/</g,"&lt;")}</pre><button class="sec" style="width:auto">Copy prompt</button></details>`;
- d.querySelector("details button").onclick=()=>navigator.clipboard.writeText(s.prompt);out.prepend(d)}
+ <details style="margin-top:8px"><summary><b>Video AI Prompt</b> <span class="mut">(${s.env} · ${s.lit})</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${s.prompt.replace(/</g,"&lt;")}</pre><button class="sec" style="width:auto">Copy prompt</button></details>
+ <details style="margin-top:8px"><summary><b>Thumbnail Prompt</b> <span class="mut">(teks: “${s.thumbText}”)</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${s.thumb.replace(/</g,"&lt;")}</pre><button class="sec" style="width:auto">Copy thumbnail prompt</button></details>`;
+ const bt=d.querySelectorAll("details button");bt[0].onclick=()=>navigator.clipboard.writeText(s.prompt);bt[1].onclick=()=>navigator.clipboard.writeText(s.thumb);out.prepend(d)}
 function add(c,a,h,t,b){const s=build(c,a,h,t,b);list.push(s);render(s,list.length)}
 const N=()=>NICHE[$("niche").value];
 const sel=(id,m)=>{const v=+$(id).value;if(v>=0)return v;if(id==="ang"&&Math.random()<.7){const b=N().ang;return b[rnd(b.length)]}return rnd(m)};
@@ -292,8 +307,8 @@ function genBatch(){const n=Math.min(200,+$("n").value||10),seen=new Set(list.ma
  while(k<n&&g++<5000){const c=sel("cep",6),a=sel("ang",15),h=sel("hook",50),t=sel("tipe",4),key=[$("niche").value,c,a,h,t].join("|");
   if(seen.has(key))continue;seen.add(key);add(c,a,h,t,1);k++}}
 function exportCSV(){if(!list.length)return alert("Belum ada scene");
- const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Durasi","Sell","Model","Judul","Script","Ad Copy","Video Prompt"];
- const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,s.dur+"s",s.sell,s.model?"YA":"TIDAK",s.title,s.scenes.map(x=>x[0]+" | "+x[1]).join("\n"),s.copy,s.prompt].map(q).join(","));
+ const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Durasi","Sell","Model","Judul","Script","Ad Copy","Video Prompt","Thumbnail Prompt"];
+ const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,s.dur+"s",s.sell,s.model?"YA":"TIDAK",s.title,s.scenes.map(x=>x[0]+" | "+x[1]).join("\n"),s.copy,s.prompt,s.thumb].map(q).join(","));
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["﻿"+[hd.join(","),...rows].join("\n")],{type:"text/csv"}));
  a.download="scene-meta-ads.csv";a.click()}
 </script>
