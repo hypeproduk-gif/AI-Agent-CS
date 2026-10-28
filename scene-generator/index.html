@@ -53,6 +53,7 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
    <label style="margin-top:6px">Terjemahan otomatis (EN) — dipakai di prompt, boleh diedit</label><input id="pdesc"></div>
   <div><label>Keterangan model (Bahasa Indonesia)</label><input id="mid" placeholder="wanita umur 30an, berhijab, kulit sawo matang"><label style="margin-top:6px">Terjemahan (EN)</label><input id="mdesc"></div>
   <div><label>Durasi per segmen</label><select id="seglen"><option value="5">5 detik</option><option value="8">8 detik</option><option value="10" selected>10 detik (cocok tool video AI)</option></select><div class="mut">Dialog otomatis dipanjangkan ±2,5 kata/detik</div></div>
+  <div><label>Sumber dialog</label><select id="dsrc"><option value="bank">Bank dialog FILO (Opus, gratis)</option><option value="tpl">Template umum</option></select></div>
   <div><label>Sell</label><select id="sell"><option>Auto</option><option>Soft</option><option>Hard</option></select><div class="mut">Auto = Hard kalau ada promo / Value Shock / Opportunistic</div></div>
   <div><label>Model manusia</label><select id="model"><option value="0">Tanpa model (produk + tangan)</option><option value="1">Pakai model (MODEL_IMAGE)</option></select></div>
   <div><label>Jumlah batch acak</label><input id="n" type="number" value="10" min="1" max="200"></div>
@@ -237,11 +238,69 @@ const HOOK_EXP={Confession:["mengaku, sedikit malu, senyum tipis","pelan di awal
 const BEAT_EXP=[["kesal bercampur pasrah, bibir mengerucut sebentar","turun, pelan, seperti mengaku"],null,["tenang lalu ramah, alis rileks, senyum kecil","lembut lalu naik mengajak"]];
 // Pecah daftar manfaat, pilih 2-3: utamakan yang kata-katanya nyambung dengan hook, sisanya acak
 const SYN={kusam:"glowing cerah",kering:"lembab melembabkan",breakout:"jerawat",jerawat:"jerawat",iritasi:"sensitif perih",berat:"ringan",flek:"flek noda"};
+// ===== Bank dialog FILO (ditulis Opus sekali, dipakai gratis) =====
+// Urutan kalimat selalu: hook → jembatan → cerita → produk → cara pakai → manfaat → bukti → CTA, lalu dibagi ke segmen.
+const BANK={
+ bridge:{
+  Confession:["Tapi setelah dua minggu pakai rutin, aku harus ngaku salah.","Ternyata aku yang terlalu cepat menilai.","Sampai akhirnya aku coba sendiri, dan ya… aku salah.","Untung aku nggak jadi skip, soalnya hasilnya beda."],
+  Curiosity:["Aku penasaran, jadi aku beli satu buat buktiin sendiri.","Jawabannya ternyata simpel banget.","Setelah aku coba sendiri, aku ngerti kenapa orang pada repeat order.","Aku cari tahu sendiri, dan ini jawabannya."],
+  Problem:["Aku dulu juga di posisi itu, dan rasanya bikin nggak pede.","Aku tahu rasanya, karena aku juga pernah ngalamin.","Dulu aku juga gitu, sampai males lihat kaca.","Aku pernah ada di titik yang sama, jadi aku ngerti banget."],
+  Result:["Padahal aku cuma pakai tipis tiap malam.","Jujur, aku nggak ngapa-ngapain selain ganti krim malam.","Aku sampai foto ulang di cahaya yang sama buat mastiin.","Bedanya kelihatan, bahkan di kamera depan."],
+  "Pattern Interrupt":["Ini krim malam yang lagi aku pakai, dan aku harus cerita.","Aku mau tunjukin satu jar kecil yang ngubah rutinitas malamku.","Sebentar aja, ini penting buat kulitmu.","Aku nggak biasanya review, tapi yang ini beda."]},
+ story:{
+  Problem:["Flek di pipi makin jelas, apalagi kalau difoto pakai kamera depan.","Udah gonta-ganti krim, bekas jerawat tetap aja nempel.","Kulitku sensitif, jadi banyak krim yang malah bikin perih.","Tiap pagi bercermin, wajah kelihatan capek dan kusam."],
+  Education:["Ternyata flek dan bekas jerawat butuh perawatan rutin, bukan yang instan.","Banyak yang pakai krim tebal-tebal biar cepat hasil, padahal justru bikin iritasi.","Kulit itu memperbaiki diri paling maksimal waktu kita tidur.","Kuncinya bukan banyak produk, tapi satu yang cocok dan dipakai konsisten."],
+  Manfaat:["Aku cari krim malam yang nggak ribet, tapi kerjanya kerasa.","Rutinitas malamku sekarang cuma satu langkah.","Aku pengen yang praktis, nggak perlu sepuluh step.","Yang aku butuh cuma satu krim yang beneran ngefek."],
+  Testimoni:["Aku udah pakai sekitar tiga minggu, tiap malam sebelum tidur.","Awalnya aku beli karena lihat review, tapi tetap ragu.","Jujur aku tipe yang susah cocok sama krim.","Aku udah pakai dari jar pertama sampai sekarang jar kedua."]},
+ product:["Ini {p}, krim malam dalam jar kecil 5 gram.","Namanya {p}. Kecil, tapi isinya padat.","Aku pakai {p}, krim malam yang teksturnya lembut.","Kenalin, {p}. Jarnya mungil, gampang ditaruh di samping kasur."],
+ usage:["Cukup ambil sedikit, oles tipis, malam aja.","Pakainya tipis setelah cuci muka, terus tinggal tidur.","Seujung jari udah cukup buat satu wajah.","Teksturnya lembut, cepat meresap, nggak lengket di bantal."],
+ ben:{
+  flek:["Flek di pipiku pelan-pelan kelihatan lebih samar.","Flek hitam yang dulu bikin minder sekarang mulai memudar.","Noda flek di pipi nggak sejelas dulu."],
+  jerawat:["Bekas jerawat juga makin tersamarkan.","Bekas jerawat yang merah-merah itu mulai pudar.","Bekas jerawatku nggak sekelihatan dulu."],
+  glowing:["Pagi-pagi wajah kelihatan lebih segar dan glowing.","Kulitku jadi lebih cerah dan glowing alami.","Wajah kelihatan glowing, bahkan tanpa makeup."],
+  lembab:["Bangun tidur kulit terasa lembab, nggak ketarik.","Kulitku jadi lebih lembab dan kenyal.","Nggak ada lagi kulit kering pas bangun pagi."],
+  perih:["Sama sekali nggak perih atau panas waktu dipakai.","Dipakai juga nggak perih, nggak panas di kulit.","Nggak ada rasa panas atau perih sama sekali."],
+  sensitif:["Aman buat kulitku yang sensitif.","Kulitku yang sensitif aja cocok.","Buat kulit sensitif kayak aku, ini aman."],
+  awet:["Kulit kelihatan lebih kencang dan awet muda.","Garis halus di wajah kelihatan lebih samar."]},
+ proof:{
+  Problem:["Akhirnya aku berani foto pakai kamera depan lagi.","Sekarang aku lebih pede keluar tanpa foundation tebal."],
+  Education:["Jadi bukan soal mahal, tapi soal rutin.","Konsisten aja tiap malam, nanti kelihatan sendiri bedanya."],
+  Manfaat:["Satu jar kecil, tapi kerjanya banyak.","Pantes banyak yang repeat order."],
+  Testimoni:["Sekarang aku udah nggak mau ganti krim lain.","Temen kantor sampai nanya aku pakai apa."]},
+ filler:["Jarnya kecil, jadi gampang dibawa kalau nginep.","Aku taruh di samping kasur biar nggak lupa.","Sebelumnya aku udah habis banyak buat krim yang nggak cocok.","Satu jar bisa awet karena pakainya tipis."],
+ ctaSoft:["Kalau kamu ngalamin hal yang sama, coba cek di bawah ya.","Penasaran? Cek dulu di keranjang kuning.","Coba deh mulai malam ini, klik di bawah."],
+ ctaHard:["Harganya cuma {harga}{promo}. Klik di bawah sebelum promonya habis!","Sekarang cuma {harga}{promo}, stoknya terbatas. Checkout sekarang ya!"],
+ ctaHardPromo:["{Promo} cuma {harga}, langsung klik keranjang kuning sebelum kehabisan!"]};
+const BKEY={flek:/flek|noda/,jerawat:/jerawat/,glowing:/glow|cerah|kusam/,lembab:/lembab|kering/,perih:/perih|panas/,sensitif:/sensitif/,awet:/awet|muda|keriput|kencang/};
+const pk=a=>a[rnd(a.length)];
+function bankLines(o){ // o: {p,hookType,hook,tipe,bens,hard,pr,pro,nSeg,D}
+ const r=x=>x.replace(/\{p\}/g,o.p).replace(/\{harga\}/g,o.pr||"harga spesial").replace(/\{promo\}/g,o.pro?`, ${o.pro}`:"").replace(/\{Promo\}/g,o.pro?o.pro.charAt(0).toUpperCase()+o.pro.slice(1):"");
+ const used=new Set(),CON=["","Terus, ","Plus, "];
+ const bens=o.bens.map(b=>{const k=Object.keys(BKEY).find(k=>BKEY[k].test(b.toLowerCase())&&!used.has(k));
+  if(k){used.add(k);return pk(BANK.ben[k])}return `${b.charAt(0).toUpperCase()+b.slice(1)} juga kerasa.`});
+ const cta=r(o.hard?(o.pro&&Math.random()<.4?pk(BANK.ctaHardPromo):pk(BANK.ctaHard)):pk(BANK.ctaSoft));
+ // cerita masalah hanya nyambung setelah hook Problem/Confession; hook lain langsung ke produk
+ const withStory=o.hookType==="Problem"||o.hookType==="Confession"||o.tipe==="Testimoni";
+ let B=[["bridge",r(pk(BANK.bridge[o.hookType]))],...(withStory?[["story",r(pk(BANK.story[o.tipe]))]]:[]),["product",r(pk(BANK.product))],["usage",r(pk(BANK.usage))],...bens.map(t=>["ben",t]),["proof",r(pk(BANK.proof[o.tipe]))]];
+ const tgt=Math.round(o.D*2.5),txt=()=>B.map(x=>x[1]),wc=()=>words([o.hook,...txt(),cta].join(" "));
+ const fill=[...BANK.filler].sort(()=>Math.random()-.5);
+ while(wc()<tgt*.9&&fill.length)B.splice(B.length-1,0,["filler",fill.pop()]);
+ // durasi pendek: buang berurutan cerita → cara pakai → bukti → jembatan → manfaat terakhir (minimal produk + 1 manfaat)
+ for(const tag of ["story","usage","proof","bridge"]){if(wc()<=tgt*1.2)break;const k=B.findIndex(x=>x[0]===tag);if(k>=0)B.splice(k,1)}
+ while(wc()>tgt*1.2&&B.filter(x=>x[0]==="ben").length>1){const k=B.map(x=>x[0]).lastIndexOf("ben");B.splice(k,1)}
+ // kata sambung manfaat ke-2 dan ke-3
+ let bi=0;B.forEach(x=>{if(x[0]==="ben"){if(bi)x[1]=CON[Math.min(bi,2)]+x[1].charAt(0).toLowerCase()+x[1].slice(1);bi++}});
+ // bagi ke segmen berdasarkan jumlah kata (CTA ikut dihitung, selalu di segmen terakhir)
+ const all=[o.hook,...txt()],tot=wc(),per=tot/o.nSeg,seg=Array.from({length:o.nSeg},()=>[]);let si=0,acc=0;
+ all.forEach(x=>{const w=words(x);if(si<o.nSeg-1&&seg[si].length&&acc+w/2>per*(si+1))si++;seg[si].push(x);acc+=w});
+ seg[o.nSeg-1].push(cta);
+ for(let k=1;k<o.nSeg-1;k++)if(!seg[k].length&&seg[k-1].length>1)seg[k].push(seg[k-1].pop());
+ return seg.map(s=>s.join(" ")||"…")}
 function pickBen(raw,hook){const all=raw.split(/\s*(?:,|;|\.|\n| dan )\s*/).map(x=>x.trim()).filter(Boolean);if(!all.length)return "hasil terlihat";
  const hw=hook.toLowerCase().split(/\W+/).flatMap(w=>[w,...(SYN[w]||"").split(" ")]).filter(w=>w.length>3);
  const sc=all.map(x=>({x,s:hw.filter(w=>x.toLowerCase().includes(w)).length+Math.random()*.9})).sort((a,b)=>b.s-a.s);
  const k=Math.min(all.length,2+rnd(2)),ch=sc.slice(0,k).map(o=>o.x);
- return ch.length>1?ch.slice(0,-1).join(", ")+" dan "+ch[ch.length-1]:ch[0]}
+ window.BENLIST=ch;return ch.length>1?ch.slice(0,-1).join(", ")+" dan "+ch[ch.length-1]:ch[0]}
 function build(c,a,h,t,batch){
  const p=$("prod").value||"produk",b=pickBen($("ben").value,HOOKS[h][0]==="Problem"?N().prob[h%10]:HOOKS[h][1]),pr=$("price").value,pro=$("promo").value.trim();
  const pdesc=$("pdesc").value.trim()||"the product",mdesc=$("mdesc").value.trim()||"a natural-looking woman";
@@ -255,9 +314,10 @@ function build(c,a,h,t,batch){
  // susun beat: hook, [agitasi, produk, filler...], manfaat+CTA
  const mid=nSeg>=4?[[dl[0],0],[dl[1],1],...FILLER.slice(0,nSeg-4).map(f=>[f,1])]:nSeg===3?[[dl[1],1]]:[];
  // segmen sedikit: gabungkan agitasi & produk supaya alur problem→produk→CTA tetap utuh
+ const BL=$("dsrc").value==="bank"?bankLines({p,hookType:H[0],hook:H[1],tipe:T,bens:window.BENLIST||[b],hard,pr,pro,nSeg,D}):null;
  const beats=nSeg===2?[[`${H[1]} ${dl[0]}`,"hook"],[`${dl[1]} ${dl[2]} ${cta}`,2]]:nSeg===3?[[H[1],"hook"],[`${dl[0]} ${dl[1]}`,1],[`${dl[2]} ${cta}`,2]]:[[H[1],"hook"],...mid,[`${dl[2]} ${cta}`,2]];
  const segs=beats.map(([line0,role],i)=>{
-  const line=role===2?stretch(line0.replace(cta,""),2,segLen-2.5,FILLER).trim()+" "+cta:stretch(line0,role,segLen,FILLER);
+  const line=BL?BL[i]:role===2?stretch(line0.replace(cta,""),2,segLen-2.5,FILLER).trim()+" "+cta:stretch(line0,role,segLen,FILLER);
   const sh={pm:g("pm",PM),hm:g("hm",HM),cam:g("cam",CAM)};
   const vo=!mdl||role===1;
   const st=Math.round(i*segLen),en=Math.round((i+1)*segLen);
