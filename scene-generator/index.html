@@ -52,6 +52,7 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
    <div class="mut" id="ptip"></div>
    <label style="margin-top:6px">Terjemahan otomatis (EN) — dipakai di prompt, boleh diedit</label><input id="pdesc"></div>
   <div><label>Keterangan model (Bahasa Indonesia)</label><input id="mid" placeholder="wanita umur 30an, berhijab, kulit sawo matang"><label style="margin-top:6px">Terjemahan (EN)</label><input id="mdesc"></div>
+  <div><label>Mode antar segmen</label><select id="vmode"><option value="var">Variasi (ganti lokasi, outfit, lighting, kamera)</option><option value="same">Nyambung (1 lokasi, 1 outfit)</option></select><div class="mut">Variasi = gaya jump-cut TikTok, lebih eksploratif</div></div>
   <div><label>Durasi per segmen</label><select id="seglen"><option value="5">5 detik</option><option value="8">8 detik</option><option value="10" selected>10 detik (cocok tool video AI)</option></select><div class="mut">Dialog otomatis dipanjangkan ±2,5 kata/detik</div></div>
   <div><label>Sumber dialog</label><select id="dsrc"><option value="bank">Bank dialog FILO (Opus, gratis)</option><option value="tpl">Template umum</option></select></div>
   <div><label>Sell</label><select id="sell"><option>Auto</option><option>Soft</option><option>Hard</option></select><div class="mut">Auto = Hard kalau ada promo / Value Shock / Opportunistic</div></div>
@@ -328,11 +329,11 @@ function build(c,a,h,t,batch){
   else if(role===2)vis=`Same person, same room, ${sh.hm}, then holding ${pdesc} toward the lens. ${sh.cam}.`;
   else vis=`Same person, same room, phone moves closer, ${sh.cam}; ${pdesc} still visible in her hand at the edge of frame. Shows the problem clearly.`;
   const ex=role==="hook"?HOOK_EXP[H[0]]:role===1?[null,"netral menjelaskan, tempo sedang"]:BEAT_EXP[role];
-  return {t:`${st}-${en} dtk`,type:vo?"VO, tangan saja":"Talking head",vis,exp:vo?null:ex[0],into:ex[1],line}});
+  return {env:g("set",SET),lit:g("lit",LIT),outfit:pk(/hijab/i.test(mdesc)?["simple modest tunic with hijab","soft knit cardigan over long dress with hijab","pastel oversized shirt with hijab","casual abaya with hijab"]:OUTFIT.filter(o=>!/hijab/.test(o))),t:`${st}-${en} dtk`,type:vo?"VO, tangan saja":"Talking head",vis,exp:vo?null:ex[0],into:ex[1],line}});
  const s={ben:b,key:[$("niche").value,c,a,h,t].join("|"),niche:$("niche").value,cep:C[0],angle:A[0],hookType:H[0],hook:H[1],tipe:T,dur:D,sell:hard?"Hard":"Soft",model:mdl,env,lit,segs};
  s.title=H[1].replace(/[.…]+$/,"");
  s.scenes=segs.map((x,i)=>[`SEG ${i+1} (${x.t})`,`${x.type} | ${x.vis}${x.exp?` Ekspresi: ${x.exp}`:""} | Intonasi: ${x.into} "${x.line}"`]);
- s.ctx={p,pdesc,mdesc,mdl,D,segLen};
+ s.ctx={p,pdesc,mdesc,mdl,D,segLen,vmode:$("vmode").value};
  s.prompt=`Vertical 9:16 TikTok UGC video, ~${D} seconds, ${nSeg} segments of ~${Math.round(segLen)}s. Product: ${p}${pdesc!=="the product"?` (${pdesc})`:""}, use PRODUCT_IMAGE as exact reference.${mdl?` Person: ${mdesc}, use MODEL_IMAGE as exact face reference.`:""}
 `+segs.map((x,i)=>`SEG ${i+1} (${x.t}) [${x.type}] ${x.vis}${x.exp?` Expression: ${x.exp}.`:""} Spoken line (Bahasa Indonesia${x.type==="Talking head"?", lip-synced":", voice-over"}): "${x.line}"`).join("\n")+`
 ${RULES_BASE}
@@ -375,16 +376,18 @@ ${IMG_END}`]];
  s.copy=`${H[1]} ${p} bantu ${b}. ${pr?`Sekarang cuma ${pr}.`:""}${pro?` 🔥 ${pro}!`:""} 👉 Klik Beli Sekarang!`;
  return s}
 // Satu prompt per segmen: tiap klip digenerate terpisah lalu disambung, jadi tiap prompt berdiri sendiri + aturan kesinambungan
-function segPrompts(s){const c=s.ctx,n=s.segs.length;return s.segs.map((g,i)=>{const len=Math.round(c.segLen);
+const OUTFIT=["casual oversized t-shirt","soft knit cardigan","simple satin pajamas","clean white blouse","pastel hoodie","neutral linen shirt","simple modest tunic with hijab","sleeveless ribbed top with light cardigan"];
+function segPrompts(s){const c=s.ctx,n=s.segs.length,V=c.vmode==="var";return s.segs.map((g,i)=>{const len=Math.round(c.segLen);
+ const env=V&&g.env?g.env:s.env,lit=V&&g.lit?g.lit:s.lit,vis=V?g.vis.replace(s.env,env).replace(s.lit,lit).replace(/Same person, same room, /,"Same person in a new spot, "):g.vis;
  return `Vertical 9:16 TikTok UGC video clip, ${len} seconds. This is clip ${i+1} of ${n} of one continuous ~${c.D}s video${i?`, continuing directly from clip ${i}`:""}.
 Product: ${c.p}${c.pdesc!=="the product"?` (${c.pdesc})`:""}, use PRODUCT_IMAGE as exact reference.${c.mdl?` Person: ${c.mdesc}, use MODEL_IMAGE as exact face reference.`:""}
-Setting: ${s.env}. Lighting: ${s.lit}.
-SHOT [${g.type}]: ${g.vis}${g.exp?` Expression: ${g.exp}.`:""}
+Setting: ${env}. Lighting: ${lit}.${c.mdl&&V&&g.outfit?` Outfit: ${g.outfit}.`:""}
+SHOT [${g.type}]: ${vis}${g.exp?` Expression: ${g.exp}.`:""}
 Spoken line (Bahasa Indonesia${g.type==="Talking head"?", lip-synced, natural speaking pace":", voice-over"}): "${g.line}"
-${i===0?"The product must be visible in the very first frame.":`CONTINUITY: same ${c.mdl?"person, outfit, hairstyle, ":""}room, lighting, camera style and product position as the end of clip ${i}. No intro, start mid-action.`}${i<n-1?" End on a natural pause so the next clip can continue.":" End with the product clearly facing the camera."}
+${i===0?"The product must be visible in the very first frame.":V?`JUMP CUT from clip ${i}: new location, ${c.mdl?"new outfit, ":""}new lighting and camera angle are welcome; keep the same ${c.mdl?"face and ":""}product. Start mid-action, no intro.`:`CONTINUITY: same ${c.mdl?"person, outfit, hairstyle, ":""}room, lighting, camera style and product position as the end of clip ${i}. No intro, start mid-action.`}${i<n-1?" End on a natural pause so the next clip can continue.":" End with the product clearly facing the camera."}
 ${RULES_BASE.replace("The product must appear within the first second. ","")}
 ${c.mdl?RULES_MODEL:RULES_NOMODEL}
-NO TEXT: Do NOT add any on-screen text, captions, subtitles, titles, stickers, watermarks, logos or graphics to the video. The only text allowed is the original printed label on the product itself.
+No added captions or subtitles (text will be added in editing).
 ${RULES_GLOBAL} Duration exactly ${len} seconds.`})}
 function render(s,i,old){const d=document.createElement("div");d.className="card";s.no=i;
  d.innerHTML=`<div class="row" style="align-items:center"><div class="hook" style="flex:3">${i}. ${s.title}</div><button class="ai" style="flex:1">${s.ai?"✨ Tulis ulang lagi":"✨ Dialog AI (Opus 5.5)"}</button></div><div class="mut aist"></div>
