@@ -48,8 +48,10 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
    <option value="45">45 detik — testimoni / storytelling</option>
    <option value="60">60 detik — produk mahal / kompleks</option></select>
    <div class="mut">Advice: 15–20 detik paling sering convert untuk Meta Ads UGC (hook kuat di 3 detik + CTA sebelum orang skip). Pakai 30–60 detik hanya untuk Education/Testimoni atau produk mahal.</div></div>
-  <div><label>Deskripsi visual produk (EN)</label><input id="pdesc" placeholder="small white jar with pink sticker, soft yellow cream"></div>
-  <div><label>Deskripsi model (EN)</label><input id="mdesc" placeholder="woman in her mid 30s"></div>
+  <div style="grid-column:1/-1"><label>Keterangan produk (Bahasa Indonesia)</label><textarea id="pid" rows="2" style="width:100%;padding:8px;border:1px solid var(--bd);border-radius:7px;background:var(--card);color:var(--tx);font:inherit"></textarea>
+   <div class="mut" id="ptip"></div>
+   <label style="margin-top:6px">Terjemahan otomatis (EN) — dipakai di prompt, boleh diedit</label><input id="pdesc"></div>
+  <div><label>Keterangan model (Bahasa Indonesia)</label><input id="mid" placeholder="wanita umur 30an, berhijab, kulit sawo matang"><label style="margin-top:6px">Terjemahan (EN)</label><input id="mdesc"></div>
   <div><label>Durasi per segmen</label><select id="seglen"><option value="5">5 detik</option><option value="8">8 detik</option><option value="10" selected>10 detik (cocok tool video AI)</option></select><div class="mut">Dialog otomatis dipanjangkan ±2,5 kata/detik</div></div>
   <div><label>Sell</label><select id="sell"><option>Auto</option><option>Soft</option><option>Hard</option></select><div class="mut">Auto = Hard kalau ada promo / Value Shock / Opportunistic</div></div>
   <div><label>Model manusia</label><select id="model"><option value="0">Tanpa model (produk + tangan)</option><option value="1">Pakai model (MODEL_IMAGE)</option></select></div>
@@ -173,6 +175,38 @@ const NICHE={
   pm:["product placed next to competitor/old product for comparison","product held close to camera","product slowly rotated"],
   hm:["hand casually holding product in frame","hand presenting product to camera","fingers rotating the bottle"],
   cam:["close-up product focus","handheld POV view","slow push-in camera movement"],lit:["soft natural window light","warm cozy indoor light"]}};
+// Kamus ID→EN untuk deskripsi produk/model (tanpa AI, tanpa token). Frasa panjang dicek duluan.
+const DICT={"muat di telapak tangan":"fits in palm","seukuran jari":"finger-sized","di antara dua ujung jari":"between two fingertips","segenggaman tangan":"fits in one hand","tutup ulir":"screw lid","tutup flip":"flip cap","stiker merah muda":"pink sticker","jatuh alami":"falls naturally","kerutan tipis":"light wrinkles","bahu turun":"drop shoulder","lengan panjang":"long sleeves","lengan pendek":"short sleeves","pinggang karet":"elastic waist","kaki lebar":"wide leg","cepat meresap":"absorbs quickly","tidak lengket":"non-sticky","umur 20an":"in her 20s","umur 30an":"in her 30s","umur 40an":"in her 40s","pertengahan 30an":"mid 30s","kulit sawo matang":"tan skin","kulit kuning langsat":"light olive skin","rambut panjang":"long hair","rambut pendek":"short hair","berhijab":"wearing hijab",
+"toples":"jar","jar":"jar","botol":"bottle","tube":"tube","tabung":"tube","pump":"pump bottle","pipet":"dropper","sachet":"sachet","kotak":"box","dus":"box","pouch":"pouch","kemasan":"packaging","tutup":"lid","label":"label","stiker":"sticker","logo":"logo","segel":"seal",
+"akrilik":"acrylic","kaca":"glass","plastik":"plastic","aluminium":"aluminum","kertas":"paper","kayu":"wooden","logam":"metal",
+"bening":"clear","transparan":"transparent","doff":"matte","matte":"matte","glossy":"glossy","mengkilap":"shiny","buram":"frosted",
+"putih":"white","hitam":"black","merah":"red","merah muda":"pink","kuning muda":"light yellow","biru muda":"light blue","hijau muda":"light green","abu muda":"light gray","coklat muda":"light brown","biru tua":"dark blue","hijau tua":"dark green","coklat tua":"dark brown","merah tua":"dark red","pink":"pink","kuning":"yellow","hijau":"green","biru":"blue","ungu":"purple","coklat":"brown","cokelat":"brown","abu-abu":"gray","abu":"gray","emas":"gold","perak":"silver","krem":"beige","cream":"cream","nude":"nude","navy":"navy","maroon":"maroon","oranye":"orange",
+"krim":"cream","salep":"ointment","serum":"serum","gel":"gel","cair":"liquid","bubuk":"powder","kapsul":"capsule","tablet":"tablet","minyak":"oil","lotion":"lotion","isi":"contents","isinya":"filled with","tekstur":"texture","lembut":"soft","kental":"thick","encer":"runny","ringan":"lightweight",
+"baju":"shirt","kaos":"t-shirt","kemeja":"button-up shirt","gamis":"long dress (gamis)","dress":"dress","rok":"skirt","celana":"pants","jaket":"jacket","hijab":"hijab","kerudung":"headscarf","outfit":"outfit",
+"bahan":"fabric","kain":"fabric","katun":"cotton","linen":"linen","rayon":"rayon","sifon":"chiffon","satin":"satin","denim":"denim","wol":"wool","rajut":"knit","polyester":"polyester","jatuh":"flowy","adem":"breathable","tebal":"thick","tipis":"thin","kaku":"stiff","melar":"stretchy",
+"potongan":"cutting","cutting":"cutting","oversize":"oversized","oversized":"oversized","longgar":"loose","ketat":"tight","pas badan":"fitted","slim fit":"slim fit","boxy":"boxy","ukuran":"size","dipakai model":"worn by model",
+"diameter":"diameter","tinggi":"height","lebar":"width","panjang":"length","kecil":"small","besar":"large","sedang":"medium","mini":"mini","bulat":"round","kotak persegi":"square","persegi":"square","oval":"oval",
+"wanita":"woman","perempuan":"woman","pria":"man","laki-laki":"man","ibu":"mother","remaja":"teenager","kulit":"skin","putih bersih":"fair",
+"dengan":"with","dan":"and","di dalam":"inside","di":"at","warna":"color","berwarna":"colored","yang":"that","atau":"or","sekitar":"about"};
+const DK=Object.keys(DICT).sort((a,b)=>b.length-a.length);
+const tr=t=>{let o=" "+t.toLowerCase().replace(/(\d+)\s*(cm|mm|ml|gr|gram|g)\b/g,"$1$2")+" ";
+ DK.forEach(k=>{o=o.replace(new RegExp("([\\s,.(])"+k.replace(/[-]/g,"\\-")+"(?=[\\s,.)])","g"),"$1"+DICT[k])});
+ o=o.replace(/(\d+)gram\b/g,"$1g").replace(/(\d+)gr\b/g,"$1g").trim();
+ // susunan Indonesia (benda + sifat) → Inggris (sifat + benda), per potongan koma
+ return o.split(/\s*,\s*/).map(ch=>{let pre="";if(/^contents /.test(ch)){pre="filled with ";ch=ch.slice(9)}
+  const w=ch.split(" ");for(const nn of NOUNS){const nw=nn.split(" ");if(w.slice(0,nw.length).join(" ")===nn&&w.length>nw.length&&w.slice(nw.length).every(x=>ADJ.has(x)))return pre+[...w.slice(nw.length),nn].join(" ")}
+  return pre+ch}).join(", ").replace(/\bsize ([a-z]{1,3})\b/g,(m,x)=>"size "+x.toUpperCase())};
+const NOUNS=["screw lid","flip cap","pump bottle","button-up shirt","jar","bottle","tube","dropper","sachet","box","pouch","packaging","lid","label","sticker","cream","ointment","serum","gel","powder","capsule","tablet","oil","lotion","texture","shirt","t-shirt","dress","skirt","pants","jacket","hijab","headscarf","fabric","cutting","woman","man","skin","hair"];
+const ADJ=new Set("acrylic glass plastic aluminum paper wooden metal clear transparent matte glossy shiny frosted white black red pink yellow green blue purple brown gray gold silver beige cream nude navy maroon orange liquid soft thick runny lightweight cotton linen rayon chiffon satin denim wool knit polyester flowy breathable thin stiff stretchy oversized loose tight fitted boxy small large medium mini round square oval fair light dark".split(" "));
+const TIPS={
+ _:"Tulis bentuk & kemasan, ukuran dibanding tangan (mis. muat di telapak tangan), bahan (kaca/plastik, doff/glossy), warna, dan isi.",
+ "Skincare":"Contoh: toples akrilik bening kecil, diameter 3cm, di antara dua ujung jari, tutup ulir putih, stiker merah muda, isi krim kuning lembut",
+ "Makeup / Kosmetik":"Contoh: tube lipstik hitam doff, seukuran jari, isi warna nude",
+ "Fashion / Pakaian":"Contoh: kaos oversize bahan katun adem, potongan boxy, bahu turun, ukuran M dipakai model, jatuh alami, kerutan tipis",
+ "Hijab / Muslim Fashion":"Contoh: hijab segi empat bahan sifon jatuh, warna krem, tipis tidak transparan",
+ "Suplemen / Kesehatan":"Contoh: botol plastik putih 10cm, muat di telapak tangan, label hijau, isi kapsul kuning",
+ "Makanan & Minuman":"Contoh: pouch kertas coklat, segenggaman tangan, isi keripik, label merah",
+ "Parfum":"Contoh: botol kaca bening kotak persegi 30ml, tutup emas, isi cair kuning muda"};
 const $=id=>document.getElementById(id),out=$("out");let list=[];
 const fill=(el,arr,f)=>el.innerHTML=arr.map((x,i)=>`<option value="${i}">${f(x,i)}</option>`).join("");
 fill($("cep"),CEP,(x,i)=>`${i+1}. ${x[0]}`);fill($("ang"),ANG,(x,i)=>`${i+1}. ${x[0]}`);
@@ -249,6 +283,9 @@ const nPick=(k,arr)=>{const b=N()[k];return b&&Math.random()<.7?b[rnd(b.length)]
 $("niche").innerHTML=Object.keys(NICHE).map(k=>`<option>${k}</option>`).join("");
 const nh=()=>{const n=N();$("nhint").textContent="Angle terbaik: "+n.ang.map(i=>ANG[i][0]).join(", ")+(n.model?" · Saran: pakai model":"");$("model").value=n.model};
 $("niche").onchange=nh;nh();
+const ptip=()=>{const t=TIPS[$("niche").value]||TIPS._;$("ptip").textContent="💡 "+TIPS._+" "+t;$("pid").placeholder=t.replace(/^Contoh: /,"")};
+$("niche").addEventListener("change",ptip);ptip();
+$("pid").oninput=()=>$("pdesc").value=tr($("pid").value);$("mid").oninput=()=>$("mdesc").value=tr($("mid").value);
 function gen1(){add(sel("cep",6),sel("ang",15),sel("hook",50),sel("tipe",4))}
 function genBatch(){const n=Math.min(200,+$("n").value||10),seen=new Set(list.map(s=>s.key));
  const r=m=>Math.floor(Math.random()*m);let k=0,g=0;
