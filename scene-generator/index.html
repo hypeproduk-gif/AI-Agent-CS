@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Scene Generator Meta Ads</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1b1f24;--mut:#667;--ac:#2f6fed;--bd:#dde1e6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121417;--card:#1c1f24;--tx:#e8eaed;--mut:#9aa;--ac:#6b9bff;--bd:#2c3138}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,sans-serif}
+.wrap{max-width:1100px;margin:auto;padding:16px}h1{font-size:22px;margin:4px 0 12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+label{font-size:12px;color:var(--mut);display:block;margin-bottom:3px}
+select,input,button{width:100%;padding:8px;border:1px solid var(--bd);border-radius:7px;background:var(--card);color:var(--tx);font:inherit}
+button{background:var(--ac);color:#fff;border:0;cursor:pointer;font-weight:600}button.sec{background:transparent;color:var(--ac);border:1px solid var(--ac)}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1;min-width:140px}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;background:var(--bg);border:1px solid var(--bd);margin:0 4px 4px 0}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{border-top:1px solid var(--bd);padding:6px;text-align:left;vertical-align:top}
+th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight:700;margin:6px 0}
+.mut{color:var(--mut);font-size:13px}
+</style>
+</head>
+<body><div class="wrap">
+<h1>🎬 Scene Generator — Creative Meta Ads</h1>
+<p class="mut">6 CEP × 15 Angle × 50 Hook × 4 Tipe Konten = 18.000 kombinasi. Pilih manual atau acak.</p>
+<div class="card">
+ <div class="grid">
+  <div><label>Nama produk</label><input id="prod" value="Serum Brightening"></div>
+  <div><label>Manfaat utama</label><input id="ben" value="kulit cerah dalam 7 hari"></div>
+  <div><label>Harga</label><input id="price" value="Rp49.000"></div>
+  <div><label>CEP</label><select id="cep"></select></div>
+  <div><label>Angle Psikologi</label><select id="ang"></select></div>
+  <div><label>Hook</label><select id="hook"></select></div>
+  <div><label>Tipe Konten</label><select id="tipe"></select></div>
+  <div><label>Jumlah batch acak</label><input id="n" type="number" value="10" min="1" max="200"></div>
+ </div>
+ <div class="row" style="margin-top:10px">
+  <button onclick="gen1()">Generate 1 Scene</button>
+  <button onclick="genBatch()">Generate Batch Acak (tanpa duplikat)</button>
+  <button class="sec" onclick="exportCSV()">Export CSV</button>
+  <button class="sec" onclick="out.innerHTML='';list=[]">Reset</button>
+ </div>
+</div>
+<div id="out"></div>
+</div>
+<script>
+const CEP=[
+ ["Problem-Solution","penonton sedang mengalami masalah dan butuh solusi cepat"],
+ ["Routine","produk masuk ke rutinitas harian (pagi/malam/sebelum kerja)"],
+ ["Commitment","momen penting/target yang membuat orang komit (acara, nikah, interview)"],
+ ["Aspirational","ingin jadi versi diri yang lebih baik / meniru idola"],
+ ["Opportunistic","momen promo, gajian, flash sale, harbolnas"],
+ ["Emotional","momen insecure, sedih, butuh self-reward"]];
+const ANG=[
+ ["FOMO","takut ketinggalan tren","tunjukkan stok menipis / komentar ramai / label sold out"],
+ ["Instant Gratification","reward cepat","timer 10 detik on-screen, hasil langsung"],
+ ["Curiosity Gap","info belum lengkap","tahan reveal sampai detik akhir"],
+ ["Shock / Unexpected Result","surprise → dopamine","reaksi kaget close-up saat lihat hasil"],
+ ["Social Proof","ikut mayoritas","montase review, rating, jumlah terjual"],
+ ["Authority Effect","percaya ahli","kutipan/visual ahli, jas lab, sertifikat BPOM"],
+ ["Hidden Gem Effect","menemukan harta karun","bisik-bisik 'rahasia', produk dikeluarkan pelan"],
+ ["Relatable Pain","ini masalah saya","close-up masalah nyata tanpa filter"],
+ ["Transformation Desire","ingin hasil sama","split-screen before/after"],
+ ["Value Shock","deal terlalu bagus","harga besar di layar, bandingkan dengan harga kopi"],
+ ["Curated Discovery","terasa organik","gaya vlog santai, kamera handheld"],
+ ["Emotional Story","empati & trust","talking head jujur, musik pelan"],
+ ["Comparison Curiosity","kompetisi & pembuktian","dua produk side-by-side, tes bersamaan"],
+ ["Demonstration Proof","bukti visual","tes langsung di kamera, no cut"],
+ ["Regret Trigger","kenapa baru tahu","ekspresi menyesal + 'andai dari dulu'"]];
+const HK={
+ "Confession":["Aku kira ini cuma hype TikTok…","Aku hampir nggak beli produk ini.","Awalnya aku ragu sama skincare ini.","Aku kira ini cuma gimmick.","Aku nyesel baru coba ini sekarang.","Aku kira ini biasa aja.","Aku kira skincare ini overhyped.","Aku hampir skip produk ini.","Aku nggak expect hasilnya.","Aku akhirnya coba juga produk ini."],
+ "Curiosity":["Kenapa skincare ini sering sold out?","Kenapa banyak orang pakai ini?","Sekarang aku ngerti kenapa ini viral.","Ini alasan skincare ini viral.","Kenapa produk ini sering muncul di FYP?","Aku baru ngerti hype-nya.","Ternyata ini alasan orang beli.","Sekarang aku tahu kenapa ini laku.","Aku baru sadar fungsi ini.","Ini yang bikin skincare ini beda."],
+ "Problem":["Kalau kulitmu kusam, coba lihat ini.","Kalau kulitmu kering, kamu harus lihat ini.","Kalau skincare kamu nggak mempan…","Kalau kamu punya masalah kulit ini…","Kalau kulitmu gampang breakout…","Kalau kamu bingung pilih skincare…","Kalau skincare kamu terasa berat…","Kalau kamu cari skincare simple…","Kalau kulitmu gampang iritasi…","Kalau kamu butuh skincare ringan…"],
+ "Result":["Aku nggak nyangka hasilnya kayak gini.","Ini hasil setelah pakai ini.","Kulitku berubah setelah pakai ini.","Aku kaget lihat hasilnya.","Ini lebih bagus dari yang aku kira.","Hasilnya ternyata kelihatan.","Aku nggak expect hasilnya.","Ini yang terjadi setelah aku pakai ini.","Hasilnya bikin aku kaget.","Ini beda dari skincare lain."],
+ "Pattern Interrupt":["Eh bentar… kamu harus lihat ini.","Stop scroll dulu.","Tunggu… lihat ini.","Aku harus tunjukkan ini.","Oke ini agak aneh.","Ini bikin aku kaget.","Ini kelihatan biasa… tapi tunggu.","Aku baru sadar ini penting.","Ini skincare yang bikin aku heran.","Kamu harus lihat ini dulu."]};
+const HOOKS=[];for(const g in HK)HK[g].forEach(t=>HOOKS.push([g,t]));
+const TIPE=["Problem","Education","Manfaat","Testimoni"];
+const BODY={
+ Problem:(p,b)=>[`Tunjukkan masalah secara detail & dramatis — konteks CEP sebagai latar.`,`Agitasi: "udah coba macem-macem tapi tetap gini."`,`Perkenalkan ${p} sebagai jalan keluar.`],
+ Education:(p,b)=>[`Jelaskan kenapa masalah terjadi (1 fakta singkat).`,`Tunjukkan kandungan/cara kerja ${p} dengan teks overlay.`,`Demo cara pakai yang benar (step 1-2-3).`],
+ Manfaat:(p,b)=>[`Sorot manfaat utama: ${b}.`,`Tunjukkan 2-3 manfaat tambahan dengan cut cepat.`,`Visualkan hidup setelah manfaat didapat.`],
+ Testimoni:(p,b)=>[`Talking head: cerita pengalaman pribadi pakai ${p}.`,`B-roll pemakaian + hasil (${b}).`,`Tambahkan screenshot review/komentar pembeli.`]};
+const $=id=>document.getElementById(id),out=$("out");let list=[];
+const fill=(el,arr,f)=>el.innerHTML=arr.map((x,i)=>`<option value="${i}">${f(x,i)}</option>`).join("");
+fill($("cep"),CEP,(x,i)=>`${i+1}. ${x[0]}`);fill($("ang"),ANG,(x,i)=>`${i+1}. ${x[0]}`);
+fill($("hook"),HOOKS,(x,i)=>`[${x[0]}] ${x[1]}`);fill($("tipe"),TIPE,x=>x);
+function build(c,a,h,t){
+ const p=$("prod").value||"produk",b=$("ben").value||"hasil terlihat",pr=$("price").value;
+ const C=CEP[c],A=ANG[a],H=HOOKS[h],T=TIPE[t],bd=BODY[T](p,b);
+ const s={cep:C[0],angle:A[0],hookType:H[0],hook:H[1],tipe:T,scenes:[
+  ["0-3s HOOK",`${H[1]} — visual: ${A[2]}. Teks on-screen besar.`],
+  ["3-8s",bd[0]+` (Momen: ${C[1]})`],
+  ["8-15s",bd[1]],
+  ["15-22s",bd[2]+` Perkuat angle ${A[0]} (${A[1]}).`],
+  ["22-27s CTA",`${A[0]==="Value Shock"||C[0]==="Opportunistic"?`Cuma ${pr}! Promo terbatas.`:`Cek keranjang kuning / klik "Beli Sekarang".`} Produk ${p} di tangan, close-up packaging.`]]};
+ s.copy=`${H[1]} ${p} bantu ${b}. ${pr?`Sekarang cuma ${pr}.`:""} 👉 Klik Beli Sekarang!`;
+ return s}
+function render(s,i){const d=document.createElement("div");d.className="card";
+ d.innerHTML=`<div><span class="tag">#${i}</span><span class="tag">CEP: ${s.cep}</span><span class="tag">Angle: ${s.angle}</span><span class="tag">Hook: ${s.hookType}</span><span class="tag">Konten: ${s.tipe}</span></div>
+ <div class="hook">“${s.hook}”</div><table>${s.scenes.map(x=>`<tr><th>${x[0]}</th><td>${x[1]}</td></tr>`).join("")}
+ <tr><th>Ad copy</th><td>${s.copy}</td></tr></table>`;out.prepend(d)}
+function add(c,a,h,t){const s=build(c,a,h,t);list.push(s);render(s,list.length)}
+function gen1(){add(+$("cep").value,+$("ang").value,+$("hook").value,+$("tipe").value)}
+function genBatch(){const n=Math.min(200,+$("n").value||10),seen=new Set(list.map(s=>s.cep+s.angle+s.hook+s.tipe));
+ const r=m=>Math.floor(Math.random()*m);let k=0,g=0;
+ while(k<n&&g++<5000){const c=r(6),a=r(15),h=r(50),t=r(4),key=CEP[c][0]+ANG[a][0]+HOOKS[h][1]+TIPE[t];
+  if(seen.has(key))continue;seen.add(key);add(c,a,h,t);k++}}
+function exportCSV(){if(!list.length)return alert("Belum ada scene");
+ const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["CEP","Angle","Hook Type","Hook","Tipe","Scene 0-3s","Scene 3-8s","Scene 8-15s","Scene 15-22s","CTA","Ad Copy"];
+ const rows=list.map(s=>[s.cep,s.angle,s.hookType,s.hook,s.tipe,...s.scenes.map(x=>x[1]),s.copy].map(q).join(","));
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["﻿"+[hd.join(","),...rows].join("\n")],{type:"text/csv"}));
+ a.download="scene-meta-ads.csv";a.click()}
+</script>
+</body></html>
