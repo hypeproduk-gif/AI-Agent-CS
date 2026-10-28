@@ -303,7 +303,7 @@ function pickBen(raw,hook){const all=raw.split(/\s*(?:,|;|\.|\n| dan )\s*/).map(
  window.BENLIST=ch;return ch.length>1?ch.slice(0,-1).join(", ")+" dan "+ch[ch.length-1]:ch[0]}
 function build(c,a,h,t,batch){
  const p=$("prod").value||"produk",b=pickBen($("ben").value,HOOKS[h][0]==="Problem"?N().prob[h%10]:HOOKS[h][1]),pr=$("price").value,pro=$("promo").value.trim();
- const pdesc=$("pdesc").value.trim()||"the product",mdesc=$("mdesc").value.trim()||"a natural-looking woman";
+ const pdesc=$("pdesc").value.replace(/\.{2,}/g,". ").replace(/(\s*,\s*)+$/,"").replace(/,\s*,/g,",").trim()||"the product",mdesc=$("mdesc").value.trim()||"a natural-looking woman";
  const n=N(),hk=(HOOKS[h][0]==="Problem"?n.prob[h%10]:HOOKS[h][1]).replace(/skincare/g,n.noun).replace(/Kulitku/g,n.res),C=CEP[c],A=ANG[a],H=[HOOKS[h][0],hk],T=TIPE[t];
  const sv=$("sell").value,hard=sv==="Hard"||(sv==="Auto"&&(A[0]==="Value Shock"||C[0]==="Opportunistic"||!!pro));
  const D=+$("dur").value,nSeg=Math.max(2,Math.round(D/+$("seglen").value)),segLen=D/nSeg;
@@ -332,6 +332,7 @@ function build(c,a,h,t,batch){
  const s={ben:b,key:[$("niche").value,c,a,h,t].join("|"),niche:$("niche").value,cep:C[0],angle:A[0],hookType:H[0],hook:H[1],tipe:T,dur:D,sell:hard?"Hard":"Soft",model:mdl,env,lit,segs};
  s.title=H[1].replace(/[.…]+$/,"");
  s.scenes=segs.map((x,i)=>[`SEG ${i+1} (${x.t})`,`${x.type} | ${x.vis}${x.exp?` Ekspresi: ${x.exp}`:""} | Intonasi: ${x.into} "${x.line}"`]);
+ s.ctx={p,pdesc,mdesc,mdl,D,segLen};
  s.prompt=`Vertical 9:16 TikTok UGC video, ~${D} seconds, ${nSeg} segments of ~${Math.round(segLen)}s. Product: ${p}${pdesc!=="the product"?` (${pdesc})`:""}, use PRODUCT_IMAGE as exact reference.${mdl?` Person: ${mdesc}, use MODEL_IMAGE as exact face reference.`:""}
 `+segs.map((x,i)=>`SEG ${i+1} (${x.t}) [${x.type}] ${x.vis}${x.exp?` Expression: ${x.exp}.`:""} Spoken line (Bahasa Indonesia${x.type==="Talking head"?", lip-synced":", voice-over"}): "${x.line}"`).join("\n")+`
 ${RULES_BASE}
@@ -353,15 +354,26 @@ ${RULES_BASE.replace("The product must appear within the first second. ","").rep
 ${mdl?RULES_MODEL:RULES_NOMODEL}`;
  s.copy=`${H[1]} ${p} bantu ${b}. ${pr?`Sekarang cuma ${pr}.`:""}${pro?` 🔥 ${pro}!`:""} 👉 Klik Beli Sekarang!`;
  return s}
+// Satu prompt per segmen: tiap klip digenerate terpisah lalu disambung, jadi tiap prompt berdiri sendiri + aturan kesinambungan
+function segPrompts(s){const c=s.ctx,n=s.segs.length;return s.segs.map((g,i)=>{const len=Math.round(c.segLen);
+ return `Vertical 9:16 TikTok UGC video clip, ${len} seconds. This is clip ${i+1} of ${n} of one continuous ~${c.D}s video${i?`, continuing directly from clip ${i}`:""}.
+Product: ${c.p}${c.pdesc!=="the product"?` (${c.pdesc})`:""}, use PRODUCT_IMAGE as exact reference.${c.mdl?` Person: ${c.mdesc}, use MODEL_IMAGE as exact face reference.`:""}
+Setting: ${s.env}. Lighting: ${s.lit}.
+SHOT [${g.type}]: ${g.vis}${g.exp?` Expression: ${g.exp}.`:""}
+Spoken line (Bahasa Indonesia${g.type==="Talking head"?", lip-synced, natural speaking pace":", voice-over"}): "${g.line}"
+${i===0?"The product must be visible in the very first frame.":`CONTINUITY: same ${c.mdl?"person, outfit, hairstyle, ":""}room, lighting, camera style and product position as the end of clip ${i}. No intro, start mid-action.`}${i<n-1?" End on a natural pause so the next clip can continue.":" End with the product clearly facing the camera."}
+${RULES_BASE.replace("The product must appear within the first second. ","")}
+${c.mdl?RULES_MODEL:RULES_NOMODEL}
+${RULES_GLOBAL} Duration exactly ${len} seconds.`})}
 function render(s,i,old){const d=document.createElement("div");d.className="card";s.no=i;
  d.innerHTML=`<div class="row" style="align-items:center"><div class="hook" style="flex:3">${i}. ${s.title}</div><button class="ai" style="flex:1">${s.ai?"✨ Tulis ulang lagi":"✨ Dialog AI (Opus 5.5)"}</button></div><div class="mut aist"></div>
  <div class="mut" style="margin-bottom:6px">Tipe: ${s.tipe} | Sell: ${s.sell} | Hook ${s.hookType} | MODEL: ${s.model?"YA":"TIDAK"} | ${s.dur} dtk</div>
  <div><span class="tag">Manfaat: ${s.ben}</span><span class="tag">${s.niche}</span><span class="tag">CEP: ${s.cep}</span><span class="tag">Angle: ${s.angle}</span></div>
  ${s.segs.map((x,k)=>`<p style="margin:10px 0"><b>SEG ${k+1} (${x.t})</b> | <i>${x.type}</i> ${x.vis}${x.exp?` <b>Ekspresi:</b> ${x.exp}`:""} | <b>Intonasi:</b> ${x.into} <b>“${x.line}”</b></p>`).join("")}
  <table><tr><th>Ad copy</th><td>${s.copy}</td></tr></table>
- <details style="margin-top:8px"><summary><b>Video AI Prompt</b> <span class="mut">(${s.env} · ${s.lit})</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${s.prompt.replace(/</g,"&lt;")}</pre><button class="sec" style="width:auto">Copy prompt</button></details>
+ ${segPrompts(s).map((sp,k)=>`<details style="margin-top:8px"><summary><b>Video Prompt SEG ${k+1}</b> <span class="mut">(${s.segs[k].t} · generate terpisah)</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${sp.replace(/</g,"&lt;")}</pre><button class="sec cp" data-k="${k}" style="width:auto">Copy prompt SEG ${k+1}</button></details>`).join("")}
  <details style="margin-top:8px"><summary><b>Thumbnail Prompt</b> <span class="mut">(teks: “${s.thumbText}”)</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${s.thumb.replace(/</g,"&lt;")}</pre><button class="sec" style="width:auto">Copy thumbnail prompt</button></details>`;
- const bt=d.querySelectorAll("details button");bt[0].onclick=()=>navigator.clipboard.writeText(s.prompt);bt[1].onclick=()=>navigator.clipboard.writeText(s.thumb);
+ const SP=segPrompts(s);d.querySelectorAll(".cp").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(SP[+b.dataset.k]));const bt=d.querySelectorAll("details button");bt[bt.length-1].onclick=()=>navigator.clipboard.writeText(s.thumb);
  d.querySelector(".ai").onclick=()=>aiRewrite(s,d);d._s=s;old?old.replaceWith(d):out.prepend(d)}
 function add(c,a,h,t,b){const s=build(c,a,h,t,b);list.push(s);render(s,list.length)}
 const N=()=>NICHE[$("niche").value];
@@ -407,7 +419,7 @@ async function aiAll(){if(!SAMPLE)return alert("AI hanya aktif di link artifact 
 let DL=null;(async()=>{try{DL=await claude.use("downloads")}catch(e){}})();
 function exportCSV(){if(!list.length)return alert("Belum ada scene");
  const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Durasi","Sell","Model","Judul","Script","Ad Copy","Video Prompt","Thumbnail Prompt"];
- const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,s.dur+"s",s.sell,s.model?"YA":"TIDAK",s.title,s.scenes.map(x=>x[0]+" | "+x[1]).join("\n"),s.copy,s.prompt,s.thumb].map(q).join(","));
+ const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,s.dur+"s",s.sell,s.model?"YA":"TIDAK",s.title,s.scenes.map(x=>x[0]+" | "+x[1]).join("\n"),s.copy,segPrompts(s).join("\n\n=====\n\n"),s.thumb].map(q).join(","));
  const csv="﻿"+[hd.join(","),...rows].join("\n");if(DL){DL.save({filename:"scene-meta-ads.csv",data:csv}).catch(()=>{});return}
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
  a.download="scene-meta-ads.csv";a.click()}
