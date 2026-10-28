@@ -33,6 +33,12 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
   <div><label>Angle Psikologi</label><select id="ang"></select></div>
   <div><label>Hook</label><select id="hook"></select></div>
   <div><label>Tipe Konten</label><select id="tipe"></select></div>
+  <div><label>Setting / Lokasi</label><select id="set"></select></div>
+  <div><label>Gerakan Produk</label><select id="pm"></select></div>
+  <div><label>Gerakan Tangan</label><select id="hm"></select></div>
+  <div><label>Angle Kamera</label><select id="cam"></select></div>
+  <div><label>Lighting</label><select id="lit"></select></div>
+  <div><label>Model manusia</label><select id="model"><option value="0">Tanpa model (produk + tangan)</option><option value="1">Pakai model (MODEL_IMAGE)</option></select></div>
   <div><label>Jumlah batch acak</label><input id="n" type="number" value="10" min="1" max="200"></div>
  </div>
  <div class="row" style="margin-top:10px">
@@ -81,34 +87,58 @@ const BODY={
  Education:(p,b)=>[`Jelaskan kenapa masalah terjadi (1 fakta singkat).`,`Tunjukkan kandungan/cara kerja ${p} dengan teks overlay.`,`Demo cara pakai yang benar (step 1-2-3).`],
  Manfaat:(p,b)=>[`Sorot manfaat utama: ${b}.`,`Tunjukkan 2-3 manfaat tambahan dengan cut cepat.`,`Visualkan hidup setelah manfaat didapat.`],
  Testimoni:(p,b)=>[`Talking head: cerita pengalaman pribadi pakai ${p}.`,`B-roll pemakaian + hasil (${b}).`,`Tambahkan screenshot review/komentar pembeli.`]};
+const SET=["minimalist white skincare table with clean beauty setup","bedside night table with soft lamp light","bathroom vanity counter with mirror reflection","cozy bedroom desk with soft aesthetic decor","modern office work desk with laptop nearby","cafe table with coffee cup and natural daylight","sunny apartment balcony table with city view","kitchen marble counter during morning light","outdoor garden wooden table surrounded by plants","inside a parked car dashboard area with daylight","car center console area with sunlight entering through windshield","simple white photography tabletop background","skincare storage shelf with organized beauty products"];
+const PM=["product slowly rotated","product lifted from table","product placed onto table","product gently pushed toward camera","product held close to camera","product lightly tapped on table","product slowly tilted side to side","product pulled into frame","product turned to show label","product placed beside glass of water"];
+const HM=["fingers rotating the bottle","hand presenting product to camera","hand sliding product across table","hand gently adjusting product position","hand holding capsule in palm","hand placing capsule next to bottle","hand picking product up naturally","hand slowly lowering product onto table","fingers lightly tapping the bottle","hand casually holding product in frame"];
+const CAM=["close-up product focus","slightly top-down angle","eye-level product shot","handheld POV view","macro product close-up","slight side angle","table-level cinematic angle","diagonal angle framing","over-the-table perspective","slow push-in camera movement"];
+const LIT=["soft natural window light","bright clean beauty lighting","warm cozy indoor light","morning sunlight glow","diffused daylight","neutral studio lighting","sunlight beam from window","soft home ambient lighting"];
+const RULES_BASE=`CRITICAL RULES: The product must appear within the first second. Natural TikTok style, not cinematic advertising. Simple realistic environment. Natural handheld smartphone feeling. Clean aesthetic background.
+CONSISTENCY RULES: The product must keep the exact same design from PRODUCT_IMAGE: same shape, label, color, and packaging. Do NOT modify the product design. Do NOT alter product packaging, logo, text, colors, or label details. The product must remain brand accurate and identical throughout the video.`;
+const RULES_NOMODEL=`Only product and hand interaction. No face, no full human model.`;
+const RULES_MODEL=`MODEL RULES: The model must keep the same face identity from MODEL_IMAGE across all scenes. Facial features, skin tone, and identity must remain consistent. Do NOT change facial structure, do NOT modify identity, do NOT distort facial proportions. Maintain natural realistic skin texture.`;
+const RULES_GLOBAL=`GLOBAL: Authentic TikTok UGC style. Natural lighting. Smartphone camera look. HD quality. Vertical 9:16 video. Duration about 20 seconds.`;
 const $=id=>document.getElementById(id),out=$("out");let list=[];
 const fill=(el,arr,f)=>el.innerHTML=arr.map((x,i)=>`<option value="${i}">${f(x,i)}</option>`).join("");
 fill($("cep"),CEP,(x,i)=>`${i+1}. ${x[0]}`);fill($("ang"),ANG,(x,i)=>`${i+1}. ${x[0]}`);
 fill($("hook"),HOOKS,(x,i)=>`[${x[0]}] ${x[1]}`);fill($("tipe"),TIPE,x=>x);
-function build(c,a,h,t){
+[["set",SET],["pm",PM],["hm",HM],["cam",CAM],["lit",LIT]].forEach(([id,a])=>{fill($(id),a,(x,i)=>`${i+1}. ${x}`);$(id).insertAdjacentHTML("afterbegin",'<option value="-1" selected>🎲 Acak</option>')});
+const rnd=m=>Math.floor(Math.random()*m),pick=(id,a)=>{const v=+$(id).value;return a[v<0?rnd(a.length):v]};
+function build(c,a,h,t,batch){
  const p=$("prod").value||"produk",b=$("ben").value||"hasil terlihat",pr=$("price").value;
  const C=CEP[c],A=ANG[a],H=HOOKS[h],T=TIPE[t],bd=BODY[T](p,b);
  const s={cep:C[0],angle:A[0],hookType:H[0],hook:H[1],tipe:T,scenes:[
-  ["0-3s HOOK",`${H[1]} — visual: ${A[2]}. Teks on-screen besar.`],
+  ["0-3s HOOK",`Produk muncul di detik 1. ${H[1]} — visual: ${A[2]}. Teks on-screen besar.`],
   ["3-8s",bd[0]+` (Momen: ${C[1]})`],
-  ["8-15s",bd[1]],
-  ["15-22s",bd[2]+` Perkuat angle ${A[0]} (${A[1]}).`],
-  ["22-27s CTA",`${A[0]==="Value Shock"||C[0]==="Opportunistic"?`Cuma ${pr}! Promo terbatas.`:`Cek keranjang kuning / klik "Beli Sekarang".`} Produk ${p} di tangan, close-up packaging.`]]};
+  ["8-13s",bd[1]],
+  ["13-17s",bd[2]+` Perkuat angle ${A[0]} (${A[1]}).`],
+  ["17-20s CTA",`${A[0]==="Value Shock"||C[0]==="Opportunistic"?`Cuma ${pr}! Promo terbatas.`:`Cek keranjang kuning / klik "Beli Sekarang".`} Produk ${p} di tangan, close-up packaging.`]]};
+ const g=(id,arr)=>batch?arr[rnd(arr.length)]:pick(id,arr),mdl=$("model").value==="1";
+ const shots=[0,1,2,3,4].map(()=>({pm:g("pm",PM),hm:g("hm",HM),cam:g("cam",CAM)}));
+ const env=g("set",SET),lit=g("lit",LIT);
+ s.prompt=`Vertical 9:16 TikTok UGC video, ~20 seconds, of ${p} (use PRODUCT_IMAGE as exact reference). Setting: ${env}. Lighting: ${lit}. ${mdl?"A person (use MODEL_IMAGE as exact face reference) interacts naturally with the product.":"Only the product and a hand are visible."}
+`+s.scenes.map((x,i)=>`[${x[0]}] ${shots[i].cam}; ${shots[i].pm}; ${shots[i].hm}. Story beat: ${x[1]}`).join("\n")+`
+On-screen text (Bahasa Indonesia): "${H[1]}"
+${RULES_BASE}
+${mdl?RULES_MODEL:RULES_NOMODEL}
+${RULES_GLOBAL}`;
+ s.env=env;s.lit=lit;
  s.copy=`${H[1]} ${p} bantu ${b}. ${pr?`Sekarang cuma ${pr}.`:""} 👉 Klik Beli Sekarang!`;
  return s}
 function render(s,i){const d=document.createElement("div");d.className="card";
  d.innerHTML=`<div><span class="tag">#${i}</span><span class="tag">CEP: ${s.cep}</span><span class="tag">Angle: ${s.angle}</span><span class="tag">Hook: ${s.hookType}</span><span class="tag">Konten: ${s.tipe}</span></div>
  <div class="hook">“${s.hook}”</div><table>${s.scenes.map(x=>`<tr><th>${x[0]}</th><td>${x[1]}</td></tr>`).join("")}
- <tr><th>Ad copy</th><td>${s.copy}</td></tr></table>`;out.prepend(d)}
-function add(c,a,h,t){const s=build(c,a,h,t);list.push(s);render(s,list.length)}
+ <tr><th>Ad copy</th><td>${s.copy}</td></tr></table>
+ <details style="margin-top:8px"><summary><b>Video AI Prompt</b> <span class="mut">(${s.env} · ${s.lit})</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${s.prompt.replace(/</g,"&lt;")}</pre><button class="sec" style="width:auto">Copy prompt</button></details>`;
+ d.querySelector("details button").onclick=()=>navigator.clipboard.writeText(s.prompt);out.prepend(d)}
+function add(c,a,h,t,b){const s=build(c,a,h,t,b);list.push(s);render(s,list.length)}
 function gen1(){add(+$("cep").value,+$("ang").value,+$("hook").value,+$("tipe").value)}
 function genBatch(){const n=Math.min(200,+$("n").value||10),seen=new Set(list.map(s=>s.cep+s.angle+s.hook+s.tipe));
  const r=m=>Math.floor(Math.random()*m);let k=0,g=0;
  while(k<n&&g++<5000){const c=r(6),a=r(15),h=r(50),t=r(4),key=CEP[c][0]+ANG[a][0]+HOOKS[h][1]+TIPE[t];
-  if(seen.has(key))continue;seen.add(key);add(c,a,h,t);k++}}
+  if(seen.has(key))continue;seen.add(key);add(c,a,h,t,1);k++}}
 function exportCSV(){if(!list.length)return alert("Belum ada scene");
- const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["CEP","Angle","Hook Type","Hook","Tipe","Scene 0-3s","Scene 3-8s","Scene 8-15s","Scene 15-22s","CTA","Ad Copy"];
- const rows=list.map(s=>[s.cep,s.angle,s.hookType,s.hook,s.tipe,...s.scenes.map(x=>x[1]),s.copy].map(q).join(","));
+ const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["CEP","Angle","Hook Type","Hook","Tipe","Scene 0-3s","Scene 3-8s","Scene 8-13s","Scene 13-17s","CTA 17-20s","Ad Copy","Video Prompt"];
+ const rows=list.map(s=>[s.cep,s.angle,s.hookType,s.hook,s.tipe,...s.scenes.map(x=>x[1]),s.copy,s.prompt].map(q).join(","));
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["﻿"+[hd.join(","),...rows].join("\n")],{type:"text/csv"}));
  a.download="scene-meta-ads.csv";a.click()}
 </script>
