@@ -102,6 +102,7 @@ const $=id=>document.getElementById(id),out=$("out");let list=[];
 const fill=(el,arr,f)=>el.innerHTML=arr.map((x,i)=>`<option value="${i}">${f(x,i)}</option>`).join("");
 fill($("cep"),CEP,(x,i)=>`${i+1}. ${x[0]}`);fill($("ang"),ANG,(x,i)=>`${i+1}. ${x[0]}`);
 fill($("hook"),HOOKS,(x,i)=>`[${x[0]}] ${x[1]}`);fill($("tipe"),TIPE,x=>x);
+[["cep",CEP],["ang",ANG],["hook",HOOKS],["tipe",TIPE]].forEach(([id])=>$(id).insertAdjacentHTML("afterbegin",'<option value="-1" selected>🎲 Acak</option>'));
 [["set",SET],["pm",PM],["hm",HM],["cam",CAM],["lit",LIT]].forEach(([id,a])=>{fill($(id),a,(x,i)=>`${i+1}. ${x}`);$(id).insertAdjacentHTML("afterbegin",'<option value="-1" selected>🎲 Acak</option>')});
 const rnd=m=>Math.floor(Math.random()*m),pick=(id,a)=>{const v=+$(id).value;return a[v<0?rnd(a.length):v]};
 function build(c,a,h,t,batch){
@@ -132,10 +133,11 @@ function render(s,i){const d=document.createElement("div");d.className="card";
  <details style="margin-top:8px"><summary><b>Video AI Prompt</b> <span class="mut">(${s.env} · ${s.lit})</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${s.prompt.replace(/</g,"&lt;")}</pre><button class="sec" style="width:auto">Copy prompt</button></details>`;
  d.querySelector("details button").onclick=()=>navigator.clipboard.writeText(s.prompt);out.prepend(d)}
 function add(c,a,h,t,b){const s=build(c,a,h,t,b);list.push(s);render(s,list.length)}
-function gen1(){add(+$("cep").value,+$("ang").value,+$("hook").value,+$("tipe").value)}
+const sel=(id,m)=>{const v=+$(id).value;return v<0?rnd(m):v};
+function gen1(){add(sel("cep",6),sel("ang",15),sel("hook",50),sel("tipe",4))}
 function genBatch(){const n=Math.min(200,+$("n").value||10),seen=new Set(list.map(s=>s.cep+s.angle+s.hook+s.tipe));
  const r=m=>Math.floor(Math.random()*m);let k=0,g=0;
- while(k<n&&g++<5000){const c=r(6),a=r(15),h=r(50),t=r(4),key=CEP[c][0]+ANG[a][0]+HOOKS[h][1]+TIPE[t];
+ while(k<n&&g++<5000){const c=sel("cep",6),a=sel("ang",15),h=sel("hook",50),t=sel("tipe",4),key=CEP[c][0]+ANG[a][0]+HOOKS[h][1]+TIPE[t];
   if(seen.has(key))continue;seen.add(key);add(c,a,h,t,1);k++}}
 function exportCSV(){if(!list.length)return alert("Belum ada scene");
  const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["CEP","Angle","Hook Type","Hook","Tipe","Scene 0-3s","Scene 3-8s","Scene 8-13s","Scene 13-17s","CTA 17-20s","Ad Copy","Video Prompt"];
