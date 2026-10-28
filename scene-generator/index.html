@@ -48,7 +48,7 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
    <option value="45">45 detik — testimoni / storytelling</option>
    <option value="60">60 detik — produk mahal / kompleks</option></select>
    <div class="mut">Advice: 15–20 detik paling sering convert untuk Meta Ads UGC (hook kuat di 3 detik + CTA sebelum orang skip). Pakai 30–60 detik hanya untuk Education/Testimoni atau produk mahal.</div></div>
-  <div style="grid-column:1/-1"><label>Keterangan produk (Bahasa Indonesia)</label><textarea id="pid" rows="2" style="width:100%;padding:8px;border:1px solid var(--bd);border-radius:7px;background:var(--card);color:var(--tx);font:inherit"></textarea>
+  <div style="grid-column:1/-1"><label>Keterangan produk (Bahasa Indonesia) <button type="button" class="sec" style="width:auto;padding:2px 10px;font-size:12px" onclick="presetFilo()">Isi preset Salep Glowing FILO</button></label><textarea id="pid" rows="2" style="width:100%;padding:8px;border:1px solid var(--bd);border-radius:7px;background:var(--card);color:var(--tx);font:inherit"></textarea>
    <div class="mut" id="ptip"></div>
    <label style="margin-top:6px">Terjemahan otomatis (EN) — dipakai di prompt, boleh diedit</label><input id="pdesc"></div>
   <div><label>Keterangan model (Bahasa Indonesia)</label><input id="mid" placeholder="wanita umur 30an, berhijab, kulit sawo matang"><label style="margin-top:6px">Terjemahan (EN)</label><input id="mdesc"></div>
@@ -412,6 +412,11 @@ const nPick=(k,arr)=>{const b=N()[k];return b&&Math.random()<.7?b[rnd(b.length)]
 $("niche").innerHTML=Object.keys(NICHE).map(k=>`<option>${k}</option>`).join("");
 const nh=()=>{const n=N();$("nhint").textContent="Angle terbaik: "+n.ang.map(i=>ANG[i][0]).join(", ")+(n.model?" · Saran: pakai model":"");$("model").value=n.model};
 $("niche").onchange=nh;nh();
+// Preset deskripsi detail FILO (dari foto 4 sisi produk)
+function presetFilo(){
+ $("prod").value="Salep Glowing Filo";$("niche").value="Skincare";nh();ptip();
+ $("pid").value="Pot akrilik bening bulat kecil, diameter 3cm, tinggi sekitar 2cm, isi 5 gram krim kuning lembut tidak lengket. Tutup ulir putih bergerigi. Stiker merah muda bulat hanya di atas tutup, samping pot bening tanpa label.";
+ $("pdesc").value="tiny round clear acrylic jar, only 3 cm in diameter and about 2 cm tall, small enough to sit between thumb and two fingertips. Thick crystal-clear transparent walls with NO label on the sides. White screw cap with fine vertical ridges around its edge. The ONLY label is a flat circular pink sticker on top of the cap: white curved band at the top reading \"FILOMALL BEAUTY\", small gold crown \"F\" logo, large bold black script text \"Salep Glowing\", small text \"Expired Date: Desember 2026\", and a white curved band at the bottom reading \"Memudarkan Flek - Wajah Glowing & Bersih\". Inside: 5 g of smooth pale butter-yellow cream, soft and non-sticky, with a small swirl peak when opened. Through the clear walls the yellow cream is visible at the bottom of the jar";}
 const durInfo=()=>{const L=+$("seglen").value,n=Math.max(1,Math.round(+$("dur").value/L));$("durinfo").textContent=`= ${n} klip × ${L} detik = ${n*L} detik total. Dialog ±${Math.round(L*2.5)} kata per klip.`};
 $("seglen").addEventListener("change",durInfo);$("dur").addEventListener("change",durInfo);durInfo();
 const ptip=()=>{const t=TIPS[$("niche").value]||TIPS._;$("ptip").textContent="💡 "+TIPS._+" "+t;$("pid").placeholder=t.replace(/^Contoh: /,"")};
