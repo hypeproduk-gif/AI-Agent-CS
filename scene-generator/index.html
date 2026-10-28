@@ -53,7 +53,7 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
    <label style="margin-top:6px">Terjemahan otomatis (EN) — dipakai di prompt, boleh diedit</label><input id="pdesc"></div>
   <div><label>Keterangan model (Bahasa Indonesia)</label><input id="mid" placeholder="wanita umur 30an, berhijab, kulit sawo matang"><label style="margin-top:6px">Terjemahan (EN)</label><input id="mdesc"></div>
   <div><label>Mode antar segmen</label><select id="vmode"><option value="var">Variasi (ganti lokasi, outfit, lighting, kamera)</option><option value="same">Nyambung (1 lokasi, 1 outfit)</option></select><div class="mut">Variasi = gaya jump-cut TikTok, lebih eksploratif</div></div>
-  <div><label>Durasi per segmen</label><select id="seglen"><option value="5">5 detik</option><option value="8">8 detik</option><option value="10" selected>10 detik (cocok tool video AI)</option></select><div class="mut">Dialog otomatis dipanjangkan ±2,5 kata/detik</div></div>
+  <div><label>Durasi per segmen</label><select id="seglen"><option value="8" selected>8 detik (Flow / Veo)</option><option value="10">10 detik</option></select><div class="mut" id="durinfo"></div></div>
   <div><label>Sumber dialog</label><select id="dsrc"><option value="bank">Bank dialog FILO (Opus, gratis)</option><option value="tpl">Template umum</option></select></div>
   <div><label>Sell</label><select id="sell"><option>Auto</option><option>Soft</option><option>Hard</option></select><div class="mut">Auto = Hard kalau ada promo / Value Shock / Opportunistic</div></div>
   <div><label>Model manusia</label><select id="model"><option value="0">Tanpa model (produk + tangan)</option><option value="1">Pakai model (MODEL_IMAGE)</option></select></div>
@@ -307,7 +307,8 @@ function build(c,a,h,t,batch){
  const pdesc=$("pdesc").value.replace(/\.{2,}/g,". ").replace(/(\s*,\s*)+$/,"").replace(/,\s*,/g,",").trim()||"the product",mdesc=$("mdesc").value.trim()||"a natural-looking woman";
  const n=N(),hk=(HOOKS[h][0]==="Problem"?n.prob[h%10]:HOOKS[h][1]).replace(/skincare/g,n.noun).replace(/Kulitku/g,n.res),C=CEP[c],A=ANG[a],H=[HOOKS[h][0],hk],T=TIPE[t];
  const sv=$("sell").value,hard=sv==="Hard"||(sv==="Auto"&&(A[0]==="Value Shock"||C[0]==="Opportunistic"||!!pro));
- const D=+$("dur").value,nSeg=Math.max(2,Math.round(D/+$("seglen").value)),segLen=D/nSeg;
+ // tiap klip pas 8 atau 10 detik; durasi total dibulatkan ke kelipatan klip
+ const segLen=+$("seglen").value,nSeg=Math.max(1,Math.round(+$("dur").value/segLen)),D=nSeg*segLen;
  const KM={set:"set",pm:"pm",hm:"hm",cam:"cam",lit:"lit"},g=(id,arr)=>(batch||+$(id).value<0)?nPick(KM[id],arr):pick(id,arr),mdl=$("model").value==="1";
  const env=g("set",SET),lit=g("lit",LIT);
  const cta=hard?`${pr?`Cuma ${pr}`:"Harga spesial"}${pro?`, ${pro}`:""}. Klik di bawah sekarang, stok terbatas!`:`${pro?`Lagi ada ${pro}. `:""}Cek sendiri, klik di bawah.`;
@@ -316,7 +317,7 @@ function build(c,a,h,t,batch){
  const mid=nSeg>=4?[[dl[0],0],[dl[1],1],...FILLER.slice(0,nSeg-4).map(f=>[f,1])]:nSeg===3?[[dl[1],1]]:[];
  // segmen sedikit: gabungkan agitasi & produk supaya alur problem→produk→CTA tetap utuh
  const BL=$("dsrc").value==="bank"?bankLines({p,hookType:H[0],hook:H[1],tipe:T,bens:window.BENLIST||[b],hard,pr,pro,nSeg,D}):null;
- const beats=nSeg===2?[[`${H[1]} ${dl[0]}`,"hook"],[`${dl[1]} ${dl[2]} ${cta}`,2]]:nSeg===3?[[H[1],"hook"],[`${dl[0]} ${dl[1]}`,1],[`${dl[2]} ${cta}`,2]]:[[H[1],"hook"],...mid,[`${dl[2]} ${cta}`,2]];
+ const beats=nSeg===1?[[`${H[1]} ${dl[1]} ${cta}`,"hook"]]:nSeg===2?[[`${H[1]} ${dl[0]}`,"hook"],[`${dl[1]} ${dl[2]} ${cta}`,2]]:nSeg===3?[[H[1],"hook"],[`${dl[0]} ${dl[1]}`,1],[`${dl[2]} ${cta}`,2]]:[[H[1],"hook"],...mid,[`${dl[2]} ${cta}`,2]];
  const segs=beats.map(([line0,role],i)=>{
   const line=BL?BL[i]:role===2?stretch(line0.replace(cta,""),2,segLen-2.5,FILLER).trim()+" "+cta:stretch(line0,role,segLen,FILLER);
   const sh={pm:g("pm",PM),hm:g("hm",HM),cam:g("cam",CAM)};
@@ -408,6 +409,8 @@ const nPick=(k,arr)=>{const b=N()[k];return b&&Math.random()<.7?b[rnd(b.length)]
 $("niche").innerHTML=Object.keys(NICHE).map(k=>`<option>${k}</option>`).join("");
 const nh=()=>{const n=N();$("nhint").textContent="Angle terbaik: "+n.ang.map(i=>ANG[i][0]).join(", ")+(n.model?" · Saran: pakai model":"");$("model").value=n.model};
 $("niche").onchange=nh;nh();
+const durInfo=()=>{const L=+$("seglen").value,n=Math.max(1,Math.round(+$("dur").value/L));$("durinfo").textContent=`= ${n} klip × ${L} detik = ${n*L} detik total. Dialog ±${Math.round(L*2.5)} kata per klip.`};
+$("seglen").addEventListener("change",durInfo);$("dur").addEventListener("change",durInfo);durInfo();
 const ptip=()=>{const t=TIPS[$("niche").value]||TIPS._;$("ptip").textContent="💡 "+TIPS._+" "+t;$("pid").placeholder=t.replace(/^Contoh: /,"")};
 $("niche").addEventListener("change",ptip);ptip();
 $("pid").oninput=()=>$("pdesc").value=tr($("pid").value);$("mid").oninput=()=>$("mdesc").value=tr($("mid").value);
