@@ -60,6 +60,7 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
  <div class="row" style="margin-top:10px">
   <button onclick="gen1()">Generate 1 Scene</button>
   <button onclick="genBatch()">Generate Batch Acak (tanpa duplikat)</button>
+  <button class="sec" onclick="aiAll()">✨ Dialog AI semua scene</button>
   <button class="sec" onclick="exportCSV()">Export CSV</button>
   <button class="sec" onclick="out.innerHTML='';list=[]">Reset</button>
  </div>
@@ -292,15 +293,16 @@ ${RULES_BASE.replace("The product must appear within the first second. ","").rep
 ${mdl?RULES_MODEL:RULES_NOMODEL}`;
  s.copy=`${H[1]} ${p} bantu ${b}. ${pr?`Sekarang cuma ${pr}.`:""}${pro?` 🔥 ${pro}!`:""} 👉 Klik Beli Sekarang!`;
  return s}
-function render(s,i){const d=document.createElement("div");d.className="card";
- d.innerHTML=`<div class="hook">${i}. ${s.title}</div>
+function render(s,i,old){const d=document.createElement("div");d.className="card";s.no=i;
+ d.innerHTML=`<div class="row" style="align-items:center"><div class="hook" style="flex:3">${i}. ${s.title}</div><button class="ai" style="flex:1">${s.ai?"✨ Tulis ulang lagi":"✨ Dialog AI (Opus 5.5)"}</button></div><div class="mut aist"></div>
  <div class="mut" style="margin-bottom:6px">Tipe: ${s.tipe} | Sell: ${s.sell} | Hook ${s.hookType} | MODEL: ${s.model?"YA":"TIDAK"} | ${s.dur} dtk</div>
  <div><span class="tag">Manfaat: ${s.ben}</span><span class="tag">${s.niche}</span><span class="tag">CEP: ${s.cep}</span><span class="tag">Angle: ${s.angle}</span></div>
  ${s.segs.map((x,k)=>`<p style="margin:10px 0"><b>SEG ${k+1} (${x.t})</b> | <i>${x.type}</i> ${x.vis}${x.exp?` <b>Ekspresi:</b> ${x.exp}`:""} | <b>Intonasi:</b> ${x.into} <b>“${x.line}”</b></p>`).join("")}
  <table><tr><th>Ad copy</th><td>${s.copy}</td></tr></table>
  <details style="margin-top:8px"><summary><b>Video AI Prompt</b> <span class="mut">(${s.env} · ${s.lit})</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${s.prompt.replace(/</g,"&lt;")}</pre><button class="sec" style="width:auto">Copy prompt</button></details>
  <details style="margin-top:8px"><summary><b>Thumbnail Prompt</b> <span class="mut">(teks: “${s.thumbText}”)</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${s.thumb.replace(/</g,"&lt;")}</pre><button class="sec" style="width:auto">Copy thumbnail prompt</button></details>`;
- const bt=d.querySelectorAll("details button");bt[0].onclick=()=>navigator.clipboard.writeText(s.prompt);bt[1].onclick=()=>navigator.clipboard.writeText(s.thumb);out.prepend(d)}
+ const bt=d.querySelectorAll("details button");bt[0].onclick=()=>navigator.clipboard.writeText(s.prompt);bt[1].onclick=()=>navigator.clipboard.writeText(s.thumb);
+ d.querySelector(".ai").onclick=()=>aiRewrite(s,d);d._s=s;old?old.replaceWith(d):out.prepend(d)}
 function add(c,a,h,t,b){const s=build(c,a,h,t,b);list.push(s);render(s,list.length)}
 const N=()=>NICHE[$("niche").value];
 const sel=(id,m)=>{const v=+$(id).value;if(v>=0)return v;if(id==="ang"&&Math.random()<.7){const b=N().ang;return b[rnd(b.length)]}return rnd(m)};
@@ -317,10 +319,37 @@ function genBatch(){const n=Math.min(200,+$("n").value||10),seen=new Set(list.ma
  const r=m=>Math.floor(Math.random()*m);let k=0,g=0;
  while(k<n&&g++<5000){const c=sel("cep",6),a=sel("ang",15),h=sel("hook",50),t=sel("tipe",4),key=[$("niche").value,c,a,h,t].join("|");
   if(seen.has(key))continue;seen.add(key);add(c,a,h,t,1);k++}}
+// ===== Dialog AI (Claude Opus 5.5 via artifact sample) =====
+let SAMPLE=null;(async()=>{try{SAMPLE=await claude.use("sample")}catch(e){}if(!SAMPLE)document.querySelectorAll(".ai").forEach(b=>b.title="AI hanya aktif di link artifact claude.ai")})();
+async function aiRewrite(s,d){
+ const st=d.querySelector(".aist");if(!SAMPLE){st.textContent="AI tidak tersedia di tampilan ini (buka lewat link artifact claude.ai).";return}
+ const btn=d.querySelector(".ai");btn.disabled=true;st.textContent="Opus 5.5 sedang menulis dialog…";
+ // contoh dialog scene lain supaya hasilnya tidak mirip
+ const others=list.filter(x=>x!==s).slice(-6).map(x=>x.segs.map(g=>g.line).join(" / ")).join("\n- ");
+ const segInfo=s.segs.map((g,i)=>`SEG ${i+1} (${g.t}, ${g.type}, ±${Math.round(((+g.t.split("-")[1].split(" ")[0])-(+g.t.split("-")[0]))*2.5)} kata). Ekspresi: ${g.exp||"-"}. Intonasi: ${g.into}.`).join("\n");
+ const prompt=`Kamu copywriter iklan UGC TikTok/Meta Ads Indonesia yang jago bikin orang beli. Tulis ulang dialog voice-over/talking head untuk video ini.
+PRODUK: ${$("prod").value}. Keterangan: ${$("pid").value||"-"}. Harga: ${$("price").value||"-"}. Promo: ${$("promo").value||"-"}.
+MANFAAT YANG DITONJOLKAN (hanya ini, 2-3): ${s.ben}.
+NICHE: ${s.niche}. CEP: ${s.cep}. ANGLE PSIKOLOGI: ${s.angle}. TIPE KONTEN: ${s.tipe}. SELL: ${s.sell}. MODEL: ${s.model?"ada (talking head)":"tidak ada, VO tangan saja"}.
+HOOK WAJIB jadi kalimat pertama SEG 1 (boleh dipoles sedikit): "${s.hook}"
+SEGMEN:\n${segInfo}
+ATURAN: bahasa lisan sehari-hari (aku/kamu, nggak, banget), terasa jujur & spesifik seperti orang beneran cerita, bukan iklan. Tiap segmen nyambung dengan sebelumnya. Jumlah kata sesuai target tiap segmen. Segmen terakhir ditutup CTA ${s.sell==="Hard"?"tegas dengan harga/promo dan urgensi":"lembut mengajak klik"}. Jangan klaim medis berlebihan (jangan "menyembuhkan", "100%", "permanen"). Jangan pakai kalimat klise yang sama dengan dialog scene lain berikut:\n- ${others||"(belum ada)"}
+Juga buat judul konsep pendek (maks 8 kata) yang menggambarkan momen video, contoh: "Flek yang baru kelihatan di kamera depan".
+Balas JSON saja: {"title":"...","lines":["dialog SEG 1","dialog SEG 2",...]} dengan tepat ${s.segs.length} item.`;
+ try{const r=await SAMPLE.json(prompt,{model:"claude-opus-5-5",cache:false});
+  if(!r||!Array.isArray(r.lines)||r.lines.length!==s.segs.length)throw{message:"format jawaban tidak sesuai"};
+  s.segs.forEach((g,i)=>{const nl=String(r.lines[i]).trim();s.prompt=s.prompt.split(`"${g.line}"`).join(`"${nl}"`);g.line=nl});
+  s.scenes=s.segs.map((x,i)=>[`SEG ${i+1} (${x.t})`,`${x.type} | ${x.vis}${x.exp?` Ekspresi: ${x.exp}`:""} | Intonasi: ${x.into} "${x.line}"`]);
+  if(r.title)s.title=String(r.title);s.ai=1;render(s,s.no,d)}
+ catch(e){btn.disabled=false;st.textContent=e&&e.code==="not_granted"?"Izin AI ditolak. Aktifkan lewat menu Permissions artifact.":e&&e.code==="rate_limited"?"Terlalu banyak permintaan, tunggu sebentar lalu coba lagi.":"Gagal: "+(e&&e.message||e)}}
+async function aiAll(){if(!SAMPLE)return alert("AI hanya aktif di link artifact claude.ai.");
+ for(const d of [...out.querySelectorAll(".card")].reverse()){if(d._s&&!d._s.ai){await aiRewrite(d._s,d)}}}
+let DL=null;(async()=>{try{DL=await claude.use("downloads")}catch(e){}})();
 function exportCSV(){if(!list.length)return alert("Belum ada scene");
  const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Durasi","Sell","Model","Judul","Script","Ad Copy","Video Prompt","Thumbnail Prompt"];
  const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,s.dur+"s",s.sell,s.model?"YA":"TIDAK",s.title,s.scenes.map(x=>x[0]+" | "+x[1]).join("\n"),s.copy,s.prompt,s.thumb].map(q).join(","));
- const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["﻿"+[hd.join(","),...rows].join("\n")],{type:"text/csv"}));
+ const csv="﻿"+[hd.join(","),...rows].join("\n");if(DL){DL.save({filename:"scene-meta-ads.csv",data:csv}).catch(()=>{});return}
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
  a.download="scene-meta-ads.csv";a.click()}
 </script>
 </body></html>
