@@ -50,6 +50,7 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
    <div class="mut">Advice: 15–20 detik paling sering convert untuk Meta Ads UGC (hook kuat di 3 detik + CTA sebelum orang skip). Pakai 30–60 detik hanya untuk Education/Testimoni atau produk mahal.</div></div>
   <div><label>Deskripsi visual produk (EN)</label><input id="pdesc" placeholder="small white jar with pink sticker, soft yellow cream"></div>
   <div><label>Deskripsi model (EN)</label><input id="mdesc" placeholder="woman in her mid 30s"></div>
+  <div><label>Durasi per segmen</label><select id="seglen"><option value="5">5 detik</option><option value="8">8 detik</option><option value="10" selected>10 detik (cocok tool video AI)</option></select><div class="mut">Dialog otomatis dipanjangkan ±2,5 kata/detik</div></div>
   <div><label>Sell</label><select id="sell"><option>Auto</option><option>Soft</option><option>Hard</option></select><div class="mut">Auto = Hard kalau ada promo / Value Shock / Opportunistic</div></div>
   <div><label>Model manusia</label><select id="model"><option value="0">Tanpa model (produk + tangan)</option><option value="1">Pakai model (MODEL_IMAGE)</option></select></div>
   <div><label>Jumlah batch acak</label><input id="n" type="number" value="10" min="1" max="200"></div>
@@ -185,6 +186,13 @@ const DIALOG={
  Education:(p,b)=>["Ternyata masalahnya sering di cara pakainya.",`${p} ini cukup dipakai tipis, rutin tiap hari.`,`Pelan-pelan hasilnya ${b}.`],
  Manfaat:(p,b)=>[`Yang paling aku suka, ${b}.`,`Plus ${p} ini praktis, gampang dibawa ke mana aja.`,"Pantes banyak yang repeat order."],
  Testimoni:(p,b)=>[`Aku udah pakai ${p} beberapa minggu.`,"Awalnya ragu, tapi aku coba rutin.",`Sekarang beneran ${b}.`]};
+// Kalimat tambahan per peran segmen, dipakai sampai dialog cukup untuk durasi segmen
+const EXTRA={hook:["Serius, aku juga awalnya nggak percaya.","Dengerin dulu sebentar ya.","Ini penting banget buat kamu yang punya masalah sama."],
+ 0:["Rasanya udah capek banget, mau nyerah aja.","Udah keluar uang banyak tapi hasilnya nihil.","Jujur ini bikin aku nggak pede tiap hari."],
+ 1:["Cara pakainya cuma beberapa langkah aja.","Teksturnya ringan dan cepat meresap.","Aku pakai rutin, dan ini bagian favoritku."],
+ 2:["Aku udah buktiin sendiri, sekarang giliran kamu.","Pokoknya kamu wajib coba, nggak bakal nyesel.","Jangan sampai kehabisan kayak aku kemarin."]};
+const words=x=>x.split(/\s+/).filter(Boolean).length;
+const stretch=(line,role,sec,pool)=>{const tgt=Math.round(sec*2.5),ex=[...(EXTRA[role]||pool)];let out=line;while(words(out)<tgt&&ex.length)out+=" "+ex.shift();return out};
 const FILLER=["Teksturnya enak, nggak lengket sama sekali.","Banyak yang nanya aku pakai apa.","Aku pakainya tiap hari, nggak pernah skip.","Dibanding yang dulu aku pakai, ini jauh lebih cocok.","Packagingnya juga rapi, aman dikirim.","Harganya masuk akal buat hasil segini."];
 const HOOK_EXP={Confession:["mengaku, sedikit malu, senyum tipis","pelan di awal, naik di akhir"],Curiosity:["penasaran, alis naik satu","bertanya, nada naik"],Problem:["kaget, alis naik, mata sedikit melebar","cepat, naik di akhir"],Result:["kaget senang, mata berbinar","antusias, cepat"],"Pattern Interrupt":["serius mendadak, menatap lensa","tegas, berhenti sejenak"]};
 const BEAT_EXP=[["kesal bercampur pasrah, bibir mengerucut sebentar","turun, pelan, seperti mengaku"],null,["tenang lalu ramah, alis rileks, senyum kecil","lembut lalu naik mengajak"]];
@@ -193,15 +201,17 @@ function build(c,a,h,t,batch){
  const pdesc=$("pdesc").value.trim()||"the product",mdesc=$("mdesc").value.trim()||"a natural-looking woman";
  const n=N(),hk=(HOOKS[h][0]==="Problem"?n.prob[h%10]:HOOKS[h][1]).replace(/skincare/g,n.noun).replace(/Kulitku/g,n.res),C=CEP[c],A=ANG[a],H=[HOOKS[h][0],hk],T=TIPE[t];
  const sv=$("sell").value,hard=sv==="Hard"||(sv==="Auto"&&(A[0]==="Value Shock"||C[0]==="Opportunistic"||!!pro));
- const D=+$("dur").value,nSeg=Math.max(2,Math.round(D/5)),segLen=D/nSeg;
+ const D=+$("dur").value,nSeg=Math.max(2,Math.round(D/+$("seglen").value)),segLen=D/nSeg;
  const KM={set:"set",pm:"pm",hm:"hm",cam:"cam",lit:"lit"},g=(id,arr)=>(batch||+$(id).value<0)?nPick(KM[id],arr):pick(id,arr),mdl=$("model").value==="1";
  const env=g("set",SET),lit=g("lit",LIT);
  const cta=hard?`${pr?`Cuma ${pr}`:"Harga spesial"}${pro?`, ${pro}`:""}. Klik di bawah sekarang, stok terbatas!`:`${pro?`Lagi ada ${pro}. `:""}Cek sendiri, klik di bawah.`;
  const dl=DIALOG[T](p,b);
  // susun beat: hook, [agitasi, produk, filler...], manfaat+CTA
  const mid=nSeg>=4?[[dl[0],0],[dl[1],1],...FILLER.slice(0,nSeg-4).map(f=>[f,1])]:nSeg===3?[[dl[1],1]]:[];
- const beats=[[H[1],"hook"],...mid,[`${dl[2]} ${cta}`,2]];
- const segs=beats.map(([line,role],i)=>{
+ // segmen sedikit: gabungkan agitasi & produk supaya alur problem→produk→CTA tetap utuh
+ const beats=nSeg===2?[[`${H[1]} ${dl[0]}`,"hook"],[`${dl[1]} ${dl[2]} ${cta}`,2]]:nSeg===3?[[H[1],"hook"],[`${dl[0]} ${dl[1]}`,1],[`${dl[2]} ${cta}`,2]]:[[H[1],"hook"],...mid,[`${dl[2]} ${cta}`,2]];
+ const segs=beats.map(([line0,role],i)=>{
+  const line=role===2?stretch(line0.replace(cta,""),2,segLen-2.5,FILLER).trim()+" "+cta:stretch(line0,role,segLen,FILLER);
   const sh={pm:g("pm",PM),hm:g("hm",HM),cam:g("cam",CAM)};
   const vo=!mdl||role===1;
   const st=Math.round(i*segLen),en=Math.round((i+1)*segLen);
