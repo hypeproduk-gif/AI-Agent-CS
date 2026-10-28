@@ -48,13 +48,13 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
    <option value="45">45 detik — testimoni / storytelling</option>
    <option value="60">60 detik — produk mahal / kompleks</option></select>
    <div class="mut">Advice: 15–20 detik paling sering convert untuk Meta Ads UGC (hook kuat di 3 detik + CTA sebelum orang skip). Pakai 30–60 detik hanya untuk Education/Testimoni atau produk mahal.</div></div>
-  <div style="grid-column:1/-1"><label>Keterangan produk (Bahasa Indonesia) <button type="button" class="sec" style="width:auto;padding:2px 10px;font-size:12px" onclick="presetFilo()">Isi preset Salep Glowing FILO</button></label><textarea id="pid" rows="2" style="width:100%;padding:8px;border:1px solid var(--bd);border-radius:7px;background:var(--card);color:var(--tx);font:inherit"></textarea>
+  <div style="grid-column:1/-1"><label>Keterangan produk (Bahasa Indonesia) <button type="button" class="sec" style="width:auto;padding:2px 10px;font-size:12px" onclick="presetFilo()">Isi preset Salep Glowing FILO</button> <button type="button" class="sec" style="width:auto;padding:2px 10px;font-size:12px" onclick="presetTka()">Isi preset Bank Soal TKA SD</button></label><textarea id="pid" rows="2" style="width:100%;padding:8px;border:1px solid var(--bd);border-radius:7px;background:var(--card);color:var(--tx);font:inherit"></textarea>
    <div class="mut" id="ptip"></div>
    <label style="margin-top:6px">Terjemahan otomatis (EN) — dipakai di prompt, boleh diedit</label><input id="pdesc"></div>
   <div><label>Keterangan model (Bahasa Indonesia)</label><input id="mid" placeholder="wanita umur 30an, berhijab, kulit sawo matang"><label style="margin-top:6px">Terjemahan (EN)</label><input id="mdesc"></div>
   <div><label>Mode antar segmen</label><select id="vmode"><option value="var">Variasi (ganti lokasi, outfit, lighting, kamera)</option><option value="same">Nyambung (1 lokasi, 1 outfit)</option></select><div class="mut">Variasi = gaya jump-cut TikTok, lebih eksploratif</div></div>
   <div><label>Durasi per segmen</label><select id="seglen"><option value="8" selected>8 detik (Flow / Veo)</option><option value="10">10 detik</option></select><div class="mut" id="durinfo"></div></div>
-  <div><label>Sumber dialog</label><select id="dsrc"><option value="bank">Bank dialog FILO (Opus, gratis)</option><option value="tpl">Template umum</option></select></div>
+  <div><label>Sumber dialog</label><select id="dsrc"><option value="bank">Bank dialog FILO (Opus, gratis)</option><option value="tka">Bank dialog TKA SD (Opus, gratis)</option><option value="tpl">Template umum</option></select></div>
   <div><label>Sell</label><select id="sell"><option>Auto</option><option>Soft</option><option>Hard</option></select><div class="mut">Auto = Hard kalau ada promo / Value Shock / Opportunistic</div></div>
   <div><label>Model manusia</label><select id="model"><option value="0">Tanpa model (produk + tangan)</option><option value="1">Pakai model (MODEL_IMAGE)</option></select></div>
   <div><label>Jumlah batch acak</label><input id="n" type="number" value="10" min="1" max="200"></div>
@@ -106,9 +106,9 @@ const BODY={
  Education:(p,b)=>[`Jelaskan kenapa masalah terjadi (1 fakta singkat).`,`Tunjukkan kandungan/cara kerja ${p} dengan teks overlay.`,`Demo cara pakai yang benar (step 1-2-3).`],
  Manfaat:(p,b)=>[`Sorot manfaat utama: ${b}.`,`Tunjukkan 2-3 manfaat tambahan dengan cut cepat.`,`Visualkan hidup setelah manfaat didapat.`],
  Testimoni:(p,b)=>[`Talking head: cerita pengalaman pribadi pakai ${p}.`,`B-roll pemakaian + hasil (${b}).`,`Tambahkan screenshot review/komentar pembeli.`]};
-const SET=["bathroom vanity counter with mirror reflection", "minimalist white skincare table with clean beauty setup", "bedside night table with soft lamp light", "cozy bedroom desk with soft aesthetic decor", "bedroom vanity mirror with ring light off to the side", "modern office work desk with laptop nearby", "cafe table with coffee cup and natural daylight", "kitchen marble counter during morning light", "inside a parked car dashboard area with daylight", "open handbag or pouch on a bed, everyday carry", "courier package just opened on the bed (unboxing)", "skincare storage shelf with organized beauty products"];
-const PM=["product pulled into frame in the first second", "product held close to camera", "product turned to show label", "product lifted from table", "product gently pushed toward camera", "product slowly rotated", "product placed onto table", "product cap opened to reveal texture/inside", "product taken out of shipping package", "product placed next to competitor/old product for comparison"];
-const HM=["hand casually holding product in frame", "hand presenting product to camera", "fingers rotating the bottle", "hand picking product up naturally", "hand opening the cap", "hand squeezing/dropping product onto fingertip or back of hand (texture swatch)", "hand applying product on skin", "thumb pointing at key label/claim", "hand unboxing product from package", "hand slowly lowering product onto table"];
+const SET=["kids study desk at home with printed worksheets","dining table with a child doing homework, parent beside","living room sofa, parent holding a smartphone","bathroom vanity counter with mirror reflection", "minimalist white skincare table with clean beauty setup", "bedside night table with soft lamp light", "cozy bedroom desk with soft aesthetic decor", "bedroom vanity mirror with ring light off to the side", "modern office work desk with laptop nearby", "cafe table with coffee cup and natural daylight", "kitchen marble counter during morning light", "inside a parked car dashboard area with daylight", "open handbag or pouch on a bed, everyday carry", "courier package just opened on the bed (unboxing)", "skincare storage shelf with organized beauty products"];
+const PM=["phone screen showing the PDF pages, scrolling slowly","printed worksheet pages fanned out on the table","tablet showing the cover page","product pulled into frame in the first second", "product held close to camera", "product turned to show label", "product lifted from table", "product gently pushed toward camera", "product slowly rotated", "product placed onto table", "product cap opened to reveal texture/inside", "product taken out of shipping package", "product placed next to competitor/old product for comparison"];
+const HM=["finger scrolling the phone screen","hand flipping printed worksheet pages","child's hand writing answers with a pencil","hand holding phone toward the camera showing the cover","hand casually holding product in frame", "hand presenting product to camera", "fingers rotating the bottle", "hand picking product up naturally", "hand opening the cap", "hand squeezing/dropping product onto fingertip or back of hand (texture swatch)", "hand applying product on skin", "thumb pointing at key label/claim", "hand unboxing product from package", "hand slowly lowering product onto table"];
 const CAM=["handheld POV view", "close-up product focus", "macro product close-up (texture detail)", "eye-level product shot", "slightly top-down angle", "over-the-table perspective", "slight side angle", "slow push-in camera movement", "front-camera selfie framing"];
 const LIT=["soft natural window light", "diffused daylight", "morning sunlight glow", "bright clean beauty lighting", "warm cozy indoor light", "soft home ambient lighting"];
 const RULES_BASE=`CRITICAL RULES: The product must appear within the first second. Natural TikTok style, not cinematic advertising. Simple realistic environment. Natural handheld smartphone feeling. Clean aesthetic background.
@@ -172,6 +172,12 @@ const NICHE={
   pm:["product turned to show label","product cap opened to reveal texture/inside","product held close to camera"],
   hm:["hand squeezing/dropping product onto fingertip or back of hand (texture swatch)","thumb pointing at key label/claim","hand opening the cap"],
   cam:["close-up product focus","handheld POV view","macro product close-up (texture detail)"],lit:["soft natural window light","warm cozy indoor light"]},
+ "Produk Digital (Bank Soal / Ebook)":{digital:1,noun:"bank soal",res:"Nilai anakku",ang:[7,14,4,5,11],model:1,
+  prob:["Kalau anakmu kelas 6 dan mau TKA…","Kalau anakmu panik lihat soal TKA…","Kalau kamu bingung cari latihan soal TKA…","Kalau anakmu susah fokus belajar…","Kalau kamu nggak sempat bikin soal latihan…","Kalau hasil tryout anakmu belum aman…","Kalau anakmu kaget sama soal penalaran…","Kalau kamu nggak mau keluar uang buat les mahal…","Kalau anakmu cepat bosan sama buku tebal…","Kalau TKA tinggal beberapa bulan lagi…"],
+  set:["kids study desk at home with printed worksheets","dining table with a child doing homework, parent beside","living room sofa, parent holding a smartphone"],
+  pm:["phone screen showing the PDF pages, scrolling slowly","printed worksheet pages fanned out on the table","tablet showing the cover page"],
+  hm:["finger scrolling the phone screen","hand flipping printed worksheet pages","child's hand writing answers with a pencil","hand holding phone toward the camera showing the cover"],
+  cam:["handheld POV view","over-the-table perspective","front-camera selfie framing"],lit:["soft natural window light","warm cozy indoor light"]},
  "Parfum":{noun:"parfum",res:"Wangiku",ang:[12,9,4,6,3],model:1,
   prob:["Kalau parfum kamu cepat hilang…","Kalau kamu gampang keringetan…","Kalau parfum kamu bikin pusing…","Kalau kamu cari wangi mewah tapi murah…","Kalau kamu bingung pilih aroma…","Kalau kamu kerja seharian di luar…","Kalau parfum kamu pasaran…","Kalau kamu pengen dipuji wangi…","Kalau kamu mau first date…","Kalau parfum mahal bikin kantong bolong…"],
   set:["open handbag or pouch on a bed, everyday carry","inside a parked car dashboard area with daylight","bedroom vanity mirror with ring light off to the side"],
@@ -209,6 +215,7 @@ const TIPS={
  "Hijab / Muslim Fashion":"Contoh: hijab segi empat bahan sifon jatuh, warna krem, tipis tidak transparan",
  "Suplemen / Kesehatan":"Contoh: botol plastik putih 10cm, muat di telapak tangan, label hijau, isi kapsul kuning",
  "Makanan & Minuman":"Contoh: pouch kertas coklat, segenggaman tangan, isi keripik, label merah",
+ "Produk Digital (Bank Soal / Ebook)":"Contoh: file PDF bank soal kelas 6, cover warna biru-kuning, ditampilkan di layar HP dan lembar soal A4 yang di-print",
  "Parfum":"Contoh: botol kaca bening kotak persegi 30ml, tutup emas, isi cair kuning muda"};
 const $=id=>document.getElementById(id),out=$("out");let list=[];
 const fill=(el,arr,f)=>el.innerHTML=arr.map((x,i)=>`<option value="${i}">${f(x,i)}</option>`).join("");
@@ -241,7 +248,7 @@ const BEAT_EXP=[["kesal bercampur pasrah, bibir mengerucut sebentar","turun, pel
 const SYN={kusam:"glowing cerah",kering:"lembab melembabkan",breakout:"jerawat",jerawat:"jerawat",iritasi:"sensitif perih",berat:"ringan",flek:"flek noda"};
 // ===== Bank dialog FILO (ditulis Opus sekali, dipakai gratis) =====
 // Urutan kalimat selalu: hook → jembatan → cerita → produk → cara pakai → manfaat → bukti → CTA, lalu dibagi ke segmen.
-const BANK={
+const BANK_FILO={
  bridge:{
   Confession:["Tapi setelah dua minggu pakai rutin, aku harus ngaku salah.","Ternyata aku yang terlalu cepat menilai.","Sampai akhirnya aku coba sendiri, dan ya… aku salah.","Untung aku nggak jadi skip, soalnya hasilnya beda."],
   Curiosity:["Aku penasaran, jadi aku beli satu buat buktiin sendiri.","Jawabannya ternyata simpel banget.","Setelah aku coba sendiri, aku ngerti kenapa orang pada repeat order.","Aku cari tahu sendiri, dan ini jawabannya."],
@@ -272,17 +279,52 @@ const BANK={
  ctaSoft:["Kalau kamu ngalamin hal yang sama, coba cek di bawah ya.","Penasaran? Cek dulu di keranjang kuning.","Coba deh mulai malam ini, klik di bawah."],
  ctaHard:["Harganya cuma {harga}{promo}. Klik di bawah sebelum promonya habis!","Sekarang cuma {harga}{promo}, stoknya terbatas. Checkout sekarang ya!"],
  ctaHardPromo:["{Promo} cuma {harga}, langsung klik keranjang kuning sebelum kehabisan!"]};
-const BKEY={flek:/flek|noda/,jerawat:/jerawat/,glowing:/glow|cerah|kusam/,lembab:/lembab|kering/,perih:/perih|panas/,sensitif:/sensitif/,awet:/awet|muda|keriput|kencang/};
+const BKEY_FILO={flek:/flek|noda/,jerawat:/jerawat/,glowing:/glow|cerah|kusam/,lembab:/lembab|kering/,perih:/perih|panas/,sensitif:/sensitif/,awet:/awet|muda|keriput|kencang/};
 const pk=a=>a[rnd(a.length)];
-function bankLines(o){ // o: {p,hookType,hook,tipe,bens,hard,pr,pro,nSeg,D}
+// ===== Bank dialog Bank Soal TKA SD (ditulis Opus sekali, dipakai gratis) =====
+const BANK_TKA={
+ bridge:{
+  Confession:["Tapi setelah anakku latihan pakai ini, aku harus ngaku salah.","Ternyata aku yang meremehkan.","Sampai akhirnya aku coba, dan anakku malah semangat latihan.","Untung aku nggak jadi skip, soalnya anakku jadi lebih siap."],
+  Curiosity:["Aku penasaran, jadi aku beli buat anakku.","Jawabannya ternyata simpel banget.","Setelah aku lihat isinya, aku ngerti kenapa banyak ibu beli.","Aku cari tahu sendiri, dan ini jawabannya."],
+  Problem:["Aku dulu juga panik, soalnya TKA ini masih baru.","Aku tahu rasanya, anakku juga sempat begitu.","Dulu aku juga bingung harus mulai dari mana.","Aku pernah di posisi itu, jadi aku ngerti banget."],
+  Result:["Padahal latihannya cuma sebentar tiap malam.","Jujur, kuncinya cuma latihan soal yang tepat.","Anakku sendiri yang bilang soalnya jadi lebih gampang.","Bedanya kelihatan dari hasil tryout-nya."],
+  "Pattern Interrupt":["Ini yang lagi dipakai anakku buat persiapan TKA.","Aku mau tunjukin satu file yang ngubah cara anakku belajar.","Sebentar aja, ini penting buat ibu yang anaknya kelas 6.","Aku nggak biasanya review, tapi yang ini beda."]},
+ story:{
+  Problem:["Anakku kelas 6, dan TKA makin dekat.","Tiap latihan, anakku bingung sama model soalnya.","Beli buku tebal, ujungnya nggak kepakai.","Aku nggak sempat bikin latihan soal sendiri."],
+  Education:["Ternyata soal TKA itu banyak penalaran, bukan cuma hafalan.","Banyak anak kesulitan bukan karena nggak pintar, tapi karena kaget sama model soalnya.","Kuncinya latihan rutin dengan soal yang mirip aslinya.","Anak lebih cepat paham kalau ada pembahasannya."],
+  Manfaat:["Aku cari latihan soal yang praktis, nggak ribet.","Sekarang belajar anakku cukup 20 menit sehari.","Aku pengen yang bisa langsung dipakai, tinggal print.","Yang aku butuh cuma soal yang mirip TKA plus pembahasannya."],
+  Testimoni:["Anakku udah latihan sekitar tiga minggu.","Awalnya aku beli karena lihat ibu-ibu lain cerita.","Jujur anakku tipe yang gampang bosan belajar.","Sekarang anakku sendiri yang minta latihan."]},
+ product:["Ini {p}, file PDF yang bisa langsung dipakai.","Namanya {p}. Isinya lengkap, tinggal download.","Aku pakai {p}, bisa dibuka di HP atau di-print.","Kenalin, {p}. Sekali beli, bisa dipakai berulang."],
+ usage:["Tinggal print, terus anak latihan beberapa soal tiap hari.","Bisa dikerjakan di HP atau di kertas, fleksibel.","Satu sesi cukup 20 menit, nggak bikin anak capek.","Habis ngerjain, langsung cocokkan sama pembahasannya."],
+ ben:{
+  soal:["Soalnya banyak, jadi anak bisa latihan terus.","Latihan soalnya lengkap, nggak perlu cari ke mana-mana."],
+  pembahasan:["Setiap soal ada pembahasannya, jadi anak paham caranya.","Ada pembahasan lengkap, aku nggak perlu jelasin dari nol."],
+  mirip:["Model soalnya mirip TKA asli, jadi anak nggak kaget.","Soalnya disusun mengikuti kisi-kisi terbaru."],
+  mapel:["Ada Matematika dan Bahasa Indonesia, sesuai yang diujikan.","Materinya sesuai mapel yang keluar di TKA."],
+  print:["Bisa dibuka di HP atau di-print, praktis banget.","Tinggal print, nggak perlu nunggu kiriman."],
+  percaya:["Anakku jadi lebih percaya diri menghadapi TKA.","Sekarang anakku lebih tenang, nggak panik lagi."],
+  hemat:["Sekali beli, bisa dipakai berulang kali.","Jauh lebih hemat dibanding les tambahan."]},
+ proof:{
+  Problem:["Sekarang aku lebih tenang lihat anakku belajar.","Hasil tryout anakku membaik, aku lega banget."],
+  Education:["Jadi bukan soal les mahal, tapi soal latihan yang tepat.","Konsisten aja tiap hari, nanti kelihatan bedanya."],
+  Manfaat:["Satu file, tapi isinya lengkap.","Pantes banyak ibu yang rekomendasiin."],
+  Testimoni:["Sekarang anakku udah nggak takut sama TKA.","Ibu-ibu di grup sekolah sampai nanya aku pakai apa."]},
+ filler:["File-nya langsung dikirim, nggak pakai nunggu.","Aku simpan di HP, jadi bisa latihan di mana aja.","Sebelumnya aku udah habis banyak buat buku yang nggak kepakai.","Adiknya nanti juga bisa pakai."],
+ ctaSoft:["Kalau anakmu juga mau TKA, cek di bawah ya.","Penasaran isinya? Cek dulu di link bawah.","Mulai latihan malam ini, klik di bawah."],
+ ctaHard:["Harganya cuma {harga}{promo}. Klik di bawah sebelum promonya habis!","Sekarang cuma {harga}{promo}, file-nya langsung dikirim. Checkout sekarang ya!"],
+ ctaHardPromo:["{Promo} cuma {harga}, langsung klik link di bawah sebelum kehabisan!"],
+ key:{soal:/soal|latihan/,pembahasan:/pembahasan|kunci/,mirip:/mirip|kisi|asli|terbaru/,mapel:/matematika|bahasa|mapel/,print:/print|pdf|hp|cetak/,percaya:/percaya|pede|siap|tenang/,hemat:/hemat|sekali beli|berulang|les/}};
+function bankLines(o){
+ const BANK=o.bank||BANK_FILO,BKEY=BANK.key||BKEY_FILO; // o: {p,hookType,hook,tipe,bens,hard,pr,pro,nSeg,D}
  const r=x=>x.replace(/\{p\}/g,o.p).replace(/\{harga\}/g,o.pr||"harga spesial").replace(/\{promo\}/g,o.pro?`, ${o.pro}`:"").replace(/\{Promo\}/g,o.pro?o.pro.charAt(0).toUpperCase()+o.pro.slice(1):"");
  const used=new Set(),CON=["","Terus, ","Plus, "];
  const bens=o.bens.map(b=>{const k=Object.keys(BKEY).find(k=>BKEY[k].test(b.toLowerCase())&&!used.has(k));
   if(k){used.add(k);return pk(BANK.ben[k])}return `${b.charAt(0).toUpperCase()+b.slice(1)} juga kerasa.`});
- const cta=r(o.hard?(o.pro&&Math.random()<.4?pk(BANK.ctaHardPromo):pk(BANK.ctaHard)):pk(BANK.ctaSoft));
+ const cta=(x=>o.pro?x:x.replace("sebelum promonya habis","sebelum kehabisan"))(r(o.hard?(o.pro&&Math.random()<.4?pk(BANK.ctaHardPromo):pk(BANK.ctaHard)):pk(BANK.ctaSoft)));
  // cerita masalah hanya nyambung setelah hook Problem/Confession; hook lain langsung ke produk
  const withStory=o.hookType==="Problem"||o.hookType==="Confession"||o.tipe==="Testimoni";
- let B=[["bridge",r(pk(BANK.bridge[o.hookType]))],...(withStory?[["story",r(pk(BANK.story[o.tipe]))]]:[]),["product",r(pk(BANK.product))],["usage",r(pk(BANK.usage))],...bens.map(t=>["ben",t]),["proof",r(pk(BANK.proof[o.tipe]))]];
+ const prodL=r(pk(BANK.product)),useL=r(pk(BANK.usage)),dup=x=>/HP|print/i.test(x)&&/HP|print/i.test(prodL+useL);
+ let B=[["bridge",r(pk(BANK.bridge[o.hookType]))],...(withStory?[["story",r(pk(BANK.story[o.tipe]))]]:[]),["product",prodL],["usage",useL],...bens.filter((t,i,a)=>!dup(t)||a.length<2).map(t=>["ben",t]),["proof",r(pk(BANK.proof[o.tipe]))]];
  const tgt=Math.round(o.D*2.5),txt=()=>B.map(x=>x[1]),wc=()=>words([o.hook,...txt(),cta].join(" "));
  const fill=[...BANK.filler].sort(()=>Math.random()-.5);
  while(wc()<tgt*.9&&fill.length)B.splice(B.length-1,0,["filler",fill.pop()]);
@@ -316,7 +358,7 @@ function build(c,a,h,t,batch){
  // susun beat: hook, [agitasi, produk, filler...], manfaat+CTA
  const mid=nSeg>=4?[[dl[0],0],[dl[1],1],...FILLER.slice(0,nSeg-4).map(f=>[f,1])]:nSeg===3?[[dl[1],1]]:[];
  // segmen sedikit: gabungkan agitasi & produk supaya alur problem→produk→CTA tetap utuh
- const BL=$("dsrc").value==="bank"?bankLines({p,hookType:H[0],hook:H[1],tipe:T,bens:window.BENLIST||[b],hard,pr,pro,nSeg,D}):null;
+ const BL=$("dsrc").value!=="tpl"?bankLines({bank:$("dsrc").value==="tka"?BANK_TKA:BANK_FILO,p,hookType:H[0],hook:H[1],tipe:T,bens:window.BENLIST||[b],hard,pr,pro,nSeg,D}):null;
  const beats=nSeg===1?[[`${H[1]} ${dl[1]} ${cta}`,"hook"]]:nSeg===2?[[`${H[1]} ${dl[0]}`,"hook"],[`${dl[1]} ${dl[2]} ${cta}`,2]]:nSeg===3?[[H[1],"hook"],[`${dl[0]} ${dl[1]}`,1],[`${dl[2]} ${cta}`,2]]:[[H[1],"hook"],...mid,[`${dl[2]} ${cta}`,2]];
  const segs=beats.map(([line0,role],i)=>{
   const line=BL?BL[i]:role===2?stretch(line0.replace(cta,""),2,segLen-2.5,FILLER).trim()+" "+cta:stretch(line0,role,segLen,FILLER);
@@ -387,9 +429,9 @@ function segPrompts(s){const c=s.ctx,n=s.segs.length,V=c.vmode==="var";return s.
 Vertical 9:16 TikTok UGC video clip, ${len} seconds. This is clip ${i+1} of ${n} of one continuous ~${c.D}s video${i?`, continuing directly from clip ${i}`:""}.
 Product: ${c.p}${c.pdesc!=="the product"?` (${c.pdesc})`:""}, use PRODUCT_IMAGE as exact reference.${c.mdl?` Person: ${c.mdesc}, use MODEL_IMAGE as exact face reference.`:""}
 Setting: ${env}. Lighting: ${lit}.${c.mdl&&V&&g.outfit?` Outfit: ${g.outfit}.`:""}
-PRODUCT ACCURACY: show the product exactly as in PRODUCT_IMAGE: same real size relative to the hand, same shape, same label position and same viewing angle (if the label is on the lid, show the lid toward the camera). Do NOT invent a side label or make the container bigger.
-PRODUCT LOCK: the product is a rigid, solid object. When it is rotated, tilted, lifted or moved, it does NOT change shape, size, color, label text or label position. Move it slowly; rotate at most 30 degrees so only the sides visible in PRODUCT_IMAGE are shown. Keep the label in focus and never let hands cover the label.
-SHOT [${g.type}]: ${(c.pdesc!=="the product"?vis.split(c.pdesc).join("the jar"):vis).replace(/label facing the camera/g,"label side (as in PRODUCT_IMAGE) facing the camera")}${g.exp?` Expression: ${g.exp}.`:""}
+${N().digital?DIGITAL_RULE:`PRODUCT ACCURACY: show the product exactly as in PRODUCT_IMAGE: same real size relative to the hand, same shape, same label position and same viewing angle (if the label is on the lid, show the lid toward the camera). Do NOT invent a side label or make the container bigger.
+PRODUCT LOCK: the product is a rigid, solid object. When it is rotated, tilted, lifted or moved, it does NOT change shape, size, color, label text or label position. Move it slowly; rotate at most 30 degrees so only the sides visible in PRODUCT_IMAGE are shown. Keep the label in focus and never let hands cover the label.`}
+SHOT [${g.type}]: ${(c.pdesc!=="the product"?vis.split(c.pdesc).join(N().digital?"the product":"the jar").replace(N().digital?/the product already raised beside her cheek/:/$^/,"a smartphone held beside her cheek, its screen showing the product cover").replace(N().digital?/label side \(as in PRODUCT_IMAGE\) facing the camera|label facing the camera/g:/$^/,"screen facing the camera"):vis).replace(/label facing the camera/g,"label side (as in PRODUCT_IMAGE) facing the camera")}${g.exp?` Expression: ${g.exp}.`:""}
 Spoken line (Bahasa Indonesia${g.type==="Talking head"?", lip-synced, natural speaking pace":", voice-over"}): "${g.line}"
 ${i===0?"The product must be visible in the very first frame.":V?`JUMP CUT from clip ${i}: new location, ${c.mdl?"new outfit, ":""}new lighting and camera angle are welcome; keep the same ${c.mdl?"face and ":""}product. Start mid-action, no intro.`:`CONTINUITY: same ${c.mdl?"person, outfit, hairstyle, ":""}room, lighting, camera style and product position as the end of clip ${i}. No intro, start mid-action.`}${i<n-1?" End on a natural pause so the next clip can continue.":" End with the product clearly facing the camera."}
 ${RULES_BASE.replace("The product must appear within the first second. ","")}
@@ -413,9 +455,16 @@ const sel=(id,m)=>{const v=+$(id).value;if(v>=0)return v;if(id==="ang"&&Math.ran
 // 70% ambil dari opsi terbaik niche, 30% dari semua opsi (variasi untuk testing)
 const nPick=(k,arr)=>{const b=N()[k];return b&&Math.random()<.7?b[rnd(b.length)]:arr[rnd(arr.length)]};
 $("niche").innerHTML=Object.keys(NICHE).map(k=>`<option>${k}</option>`).join("");
-const nh=()=>{const n=N();$("nhint").textContent="Angle terbaik: "+n.ang.map(i=>ANG[i][0]).join(", ")+(n.model?" · Saran: pakai model":"");$("model").value=n.model};
+const nh=()=>{const n=N();$("dsrc").value=n.digital?"tka":$("niche").value==="Skincare"?"bank":"tpl";$("nhint").textContent="Angle terbaik: "+n.ang.map(i=>ANG[i][0]).join(", ")+(n.model?" · Saran: pakai model":"");$("model").value=n.model};
 $("niche").onchange=nh;nh();
 // Preset deskripsi detail FILO (dari foto 4 sisi produk)
+const DIGITAL_RULE=`PRODUCT ACCURACY: the product is a DIGITAL PDF question bank. Show it only as (a) a smartphone or tablet screen displaying pages that match PRODUCT_IMAGE, or (b) printed A4 worksheet pages. The cover design, title, colors and layout must match PRODUCT_IMAGE exactly. Do NOT invent a physical box, book cover or other app. Keep the screen bright and the cover title readable; small question text may stay soft.`;
+function presetTka(){
+ $("niche").value="Produk Digital (Bank Soal / Ebook)";nh();ptip();$("prod").value="Bank Soal TKA SD";
+ $("ben").value="ratusan latihan soal, pembahasan lengkap, model soal mirip TKA asli, Matematika dan Bahasa Indonesia, bisa dibuka di HP atau di-print, anak lebih percaya diri, sekali beli bisa dipakai berulang";
+ $("pid").value="File PDF bank soal TKA kelas 6 SD, ditampilkan di layar HP dengan cover berwarna, dan halaman soal pilihan ganda yang di-print ukuran A4.";
+ $("pdesc").value="digital PDF question bank for Indonesian grade 6 TKA exam. Shown on a smartphone screen with the colorful cover page (exactly as in PRODUCT_IMAGE) and as printed A4 worksheet pages with numbered multiple-choice questions and answer explanations";
+ if(!$("mdesc").value)$("mdesc").value="Indonesian mother in her 30s, warm and friendly, casual home outfit";}
 function presetFilo(){
  $("prod").value="Salep Glowing Filo";$("niche").value="Skincare";nh();ptip();
  $("pid").value="Pot akrilik bening bulat kecil, diameter 3cm, tinggi sekitar 2cm, isi 5 gram krim kuning lembut tidak lengket. Tutup ulir putih bergerigi. Stiker merah muda bulat hanya di atas tutup, samping pot bening tanpa label.";
