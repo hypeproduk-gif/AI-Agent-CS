@@ -29,6 +29,7 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
   <div><label>Nama produk</label><input id="prod" value="Serum Brightening"></div>
   <div><label>Manfaat utama</label><input id="ben" value="kulit cerah dalam 7 hari"></div>
   <div><label>Harga</label><input id="price" value="Rp49.000"></div>
+  <div><label>Promo (kosongkan jika tidak ada)</label><input id="promo" placeholder="Beli 2 gratis 1 / Diskon 50% / Gratis ongkir"></div>
   <div><label>CEP</label><select id="cep"></select></div>
   <div><label>Angle Psikologi</label><select id="ang"></select></div>
   <div><label>Hook</label><select id="hook"></select></div>
@@ -104,25 +105,25 @@ fill($("hook"),HOOKS,(x,i)=>`[${x[0]}] ${x[1]}`);fill($("tipe"),TIPE,x=>x);
 [["set",SET],["pm",PM],["hm",HM],["cam",CAM],["lit",LIT]].forEach(([id,a])=>{fill($(id),a,(x,i)=>`${i+1}. ${x}`);$(id).insertAdjacentHTML("afterbegin",'<option value="-1" selected>🎲 Acak</option>')});
 const rnd=m=>Math.floor(Math.random()*m),pick=(id,a)=>{const v=+$(id).value;return a[v<0?rnd(a.length):v]};
 function build(c,a,h,t,batch){
- const p=$("prod").value||"produk",b=$("ben").value||"hasil terlihat",pr=$("price").value;
+ const p=$("prod").value||"produk",b=$("ben").value||"hasil terlihat",pr=$("price").value,pro=$("promo").value.trim();
  const C=CEP[c],A=ANG[a],H=HOOKS[h],T=TIPE[t],bd=BODY[T](p,b);
  const s={cep:C[0],angle:A[0],hookType:H[0],hook:H[1],tipe:T,scenes:[
   ["0-3s HOOK",`Produk muncul di detik 1. ${H[1]} — visual: ${A[2]}. Teks on-screen besar.`],
   ["3-8s",bd[0]+` (Momen: ${C[1]})`],
   ["8-13s",bd[1]],
   ["13-17s",bd[2]+` Perkuat angle ${A[0]} (${A[1]}).`],
-  ["17-20s CTA",`${A[0]==="Value Shock"||C[0]==="Opportunistic"?`Cuma ${pr}! Promo terbatas.`:`Cek keranjang kuning / klik "Beli Sekarang".`} Produk ${p} di tangan, close-up packaging.`]]};
+  ["17-20s CTA",`${A[0]==="Value Shock"||C[0]==="Opportunistic"?`Cuma ${pr}!${pro?` ${pro}.`:""} Promo terbatas.`:`${pro?`Promo: ${pro}! `:""}Cek keranjang kuning / klik "Beli Sekarang".`} Produk ${p} di tangan, close-up packaging.`]]};
  const g=(id,arr)=>batch?arr[rnd(arr.length)]:pick(id,arr),mdl=$("model").value==="1";
  const shots=[0,1,2,3,4].map(()=>({pm:g("pm",PM),hm:g("hm",HM),cam:g("cam",CAM)}));
  const env=g("set",SET),lit=g("lit",LIT);
  s.prompt=`Vertical 9:16 TikTok UGC video, ~20 seconds, of ${p} (use PRODUCT_IMAGE as exact reference). Setting: ${env}. Lighting: ${lit}. ${mdl?"A person (use MODEL_IMAGE as exact face reference) interacts naturally with the product.":"Only the product and a hand are visible."}
 `+s.scenes.map((x,i)=>`[${x[0]}] ${shots[i].cam}; ${shots[i].pm}; ${shots[i].hm}. Story beat: ${x[1]}`).join("\n")+`
-On-screen text (Bahasa Indonesia): "${H[1]}"
+On-screen text (Bahasa Indonesia): "${H[1]}"${pro?` | CTA text overlay at 17-20s: "${pro}"`:""}
 ${RULES_BASE}
 ${mdl?RULES_MODEL:RULES_NOMODEL}
 ${RULES_GLOBAL}`;
  s.env=env;s.lit=lit;
- s.copy=`${H[1]} ${p} bantu ${b}. ${pr?`Sekarang cuma ${pr}.`:""} 👉 Klik Beli Sekarang!`;
+ s.copy=`${H[1]} ${p} bantu ${b}. ${pr?`Sekarang cuma ${pr}.`:""}${pro?` 🔥 ${pro}!`:""} 👉 Klik Beli Sekarang!`;
  return s}
 function render(s,i){const d=document.createElement("div");d.className="card";
  d.innerHTML=`<div><span class="tag">#${i}</span><span class="tag">CEP: ${s.cep}</span><span class="tag">Angle: ${s.angle}</span><span class="tag">Hook: ${s.hookType}</span><span class="tag">Konten: ${s.tipe}</span></div>
