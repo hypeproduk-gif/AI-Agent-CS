@@ -48,6 +48,9 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
    <option value="45">45 detik — testimoni / storytelling</option>
    <option value="60">60 detik — produk mahal / kompleks</option></select>
    <div class="mut">Advice: 15–20 detik paling sering convert untuk Meta Ads UGC (hook kuat di 3 detik + CTA sebelum orang skip). Pakai 30–60 detik hanya untuk Education/Testimoni atau produk mahal.</div></div>
+  <div><label>Deskripsi visual produk (EN)</label><input id="pdesc" placeholder="small white jar with pink sticker, soft yellow cream"></div>
+  <div><label>Deskripsi model (EN)</label><input id="mdesc" placeholder="woman in her mid 30s"></div>
+  <div><label>Sell</label><select id="sell"><option>Auto</option><option>Soft</option><option>Hard</option></select><div class="mut">Auto = Hard kalau ada promo / Value Shock / Opportunistic</div></div>
   <div><label>Model manusia</label><select id="model"><option value="0">Tanpa model (produk + tangan)</option><option value="1">Pakai model (MODEL_IMAGE)</option></select></div>
   <div><label>Jumlah batch acak</label><input id="n" type="number" value="10" min="1" max="200"></div>
  </div>
@@ -176,34 +179,56 @@ fill($("hook"),HOOKS,(x,i)=>`[${x[0]}] ${x[1]}`);fill($("tipe"),TIPE,x=>x);
 [["cep",CEP],["ang",ANG],["hook",HOOKS],["tipe",TIPE]].forEach(([id])=>$(id).insertAdjacentHTML("afterbegin",'<option value="-1" selected>🎲 Acak</option>'));
 [["set",SET],["pm",PM],["hm",HM],["cam",CAM],["lit",LIT]].forEach(([id,a])=>{fill($(id),a,(x,i)=>`${i+1}. ${x}`);$(id).insertAdjacentHTML("afterbegin",'<option value="-1" selected>🎲 Acak</option>')});
 const rnd=m=>Math.floor(Math.random()*m),pick=(id,a)=>{const v=+$(id).value;return a[v<0?rnd(a.length):v]};
+// Dialog per tipe konten: [agitasi/pembuka, perkenalan produk, manfaat] + filler untuk durasi panjang
+const DIALOG={
+ Problem:(p,b)=>["Udah coba macem-macem, tetap aja nggak berubah.",`Ini ${p}. Pakainya gampang, nggak ribet.`,`Bantu ${b}.`],
+ Education:(p,b)=>["Ternyata masalahnya sering di cara pakainya.",`${p} ini cukup dipakai tipis, rutin tiap hari.`,`Pelan-pelan hasilnya ${b}.`],
+ Manfaat:(p,b)=>[`Yang paling aku suka, ${b}.`,`Plus ${p} ini praktis, gampang dibawa ke mana aja.`,"Pantes banyak yang repeat order."],
+ Testimoni:(p,b)=>[`Aku udah pakai ${p} beberapa minggu.`,"Awalnya ragu, tapi aku coba rutin.",`Sekarang beneran ${b}.`]};
+const FILLER=["Teksturnya enak, nggak lengket sama sekali.","Banyak yang nanya aku pakai apa.","Aku pakainya tiap hari, nggak pernah skip.","Dibanding yang dulu aku pakai, ini jauh lebih cocok.","Packagingnya juga rapi, aman dikirim.","Harganya masuk akal buat hasil segini."];
+const HOOK_EXP={Confession:["mengaku, sedikit malu, senyum tipis","pelan di awal, naik di akhir"],Curiosity:["penasaran, alis naik satu","bertanya, nada naik"],Problem:["kaget, alis naik, mata sedikit melebar","cepat, naik di akhir"],Result:["kaget senang, mata berbinar","antusias, cepat"],"Pattern Interrupt":["serius mendadak, menatap lensa","tegas, berhenti sejenak"]};
+const BEAT_EXP=[["kesal bercampur pasrah, bibir mengerucut sebentar","turun, pelan, seperti mengaku"],null,["tenang lalu ramah, alis rileks, senyum kecil","lembut lalu naik mengajak"]];
 function build(c,a,h,t,batch){
  const p=$("prod").value||"produk",b=$("ben").value||"hasil terlihat",pr=$("price").value,pro=$("promo").value.trim();
- const n=N(),hk=(HOOKS[h][0]==="Problem"?n.prob[h%10]:HOOKS[h][1]).replace(/skincare/g,n.noun).replace(/Kulitku/g,n.res),C=CEP[c],A=ANG[a],H=[HOOKS[h][0],hk],T=TIPE[t],bd=BODY[T](p,b);
- const s={key:[$("niche").value,c,a,h,t].join("|"),niche:$("niche").value,cep:C[0],angle:A[0],hookType:H[0],hook:H[1],tipe:T,scenes:[
-  ["HOOK",`Produk muncul di detik 1. ${H[1]} — visual: ${A[2]}. Teks on-screen besar.`],
-  ["",bd[0]+` (Momen: ${C[1]})`],
-  ["",bd[1]],
-  ["",bd[2]+` Perkuat angle ${A[0]} (${A[1]}).`],
-  ["CTA",`${A[0]==="Value Shock"||C[0]==="Opportunistic"?`Cuma ${pr}!${pro?` ${pro}.`:""} Promo terbatas.`:`${pro?`Promo: ${pro}! `:""}Cek keranjang kuning / klik "Beli Sekarang".`} Produk ${p} di tangan, close-up packaging.`]]};
- const D=+$("dur").value,cut=[0,D<=10?2:3],ctaLen=D<=10?2:D<=20?3:5;
- [0.33,0.66,1].forEach(f=>cut.push(Math.round(cut[1]+(D-ctaLen-cut[1])*f)));cut.push(D);
- s.scenes.forEach((x,i)=>x[0]=`${cut[i]}-${cut[i+1]}s${x[0]?" "+x[0]:""}`);s.dur=D;
+ const pdesc=$("pdesc").value.trim()||"the product",mdesc=$("mdesc").value.trim()||"a natural-looking woman";
+ const n=N(),hk=(HOOKS[h][0]==="Problem"?n.prob[h%10]:HOOKS[h][1]).replace(/skincare/g,n.noun).replace(/Kulitku/g,n.res),C=CEP[c],A=ANG[a],H=[HOOKS[h][0],hk],T=TIPE[t];
+ const sv=$("sell").value,hard=sv==="Hard"||(sv==="Auto"&&(A[0]==="Value Shock"||C[0]==="Opportunistic"||!!pro));
+ const D=+$("dur").value,nSeg=Math.max(2,Math.round(D/5)),segLen=D/nSeg;
  const KM={set:"set",pm:"pm",hm:"hm",cam:"cam",lit:"lit"},g=(id,arr)=>(batch||+$(id).value<0)?nPick(KM[id],arr):pick(id,arr),mdl=$("model").value==="1";
- const shots=[0,1,2,3,4].map(()=>({pm:g("pm",PM),hm:g("hm",HM),cam:g("cam",CAM)}));
  const env=g("set",SET),lit=g("lit",LIT);
- s.prompt=`Vertical 9:16 TikTok UGC video, ~${D} seconds, of ${p} (use PRODUCT_IMAGE as exact reference). Setting: ${env}. Lighting: ${lit}. ${mdl?"A person (use MODEL_IMAGE as exact face reference) interacts naturally with the product.":"Only the product and a hand are visible."}
-`+s.scenes.map((x,i)=>`[${x[0]}] ${shots[i].cam}; ${shots[i].pm}; ${shots[i].hm}. Story beat: ${x[1]}`).join("\n")+`
-On-screen text (Bahasa Indonesia): "${H[1]}"${pro?` | CTA text overlay at ${cut[4]}-${D}s: "${pro}"`:""}
+ const cta=hard?`${pr?`Cuma ${pr}`:"Harga spesial"}${pro?`, ${pro}`:""}. Klik di bawah sekarang, stok terbatas!`:`${pro?`Lagi ada ${pro}. `:""}Cek sendiri, klik di bawah.`;
+ const dl=DIALOG[T](p,b);
+ // susun beat: hook, [agitasi, produk, filler...], manfaat+CTA
+ const mid=nSeg>=4?[[dl[0],0],[dl[1],1],...FILLER.slice(0,nSeg-4).map(f=>[f,1])]:nSeg===3?[[dl[1],1]]:[];
+ const beats=[[H[1],"hook"],...mid,[`${dl[2]} ${cta}`,2]];
+ const segs=beats.map(([line,role],i)=>{
+  const sh={pm:g("pm",PM),hm:g("hm",HM),cam:g("cam",CAM)};
+  const vo=!mdl||role===1;
+  const st=Math.round(i*segLen),en=Math.round((i+1)*segLen);
+  let vis;
+  if(i===0)vis=vo?`${sh.cam}, ${env}, ${lit}. ${pdesc} already in frame in the very first frame, ${sh.hm}, label facing the camera. ${A[2]}.`
+              :`Handheld front-camera selfie, ${env}, ${lit}, ${mdesc}, ${pdesc} already raised beside her cheek in the very first frame, label facing the camera. Real skin texture, no filter.`;
+  else if(vo)vis=`Close-up of hands only, ${env}: ${sh.hm}, ${sh.pm}, ${sh.cam}. Label stays sharp and unchanged.`;
+  else if(role===2)vis=`Same person, same room, ${sh.hm}, then holding ${pdesc} toward the lens. ${sh.cam}.`;
+  else vis=`Same person, same room, phone moves closer, ${sh.cam}; ${pdesc} still visible in her hand at the edge of frame. Shows the problem clearly.`;
+  const ex=role==="hook"?HOOK_EXP[H[0]]:role===1?[null,"netral menjelaskan, tempo sedang"]:BEAT_EXP[role];
+  return {t:`${st}-${en} dtk`,type:vo?"VO, tangan saja":"Talking head",vis,exp:vo?null:ex[0],into:ex[1],line}});
+ const s={key:[$("niche").value,c,a,h,t].join("|"),niche:$("niche").value,cep:C[0],angle:A[0],hookType:H[0],hook:H[1],tipe:T,dur:D,sell:hard?"Hard":"Soft",model:mdl,env,lit,segs};
+ s.title=H[1].replace(/[.…]+$/,"");
+ s.scenes=segs.map((x,i)=>[`SEG ${i+1} (${x.t})`,`${x.type} | ${x.vis}${x.exp?` Ekspresi: ${x.exp}`:""} | Intonasi: ${x.into} "${x.line}"`]);
+ s.prompt=`Vertical 9:16 TikTok UGC video, ~${D} seconds, ${nSeg} segments of ~${Math.round(segLen)}s. Product: ${p}${pdesc!=="the product"?` (${pdesc})`:""}, use PRODUCT_IMAGE as exact reference.${mdl?` Person: ${mdesc}, use MODEL_IMAGE as exact face reference.`:""}
+`+segs.map((x,i)=>`SEG ${i+1} (${x.t}) [${x.type}] ${x.vis}${x.exp?` Expression: ${x.exp}.`:""} Spoken line (Bahasa Indonesia${x.type==="Talking head"?", lip-synced":", voice-over"}): "${x.line}"`).join("\n")+`
 ${RULES_BASE}
 ${mdl?RULES_MODEL:RULES_NOMODEL}
 ${RULES_GLOBAL} Duration about ${D} seconds.`;
- s.env=env;s.lit=lit;
  s.copy=`${H[1]} ${p} bantu ${b}. ${pr?`Sekarang cuma ${pr}.`:""}${pro?` 🔥 ${pro}!`:""} 👉 Klik Beli Sekarang!`;
  return s}
 function render(s,i){const d=document.createElement("div");d.className="card";
- d.innerHTML=`<div><span class="tag">#${i}</span><span class="tag">${s.niche}</span><span class="tag">CEP: ${s.cep}</span><span class="tag">Angle: ${s.angle}</span><span class="tag">Hook: ${s.hookType}</span><span class="tag">Konten: ${s.tipe}</span><span class="tag">${s.dur} detik</span></div>
- <div class="hook">“${s.hook}”</div><table>${s.scenes.map(x=>`<tr><th>${x[0]}</th><td>${x[1]}</td></tr>`).join("")}
- <tr><th>Ad copy</th><td>${s.copy}</td></tr></table>
+ d.innerHTML=`<div class="hook">${i}. ${s.title}</div>
+ <div class="mut" style="margin-bottom:6px">Tipe: ${s.tipe} | Sell: ${s.sell} | Hook ${s.hookType} | MODEL: ${s.model?"YA":"TIDAK"} | ${s.dur} dtk</div>
+ <div><span class="tag">${s.niche}</span><span class="tag">CEP: ${s.cep}</span><span class="tag">Angle: ${s.angle}</span></div>
+ ${s.segs.map((x,k)=>`<p style="margin:10px 0"><b>SEG ${k+1} (${x.t})</b> | <i>${x.type}</i> ${x.vis}${x.exp?` <b>Ekspresi:</b> ${x.exp}`:""} | <b>Intonasi:</b> ${x.into} <b>“${x.line}”</b></p>`).join("")}
+ <table><tr><th>Ad copy</th><td>${s.copy}</td></tr></table>
  <details style="margin-top:8px"><summary><b>Video AI Prompt</b> <span class="mut">(${s.env} · ${s.lit})</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${s.prompt.replace(/</g,"&lt;")}</pre><button class="sec" style="width:auto">Copy prompt</button></details>`;
  d.querySelector("details button").onclick=()=>navigator.clipboard.writeText(s.prompt);out.prepend(d)}
 function add(c,a,h,t,b){const s=build(c,a,h,t,b);list.push(s);render(s,list.length)}
@@ -220,8 +245,8 @@ function genBatch(){const n=Math.min(200,+$("n").value||10),seen=new Set(list.ma
  while(k<n&&g++<5000){const c=sel("cep",6),a=sel("ang",15),h=sel("hook",50),t=sel("tipe",4),key=[$("niche").value,c,a,h,t].join("|");
   if(seen.has(key))continue;seen.add(key);add(c,a,h,t,1);k++}}
 function exportCSV(){if(!list.length)return alert("Belum ada scene");
- const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Durasi","Scene 1 Hook","Scene 2","Scene 3","Scene 4","Scene 5 CTA","Ad Copy","Video Prompt"];
- const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,s.dur+"s",...s.scenes.map(x=>x[1]),s.copy,s.prompt].map(q).join(","));
+ const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Durasi","Sell","Model","Judul","Script","Ad Copy","Video Prompt"];
+ const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,s.dur+"s",s.sell,s.model?"YA":"TIDAK",s.title,s.scenes.map(x=>x[0]+" | "+x[1]).join("\n"),s.copy,s.prompt].map(q).join(","));
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["﻿"+[hd.join(","),...rows].join("\n")],{type:"text/csv"}));
  a.download="scene-meta-ads.csv";a.click()}
 </script>
