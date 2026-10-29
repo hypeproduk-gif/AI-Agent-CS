@@ -50,6 +50,7 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
   <div><label>Mode antar segmen</label><select id="vmode"><option value="var">Variasi (ganti lokasi, outfit, lighting, kamera)</option><option value="same">Nyambung (1 lokasi, 1 outfit)</option></select><div class="mut">Variasi = gaya jump-cut TikTok, lebih eksploratif</div></div>
   <div hidden><select id="seglen"><option value="8" selected>8</option><option value="10">10</option></select><div id="durinfo"></div></div>
   <div><label>Sumber dialog</label><select id="dsrc"><option value="bank">Bank dialog FILO (Opus, gratis)</option><option value="tka">Bank dialog TKA SD (Opus, gratis)</option><option value="tpl">Template umum</option></select></div>
+  <div><label>Platform iklan</label><select id="plat"><option value="meta" selected>Meta Ads (FB/IG)</option><option value="tiktok">TikTok</option><option value="shopee">Shopee</option></select><div class="mut">Menentukan kata CTA</div></div>
   <div><label>Sell</label><select id="sell"><option>Auto</option><option>Soft</option><option>Hard</option></select><div class="mut">Auto = Hard kalau ada promo / Value Shock / Opportunistic</div></div>
   <div><label>Model manusia</label><select id="model"><option value="1" selected>Pakai model (MODEL_IMAGE)</option><option value="0">Tanpa model (produk + tangan)</option></select></div>
   <div><label>Jumlah batch acak</label><input id="n" type="number" value="10" min="1" max="200"></div>
@@ -341,6 +342,11 @@ function pickBen(raw,hook){const all=raw.split(/\s*(?:,|;|\.|\n| dan )\s*/).map(
  const sc=all.map(x=>({x,s:hw.filter(w=>x.toLowerCase().includes(w)).length+Math.random()*.9})).sort((a,b)=>b.s-a.s);
  const k=Math.min(all.length,2+rnd(2)),ch=sc.slice(0,k).map(o=>o.x);
  window.BENLIST=ch;return ch.length>1?ch.slice(0,-1).join(", ")+" dan "+ch[ch.length-1]:ch[0]}
+// Kata CTA per platform: Meta Ads (tombol Beli Sekarang / link), TikTok (keranjang kuning), Shopee
+function PF(t){const p=$("plat").value;if(p==="tiktok")return t;
+ const M=p==="meta"?[[/langsung klik keranjang kuning/g,"langsung klik Beli Sekarang"],[/[Cc]ek dulu di keranjang kuning/g,"Cek dulu di link bawah"],[/[Cc]ek keranjang kuning/g,"Klik Beli Sekarang"],[/klik keranjang kuning/g,"klik Beli Sekarang"],[/keranjang kuning/g,"tombol Beli Sekarang"]]
+  :[[/langsung klik keranjang kuning/g,"langsung checkout di Shopee"],[/[Cc]ek dulu di keranjang kuning/g,"Cek dulu di Shopee"],[/[Cc]ek keranjang kuning/g,"Cek di Shopee"],[/klik keranjang kuning/g,"checkout di Shopee"],[/keranjang kuning/g,"Shopee"],[/[Kk]lik di bawah/g,"Cek di Shopee"],[/Klik Beli Sekarang/g,"Checkout di Shopee"],[/link di bawah|link bawah/g,"Shopee"]];
+ return M.reduce((a,[r,v])=>a.replace(r,v),t)}
 function build(c,a,h,t,batch){
  const p=$("prod").value||"produk",b=pickBen($("ben").value,HOOKS[h][0]==="Problem"?N().prob[h%10]:HOOKS[h][1]),pr=$("price").value,pro=$("promo").value.trim();
  const pdesc=$("pdesc").value.replace(/\.{2,}/g,". ").replace(/(\s*,\s*)+$/,"").replace(/,\s*,/g,",").trim()||"the product",mdesc=$("mdesc").value.trim()||"a natural-looking woman";
@@ -453,6 +459,9 @@ ${RULES_BASE.replace("The product must appear within the first second. ","").rep
 ${mdl?RULES_MODEL:RULES_NOMODEL}`;
  s.thumb=noTT(s.thumb)+"\nNO watermark, NO app logo, NO username, NO social media interface.";s.thumbs=[["4:5 (feed)",s.thumb.replace("ASPECT","Aspect ratio 4:5 vertical feed")],["9:16 (story/reels)",s.thumb.replace("ASPECT","Aspect ratio 9:16 full vertical")]];
  s.copy=`${H[1]} ${p} bantu ${b}. ${pr?`Sekarang cuma ${pr}.`:""}${pro?` 🔥 ${pro}!`:""} 👉 Klik Beli Sekarang!`;
+ // CTA disesuaikan platform iklan
+ s.segs.forEach(g=>g.line=PF(g.line));s.copy=PF(s.copy);s.thumbs.forEach(x=>x[1]=PF(x[1]));s.thumb=PF(s.thumb);s.plat=$("plat").value;
+ s.scenes=s.segs.map((x,i)=>[`SEG ${i+1} (${x.t})`,`${x.type} | ${x.vis}${x.exp?` Ekspresi: ${x.exp}`:""} | Intonasi: ${x.into} "${x.line}"`]);
  return s}
 // Satu prompt per segmen: tiap klip digenerate terpisah lalu disambung, jadi tiap prompt berdiri sendiri + aturan kesinambungan
 const OUTFIT=["casual oversized t-shirt","soft knit cardigan","simple satin pajamas","clean white blouse","pastel hoodie","neutral linen shirt","simple modest tunic with hijab","sleeveless ribbed top with light cardigan"];
@@ -562,7 +571,7 @@ MANFAAT YANG DITONJOLKAN (hanya ini, 2-3): ${s.ben}.
 NICHE: ${s.niche}. CEP: ${s.cep}. ANGLE PSIKOLOGI: ${s.angle}. TIPE KONTEN: ${s.tipe}. SELL: ${s.sell}. MODEL: ${s.model?"ada (talking head)":"tidak ada, VO tangan saja"}.
 HOOK WAJIB jadi kalimat pertama SEG 1 (boleh dipoles sedikit): "${s.hook}"
 SEGMEN:\n${segInfo}
-ATURAN: bahasa lisan sehari-hari (aku/kamu, nggak, banget), terasa jujur & spesifik seperti orang beneran cerita, bukan iklan. Tiap segmen nyambung dengan sebelumnya. Jumlah kata sesuai target tiap segmen. Segmen terakhir ditutup CTA ${s.sell==="Hard"?"tegas dengan harga/promo dan urgensi":"lembut mengajak klik"}. Jangan klaim medis berlebihan (jangan "menyembuhkan", "100%", "permanen"). Jangan pakai kalimat klise yang sama dengan dialog scene lain berikut:\n- ${others||"(belum ada)"}
+ATURAN: bahasa lisan sehari-hari (aku/kamu, nggak, banget), terasa jujur & spesifik seperti orang beneran cerita, bukan iklan. Tiap segmen nyambung dengan sebelumnya. Jumlah kata sesuai target tiap segmen. Segmen terakhir ditutup CTA untuk ${({meta:"Meta Ads: ajak klik tombol Beli Sekarang / link, JANGAN sebut keranjang kuning",tiktok:"TikTok: boleh sebut keranjang kuning",shopee:"Shopee: ajak checkout di Shopee"})[$("plat").value]}, ${s.sell==="Hard"?"tegas dengan harga/promo dan urgensi":"lembut mengajak klik"}. Jangan klaim medis berlebihan (jangan "menyembuhkan", "100%", "permanen"). Jangan pakai kalimat klise yang sama dengan dialog scene lain berikut:\n- ${others||"(belum ada)"}
 Juga buat judul konsep pendek (maks 8 kata) yang menggambarkan momen video, contoh: "Flek yang baru kelihatan di kamera depan".
 Balas JSON saja: {"title":"...","lines":["dialog SEG 1","dialog SEG 2",...]} dengan tepat ${s.segs.length} item.`;
  try{const r=await SAMPLE.json(prompt,{model:"claude-opus-5-5",cache:false});
