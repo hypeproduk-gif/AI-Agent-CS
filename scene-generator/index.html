@@ -392,7 +392,7 @@ ${RULES_GLOBAL} Duration about ${D} seconds.`;
  const seedStr=[c,a,h,t,$("niche").value].join("|");let sd=0;for(const ch of seedStr)sd=(sd*31+ch.charCodeAt(0))>>>0;
  const sp=arr=>arr[(sd+rnd(997))%arr.length];
  const CONCEPT={
-  "Social Proof / FOMO":["COMMENT PILE-UP: 3 realistic chat/comment bubbles overlap around her (not covering face or label), each with a short real customer quote; small sticker 'Restock lagi!'","REPEAT-ORDER STAMP: a slightly tilted rubber-stamp style label 'Banyak yang order lagi' near the jar, with a hand-written arrow 'akhirnya cocok'"],
+  "Social Proof / FOMO":["COMMENT PILE-UP: 3 realistic chat/comment bubbles overlap around her (not covering face or label), each with a short real customer quote; small sticker 'Restock lagi!'","BESTSELLER STAMP: a slightly tilted red rubber-stamp style label 'TERJUAL 10.000+' near the jar, with a hand-written arrow 'akhirnya kebagian'"],
   "Shock / Hasil Cepat":["DAY COUNTER: a giant number '7' (about 35% of image height) behind her shoulder with the word 'HARI', her jaw-drop reaction in front (depth effect)","REACTION ZOOM: extreme close-up of her surprised face on one side, a circled zoom-in bubble showing the smooth cheek area on the other side"],
   "Curiosity Gap":["PARTIAL REVEAL: the jar half-hidden behind her fingers or a torn paper edge, only the pink lid peeking out, headline ending with '…'","CENSOR BAR TEASE: a bold color bar covers part of the headline word like a secret, small text 'buka untuk lihat'"],
   "Authority Effect":["EXPERT NOTE: a clean clipboard-style card with 3 hand-ticked checkmarks next to the jar, like a beautician's recommendation note","INGREDIENT LABEL CARD: minimal white card with thin lines listing 3 benefits like a product spec sheet, tidy and trustworthy"],
@@ -413,7 +413,7 @@ ${RULES_GLOBAL} Duration about ${D} seconds.`;
   Problem:[hk.replace(/[.…,]+$/,"").split(" ").slice(0,5).join(" ")+"…","Udah coba semua tapi gagal?","Masalahku selesai di sini"],
   Result:["Flek pudar dalam 7 hari 😳","Lihat bedanya!","Nggak nyangka segini","7 hari, ini hasilnya"],
   "Pattern Interrupt":["STOP. Lihat ini dulu","Jangan skip!","Tunggu… lihat ini","Sebelum scroll, baca ini"]};
- const ANG_TXT={"Value Shock":[`${pr||"Harga"} dapat 2?!`,"Harga segini? Serius?!"],"Comparison Curiosity":["1 pot vs 10 skincare","Klinik vs salep malam"],"Regret Trigger":["Andai tahu dari dulu…","Nyesel baru tahu"],"Social Proof / FOMO":["Kenapa pada order lagi?","Semua udah pakai, kamu?"],"Transformation Desire":["Sebelum vs sesudah 7 hari","Dari kusam ke glowing"],"Authority Effect":["Lembut untuk kulit sensitif","Tanpa perih, terbukti"]};
+ const ANG_TXT={"Value Shock":[`${pr||"Harga"} dapat 2?!`,"Harga segini? Serius?!"],"Comparison Curiosity":["1 pot vs 10 skincare","Klinik vs salep malam"],"Regret Trigger":["Andai tahu dari dulu…","Nyesel baru tahu"],"Social Proof / FOMO":["Terjual 10.000+, kenapa?","Semua udah pakai, kamu?"],"Transformation Desire":["Sebelum vs sesudah 7 hari","Dari kusam ke glowing"],"Authority Effect":["Lembut untuk kulit sensitif","Tanpa perih, terbukti"]};
  const thTxt=ANG_TXT[A[0]]&&Math.random()<.5?sp(ANG_TXT[A[0]]):sp(TH_TXT[H[0]]);
  const badge=pro&&!thTxt.includes(pro)?pro:pr?`Cuma ${pr}`:"";
  const benS=(window.BENLIST||[b]).slice(0,2).map(x=>cap(x));
