@@ -29,8 +29,8 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
   <div><label>Tipe produk / Niche</label><select id="niche"></select><div class="mut" id="nhint"></div></div>
   <div><label>Nama produk</label><input id="prod" value="Salep Glowing Filo"></div>
   <div style="grid-column:1/-1"><label>Semua manfaat (pisahkan dengan koma)</label><input id="ben" value="memudarkan flek hitam, menyamarkan bekas jerawat, wajah glowing, melembabkan, tidak lengket, tidak perih, aman untuk kulit sensitif"><div class="mut">Tiap scene otomatis menonjolkan 2–3 manfaat yang paling nyambung dengan hook (sisanya acak untuk variasi).</div></div>
-  <div><label>Harga</label><input id="price" value="Rp49.000"></div>
-  <div><label>Promo (kosongkan jika tidak ada)</label><input id="promo" placeholder="Beli 2 gratis 1 / Diskon 50% / Gratis ongkir"></div>
+  <div><label>Harga</label><input id="price" value="Rp139.000"></div>
+  <div><label>Promo (kosongkan jika tidak ada)</label><input id="promo" value="Beli 1 Gratis 1" placeholder="Beli 2 gratis 1 / Diskon 50% / Gratis ongkir"></div>
   <div><label>CEP</label><select id="cep"></select></div>
   <div><label>Angle Psikologi</label><select id="ang"></select></div>
   <div><label>Hook</label><select id="hook"></select></div>
@@ -235,7 +235,7 @@ const EXTRA={hook:["Aku ceritain pengalamanku ya, singkat aja.","Jujur, ini yang
  1:["Cara pakainya cuma beberapa langkah aja.","Teksturnya ringan dan cepat meresap.","Aku pakai rutin, dan ini bagian favoritku."],
  2:["Aku udah buktiin sendiri, sekarang giliran kamu.","Pokoknya kamu wajib coba, nggak bakal nyesel.","Jangan sampai kehabisan kayak aku kemarin."]};
 const words=x=>x.split(/\s+/).filter(Boolean).length;
-const stretch=(line,role,sec,pool)=>{const tgt=Math.round(sec*2.5),ex=[...(EXTRA[role]||pool)];let out=line;while(words(out)<tgt&&ex.length)out+=" "+ex.shift();return out};
+const stretch=(line,role,sec,pool)=>{const tgt=Math.round(sec*3),ex=[...(EXTRA[role]||pool)];let out=line;while(words(out)<tgt&&ex.length)out+=" "+ex.shift();return out};
 const FILLER=["Teksturnya enak, nggak lengket sama sekali.","Banyak yang nanya aku pakai apa.","Aku pakainya tiap hari, nggak pernah skip.","Dibanding yang dulu aku pakai, ini jauh lebih cocok.","Packagingnya juga rapi, aman dikirim.","Harganya masuk akal buat hasil segini."];
 const HOOK_EXP={Confession:["mengaku, sedikit malu, senyum tipis","pelan di awal, naik di akhir"],Curiosity:["penasaran, alis naik satu","bertanya, nada naik"],Problem:["kaget, alis naik, mata sedikit melebar","cepat, naik di akhir"],Result:["kaget senang, mata berbinar","antusias, cepat"],"Pattern Interrupt":["serius mendadak, menatap lensa","tegas, berhenti sejenak"]};
 const BEAT_EXP=[["kesal bercampur pasrah, bibir mengerucut sebentar","turun, pelan, seperti mengaku"],null,["tenang lalu ramah, alis rileks, senyum kecil","lembut lalu naik mengajak"]];
@@ -264,6 +264,7 @@ const BANK_FILO={
   lembab:["Bangun tidur kulit terasa lembab, nggak ketarik.","Kulitku jadi lebih lembab dan kenyal.","Nggak ada lagi kulit kering pas bangun pagi."],
   perih:["Sama sekali nggak perih atau panas waktu dipakai.","Dipakai juga nggak perih, nggak panas di kulit.","Nggak ada rasa panas atau perih sama sekali."],
   sensitif:["Aman buat kulitku yang sensitif.","Kulitku yang sensitif aja cocok.","Buat kulit sensitif kayak aku, ini aman."],
+  lengket:["Teksturnya ringan, nggak lengket di wajah.","Cepat meresap, nggak lengket sama sekali."],
   awet:["Kulit kelihatan lebih kencang dan awet muda.","Garis halus di wajah kelihatan lebih samar."]},
  proof:{
   Problem:["Akhirnya aku berani foto pakai kamera depan lagi.","Sekarang aku lebih pede keluar tanpa foundation tebal."],
@@ -273,8 +274,9 @@ const BANK_FILO={
  filler:["Jarnya kecil, jadi gampang dibawa kalau nginep.","Aku taruh di samping kasur biar nggak lupa.","Sebelumnya aku udah habis banyak buat krim yang nggak cocok.","Satu jar bisa awet karena pakainya tipis."],
  ctaSoft:["Kalau kamu ngalamin hal yang sama, coba cek di bawah ya.","Penasaran? Cek dulu di keranjang kuning.","Coba deh mulai malam ini, klik di bawah."],
  ctaHard:["Harganya cuma {harga}{promo}. Klik di bawah sebelum promonya habis!","Sekarang cuma {harga}{promo}, stoknya terbatas. Checkout sekarang ya!"],
- ctaHardPromo:["{Promo} cuma {harga}, langsung klik keranjang kuning sebelum kehabisan!"]};
-const BKEY_FILO={flek:/flek|noda/,jerawat:/jerawat/,glowing:/glow|cerah|kusam/,lembab:/lembab|kering/,perih:/perih|panas/,sensitif:/sensitif/,awet:/awet|muda|keriput|kencang/};
+ ctaHardPromo:["{Promo} cuma {harga}, langsung klik keranjang kuning sebelum kehabisan!"],
+ ctaShort:["{harga}, {Promo}. Klik di bawah!","Cuma {harga}, {Promo}. Checkout sekarang!","{Promo} cuma {harga}, klik keranjang kuning!"]};
+const BKEY_FILO={lengket:/lengket/,flek:/flek|noda/,jerawat:/jerawat/,glowing:/glow|cerah|kusam/,lembab:/lembab|kering/,perih:/perih|panas/,sensitif:/sensitif/,awet:/awet|muda|keriput|kencang/};
 const pk=a=>a[rnd(a.length)];
 // ===== Bank dialog Bank Soal TKA SD (ditulis Opus sekali, dipakai gratis) =====
 const BANK_TKA={
@@ -315,16 +317,16 @@ function bankLines(o){
  const used=new Set(),CON=["","Terus, ","Plus, "];
  const bens=o.bens.map(b=>{const k=Object.keys(BKEY).find(k=>BKEY[k].test(b.toLowerCase())&&!used.has(k));
   if(k){used.add(k);return pk(BANK.ben[k])}return `${b.charAt(0).toUpperCase()+b.slice(1)} juga kerasa.`});
- const cta=(x=>o.pro?x:x.replace("sebelum promonya habis","sebelum kehabisan"))(r(o.hard?(o.pro&&Math.random()<.4?pk(BANK.ctaHardPromo):pk(BANK.ctaHard)):pk(BANK.ctaSoft)));
+ const cta=o.nSeg===1&&o.pro&&BANK.ctaShort?r(pk(BANK.ctaShort)):(x=>o.pro?x:x.replace("sebelum promonya habis","sebelum kehabisan"))(r(o.hard?(o.pro&&Math.random()<.4?pk(BANK.ctaHardPromo):pk(BANK.ctaHard)):pk(BANK.ctaSoft)));
  // cerita masalah hanya nyambung setelah hook Problem/Confession; hook lain langsung ke produk
  const withStory=o.hookType==="Problem"||o.hookType==="Confession"||o.tipe==="Testimoni";
  const prodL=r(pk(BANK.product)),useL=r(pk(BANK.usage)),dup=x=>/HP|print/i.test(x)&&/HP|print/i.test(prodL+useL);
  let B=[["bridge",r(pk(BANK.bridge[o.hookType]))],...(withStory?[["story",r(pk(BANK.story[o.tipe]))]]:[]),["product",prodL],["usage",useL],...bens.filter((t,i,a)=>!dup(t)||a.length<2).map(t=>["ben",t]),["proof",r(pk(BANK.proof[o.tipe]))]];
- const tgt=Math.round(o.D*2.5),txt=()=>B.map(x=>x[1]),wc=()=>words([o.hook,...txt(),cta].join(" "));
+ const tgt=Math.round(o.D*3),txt=()=>B.map(x=>x[1]),wc=()=>words([o.hook,...txt(),cta].join(" "));
  const fill=[...BANK.filler].sort(()=>Math.random()-.5);
- while(wc()<tgt*.9&&fill.length)B.splice(B.length-1,0,["filler",fill.pop()]);
+ while(wc()<tgt&&fill.length)B.splice(B.length-1,0,["filler",fill.pop()]);
  // durasi pendek: buang berurutan cerita → cara pakai → bukti → jembatan → manfaat terakhir (minimal produk + 1 manfaat)
- for(const tag of ["story","usage","proof","bridge"]){if(wc()<=tgt*1.2)break;const k=B.findIndex(x=>x[0]===tag);if(k>=0)B.splice(k,1)}
+ for(const tag of ["story","proof","usage"]){if(wc()<=tgt*1.2)break;const k=B.findIndex(x=>x[0]===tag);if(k>=0)B.splice(k,1)}
  while(wc()>tgt*1.2&&B.filter(x=>x[0]==="ben").length>1){const k=B.map(x=>x[0]).lastIndexOf("ben");B.splice(k,1)}
  // kata sambung manfaat ke-2 dan ke-3
  let bi=0;B.forEach(x=>{if(x[0]==="ben"){if(bi)x[1]=CON[Math.min(bi,2)]+x[1].charAt(0).toLowerCase()+x[1].slice(1);bi++}});
@@ -457,7 +459,7 @@ function presetFilo(){
  $("prod").value="Salep Glowing Filo";$("niche").value="Skincare";nh();ptip();
  $("pid").value="Ukuran pot diameter 3cm, tinggi sekitar 2cm, isi produk 5 gram, warna cream kuning, tidak lengket. Potnya bening acrylic, ada stiker pink hanya di bagian atas tutup. Tutup ulir putih bergerigi.";
  $("pdesc").value="tiny round clear acrylic jar, only 3 cm in diameter and about 2 cm tall, small enough to sit between thumb and two fingertips. Thick crystal-clear transparent walls with NO label on the sides. White screw cap with fine vertical ridges around its edge. The ONLY label is a flat circular pink sticker on top of the cap: white curved band at the top reading \"FILOMALL BEAUTY\", small gold crown \"F\" logo, large bold black script text \"Salep Glowing\", small text \"Expired Date: Desember 2028\", and a white curved band at the bottom reading \"Memudarkan Flek - Wajah Glowing & Bersih\". Inside: 5 g of smooth pale butter-yellow cream, soft and non-sticky, with a small swirl peak when opened. Through the clear walls the yellow cream is visible at the bottom of the jar";}
-const durInfo=()=>{const L=+$("seglen").value,n=Math.max(1,Math.round(+$("dur").value/L));$("durinfo").textContent=`= ${n} klip × ${L} detik = ${n*L} detik total. Dialog ±${Math.round(L*2.5)} kata per klip.`};
+const durInfo=()=>{const L=+$("seglen").value,n=Math.max(1,Math.round(+$("dur").value/L));$("durinfo").textContent=`= ${n} klip × ${L} detik = ${n*L} detik total. Dialog ±${Math.round(L*3)} kata per klip.`};
 $("seglen").addEventListener("change",durInfo);$("dur").addEventListener("change",durInfo);durInfo();
 const ptip=()=>{const t=TIPS[$("niche").value]||TIPS._;$("ptip").textContent="💡 "+TIPS._+" "+t;$("pid").placeholder=t.replace(/^Contoh: /,"")};
 $("niche").addEventListener("change",ptip);ptip();
@@ -474,7 +476,7 @@ async function aiRewrite(s,d){
  const btn=d.querySelector(".ai");btn.disabled=true;st.textContent="Opus 5.5 sedang menulis dialog…";
  // contoh dialog scene lain supaya hasilnya tidak mirip
  const others=list.filter(x=>x!==s).slice(-6).map(x=>x.segs.map(g=>g.line).join(" / ")).join("\n- ");
- const segInfo=s.segs.map((g,i)=>`SEG ${i+1} (${g.t}, ${g.type}, ±${Math.round(((+g.t.split("-")[1].split(" ")[0])-(+g.t.split("-")[0]))*2.5)} kata). Ekspresi: ${g.exp||"-"}. Intonasi: ${g.into}.`).join("\n");
+ const segInfo=s.segs.map((g,i)=>`SEG ${i+1} (${g.t}, ${g.type}, ±${Math.round(((+g.t.split("-")[1].split(" ")[0])-(+g.t.split("-")[0]))*3)} kata). Ekspresi: ${g.exp||"-"}. Intonasi: ${g.into}.`).join("\n");
  const prompt=`Kamu copywriter iklan UGC TikTok/Meta Ads Indonesia yang jago bikin orang beli. Tulis ulang dialog voice-over/talking head untuk video ini.
 PRODUK: ${$("prod").value}. Keterangan: ${$("pid").value||"-"}. Harga: ${$("price").value||"-"}. Promo: ${$("promo").value||"-"}.
 MANFAAT YANG DITONJOLKAN (hanya ini, 2-3): ${s.ben}.
