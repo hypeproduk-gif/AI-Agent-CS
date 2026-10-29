@@ -50,6 +50,7 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
   <div><label>Mode antar segmen</label><select id="vmode"><option value="var">Variasi (ganti lokasi, outfit, lighting, kamera)</option><option value="same">Nyambung (1 lokasi, 1 outfit)</option></select><div class="mut">Variasi = gaya jump-cut TikTok, lebih eksploratif</div></div>
   <div hidden><select id="seglen"><option value="8" selected>8</option><option value="10">10</option></select><div id="durinfo"></div></div>
   <div><label>Sumber dialog</label><select id="dsrc"><option value="bank">Bank dialog FILO (Opus, gratis)</option><option value="tka">Bank dialog TKA SD (Opus, gratis)</option><option value="tpl">Template umum</option></select></div>
+  <div><label>Suara video</label><select id="audio"><option value="voice" selected>Dengan dialog (talking head / VO)</option><option value="silent">Tanpa suara (b-roll, pakai musik + teks)</option></select></div>
   <div><label>Platform iklan</label><select id="plat"><option value="meta" selected>Meta Ads (FB/IG)</option><option value="tiktok">TikTok</option><option value="shopee">Shopee</option></select><div class="mut">Menentukan kata CTA</div></div>
   <div><label>Sell</label><select id="sell"><option>Auto</option><option>Soft</option><option>Hard</option></select><div class="mut">Auto = Hard kalau ada promo / Value Shock / Opportunistic</div></div>
   <div><label>Model manusia</label><select id="model"><option value="1" selected>Pakai model (MODEL_IMAGE)</option><option value="0">Tanpa model (produk + tangan)</option></select></div>
@@ -503,14 +504,17 @@ ${RULES_BASE.replace("The product must appear within the first second. ","").rep
 ${x.c.mdl?RULES_MODEL:RULES_NOMODEL}
 ${RULES_GLOBAL.replace("9:16 video","9:16 photo")} Sharp focus on the product label, natural skin texture, no beauty filter.`}).map(noTT)}
 function segPrompts(s){const n=s.segs.length;return s.segs.map((_,i)=>{const x=segCtx(s,i),len=Math.round(x.c.segLen);
- return `NO SUBTITLES, NO CAPTIONS, NO ON-SCREEN TEXT of the spoken words. Audio only. NO watermark, NO app logo, NO username, NO social media interface.
+ const SIL=$("audio").value==="silent";
+ // mode tanpa suara: tidak ada dialog/lip-sync, cerita lewat ekspresi & gerakan, cocok diberi musik + teks di editor
+ const silAct=x.g.type==="Talking head"?`She does NOT talk: lips stay relaxed or smiling, no lip movement as if speaking. She tells the story with expressions and gestures only (${["reacts with surprise, then smiles and shows the product to the lens","touches her cheek, looks at the camera, then raises the product proudly","nods confidently while presenting the product","glances at the product, then gives a warm satisfied smile"][i%4]}).`:"Hands-only shot, no talking.";
+ return `NO SUBTITLES, NO CAPTIONS, NO ON-SCREEN TEXT. ${SIL?"SILENT VIDEO: no voice, no speech, no narration (ambient sound or none).":"Audio only."} NO watermark, NO app logo, NO username, NO social media interface.
 IMAGE-TO-VIDEO: use the uploaded START IMAGE (from Image Prompt SEG ${i+1}) as the exact first frame. Keep the person, face, hair, outfit, setting, lighting and product EXACTLY as they appear in the start image; only add natural movement, speech and camera motion.
 Vertical 9:16 UGC video clip, ${len} seconds. Clip ${i+1} of ${n} of one ~${x.c.D}s video.
 Product: ${x.prod}. The product in the start image is the final design: do NOT redraw, restyle or replace it.
 ${x.rule}
 PACKAGING LOCK: packaging, label artwork, label text, colors, cap, jar shape and size must stay pixel-consistent with the start image and PRODUCT_IMAGE in every frame. Do NOT add, remove or change any text, sticker, logo or print on the product.
-MOTION [${x.g.type}]: ${x.vis}${x.g.exp?` Expression: ${x.g.exp}.`:""}
-Spoken line (Bahasa Indonesia${x.g.type==="Talking head"?", lip-synced, natural speaking pace":", voice-over"}): "${x.g.line}"
+MOTION [${SIL?"Silent b-roll":x.g.type}]: ${x.vis}${x.g.exp?` Expression: ${x.g.exp}.`:""}
+${SIL?silAct+" Natural pacing with small handheld camera movement, suitable for background music.":`Spoken line (Bahasa Indonesia${x.g.type==="Talking head"?", lip-synced, natural speaking pace":", voice-over"}): "${x.g.line}"`}
 ${i<n-1?"End on a natural pause so the next clip can continue.":"End with the product clearly facing the camera."}
 ${RULES_BASE.replace("The product must appear within the first second. ","")}
 ${x.c.mdl?RULES_MODEL:RULES_NOMODEL}
