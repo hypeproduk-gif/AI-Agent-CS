@@ -320,14 +320,14 @@ function bankLines(o){
  const cta=o.nSeg===1&&o.pro&&BANK.ctaShort?r(pk(BANK.ctaShort)):(x=>o.pro?x:x.replace("sebelum promonya habis","sebelum kehabisan"))(r(o.hard?(o.pro&&Math.random()<.4?pk(BANK.ctaHardPromo):pk(BANK.ctaHard)):pk(BANK.ctaSoft)));
  // cerita masalah hanya nyambung setelah hook Problem/Confession; hook lain langsung ke produk
  const withStory=o.hookType==="Problem"||o.hookType==="Confession"||o.tipe==="Testimoni";
- const prodL=r(pk(BANK.product)),useL=r(pk(BANK.usage)),dup=x=>/HP|print/i.test(x)&&/HP|print/i.test(prodL+useL);
+ const one=o.nSeg===1;const prodL=r(pk(one?["Ini {p}.","Namanya {p}.","Kenalin, {p}."]:BANK.product)),useL=r(pk(BANK.usage)),dup=x=>/HP|print/i.test(x)&&/HP|print/i.test(prodL+useL);
  let B=[["bridge",r(pk(BANK.bridge[o.hookType]))],...(withStory?[["story",r(pk(BANK.story[o.tipe]))]]:[]),["product",prodL],["usage",useL],...bens.filter((t,i,a)=>!dup(t)||a.length<2).map(t=>["ben",t]),["proof",r(pk(BANK.proof[o.tipe]))]];
- const tgt=Math.round(o.D*3),txt=()=>B.map(x=>x[1]),wc=()=>words([o.hook,...txt(),cta].join(" "));
+ const tgt=Math.round(o.D*(one?2.3:3)),mx=one?1.1:1.2,txt=()=>B.map(x=>x[1]),wc=()=>words([o.hook,...txt(),cta].join(" "));
  const fill=[...BANK.filler].sort(()=>Math.random()-.5);
  while(wc()<tgt&&fill.length)B.splice(B.length-1,0,["filler",fill.pop()]);
  // durasi pendek: buang berurutan cerita → cara pakai → bukti → jembatan → manfaat terakhir (minimal produk + 1 manfaat)
- for(const tag of ["story","proof","usage"]){if(wc()<=tgt*1.2)break;const k=B.findIndex(x=>x[0]===tag);if(k>=0)B.splice(k,1)}
- while(wc()>tgt*1.2&&B.filter(x=>x[0]==="ben").length>1){const k=B.map(x=>x[0]).lastIndexOf("ben");B.splice(k,1)}
+ for(const tag of one?["story","proof","usage","bridge"]:["story","proof","usage"]){if(wc()<=tgt*mx)break;const k=B.findIndex(x=>x[0]===tag);if(k>=0)B.splice(k,1)}
+ while(wc()>tgt*mx&&B.filter(x=>x[0]==="ben").length>1){const k=B.map(x=>x[0]).lastIndexOf("ben");B.splice(k,1)}
  // kata sambung manfaat ke-2 dan ke-3
  let bi=0;B.forEach(x=>{if(x[0]==="ben"){if(bi)x[1]=CON[Math.min(bi,2)]+x[1].charAt(0).toLowerCase()+x[1].slice(1);bi++}});
  // bagi ke segmen berdasarkan jumlah kata (CTA ikut dihitung, selalu di segmen terakhir)
