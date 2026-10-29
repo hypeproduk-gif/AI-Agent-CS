@@ -322,7 +322,7 @@ function bankLines(o){
  const withStory=o.hookType==="Problem"||o.hookType==="Confession"||o.tipe==="Testimoni";
  const one=o.nSeg===1;const prodL=r(pk(one?["Ini {p}.","Namanya {p}.","Kenalin, {p}."]:BANK.product)),useL=r(pk(BANK.usage)),dup=x=>/HP|print/i.test(x)&&/HP|print/i.test(prodL+useL);
  let B=[["bridge",r(pk(BANK.bridge[o.hookType]))],...(withStory?[["story",r(pk(BANK.story[o.tipe]))]]:[]),["product",prodL],["usage",useL],...bens.filter((t,i,a)=>!dup(t)||a.length<2).map(t=>["ben",t]),["proof",r(pk(BANK.proof[o.tipe]))]];
- const tgt=Math.round(o.D*(one?2.3:3)),mx=one?1.1:1.2,txt=()=>B.map(x=>x[1]),wc=()=>words([o.hook,...txt(),cta].join(" "));
+ const tgt=Math.round(o.D*(one?2.1:3)),mx=one?1.1:1.2,txt=()=>B.map(x=>x[1]),wc=()=>words([o.hook,...txt(),cta].join(" "));
  const fill=[...BANK.filler].sort(()=>Math.random()-.5);
  while(wc()<tgt&&fill.length)B.splice(B.length-1,0,["filler",fill.pop()]);
  // durasi pendek: buang berurutan cerita → cara pakai → bukti → jembatan → manfaat terakhir (minimal produk + 1 manfaat)
@@ -490,16 +490,20 @@ ${x.rule}
 ${RULES_BASE.replace("The product must appear within the first second. ","").replace(/throughout the video/,"in the image")}
 ${x.c.mdl?RULES_MODEL:RULES_NOMODEL}
 ${RULES_GLOBAL.replace("9:16 video","9:16 photo")} Sharp focus on the product label, natural skin texture, no beauty filter.`}).map(noTT)}
-// Prompt video image-to-video sengaja PENDEK: produk & orang sudah benar di start image, deskripsi panjang malah bikin AI menggambar ulang
-function segPrompts(s){const n=s.segs.length;return s.segs.map((_,i)=>{const x=segCtx(s,i),len=Math.round(x.c.segLen),D=N().digital;
- const v=x.vis.toLowerCase(),doing=/applying/.test(v)?" while dabbing a little cream onto her cheek":/squeez|swatch/.test(v)?" while taking a small dab of cream on her fingertip":/opening|cap opened/.test(v)?" while slowly twisting open the cap":", holding the jar steady near her cheek, label facing the lens";
- const act=x.g.type==="Talking head"?`She talks to the camera${D?", holding the phone with the product cover facing the lens":doing}. Small natural head movements, natural blinking, subtle handheld camera sway.`
-  :`Close-up of hands only. ${x.vis.replace(/^Close-up of hands only, [^:]*: /,"")}`;
- return `Animate the uploaded image. Keep the first frame EXACTLY as it is: same person, face, hair, outfit, room, lighting and product.
-ACTION (${len} seconds): ${act}${x.g.exp?` Expression: ${x.g.exp}.`:""}
-Spoken line (Bahasa Indonesia${x.g.type==="Talking head"?", lip-synced":", voice-over"}, natural pace): "${x.g.line}"
-PRODUCT LOCK: the ${D?"phone screen and product cover":"small jar"} stays exactly as in the image in every frame: same size, shape, colors and label. ${D?"":"Pink sticker only on the lid top, clear jar sides stay blank. "}Do NOT redraw, enlarge, add text, add labels or change the packaging. Move it slowly; keep it steady and in focus.
-NO subtitles, NO captions, NO on-screen text, NO watermark, NO logos. Realistic smartphone UGC look, vertical 9:16, ${len} seconds.`})}
+function segPrompts(s){const n=s.segs.length;return s.segs.map((_,i)=>{const x=segCtx(s,i),len=Math.round(x.c.segLen);
+ return `NO SUBTITLES, NO CAPTIONS, NO ON-SCREEN TEXT of the spoken words. Audio only. NO watermark, NO app logo, NO username, NO social media interface.
+IMAGE-TO-VIDEO: use the uploaded START IMAGE (from Image Prompt SEG ${i+1}) as the exact first frame. Keep the person, face, hair, outfit, setting, lighting and product EXACTLY as they appear in the start image; only add natural movement, speech and camera motion.
+Vertical 9:16 UGC video clip, ${len} seconds. Clip ${i+1} of ${n} of one ~${x.c.D}s video.
+Product: ${x.prod}. The product in the start image is the final design: do NOT redraw, restyle or replace it.
+${x.rule}
+PACKAGING LOCK: packaging, label artwork, label text, colors, cap, jar shape and size must stay pixel-consistent with the start image and PRODUCT_IMAGE in every frame. Do NOT add, remove or change any text, sticker, logo or print on the product.
+MOTION [${x.g.type}]: ${x.vis}${x.g.exp?` Expression: ${x.g.exp}.`:""}
+Spoken line (Bahasa Indonesia${x.g.type==="Talking head"?", lip-synced, natural speaking pace":", voice-over"}): "${x.g.line}"
+${i<n-1?"End on a natural pause so the next clip can continue.":"End with the product clearly facing the camera."}
+${RULES_BASE.replace("The product must appear within the first second. ","")}
+${x.c.mdl?RULES_MODEL:RULES_NOMODEL}
+Reminder: absolutely no subtitles or text overlays; text will be added later in editing.
+${RULES_GLOBAL} Duration exactly ${len} seconds.`}).map(noTT)}
 function render(s,i,old){const d=document.createElement("div");d.className="card";s.no=i;
  d.innerHTML=`<div class="row" style="align-items:center"><div class="hook" style="flex:3">${i}. ${s.title}</div><button class="ai" style="flex:1">${s.ai?"✨ Tulis ulang lagi":"✨ Dialog AI (Opus 5.5)"}</button></div><div class="mut aist"></div>
  <div class="mut" style="margin-bottom:6px">Tipe: ${s.tipe} | Sell: ${s.sell} | Hook ${s.hookType} | MODEL: ${s.model?"YA":"TIDAK"} | ${s.dur} dtk</div>
