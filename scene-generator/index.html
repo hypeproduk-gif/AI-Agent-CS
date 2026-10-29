@@ -40,23 +40,18 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
   <div><label>Gerakan Tangan</label><select id="hm"></select></div>
   <div><label>Angle Kamera</label><select id="cam"></select></div>
   <div><label>Lighting</label><select id="lit"></select></div>
-  <div><label>Durasi video</label><select id="dur">
-   <option value="10">10 detik — awareness / retargeting</option>
-   <option value="15">15 detik ⭐ paling convert (Reels/Stories)</option>
-   <option value="20" selected>20 detik ⭐ paling convert (TikTok/Reels)</option>
-   <option value="30">30 detik — produk butuh edukasi/demo</option>
-   <option value="45">45 detik — testimoni / storytelling</option>
-   <option value="60">60 detik — produk mahal / kompleks</option></select>
-   <div class="mut">Advice: 15–20 detik paling sering convert untuk Meta Ads UGC (hook kuat di 3 detik + CTA sebelum orang skip). Pakai 30–60 detik hanya untuk Education/Testimoni atau produk mahal.</div></div>
+  <div><label>Format video</label><select id="fmt"><option value="1x10">1 scene × 10 detik</option><option value="2x8" selected>2 scene × 8 detik = 16 detik (Flow)</option></select>
+   <select id="dur" hidden><option value="10">10</option><option value="15" selected>15</option></select>
+   <div class="mut">Tiap scene = 1 kali generate. 16 detik (2 scene) lebih leluasa untuk hook → produk → CTA.</div></div>
   <div style="grid-column:1/-1"><label>Keterangan produk (Bahasa Indonesia) <button type="button" class="sec" style="width:auto;padding:2px 10px;font-size:12px" onclick="presetFilo()">Isi preset Salep Glowing FILO</button> <button type="button" class="sec" style="width:auto;padding:2px 10px;font-size:12px" onclick="presetTka()">Isi preset Bank Soal TKA SD</button></label><textarea id="pid" rows="2" style="width:100%;padding:8px;border:1px solid var(--bd);border-radius:7px;background:var(--card);color:var(--tx);font:inherit"></textarea>
    <div class="mut" id="ptip"></div>
    <label style="margin-top:6px">Terjemahan otomatis (EN) — dipakai di prompt, boleh diedit</label><input id="pdesc"></div>
   <div><label>Keterangan model (Bahasa Indonesia)</label><input id="mid" placeholder="wanita umur 30an, berhijab, kulit sawo matang"><label style="margin-top:6px">Terjemahan (EN)</label><input id="mdesc"></div>
   <div><label>Mode antar segmen</label><select id="vmode"><option value="var">Variasi (ganti lokasi, outfit, lighting, kamera)</option><option value="same">Nyambung (1 lokasi, 1 outfit)</option></select><div class="mut">Variasi = gaya jump-cut TikTok, lebih eksploratif</div></div>
-  <div><label>Durasi per segmen</label><select id="seglen"><option value="8" selected>8 detik (Flow / Veo)</option><option value="10">10 detik</option></select><div class="mut" id="durinfo"></div></div>
+  <div hidden><select id="seglen"><option value="8" selected>8</option><option value="10">10</option></select><div id="durinfo"></div></div>
   <div><label>Sumber dialog</label><select id="dsrc"><option value="bank">Bank dialog FILO (Opus, gratis)</option><option value="tka">Bank dialog TKA SD (Opus, gratis)</option><option value="tpl">Template umum</option></select></div>
   <div><label>Sell</label><select id="sell"><option>Auto</option><option>Soft</option><option>Hard</option></select><div class="mut">Auto = Hard kalau ada promo / Value Shock / Opportunistic</div></div>
-  <div><label>Model manusia</label><select id="model"><option value="0">Tanpa model (produk + tangan)</option><option value="1">Pakai model (MODEL_IMAGE)</option></select></div>
+  <div><label>Model manusia</label><select id="model"><option value="1" selected>Pakai model (MODEL_IMAGE)</option><option value="0">Tanpa model (produk + tangan)</option></select></div>
   <div><label>Jumlah batch acak</label><input id="n" type="number" value="10" min="1" max="200"></div>
  </div>
  <div class="row" style="margin-top:10px">
@@ -387,7 +382,7 @@ ${RULES_GLOBAL} Duration about ${D} seconds.`;
  const TH_VIS={Confession:"slightly embarrassed half-smile, looking at the product",Curiosity:"one eyebrow raised, curious look straight into the lens",Problem:"frustrated expression, finger pointing at the problem area",Result:"genuine shocked face, mouth slightly open, eyes wide",
   "Pattern Interrupt":"hand raised toward the lens like saying stop, serious look"};
  s.thumbText=TH_TXT[H[0]];
- s.thumb=`Vertical 9:16 thumbnail image (also usable 4:5), first frame of the same video. Smartphone photo, authentic TikTok UGC look, not a polished ad.
+ s.thumb=`ASPECT thumbnail image, first frame of the same video. Smartphone photo, authentic TikTok UGC look, not a polished ad.
 Setting: ${env}. Lighting: ${lit}. Same environment and lighting as the video.
 Product: ${pdesc}, use PRODUCT_IMAGE as exact reference, held close to the camera, label sharp, occupying about 30% of the frame.
 ${mdl?`Person: ${mdesc}, use MODEL_IMAGE as exact face reference, ${TH_VIS[H[0]]}. Face and product both clearly visible.`:`Only a hand holding the product, ${H[0]==="Problem"?"the problem visible in the background":"slight motion blur on the hand for a candid feel"}.`}
@@ -396,27 +391,7 @@ Text overlay (Bahasa Indonesia, bold white text with black outline, top third, m
 Curiosity element: ${A[0]==="Transformation Desire"?"split before/after with the 'after' side partly hidden":A[0]==="Value Shock"?`small price sticker "${pr||"murah banget"}" next to the product`:A[0]==="Comparison Curiosity"?"two products side by side with a question mark":"red circle or arrow pointing at the product detail"}.
 ${RULES_BASE.replace("The product must appear within the first second. ","").replace(/throughout the video/,"in the image")}
 ${mdl?RULES_MODEL:RULES_NOMODEL}`;
- // Image ad (feed statis): 3 variasi, model & produk sama dengan video
- const IMG_BASE=`Static Meta Ads image, authentic UGC smartphone photo look, not a polished studio ad. Setting: ${env}. Lighting: ${lit}.
-Product: ${p}${pdesc!=="the product"?` (${pdesc})`:""}, use PRODUCT_IMAGE as exact reference, label sharp and readable.${mdl?` Person: ${mdesc}, use MODEL_IMAGE as exact face reference (same person as the video).`:""}`;
- const IMG_END=`${RULES_BASE.replace("The product must appear within the first second. ","").replace(/throughout the video/,"in the image")}
-${mdl?RULES_MODEL:RULES_NOMODEL}
-Text overlay must be in Bahasa Indonesia, short, bold, easy to read on mobile, leave space so text does not cover the face or label.`;
- const bL=(window.BENLIST||[b]).slice(0,3);
- s.images=[
-  ["1. Hero (stop scroll) · 4:5 feed",`Aspect ratio 4:5. ${IMG_BASE}
-Composition: ${mdl?`close-up of the person holding the product beside her cheek, ${TH_VIS[H[0]]}`:"hand holding the product close to the camera, background slightly blurred"}, product takes about 35% of the frame.
-Text overlay top: "${s.thumbText}"
-${IMG_END}`],
-  ["2. Manfaat (relate) · 1:1 feed",`Aspect ratio 1:1. ${IMG_BASE}
-Composition: product in the center ${mdl?"held by the person, she looks at the camera with a soft confident smile":"on the surface, a fingertip with a small cream swatch next to it"}, with ${bL.length} small checklist callouts around the product.
-Text overlay: headline "${hk.replace(/[.…]+$/,"")}" and checklist: ${bL.map(x=>`"✔ ${x}"`).join(", ")}.
-${IMG_END}`],
-  ["3. Promo (convert) · 9:16 story",`Aspect ratio 9:16. ${IMG_BASE}
-Composition: ${mdl?"person holding the product toward the lens, excited expression":"hand presenting the product toward the lens"}, product large in the lower-middle area, top area left clean for text.
-Text overlay: big "${pr||"Harga spesial"}"${pro?` with a bright badge "${pro}"`:""}, small line "${hard?"Stok terbatas, klik sekarang":"Cek di keranjang kuning"}".
-${IMG_END}`]];
- s.thumb=noTT(s.thumb)+"\nNO watermark, NO app logo, NO username, NO social media interface.";s.images.forEach(x=>x[1]=noTT(x[1])+"\nNO watermark, NO app logo, NO username, NO social media interface.");
+ s.thumb=noTT(s.thumb)+"\nNO watermark, NO app logo, NO username, NO social media interface.";s.thumbs=[["4:5 (feed)",s.thumb.replace("ASPECT","Aspect ratio 4:5 vertical feed")],["9:16 (story/reels)",s.thumb.replace("ASPECT","Aspect ratio 9:16 full vertical")]];
  s.copy=`${H[1]} ${p} bantu ${b}. ${pr?`Sekarang cuma ${pr}.`:""}${pro?` 🔥 ${pro}!`:""} 👉 Klik Beli Sekarang!`;
  return s}
 // Satu prompt per segmen: tiap klip digenerate terpisah lalu disambung, jadi tiap prompt berdiri sendiri + aturan kesinambungan
@@ -457,9 +432,8 @@ function render(s,i,old){const d=document.createElement("div");d.className="card
  ${s.segs.map((x,k)=>`<p style="margin:10px 0"><b>SEG ${k+1} (${x.t})</b> | <i>${x.type}</i> ${x.vis}${x.exp?` <b>Ekspresi:</b> ${x.exp}`:""} | <b>Intonasi:</b> ${x.into} <b>“${x.line}”</b></p>`).join("")}
  <table><tr><th>Ad copy</th><td>${s.copy}</td></tr></table>
  ${segPrompts(s).map((sp,k)=>`<details style="margin-top:8px"><summary><b>Video Prompt SEG ${k+1}</b> <span class="mut">(${s.segs[k].t} · generate terpisah)</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${sp.replace(/</g,"&lt;")}</pre><button class="sec cp" data-k="${k}" style="width:auto">Copy prompt SEG ${k+1}</button></details>`).join("")}
- <details style="margin-top:8px"><summary><b>Image Ad Prompts</b> <span class="mut">(3 variasi, model & produk sama)</span></summary>${s.images.map((x,k)=>`<p><b>${x[0]}</b></p><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${x[1].replace(/</g,"&lt;")}</pre><button class="sec ci" data-k="${k}" style="width:auto">Copy image ${k+1}</button>`).join("")}</details>
- <details style="margin-top:8px"><summary><b>Thumbnail Prompt</b> <span class="mut">(teks: “${s.thumbText}”)</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${s.thumb.replace(/</g,"&lt;")}</pre><button class="sec" style="width:auto">Copy thumbnail prompt</button></details>`;
- const SP=segPrompts(s);d.querySelectorAll(".ci").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(s.images[+b.dataset.k][1]));d.querySelectorAll(".cp").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(SP[+b.dataset.k]));const bt=d.querySelectorAll("details button");bt[bt.length-1].onclick=()=>navigator.clipboard.writeText(s.thumb);
+ ${s.thumbs.map((x,k)=>`<details style="margin-top:8px"><summary><b>Thumbnail ${x[0]}</b> <span class="mut">(teks: “${s.thumbText}”)</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${x[1].replace(/</g,"&lt;")}</pre><button class="sec ct" data-k="${k}" style="width:auto">Copy thumbnail ${x[0]}</button></details>`).join("")}`;
+ const SP=segPrompts(s);d.querySelectorAll(".ct").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(s.thumbs[+b.dataset.k][1]));d.querySelectorAll(".cp").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(SP[+b.dataset.k]));
  d.querySelector(".ai").onclick=()=>aiRewrite(s,d);d._s=s;old?old.replaceWith(d):out.prepend(d)}
 function add(c,a,h,t,b){const s=build(c,a,h,t,b);list.push(s);render(s,list.length)}
 const N=()=>NICHE[$("niche").value];
@@ -467,8 +441,9 @@ const sel=(id,m)=>{const v=+$(id).value;if(v>=0)return v;if(id==="ang"&&Math.ran
 // 70% ambil dari opsi terbaik niche, 30% dari semua opsi (variasi untuk testing)
 const nPick=(k,arr)=>{const b=N()[k];return b&&Math.random()<.7?b[rnd(b.length)]:arr[rnd(arr.length)]};
 $("niche").innerHTML=Object.keys(NICHE).map(k=>`<option>${k}</option>`).join("");
-const nh=()=>{const n=N();$("dsrc").value=n.digital?"tka":$("niche").value==="Skincare"?"bank":"tpl";$("nhint").textContent="Angle terbaik: "+n.ang.map(i=>ANG[i][0]).join(", ")+(n.model?" · Saran: pakai model":"");$("model").value=n.model};
+const nh=()=>{const n=N();$("dsrc").value=n.digital?"tka":$("niche").value==="Skincare"?"bank":"tpl";$("nhint").textContent="Angle terbaik: "+n.ang.map(i=>ANG[i][0]).join(", ")+(n.model?" · Saran: pakai model":"");$("model").value="1"};
 $("niche").onchange=nh;nh();
+const fmtSet=()=>{const two=$("fmt").value==="2x8";$("dur").value=two?"15":"10";$("seglen").value=two?"8":"10"};$("fmt").onchange=fmtSet;fmtSet();
 setTimeout(()=>{if(!$("pdesc").value)presetFilo()},0); // default: Salep Glowing Filo
 // Preset deskripsi detail FILO (dari foto 4 sisi produk)
 const DIGITAL_RULE=`PRODUCT ACCURACY: the product is a DIGITAL PDF question bank. Show it only as (a) a smartphone or tablet screen displaying pages that match PRODUCT_IMAGE, or (b) printed A4 worksheet pages. The cover design, title, colors and layout must match PRODUCT_IMAGE exactly. Do NOT invent a physical box, book cover or other app. Keep the screen bright and the cover title readable; small question text may stay soft.`;
@@ -519,8 +494,8 @@ async function aiAll(){if(!SAMPLE)return alert("AI hanya aktif di link artifact 
  for(const d of [...out.querySelectorAll(".card")].reverse()){if(d._s&&!d._s.ai){await aiRewrite(d._s,d)}}}
 let DL=null;(async()=>{try{DL=await claude.use("downloads")}catch(e){}})();
 function exportCSV(){if(!list.length)return alert("Belum ada scene");
- const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Durasi","Sell","Model","Judul","Script","Ad Copy","Video Prompt","Thumbnail Prompt","Image Prompts"];
- const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,s.dur+"s",s.sell,s.model?"YA":"TIDAK",s.title,s.scenes.map(x=>x[0]+" | "+x[1]).join("\n"),s.copy,segPrompts(s).join("\n\n=====\n\n"),s.thumb,s.images.map(x=>x[0]+"\n"+x[1]).join("\n\n=====\n\n")].map(q).join(","));
+ const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Durasi","Sell","Model","Judul","Script","Ad Copy","Video Prompt","Thumbnail 4:5","Thumbnail 9:16"];
+ const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,s.dur+"s",s.sell,s.model?"YA":"TIDAK",s.title,s.scenes.map(x=>x[0]+" | "+x[1]).join("\n"),s.copy,segPrompts(s).join("\n\n=====\n\n"),s.thumbs[0][1],s.thumbs[1][1]].map(q).join(","));
  const csv="﻿"+[hd.join(","),...rows].join("\n");if(DL){DL.save({filename:"scene-meta-ads.csv",data:csv}).catch(()=>{});return}
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
  a.download="scene-meta-ads.csv";a.click()}
