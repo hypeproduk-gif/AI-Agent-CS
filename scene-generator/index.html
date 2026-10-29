@@ -402,22 +402,53 @@ ${RULES_GLOBAL} Duration about ${D} seconds.`;
  :["hand holding the product toward the lens, background softly blurred","flat lay from above, product on a textured surface with a few simple props",
   "open jar with a fingertip cream swatch right next to it, macro","low-angle hero shot of the product standing on the edge of a table",
   "product resting on an open palm in natural light","one hand holding the lid, the other holding the open jar"];
- const TH_STYLE=["bold white text with black outline","bold black text on a yellow highlight box","white text on a pink rounded box","handwritten marker-style text","big yellow text with a soft black shadow"];
- const TH_POS=["top third","upper left corner","centered above the product","lower third (not covering the product)"];
- const TH_CUR={"Transformation Desire":["split before/after with the 'after' side partly hidden","half of the cheek glowing, half blurred"],
+  const TH_CUR={"Transformation Desire":["split before/after with the 'after' side partly hidden","half of the cheek glowing, half blurred"],
   "Value Shock":[`small price sticker "${pr||"murah banget"}" next to the product`,`starburst badge "${pro||"Promo"}" near the product`],
   "Comparison Curiosity":["two products side by side with a question mark","a big 'VS' between the old product and this one"]}[A[0]]||
   ["red circle around the product","hand-drawn arrow pointing at the jar","small '?' doodle next to the product","😳 emoji sticker near the face","yellow highlight scribble under the key word"];
- const thTxt=hard&&pro&&Math.random()<.25?`${pro} 😱`:Math.random()<.25&&window.BENLIST?cap(window.BENLIST[0])+"?":pk(TH_TXT[H[0]]);
+ // ===== Desain thumbnail ala creative image ads: layout, font, palet, emosi, hirarki teks =====
+ const EMO=(/Value Shock/.test(A[0])||C[0]==="Opportunistic"||hard&&Math.random()<.3)?"urgensi":/FOMO|Regret/.test(A[0])?"fomo":/Shock|Instant|Transformation/.test(A[0])||H[0]==="Result"?"wow":/Curiosity|Hidden|Curated|Comparison/.test(A[0])||H[0]==="Curiosity"?"penasaran":/Authority|Social|Demonstration/.test(A[0])?"percaya":"relate";
+ const EMOD={urgensi:{mood:"urgent, loud, deal-hunting energy",pal:[["bold red & yellow","#E63946","#FFD60A","#111111"],["hot pink & lemon","#FF2E7E","#FFE14D","#1A1A1A"]],font:["heavy condensed sans like Bebas Neue / Anton, all caps","chunky rounded sans like Poppins Black, all caps"],deco:"starburst price badge, slight tilt, exclamation marks"},
+  fomo:{mood:"fear of missing out, everyone has it but you",pal:[["black & neon pink","#111111","#FF2E7E","#FFFFFF"],["deep purple & lime","#3C1A5B","#C6FF3D","#FFFFFF"]],font:["bold italic sans with motion feel","heavy condensed sans like Bebas Neue"],deco:"small fire emoji, countdown-like strip, 'stok terbatas' tag"},
+  wow:{mood:"shock and surprise, jaw-drop moment",pal:[["electric yellow & black","#FFE14D","#111111","#FFFFFF"],["hot pink & white","#FF2E7E","#FFFFFF","#1A1A1A"]],font:["giant chunky rounded sans like Poppins Black","bold comic-style display font"],deco:"😳 emoji, burst lines around the face, tilted headline"},
+  penasaran:{mood:"mystery and curiosity, makes people want to know more",pal:[["lilac & deep purple","#CDB4FF","#3C1A5B","#FFFFFF"],["mint & navy","#BFF0DC","#14213D","#FFFFFF"]],font:["clean bold sans with an ellipsis…","handwritten marker mixed with bold sans"],deco:"question mark doodles, part of the cheek slightly blurred, hand-drawn arrow"},
+  percaya:{mood:"calm, trustworthy, safe and proven",pal:[["soft blush & plum","#F7C6D0","#5B2245","#FFFFFF"],["cream & forest green","#FFF4E6","#1F4D3A","#C9A227"]],font:["elegant bold serif like Playfair Display","clean geometric sans like Montserrat Bold"],deco:"small check-mark list, thin lines, star rating ★★★★★"},
+  relate:{mood:"empathy and honesty, 'this is me' feeling",pal:[["coral & cream","#FF6F59","#FFF4E6","#2B2B2B"],["dusty pink & brown","#E8B4B8","#5C3D2E","#FFFFFF"]],font:["casual handwritten brush script for the headline + simple sans for subtext","soft rounded sans like Nunito ExtraBold"],deco:"quote marks, speech bubble, soft hand-drawn underline"}}[EMO];
+ const pal=pk(EMOD.pal),font=pk(EMOD.font);
+ const LAYOUTS=[
+  "BIG HEADLINE TOP: headline across the top 30% in 2 short lines, very large; photo below",
+  "SIDE SPLIT: left 40% is a solid color panel with stacked text, right 60% is the photo",
+  "BOTTOM BANNER: full photo, bottom 25% is a solid color band with headline and a CTA pill",
+  "STICKER STYLE: headline on a tilted torn-paper sticker, promo badge as a starburst in a corner",
+  "SPEECH BUBBLE: headline inside a speech bubble coming from her mouth, as if she says it",
+  "MAGAZINE COVER: huge masthead-style headline at the top, small callouts around the photo",
+  "CALLOUT ARROWS: headline on top, 2 short benefit callouts with arrows pointing at the product",
+  "TEXT BEHIND HEAD: giant headline word placed behind her head (depth effect), subtext in front"];
+ const layout=pk(mdl?LAYOUTS:LAYOUTS.filter(l=>!/SPEECH|BEHIND HEAD/.test(l)));
+ const benS=(window.BENLIST||[b]).slice(0,2).map(x=>cap(x));
+ const ctaPill=pk(["Cek keranjang kuning","Klik sekarang","Ambil promonya","Cobain malam ini"]);
+ const EMO_TXT={urgensi:[`${pro||"Promo"} hari ini!`,"Jangan sampai kehabisan!","Harga segini? Serius?!"],fomo:["Semua udah pakai, kamu?","Sold out lagi?!","Telat tahu, nyesel!"],
+  wow:["Hasilnya bikin kaget 😳","Nggak nyangka segini!","Serius, cuma ini?!"],penasaran:["Rahasianya cuma ini…","Kok bisa sekecil ini?","Isinya bikin penasaran…"],
+  percaya:["Aman buat kulit sensitif","Dipakai tiap malam, terbukti","Pilihan yang bikin tenang"],relate:["Ini aku banget…","Capek nutupin flek?","Akhirnya nemu yang cocok"]}[EMO];
+ const thTxt=Math.random()<.5?pk(EMO_TXT):pk(TH_TXT[H[0]]);
+ const badge=pro&&!thTxt.includes(pro)?pro:pr?`Cuma ${pr}`:"";
  s.thumbText=thTxt;
- s.thumb=`ASPECT thumbnail image, first frame of the same video. Smartphone photo, authentic UGC look, not a polished ad.
+ s.thumb=`ASPECT thumbnail image, first frame of the same video. Base photo: smartphone UGC look.
 Setting: ${env}. Lighting: ${lit}. Same environment and lighting as the video.
 Product: ${pdesc}, use PRODUCT_IMAGE as exact reference, label sharp.
 Composition: ${pk(TH_COMP)}.
 ${mdl?`Person: ${mdesc}, use MODEL_IMAGE as exact face reference, ${pk(TH_VIS[H[0]])}. Face and product both clearly visible.`:`No face, only hands and product.`}
-Scroll-stopping: one strong focal point, high contrast between product and background, slight imperfection (candid, not staged).
-Text overlay (Bahasa Indonesia, ${pk(TH_STYLE)}, ${pk(TH_POS)}, max 6 words): "${thTxt}"
-Curiosity element: ${pk(TH_CUR)}.
+DESIGN STYLE: scroll-stopping creative image ad (like a high-performing Meta shop ad), not a plain photo. Bold graphic design layered on top of the UGC photo.
+EMOTION TO CONVEY: ${EMO.toUpperCase()} (${EMOD.mood}). Every design choice must push this emotion.
+LAYOUT: ${layout}.
+TYPOGRAPHY: headline in ${font}; clear size hierarchy: headline very large (about 12-15% of image height), subheadline medium (about 5%), badge and CTA small but bold. Max 2 font families. High contrast, readable on a phone at a glance.
+COLOR PALETTE: ${pal[0]}: ${pal[1]}, ${pal[2]}, accent ${pal[3]}. Use these for text, panels and badges so it stands out from the photo.
+DECORATION: ${EMOD.deco}; ${pk(TH_CUR)}.
+TEXT (Bahasa Indonesia, spell EXACTLY as written, no other words):
+- Headline: "${thTxt}"
+- Subheadline: "${benS.join(" • ")}"${badge?`\n- Badge: "${badge}"`:""}
+- CTA pill: "${ctaPill}"
+Keep text away from the face and the product label; the product must stay fully visible and unchanged.
 ${RULES_BASE.replace("The product must appear within the first second. ","").replace(/throughout the video/,"in the image")}
 ${mdl?RULES_MODEL:RULES_NOMODEL}`;
  s.thumb=noTT(s.thumb)+"\nNO watermark, NO app logo, NO username, NO social media interface.";s.thumbs=[["4:5 (feed)",s.thumb.replace("ASPECT","Aspect ratio 4:5 vertical feed")],["9:16 (story/reels)",s.thumb.replace("ASPECT","Aspect ratio 9:16 full vertical")]];
