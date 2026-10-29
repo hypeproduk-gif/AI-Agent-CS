@@ -458,7 +458,8 @@ const box=(t,txt,cls,k)=>`<details style="margin-top:6px"><summary><b>${t}</b></
 function render(s,i,old){const d=document.createElement("div");d.className="card";s.no=i;
  const P={};s.vis.forEach((_,k)=>{P["i"+k]=imgPrompt(s,k)+(k===0?"\n\n\n===== PROMPT THUMBNAIL 4:5 (upload hasil gambar di atas) =====\n\n"+thumbPrompt(s,"4:5")+"\n\n\n===== PROMPT THUMBNAIL 9:16 =====\n\n"+thumbPrompt(s,"9:16"):"");P["v"+k]=vidPrompt(s,k,false);P["s"+k]=vidPrompt(s,k,true)});
  s._P=P;
- d.innerHTML=`<div class="hook">${i}. ${s.head}</div>
+ if(s.aiImg)P.ai=s.aiImg;
+ d.innerHTML=`<div class="row" style="align-items:center"><div class="hook" style="flex:3">${i}. ${s.head}</div><button class="aib" style="flex:1">${s.aiImg?"✨ Tulis ulang brief":"✨ Brief Image AI (Opus)"}</button></div><div class="mut aist"></div>${s.aiImg?`<div style="border:2px solid var(--ac);border-radius:8px;padding:6px 10px;margin:6px 0">${box("✨ Prompt Image AI (khusus ide ini, 4:5)",s.aiImg,"ai","")}</div>`:""}
  <table class="cav"><tr><th>01 Tipe CEP</th><td>${s.cep}</td></tr><tr><th>02 CEP utama</th><td>${s.main}</td></tr><tr><th>03 Sub-CEP</th><td>${s.sub}</td></tr>
  <tr><th>04 Advertised Value</th><td><b>${s.av.t}</b> · ${s.av.f} → ${s.av.o}</td></tr><tr><th>05 Intent</th><td>${s.sell} + ${s.ci}</td></tr><tr><th>06 Angle</th><td>${s.angle} <span class="mut">(${s.angDesc})</span></td></tr>
  <tr><th>07 Content</th><td><b>${s.fmt}</b><br>🖼️ <b>Image:</b> ${s.ideaImg}<br>🎬 <b>Video:</b> ${s.ideaVid}</td></tr></table>
@@ -468,6 +469,7 @@ function render(s,i,old){const d=document.createElement("div");d.className="card
  <div style="margin:6px 0"><label>Gambar utama LP (upload hasil ① Prompt Image)</label><input type="file" accept="image/*" class="lpimg"><div class="mut lpst">${s.heroImg?"✓ Gambar sudah dipasang":"Upload gambar dulu untuk mengaktifkan LP."}</div></div>
  <div class="row"><button class="sec lpa" ${s.heroImg?"":"disabled"}>Copy LP ATAS</button><button class="sec lpb" ${s.heroImg?"":"disabled"}>Copy LP BAWAH</button><button class="sec lpv" ${s.heroImg?"":"disabled"}>Preview LP</button></div><div class="lpf"></div></details>`}`;
  d.querySelectorAll(".cp").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(P[b.dataset.k]));
+ d.querySelector(".aib").onclick=()=>aiBrief(s,d);
  const LP=()=>buildLP(s);
  d.querySelector(".lpimg").onchange=e=>{const fl=e.target.files[0];if(!fl)return;const im=new Image();im.onload=()=>{const W=432,H=540,c=document.createElement("canvas");c.width=W;c.height=H;const r=Math.max(W/im.width,H/im.height),w=im.width*r,h=im.height*r;c.getContext("2d").drawImage(im,(W-w)/2,(H-h)/2.6,w,h);
   s.heroImg=c.toDataURL("image/webp",.5);d.querySelector(".lpst").textContent=`✓ Gambar dipasang (${Math.round(s.heroImg.length*.75/1024)} KB)`;d.querySelectorAll(".lpa,.lpb,.lpv").forEach(b=>b.disabled=false);URL.revokeObjectURL(im.src)};im.src=URL.createObjectURL(fl)};
@@ -496,6 +498,32 @@ function exportCSV(){if(!list.length)return alert("Belum ada ide");
  const rows=list.map(s=>{const P=s._P,ks=s.vis.map((_,k)=>k);return [s.ptype,s.cep,s.main,s.sub,`${s.av.t}: ${s.av.f} → ${s.av.o}`,s.sell,s.ci,s.angle,s.ideaImg,s.ideaVid,s.lines.join(" | "),ks.map(k=>P["i"+k]).join("\n\n=====\n\n"),ks.map(k=>P["v"+k]).join("\n\n=====\n\n"),ks.map(k=>P["s"+k]).join("\n\n=====\n\n")].map(q).join(",")});
  const csv="﻿"+[hd.join(","),...rows].join("\n");if(DL){DL.save({filename:"ide-konten-cavac.csv",data:csv}).catch(()=>{});return}
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="ide-konten-cavac.csv";a.click()}
+// ===== ✨ Brief Image AI: Claude menulis prompt image ad khusus per ide (pakai token) =====
+let SAMPLE=null;(async()=>{try{SAMPLE=await claude.use("sample")}catch(e){}})();
+async function aiBrief(s,d){const st=d.querySelector(".aist"),btn=d.querySelector(".aib");
+ if(!SAMPLE){st.textContent="AI hanya aktif di link artifact claude.ai.";return}
+ btn.disabled=true;st.textContent="Claude sedang menyusun brief creative…";
+ const pr=$("price").value,pro=$("promo").value.trim(),H=HERO_COL[s.cep];
+ const q=`Kamu creative strategist + art director Meta Ads Indonesia kelas atas. Olah breakdown CAVAC ini menjadi SATU prompt generate image (bahasa Inggris) untuk iklan gambar Meta Ads 4:5.
+PRODUK: ${s.P}. Deskripsi visual produk (WAJIB dipatuhi persis): ${s.pdesc}. Harga ${pr||"-"}, promo ${pro||"-"}. ${s.mdl?`Model: ${s.mdesc} (pakai MODEL_IMAGE sebagai referensi wajah).`:"Tanpa model wajah, tangan saja."}
+01 Tipe CEP: ${s.cep}
+02 CEP utama: ${s.main}
+03 Sub-CEP: ${s.sub}
+04 Advertised Value: ${s.av.t} · ${s.av.f} → ${s.av.o}
+05 Intent: ${s.sell} + ${s.ci}
+06 Angle: ${s.angle} (${s.angDesc})
+07 Content: image ad (headline ide: "${s.head}")
+SYARAT:
+- Image harus SATU KESATUAN cerita: cari satu ide visual/properti yang langsung menceritakan sub-CEP tanpa penjelasan (contoh: foto lama di layar HP di samping wajah sekarang untuk momen "membuka foto lama"). Jangan generik.
+- Stand out & stop scroll: 1 focal point, warna latar/aksen yang berani dan harmonis (boleh pakai ${H[0]} ${H[1]} sebagai aksen), kontras tinggi.
+- Advertised value harus tersampaikan jelas dan tajam untuk Meta (sinyal relevansi ke audiens yang tepat): headline relatable ≤6 kata dari sub-CEP, 1 baris value, 1 baris kecil pendukung, CTA sesuai ${s.sell} (No Sell = tanpa CTA beli). Maksimal 4 elemen teks. Tulis semua teks Bahasa Indonesia PERSIS dalam tanda kutip.
+- Semua bagian sempurna: tata letak per zona (atas/tengah/bawah dengan persentase), tipografi (gaya font, ukuran relatif, warna hex), ekspresi & pose model, posisi tangan dan produk, pencahayaan, latar, gaya foto UGC realistis (bukan poster AI).
+- Produk: ukuran asli kecil di tangan, label harus sama persis dengan referensi, jangan tambah tulisan/label di produk, jangan menutupi label.
+- Larangan: teks 3D/glossy, gradasi generik, sparkle, watermark, UI palsu, lebih dari 1 emoji, klaim "menyembuhkan/100%/permanen".
+Balas HANYA prompt final dalam bahasa Inggris, siap di-paste ke generator gambar (sertakan: use PRODUCT_IMAGE and MODEL_IMAGE as exact references).`;
+ try{const r=await SAMPLE(q,{model:"claude-opus-5-5",cache:false,onText:u=>{st.textContent="Menulis… "+u.text.length+" karakter"}});
+  s.aiImg=r.text.trim();s._P.ai=s.aiImg;render(s,s.no,d)}
+ catch(e){btn.disabled=false;st.textContent=e&&e.code==="not_granted"?"Izin AI ditolak, aktifkan lewat menu Permissions artifact.":e&&e.code==="rate_limited"?"Terlalu banyak permintaan, coba lagi sebentar.":"Gagal: "+(e&&e.message||e)}}
 
 </script>
 </body></html>
