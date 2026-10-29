@@ -472,18 +472,36 @@ PRODUCT VIEW IN THIS SHOT: match ${VIEWS[a]}; when the product moves, it may pas
 PRODUCT SIZE: very small jar. 3 cm wide = about the width of two adult finger segments side by side (roughly a bottle-cap size); 2 cm tall = about one finger segment. It fits easily between thumb and index finger and covers only a small part of the palm. Never show it as big as a palm, a cup or a standard cream jar.
 CLEAR JAR = BLANK: the clear acrylic jar body (sides and bottom) is completely blank and transparent: NO printed text, NO label, NO logo, NO brand name, NO embossing, NO numbers, NO stickers on it. The ONLY text on the whole product is the round pink sticker on top of the white lid. When the jar is shown from the front or side (views 4 and 5), you see only clear acrylic, the white ribbed cap and the yellow cream inside, nothing written.
 NO ADDITIONS WHEN MOVING: the product is a rigid, solid object. While it is lifted, rotated, tilted, opened or moved, do NOT add anything to it: no extra stickers, side labels, text, logos, patterns, pumps, droppers, boxes, ribbons, glitter or reflections with writing; do NOT change its shape, size, color, label text or cap. Move it slowly and smoothly, keep the label in focus, and never let fingers cover the label.`};
-function segPrompts(s){const c=s.ctx,n=s.segs.length,V=c.vmode==="var";return s.segs.map((g,i)=>{const len=Math.round(c.segLen);
- const env=V&&g.env?g.env:s.env,lit=V&&g.lit?g.lit:s.lit,vis=V?g.vis.replace(s.env,env).replace(s.lit,lit).replace(/Same person, same room, /,"Same person in a new spot, "):g.vis;
+// Alur Flow: (1) generate gambar start frame per segmen → (2) upload gambar itu, generate video (image-to-video) → (3) thumbnail
+function segCtx(s,i){const c=s.ctx,g=s.segs[i],V=c.vmode==="var",D=N().digital;
+ const env=V&&g.env?g.env:s.env,lit=V&&g.lit?g.lit:s.lit;
+ let vis=V?g.vis.replace(s.env,env).replace(s.lit,lit).replace(/Same person, same room, /,"Same person in a new spot, "):g.vis;
+ if(c.pdesc!=="the product")vis=vis.split(c.pdesc).join(D?"the product":"the jar");
+ if(D)vis=vis.replace(/the product already raised beside her cheek/,"a smartphone held beside her cheek, its screen showing the product cover").replace(/label side \(as in PRODUCT_IMAGE\) facing the camera|label facing the camera/g,"screen facing the camera");
+ vis=vis.replace(/label facing the camera/g,"label side (as in PRODUCT_IMAGE) facing the camera");
+ return {c,g,V,env,lit,vis,outfit:c.mdl&&V&&g.outfit?` Outfit: ${g.outfit}.`:"",prod:`${c.p}${c.pdesc!=="the product"?` (${c.pdesc})`:""}`,rule:D?DIGITAL_RULE:PHYS_RULE(vis)}}
+function segImagePrompts(s){const n=s.segs.length;return s.segs.map((_,i)=>{const x=segCtx(s,i);
+ return `STILL PHOTO, vertical 9:16, photorealistic smartphone UGC photo (start frame for video SEG ${i+1} of ${n}; also usable on its own as an image ad).
+NO text, NO captions, NO watermark, NO stickers, NO graphics. The only text in the image is the product's own original label.
+Product: ${x.prod}, use PRODUCT_IMAGE as exact reference.${x.c.mdl?` Person: ${x.c.mdesc}, use MODEL_IMAGE as exact face reference.`:""}
+Setting: ${x.env}. Lighting: ${x.lit}.${x.outfit}
+MOMENT TO CAPTURE: the very first moment of this shot: ${x.vis}${x.g.exp?` Expression: ${x.g.exp}.`:""}
+${x.rule}
+${RULES_BASE.replace("The product must appear within the first second. ","").replace(/throughout the video/,"in the image")}
+${x.c.mdl?RULES_MODEL:RULES_NOMODEL}
+${RULES_GLOBAL.replace("9:16 video","9:16 photo")} Sharp focus on the product label, natural skin texture, no beauty filter.`}).map(noTT)}
+function segPrompts(s){const n=s.segs.length;return s.segs.map((_,i)=>{const x=segCtx(s,i),len=Math.round(x.c.segLen);
  return `NO SUBTITLES, NO CAPTIONS, NO ON-SCREEN TEXT of the spoken words. Audio only. NO watermark, NO app logo, NO username, NO social media interface.
-Vertical 9:16 TikTok UGC video clip, ${len} seconds. This is clip ${i+1} of ${n} of one continuous ~${c.D}s video${i?`, continuing directly from clip ${i}`:""}.
-Product: ${c.p}${c.pdesc!=="the product"?` (${c.pdesc})`:""}, use PRODUCT_IMAGE as exact reference.${c.mdl?` Person: ${c.mdesc}, use MODEL_IMAGE as exact face reference.`:""}
-Setting: ${env}. Lighting: ${lit}.${c.mdl&&V&&g.outfit?` Outfit: ${g.outfit}.`:""}
-${N().digital?DIGITAL_RULE:PHYS_RULE(vis)}
-SHOT [${g.type}]: ${(c.pdesc!=="the product"?vis.split(c.pdesc).join(N().digital?"the product":"the jar").replace(N().digital?/the product already raised beside her cheek/:/$^/,"a smartphone held beside her cheek, its screen showing the product cover").replace(N().digital?/label side \(as in PRODUCT_IMAGE\) facing the camera|label facing the camera/g:/$^/,"screen facing the camera"):vis).replace(/label facing the camera/g,"label side (as in PRODUCT_IMAGE) facing the camera")}${g.exp?` Expression: ${g.exp}.`:""}
-Spoken line (Bahasa Indonesia${g.type==="Talking head"?", lip-synced, natural speaking pace":", voice-over"}): "${g.line}"
-${i===0?"The product must be visible in the very first frame.":V?`JUMP CUT from clip ${i}: new location, ${c.mdl?"new outfit, ":""}new lighting and camera angle are welcome; keep the same ${c.mdl?"face and ":""}product. Start mid-action, no intro.`:`CONTINUITY: same ${c.mdl?"person, outfit, hairstyle, ":""}room, lighting, camera style and product position as the end of clip ${i}. No intro, start mid-action.`}${i<n-1?" End on a natural pause so the next clip can continue.":" End with the product clearly facing the camera."}
+IMAGE-TO-VIDEO: use the uploaded START IMAGE (from Image Prompt SEG ${i+1}) as the exact first frame. Keep the person, face, hair, outfit, setting, lighting and product EXACTLY as they appear in the start image; only add natural movement, speech and camera motion.
+Vertical 9:16 UGC video clip, ${len} seconds. Clip ${i+1} of ${n} of one ~${x.c.D}s video.
+Product: ${x.prod}. The product in the start image is the final design: do NOT redraw, restyle or replace it.
+${x.rule}
+PACKAGING LOCK: packaging, label artwork, label text, colors, cap, jar shape and size must stay pixel-consistent with the start image and PRODUCT_IMAGE in every frame. Do NOT add, remove or change any text, sticker, logo or print on the product.
+MOTION [${x.g.type}]: ${x.vis}${x.g.exp?` Expression: ${x.g.exp}.`:""}
+Spoken line (Bahasa Indonesia${x.g.type==="Talking head"?", lip-synced, natural speaking pace":", voice-over"}): "${x.g.line}"
+${i<n-1?"End on a natural pause so the next clip can continue.":"End with the product clearly facing the camera."}
 ${RULES_BASE.replace("The product must appear within the first second. ","")}
-${c.mdl?RULES_MODEL:RULES_NOMODEL}
+${x.c.mdl?RULES_MODEL:RULES_NOMODEL}
 Reminder: absolutely no subtitles or text overlays; text will be added later in editing.
 ${RULES_GLOBAL} Duration exactly ${len} seconds.`}).map(noTT)}
 function render(s,i,old){const d=document.createElement("div");d.className="card";s.no=i;
@@ -492,9 +510,11 @@ function render(s,i,old){const d=document.createElement("div");d.className="card
  <div><span class="tag">Manfaat: ${s.ben}</span><span class="tag">${s.niche}</span><span class="tag">CEP: ${s.cep}</span><span class="tag">Angle: ${s.angle}</span></div>
  ${s.segs.map((x,k)=>`<p style="margin:10px 0"><b>SEG ${k+1} (${x.t})</b> | <i>${x.type}</i> ${x.vis}${x.exp?` <b>Ekspresi:</b> ${x.exp}`:""} | <b>Intonasi:</b> ${x.into} <b>“${x.line}”</b></p>`).join("")}
  <table><tr><th>Ad copy</th><td>${s.copy}</td></tr></table>
- ${segPrompts(s).map((sp,k)=>`<details style="margin-top:8px"><summary><b>Video Prompt SEG ${k+1}</b> <span class="mut">(${s.segs[k].t} · generate terpisah)</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${sp.replace(/</g,"&lt;")}</pre><button class="sec cp" data-k="${k}" style="width:auto">Copy prompt SEG ${k+1}</button></details>`).join("")}
+ ${(()=>{const IP=segImagePrompts(s),VP=segPrompts(s),box=(t,sub,txt,cls,k,btn)=>`<details style="margin-top:8px"><summary><b>${t}</b> <span class="mut">${sub}</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${txt.replace(/</g,"&lt;")}</pre><button class="sec ${cls}" data-k="${k}" style="width:auto">${btn}</button></details>`;
+  return s.segs.map((g,k)=>`<div style="border-left:3px solid var(--ac);padding-left:10px;margin-top:10px"><b>SEG ${k+1} (${g.t})</b>${box("① Prompt Image","(generate dulu → jadi start frame / bisa dipakai sebagai image ad)",IP[k],"ci",k,"Copy image SEG "+(k+1))}${box("② Prompt Video","(upload gambar ① di Flow, lalu pakai prompt ini)",VP[k],"cp",k,"Copy video SEG "+(k+1))}</div>`).join("")})()}
+ <div style="margin-top:10px"><b>③ Thumbnail</b></div>
  ${s.thumbs.map((x,k)=>`<details style="margin-top:8px"><summary><b>Thumbnail ${x[0]}</b> <span class="mut">(teks: “${s.thumbText}”)</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${x[1].replace(/</g,"&lt;")}</pre><button class="sec ct" data-k="${k}" style="width:auto">Copy thumbnail ${x[0]}</button></details>`).join("")}`;
- const SP=segPrompts(s);d.querySelectorAll(".ct").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(s.thumbs[+b.dataset.k][1]));d.querySelectorAll(".cp").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(SP[+b.dataset.k]));
+ const SP=segPrompts(s),IPs=segImagePrompts(s);d.querySelectorAll(".ci").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(IPs[+b.dataset.k]));d.querySelectorAll(".ct").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(s.thumbs[+b.dataset.k][1]));d.querySelectorAll(".cp").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(SP[+b.dataset.k]));
  d.querySelector(".ai").onclick=()=>aiRewrite(s,d);d._s=s;old?old.replaceWith(d):out.prepend(d)}
 function add(c,a,h,t,b){const s=build(c,a,h,t,b);list.push(s);render(s,list.length)}
 const N=()=>NICHE[$("niche").value];
@@ -555,8 +575,8 @@ async function aiAll(){if(!SAMPLE)return alert("AI hanya aktif di link artifact 
  for(const d of [...out.querySelectorAll(".card")].reverse()){if(d._s&&!d._s.ai){await aiRewrite(d._s,d)}}}
 let DL=null;(async()=>{try{DL=await claude.use("downloads")}catch(e){}})();
 function exportCSV(){if(!list.length)return alert("Belum ada scene");
- const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Durasi","Sell","Model","Judul","Script","Ad Copy","Video Prompt","Thumbnail 4:5","Thumbnail 9:16"];
- const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,s.dur+"s",s.sell,s.model?"YA":"TIDAK",s.title,s.scenes.map(x=>x[0]+" | "+x[1]).join("\n"),s.copy,segPrompts(s).join("\n\n=====\n\n"),s.thumbs[0][1],s.thumbs[1][1]].map(q).join(","));
+ const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Durasi","Sell","Model","Judul","Script","Ad Copy","Image Prompt","Video Prompt","Thumbnail 4:5","Thumbnail 9:16"];
+ const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,s.dur+"s",s.sell,s.model?"YA":"TIDAK",s.title,s.scenes.map(x=>x[0]+" | "+x[1]).join("\n"),s.copy,segImagePrompts(s).join("\n\n=====\n\n"),segPrompts(s).join("\n\n=====\n\n"),s.thumbs[0][1],s.thumbs[1][1]].map(q).join(","));
  const csv="﻿"+[hd.join(","),...rows].join("\n");if(DL){DL.save({filename:"scene-meta-ads.csv",data:csv}).catch(()=>{});return}
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
  a.download="scene-meta-ads.csv";a.click()}
