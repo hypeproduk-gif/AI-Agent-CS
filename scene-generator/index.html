@@ -392,17 +392,17 @@ ${RULES_GLOBAL} Duration about ${D} seconds.`;
  const seedStr=[c,a,h,t,$("niche").value].join("|");let sd=0;for(const ch of seedStr)sd=(sd*31+ch.charCodeAt(0))>>>0;
  const sp=arr=>arr[(sd+rnd(997))%arr.length];
  const CONCEPT={
-  "Social Proof / FOMO":["COMMENT PILE-UP: 3 realistic chat/comment bubbles overlap around her (not covering face or label), each with a short real customer quote; small sticker 'Restock lagi!'","BESTSELLER STAMP: a slightly tilted red rubber-stamp style label 'TERJUAL 10.000+' near the jar, with a hand-written arrow 'akhirnya kebagian'"],
-  "Shock / Hasil Cepat":["DAY COUNTER: a giant number '7' (about 35% of image height) behind her shoulder with the word 'HARI', her jaw-drop reaction in front (depth effect)","REACTION ZOOM: extreme close-up of her surprised face on one side, a circled zoom-in bubble showing the smooth cheek area on the other side"],
-  "Curiosity Gap":["PARTIAL REVEAL: the jar half-hidden behind her fingers or a torn paper edge, only the pink lid peeking out, headline ending with '…'","CENSOR BAR TEASE: a bold color bar covers part of the headline word like a secret, small text 'buka untuk lihat'"],
-  "Authority Effect":["EXPERT NOTE: a clean clipboard-style card with 3 hand-ticked checkmarks next to the jar, like a beautician's recommendation note","INGREDIENT LABEL CARD: minimal white card with thin lines listing 3 benefits like a product spec sheet, tidy and trustworthy"],
-  "Hidden Gem / Discovery":["SECRET STASH: the tiny jar being pulled out of an open handbag or drawer, a yellow sticky note 'rahasia kulitku 🤫'","FOUND IT: her hand holding the jar up like a found treasure, a hand-drawn circle and the word 'ketemu!' in marker"],
-  "Relatable Pain / Emotional Story":["NOTES-APP CONFESSION: a phone notes-style white card overlay with a short honest confession line, she looks into the mirror thoughtfully","STICKY NOTE MIRROR: a sticky note on the mirror edge with a handwritten line, soft emotional mood, her calm hopeful smile"],
-  "Transformation Desire":["DIAGONAL SPLIT: image split diagonally into 'Sebelum' (slightly duller, desaturated) and 'Sesudah' (brighter, glowing) of the same face, jar in the 'Sesudah' side","SWIPE ARROW: a big curved hand-drawn arrow from a small 'before' inset photo to the glowing main photo"],
-  "Value Shock":["PRICE TAG SHOCK: an oversized tilted price-tag sticker with the price, small crossed-out higher price above it, jar right next to the tag","RECEIPT COMPARE: a narrow receipt-style strip comparing 'Klinik' (crossed out) vs this product price, jar on top of the receipt"],
-  "Comparison Curiosity":["VS LAYOUT: left side a messy pile of many skincare bottles crossed out with a red X, right side the single tiny jar glowing, big 'VS' in the middle","1 vs 10: one hand holds the tiny jar, the other side shows a row of big bottles with a strike line, headline about simplicity"],
-  "Demonstration Proof":["MACRO SWATCH: macro close-up of a fingertip with the yellow cream swatch next to the open jar, small stamp 'TES LANGSUNG'","TEXTURE STRETCH: cream lightly stretched between thumb and index finger showing non-sticky texture, arrow callout 'nggak lengket'"],
-  "Regret Trigger":["CALENDAR REGRET: a small calendar card with many crossed-out months beside her, handwritten 'andai tahu dari dulu'","FACEPALM REGRET: playful face-palm with a smile, jar raised in the other hand, scribbled text 'nyesel baru tahu'"]};
+  "Social Proof / FOMO":["COMMENT PILE-UP: 3 realistic white comment bubbles overlapping beside her (not over face or jar), each a short customer quote, plus a small sticker 'Restock lagi!'","BESTSELLER STAMP: a slightly tilted red rubber-stamp style label 'TERJUAL 10.000+' near the jar, with a hand-drawn arrow 'akhirnya kebagian'"],
+  "Shock / Hasil Cepat":["DAY COUNTER: a giant outlined number '7' with the word 'HARI' placed in the background area behind her shoulder (depth effect, never over the face)","ZOOM BUBBLE: a circular magnifier bubble with a hand-drawn line pointing at her cheek, small label 'lihat bedanya'"],
+  "Curiosity Gap":["CENSOR BAR TEASE: one word of the headline covered by a hero-color bar like a secret, small text 'buka untuk lihat'","QUESTION MARKS: 2-3 hand-drawn question marks and a dotted arrow pointing at the jar"],
+  "Authority Effect":["EXPERT NOTE: a small clipboard-style white card with 3 hand-ticked checkmarks next to the jar, like a beautician's note","SPEC CARD: a minimal white card with thin lines listing the supporting benefits, tidy and trustworthy"],
+  "Hidden Gem / Discovery":["SECRET NOTE: a yellow sticky note 'rahasia kulitku 🤫' slightly overlapping the photo edge, arrow to the jar","FOUND IT: a hand-drawn marker circle around the jar and the word 'ketemu!'"],
+  "Relatable Pain / Emotional Story":["NOTES-APP CARD: a white phone-notes style card with the headline as a short honest confession","STICKY NOTE: a sticky note placed at the mirror/background edge with a handwritten line, soft emotional mood"],
+  "Transformation Desire":["SEBELUM/SESUDAH LABELS: two small pill labels 'Sebelum' and 'Sesudah' with a curved hand-drawn arrow toward her glowing face","SWIPE ARROW: a big curved hand-drawn arrow and the word 'glowing!' pointing at her cheek"],
+  "Value Shock":["PRICE TAG SHOCK: an oversized tilted price-tag sticker with the price, a small crossed-out higher price above it, placed next to the jar","RECEIPT STRIP: a narrow receipt-style strip comparing 'Klinik' (crossed out) vs this product price"],
+  "Comparison Curiosity":["VS BADGE: a big 'VS' badge with 'Klinik mahal' crossed out on one side and the jar on the other","1 vs 10: a sticker '1 pot vs 10 skincare' with a strike line through '10 skincare'"],
+  "Demonstration Proof":["TEST STAMP: a small stamp 'TES LANGSUNG' near the jar with an arrow to the cream","TEXTURE CALLOUT: a hand-drawn arrow with the label 'nggak lengket' pointing at the cream"],
+  "Regret Trigger":["REGRET NOTE: handwritten text 'andai tahu dari dulu' with a small scribble heart","CALENDAR CARD: a small calendar card with several crossed-out months beside her"]};
  const angK=CONCEPT[A[0]]?A[0]:"Relatable Pain / Emotional Story";
  const concept=sp(CONCEPT[angK]);
  const conceptTxt=[...concept.matchAll(/'([^']+)'/g)].map(m=>m[1]);
@@ -425,26 +425,23 @@ ${RULES_GLOBAL} Duration about ${D} seconds.`;
  s.thumbText=thTxt;
  // Thumbnail = frame pertama video: pakai setting/lighting/outfit milik segmen 1 (sama dengan Prompt Image SEG 1)
  const V0=$("vmode").value==="var",T0={env:V0&&segs[0].env||env,lit:V0&&segs[0].lit||lit,outfit:mdl&&V0&&segs[0].outfit?` Outfit: ${segs[0].outfit}.`:""};
- s.thumb=`HIGH-PERFORMING META ADS IMAGE CREATIVE, ASPECT. Must work on its own as a scroll-stopping image ad.
-BASE PHOTO: if available, use the generated image from "Prompt Image SEG 1" as the base photo and design on top of it; otherwise recreate the same scene. Real smartphone photo, natural skin texture and pores, slight grain, true-to-life colors.
-Setting: ${T0.env}. Lighting: ${T0.lit}.${T0.outfit}
-Product: ${pdesc}, use PRODUCT_IMAGE as exact reference; the jar stays small (true size in the hand), sharp, label readable, unchanged.
-${mdl?`Person: ${mdesc}, use MODEL_IMAGE as exact face reference. Expression: ${sp(EXPR)}.`:"No face: hands and product only."}
-STORY CONTEXT: ${CEP_CTX}. Angle: ${A[0]} (${A[1]}). Hook type: ${H[0]}. Content type: ${T}.
-CREATIVE CONCEPT (the one big idea of this ad): ${concept}.
-VISUAL HIERARCHY (eye path): 1) headline → 2) her face/reaction → 3) the jar → 4) badge → 5) CTA. One clear focal point, lots of breathing room, no clutter.
-HERO COLOR: ${HERO_COL[0]} ${HERO_COL[1]} is the ONLY highlight color. Use it for the headline highlight box/underline, the badge and the CTA pill. Everything else stays neutral (off-white #FAF7F2, near-black #141414, and the photo's natural tones). Strong contrast so the hero color pops in the feed.
-TYPOGRAPHY: headline in ${FONT}, about 12–16% of image height, max 2 lines, left-aligned or slightly tilted (max 4°). Supporting text in a clean sans, about 4–5% of image height. Max 2 font families, no outlines/bevels.
+ // Thumbnail = lapisan desain di atas gambar hasil ① Prompt Image (foto tidak digambar ulang)
+ s.thumb=`EDIT THE UPLOADED IMAGE INTO A HIGH-PERFORMING META ADS IMAGE CREATIVE, ASPECT.
+BASE: use the uploaded image (result of Prompt Image SEG 1) exactly as it is. Do NOT regenerate or change the photo: same person, face, outfit, pose, background, lighting and product. Only ADD a graphic design layer on top (text, shapes, stickers). Crop/extend the background only if needed for the aspect ratio.
+PRODUCT: the jar must stay exactly as in the photo: same size, label and colors, fully visible, nothing placed over the label, no new text printed on the jar.
+STORY CONTEXT: ${CEP_CTX}. Angle: ${A[0]} (${A[1]}). Hook type: ${H[0]}.
+CREATIVE CONCEPT (graphic overlay only): ${concept}.
+VISUAL HIERARCHY (eye path): 1) headline → 2) her face/reaction → 3) the jar → 4) badge → 5) CTA. One clear focal point, breathing room, no clutter.
+HERO COLOR: ${HERO_COL[0]} ${HERO_COL[1]} is the ONLY highlight color: headline highlight box/underline, badge and CTA pill. Other text: off-white #FAF7F2 or near-black #141414. Strong contrast so it pops in the feed.
+TYPOGRAPHY: headline in ${FONT}, about 12–16% of image height, max 2 lines, slight tilt allowed (max 4°). Supporting text in a clean sans, about 4–5% of image height. Max 2 font families, no outlines/bevels.
 TEXT (Bahasa Indonesia, spell EXACTLY, no other words):
 - Headline: "${thTxt}"
 - Supporting line: "${benS.join(" • ")}"
 - Proof chip: "${proof}"${badge?`\n- Badge: "${badge}"`:""}
 - CTA pill: "${ctaPill}"${conceptTxt.map(x=>`\n- Sticker/stamp text: "${x}"`).join("")}
-LAYOUT RULES: keep text off the face and off the product label; product fully visible. SAFE_ZONE
-ANTI-AI-TEMPLATE: must look like a real seller's ad edited in CapCut/Canva, not an AI poster. NO 3D chrome or glossy text, NO generic purple/blue gradients, NO lens flares, NO floating sparkles/bokeh hearts, NO fake app UI, NO stock icons, NO extra products ${A[0]==="Comparison Curiosity"?"except the crossed-out comparison items":""}, max 1 emoji. Stickers and hand-drawn elements look hand-placed and slightly imperfect.
-CURIOSITY: the image must leave one question unanswered (why / how fast / how cheap) so people tap to find out.
-${RULES_BASE.replace("The product must appear within the first second. ","").replace(/throughout the video/,"in the image")}
-${mdl?RULES_MODEL:RULES_NOMODEL}`;
+LAYOUT: place text on empty areas (background, beside her), never over the face or the product label. SAFE_ZONE
+ANTI-AI-TEMPLATE: looks like a real seller's ad edited in CapCut/Canva. NO 3D chrome or glossy text, NO generic gradients, NO lens flares, NO floating sparkles, NO fake app UI, NO stock icons, max 1 emoji. Stickers and hand-drawn marks look hand-placed and slightly imperfect.
+CURIOSITY: leave one question unanswered (why / how fast / how cheap) so people tap to find out.`;
  s.thumb=noTT(s.thumb).replace(/Cek keranjang kuning/g,PF("Cek keranjang kuning"))+"\nNO watermark, NO app logo, NO username, NO social media interface.";
  s.thumbs=[["4:5 (feed)",s.thumb.replace("ASPECT","aspect ratio 4:5 vertical feed (1080x1350)").replace("SAFE_ZONE","Keep all text inside the central 90% of the frame.")],["9:16 (story/reels)",s.thumb.replace("ASPECT","aspect ratio 9:16 full vertical (1080x1920)").replace("SAFE_ZONE","Story safe zone: keep the top 14% and bottom 20% free of text (Instagram/Facebook UI covers them).")]];
  s.copy=`${H[1]} ${p} bantu ${b}. ${pr?`Sekarang cuma ${pr}.`:""}${pro?` 🔥 ${pro}!`:""} 👉 Klik Beli Sekarang!`;
