@@ -35,9 +35,12 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
   <div><label>Platform iklan</label><select id="plat"><option value="meta" selected>Meta Ads (FB/IG)</option><option value="tiktok">TikTok</option><option value="shopee">Shopee</option></select></div>
   <div><label>01 Tipe CEP</label><select id="cep"></select></div>
   <div><label>02 CEP utama</label><select id="main"></select></div>
+  <div><label>03 Sub-CEP</label><select disabled><option>🎲 acak dari 3 sub-CEP (Ws)</option></select></div>
+  <div><label>04 Advertised Value (VFO)</label><select id="av"><option value="-1" selected>🎲 Acak (sesuai CEP)</option><option>Concrete</option><option>Instinctive</option><option>Uncharted</option><option>Aspirational</option></select></div>
   <div><label>05a Selling Intent</label><select id="sell"></select></div>
   <div><label>05b Communication Intent</label><select id="ci"></select></div>
   <div><label>06 Angle</label><select id="ang"></select></div>
+  <div><label>07 Content (format video)</label><select id="cfmt"></select></div>
   <div><label>Formula LP</label><select id="lpform"><option value="auto" selected>Otomatis sesuai CEP</option><option>PAS</option><option>AIDA</option><option>PASTOR</option><option>BAB</option><option>4P</option><option>ODC</option></select></div>
   <div><label>Jumlah ide (batch)</label><input id="n" type="number" value="10" min="1" max="100"></div>
  </div>
@@ -334,7 +337,7 @@ function applyFormula(html,key){const F=LP_FORMULA[key],D='<div class="sg-divide
  const out=F[1].map(k=>B[k]!==undefined&&B[k]!==""?B[k]:(LP_EXTRA[k]||"")).filter(Boolean);
  let r=out.join(D);if(!F[1].includes("QUIZ"))r=r.replace('href="#sg-quiz" class="sg-hero-btn">','href="#sg-order" class="sg-hero-btn">').replace(/Cek Apakah Cocok Untukmu\s*<small>Quiz 3 pertanyaan — hasil keluar otomatis<\/small>/,"Lihat Paket &amp; Promo<small>Bisa COD · bayar di rumah</small>");
  return r.replace(/<!-- (LP Salep[^>]*?) -->/,`<!-- $1 · Formula ${key}: ${F[0]} -->`)}
-const ANG_ALIAS={"Social Proof / FOMO":"Social Proof","Shock / Hasil Cepat":"Shock / Unexpected Result","Hidden Gem / Discovery":"Hidden Gem Effect","Relatable Pain / Emotional Story":"Relatable Pain"};
+const ANG_ALIAS={"Storytelling":"Emotional Story","Relatable":"Relatable Pain","Testimoni":"Social Proof","Ilmiah / Fakta":"Authority Effect","Humor":"Curiosity Gap","FOMO":"FOMO","Social Proof / FOMO":"Social Proof","Shock / Hasil Cepat":"Shock / Unexpected Result","Hidden Gem / Discovery":"Hidden Gem Effect","Relatable Pain / Emotional Story":"Relatable Pain"};
 function buildLP(s){const C=LP_CEP[s.cep]||LP_CEP["Problem-Solution"],A=LP_ANG[s.angle]||LP_ANG[ANG_ALIAS[s.angle]]||LP_ANG["Relatable Pain"];
  const pr=$("price").value||"Rp139.000",pro=$("promo").value||"Beli 1 Gratis 1";
  const f=t=>t.split("{{PRICE}}").join(pr).split("{{PROMO}}").join(pro);
@@ -346,14 +349,19 @@ function buildLP(s){const C=LP_CEP[s.cep]||LP_CEP["Problem-Solution"],A=LP_ANG[s
 
 // ===== APP: CAVAC Creative Generator =====
 const CEPS=Object.keys(CAVAC.fisik);
-const ANG=[["Social Proof / FOMO","semua orang pakai"],["Shock / Hasil Cepat","hasil cepat yang mengejutkan"],["Curiosity Gap","info belum lengkap"],["Authority Effect","percaya ahli"],["Hidden Gem / Discovery","menemukan harta karun"],["Relatable Pain / Emotional Story","ini masalah saya"],["Transformation Desire","ingin hasil sama"],["Value Shock","deal terlalu bagus"],["Comparison Curiosity","perbandingan"],["Demonstration Proof","bukti visual"],["Regret Trigger","kenapa baru tahu"]];
+// 07 Content: format eksekusi video (image selalu dibuat dari momen sub-CEP)
+const FORMATS=[{n:"Video pendek (talking head)",shot:"Talking head UGC, she speaks to the camera",act:["holding the jar toward the lens","holding the phone with the product cover facing the lens"]},
+ {n:"Sketsa (mini drama)",shot:"Short skit, natural acting like a real moment caught on camera",act:["reacting to her reflection, then picking up the jar with a relieved smile","reacting to the child's question, then showing the PDF on the phone"]},
+ {n:"Tutorial / Demo",shot:"Step-by-step demo, clear hand actions",act:["opening the cap, taking a small dab and applying it thinly on her cheek","opening the PDF, picking a question, then showing the explanation page"]},
+ {n:"Testimoni / Studi kasus",shot:"Honest testimonial, sitting relaxed, sharing her own result",act:["touching her glowing cheek and holding up the jar","showing the improved tryout result next to the phone with the PDF"]}];
+const ANG=[["Storytelling","cerita personal dengan awal–konflik–akhir"],["Relatable","situasi sehari-hari yang bikin 'ini aku banget'"],["Testimoni","pengalaman pelanggan nyata sebagai bukti"],["Ilmiah / Fakta","penjelasan cara kerja & fakta produk"],["Humor","lucu, self-aware, bikin senyum"],["FOMO","banyak yang pakai, promo terbatas"]];
 // angle yang paling nyambung per Communication Intent (dipakai saat angle acak)
-const CI_ANG={Educate:[2,9,3],Trigger:[5,0,1],Inspire:[6,4],Clarify:[2,8,3],Validate:[5,0],Entertain:[10,1,2],Proof:[0,9,6],["Call to Act"]:[7,0],Reinforce:[0,6]};
+const CI_ANG={Educate:[3,0],Trigger:[1,5],Inspire:[0,2],Clarify:[3,4],Validate:[1,2],Entertain:[4,1],Proof:[2,3],["Call to Act"]:[5,2],Reinforce:[2,1]};
 const SELL_CI={"No Sell":["Educate","Inspire","Entertain","Validate","Clarify"],"Soft Sell":["Educate","Trigger","Inspire","Clarify","Validate","Proof","Reinforce"],"Hard Sell":["Trigger","Proof","Call to Act","Reinforce"]};
 const $=id=>document.getElementById(id),out=$("out");let list=[];
 const PT=()=>$("ptype").value;
 const opt=(el,arr,lab)=>el.innerHTML='<option value="-1" selected>🎲 Acak</option>'+arr.map((x,i)=>`<option value="${i}">${lab(x,i)}</option>`).join("");
-opt($("cep"),CEPS,x=>x);opt($("sell"),SELL,x=>x);opt($("ci"),CI,x=>x);opt($("ang"),ANG,x=>x[0]);
+opt($("cep"),CEPS,x=>x);opt($("cfmt"),FORMATS,x=>x.n);opt($("sell"),SELL,x=>x);opt($("ci"),CI,x=>x);opt($("ang"),ANG,x=>x[0]);
 const sv=(id,n)=>{const v=+$(id).value;return v>=0?v:rnd(n)};
 function fillMain(){const c=+$("cep").value,el=$("main");if(c<0){el.innerHTML='<option value="-1">🎲 Acak</option>';return}
  el.innerHTML='<option value="-1">🎲 Acak</option>'+CAVAC[PT()][CEPS[c]].map((x,i)=>`<option value="${i}">${x.m}</option>`).join("")}
@@ -367,26 +375,31 @@ function build(ci0){
  const sell=SELL[sv("sell",3)];
  let ci=+$("ci").value>=0?CI[+$("ci").value]:pk(SELL_CI[sell]);if(ci0)ci=ci0;
  const a=+$("ang").value>=0?+$("ang").value:(Math.random()<.75?pk(CI_ANG[ci]):rnd(ANG.length)),A=ANG[a];
- const pref=AV_PREF[cep],pool=AVS[PT()],avp=pool.filter(x=>pref.includes(x.t)),AV=pk(Math.random()<.7&&avp.length?avp:pool);
+ const avT=$("av").value,pool=AVS[PT()],pref=avT!=="-1"?[avT]:AV_PREF[cep],avp=pool.filter(x=>pref.includes(x.t)),AV=pk(avT!=="-1"&&avp.length?avp:(Math.random()<.7&&avp.length?avp:pool));
+ const FMT=FORMATS[+$("cfmt").value>=0?+$("cfmt").value:rnd(FORMATS.length)];
  // dialog: hook sub-CEP → jembatan CI → value → CTA sesuai selling intent
  const intro=D?`Aku pakai ${P}.`:pk([`Ini ${P}.`,`Kenalin, ${P}.`,`Aku pakai ${P}.`]);
  const cta=sell==="No Sell"?"":sell==="Soft Sell"?PF(pk(["Cek di bawah ya.","Coba deh, cek di bawah."])):PF(`${pr?`Cuma ${pr}`:"Harga spesial"}${pro?`, ${pro}`:""}. Klik Beli Sekarang!`);
  const two=$("fmt").value==="2x8";
- let L=[S.h,CI_LINE[PT()][ci],intro,AV.l,cta].filter(Boolean);
- if(!two&&words(L.join(" "))>24)L=L.filter(x=>x!==CI_LINE[PT()][ci]);
+ // 06 Angle memberi warna pada dialog
+ const an=A[0],avl=an==="Ilmiah / Fakta"?"Faktanya, "+AV.l.charAt(0).toLowerCase()+AV.l.slice(1):an==="Testimoni"?"Pengalamanku: "+AV.l.charAt(0).toLowerCase()+AV.l.slice(1):AV.l;
+ const intro2=an==="Storytelling"?`Sampai akhirnya aku coba ${P}.`:an==="FOMO"?`${P}, yang lagi banyak dicari.`:intro;
+ const ciL=an==="Humor"&&ci!=="Entertain"?(D?"Sampai aku ikut pusing lihat soalnya.":"Sampai cermin pun bosen dengar aku ngeluh."):CI_LINE[PT()][ci];
+ let L=[S.h,ciL,intro2,avl,cta].filter(Boolean);
+ if(!two&&words(L.join(" "))>24)L=L.filter(x=>x!==ciL);
  if(!two&&words(L.join(" "))>26&&sell==="Hard Sell")L[L.length-1]=PF(`${pr||""}${pro?` ${pro}`:""}. Klik Beli Sekarang!`.trim());
- if(!two&&words(L.join(" "))>26)L=L.filter(x=>x!==intro).map((x,k)=>k===1?x.replace(/^/,`${P}: `):x);
+ if(!two&&words(L.join(" "))>26)L=L.filter(x=>x!==intro2).map((x,k)=>k===1?x.replace(/^/,`${P}: `):x);
  const segN=two?2:1,len=two?8:10,cut=two?Math.ceil(L.length/2):L.length;
  const lines=two?[L.slice(0,cut).join(" "),L.slice(cut).join(" ")]:[L.join(" ")];
  // visual per segmen: seg1 = momen sub-CEP, seg2 = interaksi produk di tempat yang sama
  const P_EN=D?"a smartphone showing the product cover":"the small jar";
- const act=D?pk(["finger scrolling the PDF on the phone","pointing at a question on the printed worksheet","child writing answers with a pencil"]):pk(["dabbing a little cream onto her cheek","taking a small dab of cream on her fingertip","holding the jar toward the lens"]);
+ const act=FMT.act[D?1:0];
  const cam=pk(["handheld front-camera selfie framing","medium shot from a phone propped nearby","close framing on face and hands","slightly over-the-shoulder angle"]);
- const vis=[`${S.v}. ${mdl?`Camera: ${cam}; ${P_EN} clearly visible in her hand or right beside her, label toward the camera`:`hands only, ${P_EN} in frame`}`,`Same person and place: ${mdl?"she":"a hand is"} ${act}, then shows ${P_EN} to the camera`];
+ const vis=[`${FMT.shot}. ${S.v}. ${mdl?`Camera: ${cam}; ${P_EN} clearly visible in her hand or right beside her, label toward the camera`:`hands only, ${P_EN} in frame`}`,`Same person and place: ${mdl?"she":"a hand is"} ${act}, then shows ${P_EN} to the camera`];
  const s={id:Date.now()+Math.random(),ptype:PT(),cep,main:M.m,sub:S.e,hook:S.h,head:S.t,av:AV,sell,ci,angle:A[0],angDesc:A[1],lines,vis:vis.slice(0,segN),len,segN,mdl,pdesc,mdesc,P,env:S.v,
   key:[PT(),c,mi,si,a,ci,sell].join("|")};
  s.concept=pk(CONCEPT[A[0]]);s.ideaImg=`Foto momen: ${S.e} Overlay: ${s.concept.split(":")[0].toLowerCase()} + headline "${S.t}" + nilai "${AV.o}".`;
- s.ideaVid=`${segN} scene × ${len} detik, ${mdl?"talking head":"VO tangan"}: buka dengan "${S.h}", ${ci.toLowerCase()} lewat "${AV.l}"${cta?`, tutup ${sell.toLowerCase()}`:", tanpa ajakan beli (awareness)"}.`;
+ s.fmt=FMT.n;s.ideaVid=`${FMT.n}, ${segN} scene × ${len} detik: buka dengan "${S.h}", ${ci.toLowerCase()} lewat "${AV.l}"${cta?`, tutup ${sell.toLowerCase()}`:", tanpa ajakan beli (awareness)"}.`;
  return s}
 // ---------- prompt ----------
 const rule=(s,vis)=>s.ptype==="digital"?DIGITAL_RULE:PHYS_RULE(vis);
@@ -414,17 +427,12 @@ ${RULES_BASE.replace("The product must appear within the first second. ","")}
 ${s.mdl?RULES_MODEL:RULES_NOMODEL}
 Duration exactly ${s.len} seconds.`)}
 // thumbnail = lapisan desain di atas gambar ① (foto tidak digambar ulang)
-const CONCEPT={"Social Proof / FOMO":["COMMENT PILE-UP: 3 white comment bubbles beside her with short customer quotes, plus a sticker 'Banyak yang order lagi'","BESTSELLER STAMP: a tilted red rubber-stamp label 'TERJUAL 10.000+' near the product, hand-drawn arrow 'akhirnya kebagian'"],
- "Shock / Hasil Cepat":["DAY COUNTER: a giant outlined '7 HARI' in the background area behind her shoulder (never over the face)","ZOOM BUBBLE: a circular magnifier bubble with a line pointing at the result, label 'lihat bedanya'"],
- "Curiosity Gap":["CENSOR BAR: one headline word covered by a hero-color bar like a secret, tiny text 'buka untuk lihat'","QUESTION MARKS: 2-3 hand-drawn question marks and a dotted arrow to the product"],
- "Authority Effect":["EXPERT NOTE: a small clipboard card with 3 hand-ticked checkmarks next to the product","SPEC CARD: a minimal white card with thin lines listing the benefits"],
- "Hidden Gem / Discovery":["SECRET NOTE: a yellow sticky note 'rahasia kecilku 🤫' with an arrow to the product","FOUND IT: a hand-drawn marker circle around the product and the word 'ketemu!'"],
- "Relatable Pain / Emotional Story":["NOTES-APP CARD: a white phone-notes style card with the headline as an honest confession","STICKY NOTE: a handwritten sticky note at the background edge, soft emotional mood"],
- "Transformation Desire":["SEBELUM/SESUDAH: two pill labels 'Sebelum' and 'Sesudah' with a curved hand-drawn arrow","SWIPE ARROW: a big curved arrow with the word 'berubah!'"],
- "Value Shock":["PRICE TAG: an oversized tilted price-tag sticker with the price and a small crossed-out higher price","RECEIPT STRIP: a narrow receipt strip comparing the expensive alternative (crossed out) vs this price"],
- "Comparison Curiosity":["VS BADGE: a big 'VS' badge, the expensive alternative crossed out vs this product","1 vs 10: a sticker '1 ini vs 10 lainnya' with a strike line"],
- "Demonstration Proof":["TEST STAMP: a small stamp 'TES LANGSUNG' with an arrow to the product","CALLOUT: a hand-drawn arrow with a 2-word label pointing at the key detail"],
- "Regret Trigger":["REGRET NOTE: handwritten 'andai tahu dari dulu' with a small scribble heart","CALENDAR CARD: a small calendar card with crossed-out months"]};
+const CONCEPT={"Storytelling":["STORY STRIP: 3 small numbered caption chips '1 dulu', '2 coba', '3 sekarang' along the edge, a dotted line connecting them","DIARY CARD: a notes-app style white card with a 1-line personal confession as the headline"],
+ "Relatable":["SPEECH BUBBLE: the headline inside a big speech bubble coming from her, like she is saying it","STICKY NOTE: a handwritten sticky note 'ini aku banget' at the background edge with a small arrow to her"],
+ "Testimoni":["REVIEW CARD: a white customer-review card with 5 stars and a short quote, placed beside her","COMMENT PILE-UP: 3 white comment bubbles with short customer quotes, plus a sticker 'Banyak yang order lagi'"],
+ "Ilmiah / Fakta":["SPEC CARD: a minimal white card with thin lines and 2-3 checkmarked facts, tidy and trustworthy","CALLOUT LINES: thin labeled pointer lines to the product with short fact labels"],
+ "Humor":["MEME CAPTION: bold top caption in meme style with a funny self-aware line, small reaction emoji","SCRIBBLE: playful hand-drawn doodles (sweat drops, arrows) around her expression"],
+ "FOMO":["BESTSELLER STAMP: a tilted red rubber-stamp label 'TERJUAL 10.000+' near the product, hand-drawn arrow 'akhirnya kebagian'","COUNTDOWN STRIP: a bold strip 'PROMO HARI INI' with a small clock icon drawn by hand"]};
 const HERO_COL={"Problem-Solution":["hot pink","#FF2E7E"],"Routine":["sunny orange","#FF8A00"],"Commitment":["tomato red","#E8452C"],"Aspirational":["champagne gold","#D4A24C"],"Opportunistic":["electric yellow","#FFE14D"],"Emotional":["warm coral","#FF6F61"]};
 function thumbPrompt(s,ratio){const con=s.concept||(s.concept=pk(CONCEPT[s.angle])),ctxt=[...con.matchAll(/'([^']+)'/g)].map(m=>m[1]),H=HERO_COL[s.cep],pr=$("price").value,pro=$("promo").value.trim();
  const badge=s.sell==="No Sell"?"":pro||(pr?`Cuma ${pr}`:"");const cta=s.sell==="No Sell"?"":PF(s.sell==="Hard Sell"?"Klik Beli Sekarang":"Cek di bawah");
@@ -453,7 +461,7 @@ function render(s,i,old){const d=document.createElement("div");d.className="card
  d.innerHTML=`<div class="hook">${i}. ${s.head}</div>
  <table class="cav"><tr><th>01 Tipe CEP</th><td>${s.cep}</td></tr><tr><th>02 CEP utama</th><td>${s.main}</td></tr><tr><th>03 Sub-CEP</th><td>${s.sub}</td></tr>
  <tr><th>04 Advertised Value</th><td><b>${s.av.t}</b> · ${s.av.f} → ${s.av.o}</td></tr><tr><th>05 Intent</th><td>${s.sell} + ${s.ci}</td></tr><tr><th>06 Angle</th><td>${s.angle} <span class="mut">(${s.angDesc})</span></td></tr>
- <tr><th>07 Content</th><td>🖼️ <b>Image:</b> ${s.ideaImg}<br>🎬 <b>Video:</b> ${s.ideaVid}</td></tr></table>
+ <tr><th>07 Content</th><td><b>${s.fmt}</b><br>🖼️ <b>Image:</b> ${s.ideaImg}<br>🎬 <b>Video:</b> ${s.ideaVid}</td></tr></table>
  ${s.lines.map((l,k)=>`<p style="margin:8px 0"><b>Dialog SEG ${k+1} (${s.len} dtk):</b> “${l}”</p>`).join("")}
  ${s.vis.map((_,k)=>`<div style="border-left:3px solid var(--ac);padding-left:10px;margin-top:8px"><b>SEG ${k+1}</b>${box("① Prompt Image"+(k===0?" + Thumbnail":""),P["i"+k],"i",k)}${box("② Prompt Video · dengan dialog",P["v"+k],"v",k)}${box("② Prompt Video · tanpa suara",P["s"+k],"s",k)}</div>`).join("")}
  ${s.ptype==="digital"?`<p class="mut" style="margin-top:8px">③ Landing Page: template LP saat ini khusus Salep Glowing FILO (produk fisik).</p><div hidden><input class="lpimg"><div class="lpst"></div><button class="lpa"></button><button class="lpb"></button><button class="lpv"></button><div class="lpf"></div></div>`:`<details style="margin-top:8px"><summary><b>③ Landing Page Scalev</b> <span class="mut">(${s.cep} · ${s.angle} · formula ${lpFormula(s.cep)})</span></summary>
