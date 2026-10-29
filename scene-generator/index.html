@@ -27,8 +27,8 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
 <div class="card">
  <div class="grid">
   <div><label>Tipe produk / Niche</label><select id="niche"></select><div class="mut" id="nhint"></div></div>
-  <div><label>Nama produk</label><input id="prod" value="Serum Brightening"></div>
-  <div style="grid-column:1/-1"><label>Semua manfaat (pisahkan dengan koma)</label><input id="ben" value="memudarkan flek hitam, menyamarkan bekas jerawat, wajah glowing, melembabkan, tidak perih, aman untuk kulit sensitif"><div class="mut">Tiap scene otomatis menonjolkan 2–3 manfaat yang paling nyambung dengan hook (sisanya acak untuk variasi).</div></div>
+  <div><label>Nama produk</label><input id="prod" value="Salep Glowing Filo"></div>
+  <div style="grid-column:1/-1"><label>Semua manfaat (pisahkan dengan koma)</label><input id="ben" value="memudarkan flek hitam, menyamarkan bekas jerawat, wajah glowing, melembabkan, tidak lengket, tidak perih, aman untuk kulit sensitif"><div class="mut">Tiap scene otomatis menonjolkan 2–3 manfaat yang paling nyambung dengan hook (sisanya acak untuk variasi).</div></div>
   <div><label>Harga</label><input id="price" value="Rp49.000"></div>
   <div><label>Promo (kosongkan jika tidak ada)</label><input id="promo" placeholder="Beli 2 gratis 1 / Diskon 50% / Gratis ongkir"></div>
   <div><label>CEP</label><select id="cep"></select></div>
@@ -423,14 +423,26 @@ ${IMG_END}`]];
 const OUTFIT=["casual oversized t-shirt","soft knit cardigan","simple satin pajamas","clean white blouse","pastel hoodie","neutral linen shirt","simple modest tunic with hijab","sleeveless ribbed top with light cardigan"];
 // Kata "TikTok" bikin AI meniru watermark/UI TikTok, jadi diganti istilah netral
 const noTT=x=>x.replace(/TikTok UGC/g,"UGC smartphone").replace(/TikTok style/g,"social-media UGC style").replace(/TikTok\/?/g,"");
+// Referensi produk: lembar 6 sudut. Tiap shot diberi sudut pandang produk yang paling cocok dengan gerakannya.
+const VIEWS=["view 1: top view of the lid with the round pink label","view 2: jar open with the lid tilted beside it","view 3: held between thumb and fingertips (true size)","view 4: front side view showing the clear acrylic jar wall and white ribbed cap, label visible only as a thin edge on top","view 5: 45-degree angle showing both the top label and the clear side","view 6: open jar from above showing the pale yellow cream with a small swirl peak"];
+function pickView(v){v=v.toLowerCase().replace(/real skin texture/g,"");
+ if(/beside her cheek|very first frame/.test(v))return[2,0];
+ if(/cap opened|opening the cap|swatch|applying|texture|inside/.test(v))return[5,1];
+ if(/rotat|tilt|turned/.test(v))return[4,3];
+ if(/top-down|over-the-table|show label|label/.test(v)&&!/side angle/.test(v))return[0,4];
+ if(/side angle|eye-level|table-level|beside glass|placed onto|lowering|sliding/.test(v))return[3,4];
+ return[2,4]}
+const PHYS_RULE=vis=>{const [a,b]=pickView(vis);return `PRODUCT REFERENCE: PRODUCT_IMAGE is a reference sheet of the SAME jar from 6 angles (1 top lid label, 2 open with lid beside, 3 held in fingers for scale, 4 front side clear jar, 5 45-degree angle, 6 open showing cream). Ignore the pink measurement callouts, arrows and text boxes on the sheet ("Tinggi ±2 cm", "Diameter ±3 cm", "Isi Salep 5 gram", "Pot Acrylic Bening"): they are NOT part of the product.
+PRODUCT VIEW IN THIS SHOT: match ${VIEWS[a]}; when the product moves, it may pass through ${VIEWS[b]}. Only show angles that exist in the reference sheet.
+PRODUCT ACCURACY: same real size relative to the hand (3 cm wide, 2 cm tall), same shape, same label position (round pink sticker on the lid top only), clear acrylic walls with no label on the sides.
+NO ADDITIONS WHEN MOVING: the product is a rigid, solid object. While it is lifted, rotated, tilted, opened or moved, do NOT add anything to it: no extra stickers, side labels, text, logos, patterns, pumps, droppers, boxes, ribbons, glitter or reflections with writing; do NOT change its shape, size, color, label text or cap. Move it slowly and smoothly, keep the label in focus, and never let fingers cover the label.`};
 function segPrompts(s){const c=s.ctx,n=s.segs.length,V=c.vmode==="var";return s.segs.map((g,i)=>{const len=Math.round(c.segLen);
  const env=V&&g.env?g.env:s.env,lit=V&&g.lit?g.lit:s.lit,vis=V?g.vis.replace(s.env,env).replace(s.lit,lit).replace(/Same person, same room, /,"Same person in a new spot, "):g.vis;
  return `NO SUBTITLES, NO CAPTIONS, NO ON-SCREEN TEXT of the spoken words. Audio only. NO watermark, NO app logo, NO username, NO social media interface.
 Vertical 9:16 TikTok UGC video clip, ${len} seconds. This is clip ${i+1} of ${n} of one continuous ~${c.D}s video${i?`, continuing directly from clip ${i}`:""}.
 Product: ${c.p}${c.pdesc!=="the product"?` (${c.pdesc})`:""}, use PRODUCT_IMAGE as exact reference.${c.mdl?` Person: ${c.mdesc}, use MODEL_IMAGE as exact face reference.`:""}
 Setting: ${env}. Lighting: ${lit}.${c.mdl&&V&&g.outfit?` Outfit: ${g.outfit}.`:""}
-${N().digital?DIGITAL_RULE:`PRODUCT ACCURACY: show the product exactly as in PRODUCT_IMAGE: same real size relative to the hand, same shape, same label position and same viewing angle (if the label is on the lid, show the lid toward the camera). Do NOT invent a side label or make the container bigger.
-PRODUCT LOCK: the product is a rigid, solid object. When it is rotated, tilted, lifted or moved, it does NOT change shape, size, color, label text or label position. Move it slowly; rotate at most 30 degrees so only the sides visible in PRODUCT_IMAGE are shown. Keep the label in focus and never let hands cover the label.`}
+${N().digital?DIGITAL_RULE:PHYS_RULE(vis)}
 SHOT [${g.type}]: ${(c.pdesc!=="the product"?vis.split(c.pdesc).join(N().digital?"the product":"the jar").replace(N().digital?/the product already raised beside her cheek/:/$^/,"a smartphone held beside her cheek, its screen showing the product cover").replace(N().digital?/label side \(as in PRODUCT_IMAGE\) facing the camera|label facing the camera/g:/$^/,"screen facing the camera"):vis).replace(/label facing the camera/g,"label side (as in PRODUCT_IMAGE) facing the camera")}${g.exp?` Expression: ${g.exp}.`:""}
 Spoken line (Bahasa Indonesia${g.type==="Talking head"?", lip-synced, natural speaking pace":", voice-over"}): "${g.line}"
 ${i===0?"The product must be visible in the very first frame.":V?`JUMP CUT from clip ${i}: new location, ${c.mdl?"new outfit, ":""}new lighting and camera angle are welcome; keep the same ${c.mdl?"face and ":""}product. Start mid-action, no intro.`:`CONTINUITY: same ${c.mdl?"person, outfit, hairstyle, ":""}room, lighting, camera style and product position as the end of clip ${i}. No intro, start mid-action.`}${i<n-1?" End on a natural pause so the next clip can continue.":" End with the product clearly facing the camera."}
@@ -457,6 +469,7 @@ const nPick=(k,arr)=>{const b=N()[k];return b&&Math.random()<.7?b[rnd(b.length)]
 $("niche").innerHTML=Object.keys(NICHE).map(k=>`<option>${k}</option>`).join("");
 const nh=()=>{const n=N();$("dsrc").value=n.digital?"tka":$("niche").value==="Skincare"?"bank":"tpl";$("nhint").textContent="Angle terbaik: "+n.ang.map(i=>ANG[i][0]).join(", ")+(n.model?" · Saran: pakai model":"");$("model").value=n.model};
 $("niche").onchange=nh;nh();
+setTimeout(()=>{if(!$("pdesc").value)presetFilo()},0); // default: Salep Glowing Filo
 // Preset deskripsi detail FILO (dari foto 4 sisi produk)
 const DIGITAL_RULE=`PRODUCT ACCURACY: the product is a DIGITAL PDF question bank. Show it only as (a) a smartphone or tablet screen displaying pages that match PRODUCT_IMAGE, or (b) printed A4 worksheet pages. The cover design, title, colors and layout must match PRODUCT_IMAGE exactly. Do NOT invent a physical box, book cover or other app. Keep the screen bright and the cover title readable; small question text may stay soft.`;
 function presetTka(){
@@ -467,8 +480,8 @@ function presetTka(){
  if(!$("mdesc").value)$("mdesc").value="Indonesian mother in her 30s, warm and friendly, casual home outfit";}
 function presetFilo(){
  $("prod").value="Salep Glowing Filo";$("niche").value="Skincare";nh();ptip();
- $("pid").value="Pot akrilik bening bulat kecil, diameter 3cm, tinggi sekitar 2cm, isi 5 gram krim kuning lembut tidak lengket. Tutup ulir putih bergerigi. Stiker merah muda bulat hanya di atas tutup, samping pot bening tanpa label.";
- $("pdesc").value="tiny round clear acrylic jar, only 3 cm in diameter and about 2 cm tall, small enough to sit between thumb and two fingertips. Thick crystal-clear transparent walls with NO label on the sides. White screw cap with fine vertical ridges around its edge. The ONLY label is a flat circular pink sticker on top of the cap: white curved band at the top reading \"FILOMALL BEAUTY\", small gold crown \"F\" logo, large bold black script text \"Salep Glowing\", small text \"Expired Date: Desember 2026\", and a white curved band at the bottom reading \"Memudarkan Flek - Wajah Glowing & Bersih\". Inside: 5 g of smooth pale butter-yellow cream, soft and non-sticky, with a small swirl peak when opened. Through the clear walls the yellow cream is visible at the bottom of the jar";}
+ $("pid").value="Ukuran pot diameter 3cm, tinggi sekitar 2cm, isi produk 5 gram, warna cream kuning, tidak lengket. Potnya bening acrylic, ada stiker pink hanya di bagian atas tutup. Tutup ulir putih bergerigi.";
+ $("pdesc").value="tiny round clear acrylic jar, only 3 cm in diameter and about 2 cm tall, small enough to sit between thumb and two fingertips. Thick crystal-clear transparent walls with NO label on the sides. White screw cap with fine vertical ridges around its edge. The ONLY label is a flat circular pink sticker on top of the cap: white curved band at the top reading \"FILOMALL BEAUTY\", small gold crown \"F\" logo, large bold black script text \"Salep Glowing\", small text \"Expired Date: Desember 2028\", and a white curved band at the bottom reading \"Memudarkan Flek - Wajah Glowing & Bersih\". Inside: 5 g of smooth pale butter-yellow cream, soft and non-sticky, with a small swirl peak when opened. Through the clear walls the yellow cream is visible at the bottom of the jar";}
 const durInfo=()=>{const L=+$("seglen").value,n=Math.max(1,Math.round(+$("dur").value/L));$("durinfo").textContent=`= ${n} klip × ${L} detik = ${n*L} detik total. Dialog ±${Math.round(L*2.5)} kata per klip.`};
 $("seglen").addEventListener("change",durInfo);$("dur").addEventListener("change",durInfo);durInfo();
 const ptip=()=>{const t=TIPS[$("niche").value]||TIPS._;$("ptip").textContent="💡 "+TIPS._+" "+t;$("pid").placeholder=t.replace(/^Contoh: /,"")};
