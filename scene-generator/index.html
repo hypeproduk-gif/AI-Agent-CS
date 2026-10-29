@@ -380,17 +380,44 @@ ${RULES_BASE}
 ${mdl?RULES_MODEL:RULES_NOMODEL}
 ${RULES_GLOBAL} Duration about ${D} seconds.`;
  // Thumbnail: frame pertama video (setting, lighting, produk, model sama) + teks kepo pendek
- const TH_TXT={Confession:"Aku salah soal ini…",Curiosity:"Kenapa semua pakai ini?",Problem:hk.replace(/[.…,]+$/,"").split(" ").slice(0,6).join(" ")+"?",Result:"Hasilnya bikin kaget 😳","Pattern Interrupt":"STOP. Lihat ini dulu"};
- const TH_VIS={Confession:"slightly embarrassed half-smile, looking at the product",Curiosity:"one eyebrow raised, curious look straight into the lens",Problem:"frustrated expression, finger pointing at the problem area",Result:"genuine shocked face, mouth slightly open, eyes wide",
-  "Pattern Interrupt":"hand raised toward the lens like saying stop, serious look"};
- s.thumbText=TH_TXT[H[0]];
- s.thumb=`ASPECT thumbnail image, first frame of the same video. Smartphone photo, authentic TikTok UGC look, not a polished ad.
+ // Thumbnail: tiap scene dapat kombinasi acak teks, komposisi, ekspresi, gaya teks & elemen penasaran supaya tidak mirip-mirip
+ const TH_TXT={Confession:["Aku salah soal ini…","Awalnya aku nggak percaya","Jujur, aku nyesel telat","Aku kira cuma gimmick","Ternyata aku keliru 🙈"],
+  Curiosity:["Kenapa semua pakai ini?","Ini rahasianya…","Kok bisa sekecil ini?","Ada apa di pot ini?","Viral karena ini 👀"],
+  Problem:[hk.replace(/[.…,]+$/,"").split(" ").slice(0,5).join(" ")+"…","Udah coba semua tapi gagal?","Ini yang aku pakai sekarang","Masalahku selesai di sini"],
+  Result:["Hasilnya bikin kaget 😳","Lihat bedanya!","Cuma pakai tipis tiap malam","Nggak nyangka segini","Before vs after 👀"],
+  "Pattern Interrupt":["STOP. Lihat ini dulu","Jangan skip!","Tunggu… lihat ini","Kamu harus tahu ini","Sebelum scroll, lihat ini"]};
+ const TH_VIS={Confession:["slightly embarrassed half-smile, looking at the product","biting her lip, guilty but happy smile","covering her mouth with her fingers, eyes smiling"],
+  Curiosity:["one eyebrow raised, curious look straight into the lens","squinting playfully at the product","leaning in close to the lens as if sharing a secret"],
+  Problem:["frustrated expression, finger pointing at the problem area on her cheek","tired face touching her cheek, then glancing at the product","sigh with a slight frown, looking into the mirror"],
+  Result:["genuine shocked face, mouth slightly open, eyes wide","delighted laugh, touching her glowing cheek","proud confident smile, chin slightly up"],
+  "Pattern Interrupt":["hand raised toward the lens like saying stop, serious look","eyes wide, finger on lips like 'shh'","sudden lean toward the camera, intense eye contact"]};
+ const TH_COMP=mdl?["extreme close-up selfie, half of the face fills the frame, product raised next to the cheek",
+  "mirror selfie with the phone partly visible, product held up toward the mirror",
+  "product held very close to the lens in sharp focus, her face softly blurred behind it",
+  "she points at the product with her other hand, product in the foreground looking slightly larger from perspective",
+  "lying on the bed shot from above, product held above her face",
+  "over-the-shoulder view, she looks at the product resting on her fingertips",
+  "sitting at a vanity, leaning toward the camera with the product at chin level",
+  "candid mid-laugh shot, product in hand slightly off-center"]
+ :["hand holding the product toward the lens, background softly blurred","flat lay from above, product on a textured surface with a few simple props",
+  "open jar with a fingertip cream swatch right next to it, macro","low-angle hero shot of the product standing on the edge of a table",
+  "product resting on an open palm in natural light","one hand holding the lid, the other holding the open jar"];
+ const TH_STYLE=["bold white text with black outline","bold black text on a yellow highlight box","white text on a pink rounded box","handwritten marker-style text","big yellow text with a soft black shadow"];
+ const TH_POS=["top third","upper left corner","centered above the product","lower third (not covering the product)"];
+ const TH_CUR={"Transformation Desire":["split before/after with the 'after' side partly hidden","half of the cheek glowing, half blurred"],
+  "Value Shock":[`small price sticker "${pr||"murah banget"}" next to the product`,`starburst badge "${pro||"Promo"}" near the product`],
+  "Comparison Curiosity":["two products side by side with a question mark","a big 'VS' between the old product and this one"]}[A[0]]||
+  ["red circle around the product","hand-drawn arrow pointing at the jar","small '?' doodle next to the product","😳 emoji sticker near the face","yellow highlight scribble under the key word"];
+ const thTxt=hard&&pro&&Math.random()<.25?`${pro} 😱`:Math.random()<.25&&window.BENLIST?cap(window.BENLIST[0])+"?":pk(TH_TXT[H[0]]);
+ s.thumbText=thTxt;
+ s.thumb=`ASPECT thumbnail image, first frame of the same video. Smartphone photo, authentic UGC look, not a polished ad.
 Setting: ${env}. Lighting: ${lit}. Same environment and lighting as the video.
-Product: ${pdesc}, use PRODUCT_IMAGE as exact reference, held close to the camera, label sharp, occupying about 30% of the frame.
-${mdl?`Person: ${mdesc}, use MODEL_IMAGE as exact face reference, ${TH_VIS[H[0]]}. Face and product both clearly visible.`:`Only a hand holding the product, ${H[0]==="Problem"?"the problem visible in the background":"slight motion blur on the hand for a candid feel"}.`}
+Product: ${pdesc}, use PRODUCT_IMAGE as exact reference, label sharp.
+Composition: ${pk(TH_COMP)}.
+${mdl?`Person: ${mdesc}, use MODEL_IMAGE as exact face reference, ${pk(TH_VIS[H[0]])}. Face and product both clearly visible.`:`No face, only hands and product.`}
 Scroll-stopping: one strong focal point, high contrast between product and background, slight imperfection (candid, not staged).
-Text overlay (Bahasa Indonesia, bold white text with black outline, top third, max 6 words): "${s.thumbText}"
-Curiosity element: ${A[0]==="Transformation Desire"?"split before/after with the 'after' side partly hidden":A[0]==="Value Shock"?`small price sticker "${pr||"murah banget"}" next to the product`:A[0]==="Comparison Curiosity"?"two products side by side with a question mark":"red circle or arrow pointing at the product detail"}.
+Text overlay (Bahasa Indonesia, ${pk(TH_STYLE)}, ${pk(TH_POS)}, max 6 words): "${thTxt}"
+Curiosity element: ${pk(TH_CUR)}.
 ${RULES_BASE.replace("The product must appear within the first second. ","").replace(/throughout the video/,"in the image")}
 ${mdl?RULES_MODEL:RULES_NOMODEL}`;
  s.thumb=noTT(s.thumb)+"\nNO watermark, NO app logo, NO username, NO social media interface.";s.thumbs=[["4:5 (feed)",s.thumb.replace("ASPECT","Aspect ratio 4:5 vertical feed")],["9:16 (story/reels)",s.thumb.replace("ASPECT","Aspect ratio 9:16 full vertical")]];
