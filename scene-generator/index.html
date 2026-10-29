@@ -50,7 +50,7 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
   <div><label>Mode antar segmen</label><select id="vmode"><option value="var">Variasi (ganti lokasi, outfit, lighting, kamera)</option><option value="same">Nyambung (1 lokasi, 1 outfit)</option></select><div class="mut">Variasi = gaya jump-cut TikTok, lebih eksploratif</div></div>
   <div hidden><select id="seglen"><option value="8" selected>8</option><option value="10">10</option></select><div id="durinfo"></div></div>
   <div><label>Sumber dialog</label><select id="dsrc"><option value="bank">Bank dialog FILO (Opus, gratis)</option><option value="tka">Bank dialog TKA SD (Opus, gratis)</option><option value="tpl">Template umum</option></select></div>
-  <div><label>Suara video</label><select id="audio"><option value="voice" selected>Dengan dialog (talking head / VO)</option><option value="silent">Tanpa suara (b-roll, pakai musik + teks)</option></select></div>
+  <select id="audio" hidden><option value="voice" selected></option><option value="silent"></option></select>
   <div><label>Platform iklan</label><select id="plat"><option value="meta" selected>Meta Ads (FB/IG)</option><option value="tiktok">TikTok</option><option value="shopee">Shopee</option></select><div class="mut">Menentukan kata CTA</div></div>
   <div><label>Sell</label><select id="sell"><option>Auto</option><option>Soft</option><option>Hard</option></select><div class="mut">Auto = Hard kalau ada promo / Value Shock / Opportunistic</div></div>
   <div><label>Model manusia</label><select id="model"><option value="1" selected>Pakai model (MODEL_IMAGE)</option><option value="0">Tanpa model (produk + tangan)</option></select></div>
@@ -503,12 +503,12 @@ ${x.rule}
 ${RULES_BASE.replace("The product must appear within the first second. ","").replace(/throughout the video/,"in the image")}
 ${x.c.mdl?RULES_MODEL:RULES_NOMODEL}
 ${RULES_GLOBAL.replace("9:16 video","9:16 photo")} Sharp focus on the product label, natural skin texture, no beauty filter.`}).map(noTT)}
-function segPrompts(s){const n=s.segs.length;return s.segs.map((_,i)=>{const x=segCtx(s,i),len=Math.round(x.c.segLen);
- const SIL=$("audio").value==="silent";
+function segPrompts(s,silent){const n=s.segs.length;return s.segs.map((_,i)=>{const x=segCtx(s,i),len=Math.round(x.c.segLen);
+ const SIL=silent===undefined?$("audio").value==="silent":!!silent;
  // mode tanpa suara: tidak ada dialog/lip-sync, cerita lewat ekspresi & gerakan, cocok diberi musik + teks di editor
  const silAct=x.g.type==="Talking head"?`She does NOT talk: lips stay relaxed or smiling, no lip movement as if speaking. She tells the story with expressions and gestures only (${["reacts with surprise, then smiles and shows the product to the lens","touches her cheek, looks at the camera, then raises the product proudly","nods confidently while presenting the product","glances at the product, then gives a warm satisfied smile"][i%4]}).`:"Hands-only shot, no talking.";
  return `NO SUBTITLES, NO CAPTIONS, NO ON-SCREEN TEXT. ${SIL?"SILENT VIDEO: no voice, no speech, no narration (ambient sound or none).":"Audio only."} NO watermark, NO app logo, NO username, NO social media interface.
-IMAGE-TO-VIDEO: use the uploaded START IMAGE (from Image Prompt SEG ${i+1}) as the exact first frame. Keep the person, face, hair, outfit, setting, lighting and product EXACTLY as they appear in the start image; only add natural movement, speech and camera motion.
+IMAGE-TO-VIDEO: use the uploaded START IMAGE (from Image Prompt SEG ${i+1}) as the exact first frame. Keep the person, face, hair, outfit, setting, lighting and product EXACTLY as they appear in the start image; only add natural movement${SIL?"":", speech"} and camera motion.
 Vertical 9:16 UGC video clip, ${len} seconds. Clip ${i+1} of ${n} of one ~${x.c.D}s video.
 Product: ${x.prod}. The product in the start image is the final design: do NOT redraw, restyle or replace it.
 ${x.rule}
@@ -579,8 +579,8 @@ function render(s,i,old){const d=document.createElement("div");d.className="card
  <div><span class="tag">Manfaat: ${s.ben}</span><span class="tag">${s.niche}</span><span class="tag">CEP: ${s.cep}</span><span class="tag">Angle: ${s.angle}</span></div>
  ${s.segs.map((x,k)=>`<p style="margin:10px 0"><b>SEG ${k+1} (${x.t})</b> | <i>${x.type}</i> ${x.vis}${x.exp?` <b>Ekspresi:</b> ${x.exp}`:""} | <b>Intonasi:</b> ${x.into} <b>“${x.line}”</b></p>`).join("")}
  <table><tr><th>Ad copy</th><td>${s.copy}</td></tr></table>
- ${(()=>{const IP=segImagePrompts(s),VP=segPrompts(s),box=(t,sub,txt,cls,k,btn)=>`<details style="margin-top:8px"><summary><b>${t}</b> <span class="mut">${sub}</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${txt.replace(/</g,"&lt;")}</pre><button class="sec ${cls}" data-k="${k}" style="width:auto">${btn}</button></details>`;
-  return s.segs.map((g,k)=>`<div style="border-left:3px solid var(--ac);padding-left:10px;margin-top:10px"><b>SEG ${k+1} (${g.t})</b>${box("① Prompt Image","(generate dulu → jadi start frame / bisa dipakai sebagai image ad)",IP[k],"ci",k,"Copy image SEG "+(k+1))}${box("② Prompt Video","(upload gambar ① di Flow, lalu pakai prompt ini)",VP[k],"cp",k,"Copy video SEG "+(k+1))}</div>`).join("")})()}
+ ${(()=>{const IP=segImagePrompts(s),VP=segPrompts(s,false),VS=segPrompts(s,true),box=(t,sub,txt,cls,k,btn)=>`<details style="margin-top:8px"><summary><b>${t}</b> <span class="mut">${sub}</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${txt.replace(/</g,"&lt;")}</pre><button class="sec ${cls}" data-k="${k}" style="width:auto">${btn}</button></details>`;
+  return s.segs.map((g,k)=>`<div style="border-left:3px solid var(--ac);padding-left:10px;margin-top:10px"><b>SEG ${k+1} (${g.t})</b>${box("① Prompt Image","(generate dulu → jadi start frame / bisa dipakai sebagai image ad)",IP[k],"ci",k,"Copy image SEG "+(k+1))}${box("② Prompt Video · dengan dialog","(upload gambar ① di Flow, lalu pakai prompt ini)",VP[k],"cp",k,"Copy video SEG "+(k+1))}${box("② Prompt Video · tanpa suara","(b-roll, tambah musik + teks di editor)",VS[k],"cs",k,"Copy video tanpa suara SEG "+(k+1))}</div>`).join("")})()}
  <details style="margin-top:8px" class="lpbox"><summary><b>④ Landing Page Scalev</b> <span class="mut">(1 LP per CEP + angle: ${s.cep} · ${s.angle})</span></summary>
  <p class="mut" style="margin:6px 0">Semua scene dengan CEP &amp; angle yang sama memakai LP yang sama. Paste ATAS sebelum form checkout, BAWAH sesudahnya.</p>
  <div style="margin:6px 0 8px"><label>Gambar utama LP (upload hasil ① Prompt Image SEG 1)</label><input type="file" accept="image/*" class="lpimg"><div class="mut lpst">${s.heroImg?"✓ Gambar sudah dipasang":"Upload gambar dulu untuk mengaktifkan LP."}</div></div>
@@ -588,7 +588,7 @@ function render(s,i,old){const d=document.createElement("div");d.className="card
  <div class="lpf"></div></details>
  <div style="margin-top:10px"><b>③ Thumbnail</b></div>
  ${s.thumbs.map((x,k)=>`<details style="margin-top:8px"><summary><b>Thumbnail ${x[0]}</b> <span class="mut">(teks: “${s.thumbText}”)</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${x[1].replace(/</g,"&lt;")}</pre><button class="sec ct" data-k="${k}" style="width:auto">Copy thumbnail ${x[0]}</button></details>`).join("")}`;
- const SP=segPrompts(s),IPs=segImagePrompts(s);d.querySelectorAll(".ci").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(IPs[+b.dataset.k]));{const LP=()=>buildLP(s);
+ const SP=segPrompts(s,false),SS=segPrompts(s,true),IPs=segImagePrompts(s);d.querySelectorAll(".cs").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(SS[+b.dataset.k]));d.querySelectorAll(".ci").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(IPs[+b.dataset.k]));{const LP=()=>buildLP(s);
  // kecilkan gambar upload jadi WebP 480x600 (4:5) supaya LP tetap ringan
  d.querySelector(".lpimg").onchange=e=>{const fl=e.target.files[0];if(!fl)return;const im=new Image();im.onload=()=>{const W=432,H=540,c=document.createElement("canvas");c.width=W;c.height=H;const r=Math.max(W/im.width,H/im.height),w=im.width*r,h=im.height*r;c.getContext("2d").drawImage(im,(W-w)/2,(H-h)/2.6,w,h);
   s.heroImg=c.toDataURL("image/webp",.5);const st=d.querySelector(".lpst");st.textContent=`✓ Gambar dipasang (${Math.round(s.heroImg.length*.75/1024)} KB)`;d.querySelectorAll(".lpa,.lpb,.lpv").forEach(b=>b.disabled=false);URL.revokeObjectURL(im.src)};im.src=URL.createObjectURL(fl)};d.querySelector(".lpa").onclick=()=>navigator.clipboard.writeText(LP().atas);d.querySelector(".lpb").onclick=()=>navigator.clipboard.writeText(LP().bawah);
@@ -654,8 +654,8 @@ async function aiAll(){if(!SAMPLE)return alert("AI hanya aktif di link artifact 
  for(const d of [...out.querySelectorAll(".card")].reverse()){if(d._s&&!d._s.ai){await aiRewrite(d._s,d)}}}
 let DL=null;(async()=>{try{DL=await claude.use("downloads")}catch(e){}})();
 function exportCSV(){if(!list.length)return alert("Belum ada scene");
- const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Durasi","Sell","Model","Judul","Script","Ad Copy","Image Prompt","Video Prompt","Thumbnail 4:5","Thumbnail 9:16"];
- const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,s.dur+"s",s.sell,s.model?"YA":"TIDAK",s.title,s.scenes.map(x=>x[0]+" | "+x[1]).join("\n"),s.copy,segImagePrompts(s).join("\n\n=====\n\n"),segPrompts(s).join("\n\n=====\n\n"),s.thumbs[0][1],s.thumbs[1][1]].map(q).join(","));
+ const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Durasi","Sell","Model","Judul","Script","Ad Copy","Image Prompt","Video Prompt (dialog)","Video Prompt (tanpa suara)","Thumbnail 4:5","Thumbnail 9:16"];
+ const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,s.dur+"s",s.sell,s.model?"YA":"TIDAK",s.title,s.scenes.map(x=>x[0]+" | "+x[1]).join("\n"),s.copy,segImagePrompts(s).join("\n\n=====\n\n"),segPrompts(s,false).join("\n\n=====\n\n"),segPrompts(s,true).join("\n\n=====\n\n"),s.thumbs[0][1],s.thumbs[1][1]].map(q).join(","));
  const csv="﻿"+[hd.join(","),...rows].join("\n");if(DL){DL.save({filename:"scene-meta-ads.csv",data:csv}).catch(()=>{});return}
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
  a.download="scene-meta-ads.csv";a.click()}
