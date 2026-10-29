@@ -1,54 +1,65 @@
-<!-- LP Salep Glowing FILO · CEP Problem-Solution · Angle Relatable Pain · dibuat dari Scene Generator -->
-<!-- LP Salep Glowing FILO · Problem-Solution · BAWAH (sesudah form Scalev). Prefix .flp2, tanpa <script>. -->
+<!-- LP Salep Glowing FILO v2 · CEP Problem-Solution · Angle Relatable Pain · dibuat dari Scene Generator · BAWAH (sesudah form) -->
 <style>
-.flp2{--pl:16px;--pr:14px;--plum:#3D1730;--blush:#F9E3EA;--rose:#D9497A;--cream:#FFF7F2;--txt:#3a2a33;--mid:#7a6570;--cta:#03AC0E;max-width:560px;margin:0 auto;background:#fff;color:var(--txt);font:400 15px/1.65 'Open Sans',Arial,sans-serif;overflow-x:hidden;box-sizing:border-box}
-.flp2 *{box-sizing:border-box}
-.flp2 h2{font-family:'Poppins',Arial,sans-serif;font-weight:700;text-transform:capitalize;font-size:clamp(21px,6.2vw,25px);line-height:1.25;color:var(--plum);margin:0 0 14px}
-.flp2 p{margin:0 0 14px}
-.flp2 .s{padding:30px var(--pr) 30px var(--pl)}
-.flp2 .kick{display:inline-block;font:600 11px/1 'Poppins',Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--rose);margin-bottom:10px}
-.flp2 .faq{background:var(--cream);box-shadow:0 0 0 100vmax var(--cream);clip-path:inset(0 -100vmax)}
-.flp2 details{background:#fff;border-left:4px solid var(--rose);border-radius:4px 12px 12px 4px;margin:0 0 10px}
-.flp2 summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 14px;font:700 14.5px/1.4 'Poppins',Arial,sans-serif;color:var(--plum)}
-.flp2 summary::-webkit-details-marker{display:none}
-.flp2 summary::after{content:'+';flex:none;width:24px;height:24px;border-radius:50%;background:var(--blush);color:var(--plum);display:flex;align-items:center;justify-content:center;font-size:17px}
-.flp2 details[open] summary::after{content:'−'}
-.flp2 details div{padding:0 14px 14px;font-size:14px}
-.flp2 mark{background:var(--blush);color:var(--plum);padding:0 4px;font-weight:700}
-.flp2 u{text-decoration-color:var(--rose);text-decoration-thickness:2px;text-underline-offset:3px}
-.flp2 .close{background:var(--plum);color:#fff;text-align:center;box-shadow:0 0 0 100vmax var(--plum);clip-path:inset(0 -100vmax)}
-.flp2 .close h2{color:#fff}
-.flp2 .close p{color:rgba(255,255,255,.82)}
-.flp2 .pts{list-style:none!important;margin:0 auto 18px!important;padding:0!important;text-align:left;display:inline-block}
-.flp2 .pts li{display:grid!important;grid-template-columns:16px 1fr!important;gap:6px!important;margin:0 0 6px!important;padding:0!important;font-size:14px}
-.flp2 .pts li::before{content:'✓';color:#7CE27F;font-weight:700}
-.flp2 .cta{display:block;background:var(--cta);color:#fff!important;font:700 16px/1.3 'Poppins',Arial,sans-serif;padding:17px 12px;border-radius:10px;text-decoration:none!important;box-shadow:0 3px 0 #028a0b}
-.flp2 .sm{font-size:11px;margin:10px 0 0!important;opacity:.8}
-.flp2 .foot{padding:18px var(--pr) 28px var(--pl);font-size:11px;text-align:center;color:var(--mid)}
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+.sg3 * { box-sizing: border-box; margin: 0; padding: 0; }
+.sg3 { font-family: 'Plus Jakarta Sans', sans-serif; max-width: 680px; margin: 0 auto; background: #FAF6F2; overflow-x: hidden; }
+.sg3-divider { height: 3px; background: linear-gradient(90deg, transparent, #C94F7C, transparent); }
+.sg3-section { padding: 28px 20px; }
+.sg3-krem { background: #FAF6F2; }
+.sg3-plum { background: #0D1B2A; }
+.sg3-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #C94F7C; margin-bottom: 6px; }
+.sg3-h2 { font-size: 20px; font-weight: 800; color: #0D1B2A; line-height: 1.25; margin-bottom: 6px; }
+.sg3-h2-white { color: #fff; }
+.sg3-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; text-align: left; }
+.sg3-li { display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,.07); border-radius: 8px; padding: 12px 14px; }
+.sg3-li b { color: #C9963A; font-weight: 800; flex-shrink: 0; }
+.sg3-li span { font-size: 14px; color: rgba(255,255,255,.8); line-height: 1.55; }
+.sg3-promise { background: rgba(201,150,58,.12); border: 1px solid rgba(201,150,58,.3); border-radius: 10px; padding: 16px; margin-bottom: 20px; text-align: center; }
+.sg3-promise p:first-child { font-size: 15px; font-weight: 700; color: #C9963A; margin-bottom: 6px; }
+.sg3-promise p + p { font-size: 14px; color: rgba(255,255,255,.75); line-height: 1.6; }
+.sg3-btn { display: block !important; width: 100% !important; background: #C9963A !important; background-color: #C9963A !important; color: #0D1B2A !important; font-size: 16px !important; font-weight: 800 !important; text-align: center !important; padding: 17px 24px !important; border-radius: 10px !important; text-decoration: none !important; box-shadow: 0 4px 14px rgba(201,150,58,.35) !important; line-height: 1.3 !important; -webkit-appearance: none !important; appearance: none !important; margin-bottom: 10px !important; }
+.sg3-btn:visited,.sg3-btn:hover,.sg3-btn:active,.sg3-btn:focus { color: #0D1B2A !important; background: #B8832A !important; text-decoration: none !important; }
+.sg3-btn small { display: block !important; font-size: 11px !important; font-weight: 500 !important; opacity: .75 !important; margin-top: 3px !important; color: #0D1B2A !important; }
+.sg3-btn.ghost { background: transparent !important; color: #C9963A !important; border: 1.5px solid #C9963A !important; box-shadow: none !important; }
+.sg3-btn.ghost small { color: #C9963A !important; }
+.sg3-honest { background: #FDF0F6; border: 1px solid #F4A7C3; border-radius: 8px; padding: 14px 16px; font-size: 12px; color: #374151; line-height: 1.6; }
+.sg3-honest strong { color: #7B1040; display: block; margin-bottom: 4px; }
+.sg3-footer-bar { background: #060E18; padding: 20px; text-align: center; }
+.sg3-footer-brand { font-size: 13px; font-weight: 700; color: rgba(255,255,255,.5); margin-bottom: 6px; }
+.sg3-footer-brand span { color: #C94F7C; }
+.sg3-footer-note { font-size: 10px; color: rgba(255,255,255,.25); line-height: 1.6; }
 </style>
-<div class="flp2">
 
-<section class="s faq">
-<span class="kick">Sebelum pesan</span>
-<h2>Pertanyaan Yang Sering Ditanyakan</h2>
-<details open><summary>Kulit saya sensitif, perih nggak?</summary><div><b>Tidak.</b> Banyak pelanggan berkulit sensitif memakainya tanpa perih, panas, atau lengket. Mau lebih tenang? Coba sedikit di belakang telinga dulu.</div></details>
-<details><summary>Berapa lama hasilnya kelihatan?</summary><div>Banyak pelanggan sudah lihat flek memudar dalam <b>7 hari</b>, makin jelas di minggu 2–3 pemakaian rutin.</div></details>
-<details><summary>Potnya kecil, awet nggak?</summary><div><b>Awet.</b> Dipakai tipis, 1 pot ±1–1,5 bulan. Paket Beli 1 Gratis 1 isi 2 pot = ±2–3 bulan.</div></details>
-<details><summary>Kenapa harus pakai sunscreen?</summary><div>Supaya flek tidak balik lagi. Karena itu pembelian hari ini <b>gratis sunscreen</b>.</div></details>
-<details><summary>Boleh bareng skincare lain?</summary><div>Boleh. Pakai salep sebagai langkah terakhir di malam hari.</div></details>
-<details><summary>Bisa COD?</summary><div><b>Bisa.</b> Bayar ke kurir saat paket sampai. CS konfirmasi lewat WhatsApp.</div></details>
-<details><summary>Dikirim dari mana?</summary><div>Dari Surabaya ke seluruh Indonesia. Resi dikirim setelah pesanan diproses.</div></details>
-</section>
+<div class="sg3">
+<div class="sg3-divider"></div>
 
+<div class="sg3-section sg3-plum" style="text-align:center">
+  <p class="sg3-eyebrow">Kenapa ini penting</p>
+  <h2 class="sg3-h2 sg3-h2-white" style="margin-bottom:16px">Mulai Rawat Flek Malam Ini<br><span style="color:#C9963A">Flek tidak memudar sendiri, tapi bisa dirawat dengan cara yang benar.</span></h2>
+  <div class="sg3-list">
+    <div class="sg3-li"><b>✓</b><span>Semakin lama dibiarkan, flek semakin gelap dan semakin susah pudar — waktu terbaik adalah sekarang.</span></div>
+    <div class="sg3-li"><b>✓</b><span>Salep Glowing FILO bekerja saat kamu tidur — tidak perlu rutinitas panjang, tidak perlu keluar banyak biaya.</span></div>
+    <div class="sg3-li"><b>✓</b><span>Ribuan pelanggan sudah membuktikan — flek memudar, kulit lebih cerah, kepercayaan diri kembali.</span></div>
+  </div>
+  <div class="sg3-promise">
+    <p>Janji kami sederhana.</p>
+    <p>Oles tipis sebelum tidur. Biarkan bekerja semalaman. Besok pagi mulai rasakan perbedaannya — tanpa perih, tanpa ribet, tanpa keluar banyak.</p>
+  </div>
+  <a href="#sg-order" class="sg3-btn">Ambil Promo Beli 1 Gratis 1 · Rp139.000<small>Bonus sunscreen untuk pembelian hari ini · bisa COD</small></a>
+  <a href="#sg-testi" class="sg3-btn ghost">Lihat Bukti dari Pelanggan Asli<small>Testimoni nyata — bukan endorse berbayar</small></a>
+</div>
 
-<section class="s close">
-<h2>Mulai Rawat Flek Malam Ini</h2>
-<p>Malam ini bisa jadi malam pertama kulit Anda berubah.</p>
-<ul class="pts"><li><span>Beli 1 Gratis 1 hanya <b>Rp139.000</b></span></li><li><span>Gratis sunscreen + eyeliner untuk pembelian hari ini</span></li><li><span>Bisa bayar di tempat (COD)</span></li></ul>
-<a class="cta" href="#filo-order">Ambil Promo Sekarang · Rp139.000</a>
-<p class="sm">Bonus berlaku untuk pembelian hari ini.</p>
-</section>
+<div class="sg3-divider"></div>
 
-<div class="foot">Filomall Beauty · Salep Glowing FILO<br>Produk perawatan kulit, bukan obat. Hasil tiap orang bisa berbeda.<br>Pembayaran aman via Scalev.</div>
+<div class="sg3-section sg3-krem">
+  <div class="sg3-honest">
+    <strong>Catatan jujur.</strong>
+    Salep Glowing FILO adalah produk perawatan kulit malam yang dipakai secara rutin. Hasil bervariasi antar individu tergantung kondisi kulit, keparahan flek, dan konsistensi pemakaian. Bukan obat dan tidak mengklaim menyembuhkan kondisi kulit medis.
+  </div>
+</div>
 
+<div class="sg3-footer-bar">
+  <div class="sg3-footer-brand"><span>F</span> Filomall Beauty</div>
+  <div class="sg3-footer-note">© Filomall Beauty · Salep Glowing FILO untuk perawatan malam.<br>Hasil bervariasi antar individu tergantung kondisi kulit dan konsistensi pemakaian.<br>Pembayaran diproses aman via Scalev.</div>
+</div>
 </div>
