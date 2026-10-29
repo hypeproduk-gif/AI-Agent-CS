@@ -1,9 +1,6 @@
 <!doctype html>
-<html lang="id">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Scene Generator Meta Ads</title>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAVAC Creative Generator</title>
 <style>
 :root{--bg:#f6f7f9;--card:#fff;--tx:#1b1f24;--mut:#667;--ac:#2f6fed;--bd:#dde1e6}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121417;--card:#1c1f24;--tx:#e8eaed;--mut:#9aa;--ac:#6b9bff;--bd:#2c3138}}
@@ -19,168 +16,188 @@ button{background:var(--ac);color:#fff;border:0;cursor:pointer;font-weight:600}b
 table{width:100%;border-collapse:collapse;font-size:13px}td,th{border-top:1px solid var(--bd);padding:6px;text-align:left;vertical-align:top}
 th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight:700;margin:6px 0}
 .mut{color:var(--mut);font-size:13px}
+.cav th{width:130px;font-size:12px}.cav td{font-size:13px}pre{white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px;max-height:420px;overflow:auto}
 </style>
-</head>
-<body><div class="wrap">
-<h1>🎬 Scene Generator — Creative Meta Ads</h1>
-<p class="mut">6 CEP × 11 Angle × 34 Hook × 4 Tipe Konten = 8.976 kombinasi unik. Pilih manual atau acak.</p>
+</head><body><div class="wrap">
+<h1>🎯 CAVAC Creative Generator · Meta Ads</h1>
+<p class="mut">CEP → CEP utama → Sub-CEP → Advertised Value → Intent → Angle → Konten (image + video). Gratis, tanpa token.</p>
 <div class="card">
  <div class="grid">
-  <div><label>Tipe produk / Niche</label><select id="niche"></select><div class="mut" id="nhint"></div></div>
-  <div><label>Nama produk</label><input id="prod" value="Salep Glowing Filo"></div>
-  <div style="grid-column:1/-1"><label>Semua manfaat (pisahkan dengan koma)</label><input id="ben" value="memudarkan flek hitam, menyamarkan bekas jerawat, wajah glowing, melembabkan, tidak lengket, tidak perih, aman untuk kulit sensitif"><div class="mut">Tiap scene otomatis menonjolkan 2–3 manfaat yang paling nyambung dengan hook (sisanya acak untuk variasi).</div></div>
-  <div><label>Harga</label><input id="price" value="Rp139.000"></div>
-  <div><label>Promo (kosongkan jika tidak ada)</label><input id="promo" value="Beli 1 Gratis 1" placeholder="Beli 2 gratis 1 / Diskon 50% / Gratis ongkir"></div>
-  <div><label>CEP</label><select id="cep"></select></div>
-  <div><label>Angle Psikologi</label><select id="ang"></select></div>
-  <div><label>Hook</label><select id="hook"></select></div>
-  <div><label>Tipe Konten</label><select id="tipe"></select></div>
-  <div><label>Setting / Lokasi</label><select id="set"></select></div>
-  <div><label>Gerakan Produk</label><select id="pm"></select></div>
-  <div><label>Gerakan Tangan</label><select id="hm"></select></div>
-  <div><label>Angle Kamera</label><select id="cam"></select></div>
-  <div><label>Lighting</label><select id="lit"></select></div>
-  <div><label>Format video</label><select id="fmt"><option value="1x10" selected>1 scene × 10 detik</option><option value="2x8">2 scene × 8 detik = 16 detik (Flow)</option></select>
-   <select id="dur" hidden><option value="10">10</option><option value="15" selected>15</option></select>
-   <div class="mut">Tiap scene = 1 kali generate. 16 detik (2 scene) lebih leluasa untuk hook → produk → CTA.</div></div>
-  <div style="grid-column:1/-1"><label>Keterangan produk (Bahasa Indonesia) <button type="button" class="sec" style="width:auto;padding:2px 10px;font-size:12px" onclick="presetFilo()">Isi preset Salep Glowing FILO</button> <button type="button" class="sec" style="width:auto;padding:2px 10px;font-size:12px" onclick="presetTka()">Isi preset Bank Soal TKA SD</button></label><textarea id="pid" rows="2" style="width:100%;padding:8px;border:1px solid var(--bd);border-radius:7px;background:var(--card);color:var(--tx);font:inherit"></textarea>
-   <div class="mut" id="ptip"></div>
-   <label style="margin-top:6px">Terjemahan otomatis (EN) — dipakai di prompt, boleh diedit</label><input id="pdesc"></div>
-  <div><label>Keterangan model (Bahasa Indonesia)</label><input id="mid" placeholder="wanita umur 30an, berhijab, kulit sawo matang"><label style="margin-top:6px">Terjemahan (EN)</label><input id="mdesc"></div>
-  <div><label>Mode antar segmen</label><select id="vmode"><option value="var">Variasi (ganti lokasi, outfit, lighting, kamera)</option><option value="same">Nyambung (1 lokasi, 1 outfit)</option></select><div class="mut">Variasi = gaya jump-cut TikTok, lebih eksploratif</div></div>
-  <div hidden><select id="seglen"><option value="8" selected>8</option><option value="10">10</option></select><div id="durinfo"></div></div>
-  <div><label>Sumber dialog</label><select id="dsrc"><option value="bank">Bank dialog FILO (Opus, gratis)</option><option value="tka">Bank dialog TKA SD (Opus, gratis)</option><option value="tpl">Template umum</option></select></div>
-  <select id="audio" hidden><option value="voice" selected></option><option value="silent"></option></select>
-  <div><label>Formula LP</label><select id="lpform"><option value="auto" selected>Otomatis sesuai CEP</option><option>PAS</option><option>AIDA</option><option>PASTOR</option><option>BAB</option><option>4P</option><option>ODC</option></select><div class="mut">PS→PAS · Routine→AIDA · Commitment→4P · Aspirational→BAB · Opportunistic→ODC · Emotional→PASTOR</div></div>
-  <div><label>Platform iklan</label><select id="plat"><option value="meta" selected>Meta Ads (FB/IG)</option><option value="tiktok">TikTok</option><option value="shopee">Shopee</option></select><div class="mut">Menentukan kata CTA</div></div>
-  <div><label>Sell</label><select id="sell"><option>Auto</option><option>Soft</option><option>Hard</option></select><div class="mut">Auto = Hard kalau ada promo / Value Shock / Opportunistic</div></div>
+  <div><label>Tipe produk</label><select id="ptype"><option value="fisik" selected>Produk fisik (preset Salep Glowing FILO)</option><option value="digital">Produk digital (preset Bank Soal TKA SD)</option></select></div>
+  <div><label>Nama produk</label><input id="prod"></div>
+  <div><label>Harga</label><input id="price"></div>
+  <div><label>Promo</label><input id="promo" placeholder="Beli 1 Gratis 1"></div>
+  <div style="grid-column:1/-1"><label>Keterangan produk (Bahasa Indonesia)</label><textarea id="pid" rows="2" style="width:100%;padding:8px;border:1px solid var(--bd);border-radius:7px;background:var(--card);color:var(--tx);font:inherit"></textarea>
+   <label style="margin-top:6px">Terjemahan otomatis (EN, dipakai di prompt, boleh diedit)</label><input id="pdesc"></div>
+  <div><label>Keterangan model (Bahasa Indonesia)</label><input id="mid" placeholder="wanita umur 30an, berhijab"><label style="margin-top:6px">Terjemahan (EN)</label><input id="mdesc"></div>
   <div><label>Model manusia</label><select id="model"><option value="1" selected>Pakai model (MODEL_IMAGE)</option><option value="0">Tanpa model (produk + tangan)</option></select></div>
-  <div><label>Jumlah batch acak</label><input id="n" type="number" value="10" min="1" max="200"></div>
+  <div><label>Format video</label><select id="fmt"><option value="1x10" selected>1 scene × 10 detik</option><option value="2x8">2 scene × 8 detik (Flow)</option></select></div>
+  <div><label>Platform iklan</label><select id="plat"><option value="meta" selected>Meta Ads (FB/IG)</option><option value="tiktok">TikTok</option><option value="shopee">Shopee</option></select></div>
+  <div><label>01 Tipe CEP</label><select id="cep"></select></div>
+  <div><label>02 CEP utama</label><select id="main"></select></div>
+  <div><label>05a Selling Intent</label><select id="sell"></select></div>
+  <div><label>05b Communication Intent</label><select id="ci"></select></div>
+  <div><label>06 Angle</label><select id="ang"></select></div>
+  <div><label>Formula LP</label><select id="lpform"><option value="auto" selected>Otomatis sesuai CEP</option><option>PAS</option><option>AIDA</option><option>PASTOR</option><option>BAB</option><option>4P</option><option>ODC</option></select></div>
+  <div><label>Jumlah ide (batch)</label><input id="n" type="number" value="10" min="1" max="100"></div>
  </div>
  <div class="row" style="margin-top:10px">
-  <button onclick="gen1()">Generate 1 Scene</button>
-  <button onclick="genBatch()">Generate Batch Acak (tanpa duplikat)</button>
-  <button class="sec" onclick="aiAll()">✨ Dialog AI semua scene</button>
+  <button onclick="gen1()">Generate 1 Ide</button>
+  <button onclick="genBatch()">Generate Batch (tanpa ide kembar)</button>
   <button class="sec" onclick="exportCSV()">Export CSV</button>
   <button class="sec" onclick="out.innerHTML='';list=[]">Reset</button>
  </div>
+ <p class="mut" style="margin:8px 0 0">Alur Flow: ① generate gambar (prompt image) → upload gambar itu + prompt thumbnail untuk iklan gambar → upload gambar yang sama + ② prompt video untuk iklan video.</p>
 </div>
 <div id="out"></div>
 </div>
 <script>
-const CEP=[
- ["Problem-Solution","penonton sedang mengalami masalah dan butuh solusi cepat"],
- ["Routine","produk masuk ke rutinitas harian (pagi/malam/sebelum kerja)"],
- ["Commitment","momen penting/target yang membuat orang komit (acara, nikah, interview)"],
- ["Aspirational","ingin jadi versi diri yang lebih baik / meniru idola"],
- ["Opportunistic","momen promo, gajian, flash sale, harbolnas"],
- ["Emotional","momen insecure, sedih, butuh self-reward"]];
-// 11 angle: yang mirip sudah digabung (FOMO+Social Proof, Instant+Shock, Hidden Gem+Curated Discovery, Relatable Pain+Emotional Story)
-const ANG=[
- ["Social Proof / FOMO","semua orang pakai, takut ketinggalan","montase review, komentar ramai, label sold out"],
- ["Shock / Hasil Cepat","hasil cepat yang mengejutkan","reaksi kaget close-up saat lihat hasil"],
- ["Curiosity Gap","info belum lengkap","tahan reveal sampai detik akhir"],
- ["Authority Effect","percaya ahli","kutipan/visual ahli, jas lab, sertifikat BPOM"],
- ["Hidden Gem / Discovery","menemukan harta karun","gaya vlog santai, produk dikeluarkan pelan seperti rahasia"],
- ["Relatable Pain / Emotional Story","ini masalah saya, empati","close-up masalah nyata tanpa filter, talking head jujur"],
- ["Transformation Desire","ingin hasil sama","split-screen before/after"],
- ["Value Shock","deal terlalu bagus","harga besar di layar, bandingkan dengan harga kopi"],
- ["Comparison Curiosity","kompetisi & pembuktian","dua produk side-by-side, tes bersamaan"],
- ["Demonstration Proof","bukti visual","tes langsung di kamera, no cut"],
- ["Regret Trigger","kenapa baru tahu","ekspresi menyesal + 'andai dari dulu'"]];
-// 34 hook unik (duplikat & yang kembar sudah dibuang). Problem tetap 10 karena dipetakan ke hook problem per niche.
-const HK={
- "Confession":["Aku kira ini cuma hype TikTok…","Aku hampir skip produk ini.","Awalnya aku ragu sama skincare ini.","Aku nyesel baru coba ini sekarang.","Aku akhirnya coba juga produk ini.","Jujur, aku nggak percaya sama review-nya."],
- "Curiosity":["Kenapa skincare ini sering sold out?","Ini alasan skincare ini viral.","Kenapa produk ini sering muncul di FYP?","Aku baru sadar fungsi ini.","Ini yang bikin skincare ini beda.","Kenapa ibu-ibu pada repeat order ini?"],
- "Problem":["Kalau kulitmu kusam, coba lihat ini.","Kalau kulitmu kering, kamu harus lihat ini.","Kalau skincare kamu nggak mempan…","Kalau kamu punya masalah kulit ini…","Kalau kulitmu gampang breakout…","Kalau kamu bingung pilih skincare…","Kalau skincare kamu terasa berat…","Kalau kamu cari skincare simple…","Kalau kulitmu gampang iritasi…","Kalau kamu pernah malu difoto dari dekat…"],
- "Result":["Aku nggak nyangka hasilnya kayak gini.","Ini hasil setelah pakai ini.","Kulitku berubah setelah pakai ini.","Aku kaget lihat hasilnya.","7 hari pakai, ini hasilnya.","Ini lebih bagus dari yang aku kira."],
- "Pattern Interrupt":["Stop scroll dulu.","Tunggu… lihat ini.","Oke ini agak aneh.","Ini kelihatan biasa… tapi tunggu.","Aku baru sadar ini penting.","Harga segini dapat 2? Serius?"]};
-const HOOKS=[];for(const g in HK)HK[g].forEach(t=>HOOKS.push([g,t]));
-const P0=HOOKS.findIndex(x=>x[0]==="Problem"),pIdx=h=>(h-P0)%10;
-const TIPE=["Problem","Education","Manfaat","Testimoni"];
-const BODY={
- Problem:(p,b)=>[`Tunjukkan masalah secara detail & dramatis — konteks CEP sebagai latar.`,`Agitasi: "udah coba macem-macem tapi tetap gini."`,`Perkenalkan ${p} sebagai jalan keluar.`],
- Education:(p,b)=>[`Jelaskan kenapa masalah terjadi (1 fakta singkat).`,`Tunjukkan kandungan/cara kerja ${p} dengan teks overlay.`,`Demo cara pakai yang benar (step 1-2-3).`],
- Manfaat:(p,b)=>[`Sorot manfaat utama: ${b}.`,`Tunjukkan 2-3 manfaat tambahan dengan cut cepat.`,`Visualkan hidup setelah manfaat didapat.`],
- Testimoni:(p,b)=>[`Talking head: cerita pengalaman pribadi pakai ${p}.`,`B-roll pemakaian + hasil (${b}).`,`Tambahkan screenshot review/komentar pembeli.`]};
+// ===== DATA CAVAC (ditulis sekali, dipakai gratis tanpa token) =====
+// Struktur: Tipe CEP → 2 CEP utama → 3 Sub-CEP (kalimat event Ws). Tiap sub-CEP: e=event, h=hook lisan, t=headline gambar, v=visual EN
+const CAVAC={
+fisik:{
+"Problem-Solution":[
+ {m:"Saat flek & bekas jerawat tidak juga hilang meski sudah ganti-ganti produk",s:[
+  {e:"Pagi hari di depan cermin kamar mandi, kesal karena flek di pipi masih sama setelah ganti krim ketiga.",h:"Udah ganti krim tiga kali, flek di pipiku masih di situ.",t:"Flek masih di situ?",v:"early morning at a bathroom mirror, she leans close to inspect a dark spot on her cheek, three other skincare bottles pushed aside on the counter, frustrated expression"},
+  {e:"Saat selfie kamera depan di cahaya terang, flek kelihatan jelas lalu fotonya langsung dihapus.",h:"Tiap selfie di cahaya terang, flekku kelihatan banget.",t:"Selfie langsung dihapus?",v:"bright daylight by a window, she holds her phone up for a selfie, looks at the screen and frowns, fingertips touching her cheek"},
+  {e:"Malam sebelum tidur, ragu coba krim baru karena kulit sensitif pernah perih.",h:"Kulitku sensitif, krim pemutih malah bikin perih.",t:"Kulit sensitif, takut perih?",v:"night, warm bedside lamp, she sits on the bed holding the small jar hesitantly, slightly worried face"}]},
+ {m:"Saat kulit kusam dan tidak merata meski sudah rutin skincare",s:[
+  {e:"Pagi saat makeup, sadar concealer makin tebal hanya untuk menutupi flek.",h:"Concealer-ku makin tebal cuma buat nutupin flek.",t:"Concealer makin tebal?",v:"morning at a vanity, she dabs concealer on her cheek with a sponge, makeup items around, tired look"},
+  {e:"Sore pulang kerja, melihat wajah kusam dan lelah di cermin lift kantor.",h:"Pulang kerja, mukaku kelihatan kusam banget.",t:"Muka kusam tiap sore?",v:"evening inside an office elevator with a mirror wall, she in work clothes looks at her dull face, bag on her shoulder"},
+  {e:"Saat membuka galeri foto lama, merasa kulitnya dulu jauh lebih cerah.",h:"Lihat foto lama, kulitku dulu nggak sekusam ini.",t:"Dulu kulitmu lebih cerah?",v:"living room sofa, she scrolls old photos on her phone with a nostalgic frown"}]}],
+"Routine":[
+ {m:"Saat menjalani rutinitas malam sebelum tidur",s:[
+  {e:"Jam 10 malam habis cuci muka, capek dan hanya mau skincare satu langkah.",h:"Malam-malam capek, aku cuma mau skincare satu langkah.",t:"Skincare cukup 1 langkah",v:"10 pm at a bathroom sink, she pats her freshly washed face with a towel, the small jar waiting on the counter"},
+  {e:"Sambil rebahan sebelum tidur, oles tipis lalu langsung tidur.",h:"Oles tipis, langsung tidur. Udah, gitu aja.",t:"Oles, tidur, selesai",v:"night, she lies on her bed in pajamas dabbing a little cream on her cheek, cozy lamp light"},
+  {e:"Saat menginap di luar kota, butuh skincare mungil yang muat di pouch.",h:"Nginep di luar kota, skincare-ku cukup satu pot kecil ini.",t:"Muat di pouch kecil",v:"hotel room, an open travel pouch on the bed, she takes out the tiny jar between two fingers"}]},
+ {m:"Saat rutinitas pagi sebelum beraktivitas",s:[
+  {e:"Pagi sebelum kerja, wajah sudah lembap dan cukup makeup tipis.",h:"Bangun tidur muka udah lembap, makeup tipis aja cukup.",t:"Bangun langsung glowing",v:"morning sunlight at a bedroom vanity, she smiles at the mirror applying a light lip tint, glowing skin"},
+  {e:"Ibu rumah tangga di sela menyiapkan bekal anak, butuh perawatan yang praktis.",h:"Jadi ibu nggak sempat skincare ribet, ini yang paling praktis.",t:"Ibu sibuk, tetap glowing",v:"kitchen counter in the morning, a school lunch box beside the jar, she in casual clothes smiles"},
+  {e:"Pagi setelah memakai sunscreen, merasa perawatan malamnya terjaga.",h:"Malam salep, pagi sunscreen. Kulitku makin rata.",t:"Malam salep, pagi sunscreen",v:"morning bathroom, she applies sunscreen, the jar standing beside the sunscreen tube"}]}],
+"Commitment":[
+ {m:"Saat menjelang acara keluarga atau kondangan",s:[
+  {e:"Seminggu sebelum kondangan sepupu, cemas melihat flek saat mencoba makeup.",h:"Seminggu lagi kondangan, flekku masih kelihatan.",t:"Seminggu lagi kondangan",v:"bedroom vanity at night, a kebaya hanging behind her, she tries makeup and worriedly checks her cheek"},
+  {e:"Menjelang Lebaran, ingin wajah cerah di foto keluarga besar.",h:"Lebaran nanti pasti banyak foto, aku mau wajahku cerah.",t:"Siap foto Lebaran",v:"living room decorated for Eid, she holds the jar near her cheek with a hopeful smile"},
+  {e:"Dua minggu sebelum reuni sekolah, ingin tampil segar di depan teman lama.",h:"Mau reunian, masa iya mukaku kusam.",t:"Reuni tinggal 2 minggu",v:"bedroom, phone showing a group chat, an outfit laid on the bed, she looks into the mirror"}]},
+ {m:"Saat berkomitmen merawat diri dalam waktu tertentu",s:[
+  {e:"Mulai tantangan 7 hari, mencoret kalender setiap malam.",h:"Aku tantang diri sendiri, 7 hari pakai rutin.",t:"Tantangan 7 hari",v:"bedroom desk, a small paper calendar with days crossed off, the jar next to it, she holds a pen"},
+  {e:"Menjelang ulang tahun ke-40, ingin kulit tetap kencang dan segar.",h:"Mau umur 40, aku pengen kulitku tetap kencang.",t:"Menuju 40, tetap segar",v:"cozy room, a birthday card on the table, she gently touches her jawline with confidence"},
+  {e:"Sebelum wisuda anak, ingin tampil percaya diri di foto bersama anak.",h:"Wisuda anakku sebentar lagi, aku mau tampil PD.",t:"Siap foto wisuda anak",v:"living room, a graduation photo frame on the shelf, she holds the jar and smiles"}]}],
+"Aspirational":[
+ {m:"Saat ingin tampil percaya diri tanpa makeup",s:[
+  {e:"Akhir pekan, ingin keluar rumah bare face tanpa ragu.",h:"Weekend ini aku mau keluar tanpa makeup.",t:"Berani bare face",v:"bright café table, no makeup, glowing skin, the jar beside a coffee cup"},
+  {e:"Melihat teman seumuran yang kulitnya tetap cerah, jadi ingin juga.",h:"Temanku seumuran kulitnya cerah banget, aku juga mau.",t:"Cerah seperti dia",v:"park bench in daytime, she looks at a photo of friends on her phone, then at the jar in her hand"},
+  {e:"Ingin dipuji suami dan keluarga karena terlihat lebih segar.",h:"Suamiku bilang aku kelihatan lebih segar.",t:"Dipuji makin segar",v:"home dining room in warm light, she smiles shyly holding the jar"}]},
+ {m:"Saat ingin hasil seperti perawatan klinik tapi di rumah",s:[
+  {e:"Ingin hasil seperti habis perawatan klinik tapi budget terbatas.",h:"Mau kayak abis perawatan klinik, tapi di rumah aja.",t:"Rasa klinik, di rumah",v:"clean white bedroom, she in a bathrobe with a towel on her head, spa mood, jar in hand"},
+  {e:"Ingin kulit glowing alami seperti di video skincare.",h:"Pengen glowing alami kayak di video-video skincare.",t:"Glowing alami",v:"ring light off to the side, she records herself with glowing skin, jar raised"},
+  {e:"Masuk usia 30-an, mulai merawat garis halus dengan cara sederhana.",h:"Masuk 30-an, aku mulai rawat garis halus.",t:"Mulai rawat di 30-an",v:"bedroom vanity, she gently touches fine lines near her eyes, the jar open"}]}],
+"Opportunistic":[
+ {m:"Saat ada promo beli 1 gratis 1",s:[
+  {e:"Scroll malam hari, tergoda promo karena dapat 2 pot.",h:"Lagi scroll, eh ada promo beli 1 gratis 1.",t:"Beli 1 dapat 2!",v:"night, she lies on the sofa scrolling her phone, surprised, two jars on the table"},
+  {e:"Ingin beli berdua dengan ibu supaya hemat.",h:"Promo ini pas banget, satu buat aku satu buat ibuku.",t:"Satu buat ibu",v:"home living room, she hands one jar to an older woman, both smiling"},
+  {e:"Dapat bonus sunscreen gratis, jadi paket perawatan lengkap.",h:"Udah dapat 2 pot, gratis sunscreen lagi.",t:"Gratis sunscreen juga",v:"bed with an unboxed package, two jars and a sunscreen tube, she smiles"}]},
+ {m:"Saat gajian atau momen belanja",s:[
+  {e:"Hari gajian, ingin self-reward yang benar-benar terasa manfaatnya.",h:"Gajian kali ini aku mau self-reward yang beneran ngefek.",t:"Self-reward gajian",v:"office desk, a payday notification on her phone, she holds the jar happily"},
+  {e:"Bisa COD, jadi berani mencoba tanpa transfer dulu.",h:"Bisa COD, jadi aku berani coba dulu.",t:"Bayar di rumah",v:"front door, a courier hands over a package, she receives it smiling"},
+  {e:"Membandingkan harga dengan perawatan klinik yang mahal.",h:"Sekali ke klinik bisa ratusan ribu, ini cuma segini.",t:"Lebih hemat dari klinik",v:"table with a clinic receipt and the small jar side by side, she compares them"}]}],
+"Emotional":[
+ {m:"Saat merasa tidak percaya diri karena flek",s:[
+  {e:"Saat diajak foto bareng keluarga, memilih mundur ke belakang.",h:"Dulu aku selalu menghindar kalau diajak foto.",t:"Dulu menghindari kamera",v:"family gathering in the background, she steps back from a group photo, looking down"},
+  {e:"Dikira lebih tua dari usia sebenarnya karena flek.",h:"Orang sering kira aku lebih tua gara-gara flek ini.",t:"Terlihat lebih tua?",v:"bathroom mirror in soft light, she looks sad touching her cheek"},
+  {e:"Lelah harus menutupi wajah dengan makeup setiap hari.",h:"Capek banget tiap hari harus nutupin muka.",t:"Capek nutupin muka",v:"vanity, makeup sponge in hand, she sighs at her reflection"}]},
+ {m:"Saat kembali percaya diri setelah merawat diri",s:[
+  {e:"Pertama kali berani selfie tanpa filter lagi.",h:"Akhirnya aku berani selfie tanpa filter lagi.",t:"Selfie tanpa filter",v:"bright window light, she takes a happy no-filter selfie, glowing skin"},
+  {e:"Ditanya teman kantor pakai apa karena kulitnya makin cerah.",h:"Teman kantorku nanya aku pakai apa.",t:"Ditanya pakai apa",v:"office pantry, a colleague's hand points at her face, she laughs holding the jar"},
+  {e:"Bercermin dan tersenyum melihat kulit yang berubah.",h:"Sekarang aku suka bercermin lagi.",t:"Suka bercermin lagi",v:"bedroom mirror, she smiles at her reflection touching her glowing cheek"}]}]},
+digital:{
+"Problem-Solution":[
+ {m:"Saat anak kesulitan dengan model soal TKA",s:[
+  {e:"Malam belajar, anak bingung dan diam lama melihat soal penalaran.",h:"Anakku bingung tiap ketemu soal penalaran.",t:"Anak bingung soal TKA?",v:"evening at a kids study desk, a child stares at a worksheet confused, mother beside him with a smartphone"},
+  {e:"Hasil tryout pertama di bawah harapan, orang tua panik.",h:"Hasil tryout pertama anakku jauh dari harapan.",t:"Tryout anjlok?",v:"dining table, a tryout result sheet with low score, mother worried, child looking down"},
+  {e:"Sudah beli buku tebal tapi tidak pernah selesai dikerjakan.",h:"Beli buku tebal, ujungnya nggak kepakai.",t:"Buku tebal nggak kepakai",v:"bookshelf with thick untouched workbooks, mother holds her phone showing the PDF instead"}]},
+ {m:"Saat orang tua bingung mencari latihan soal yang tepat",s:[
+  {e:"Malam hari mencari contoh soal TKA di internet tapi tidak ketemu yang lengkap.",h:"Cari soal TKA di internet, nggak ada yang lengkap.",t:"Cari soal nggak ketemu?",v:"living room sofa at night, mother scrolling her phone with a frustrated face"},
+  {e:"Tidak sempat membuat soal latihan sendiri karena sibuk kerja.",h:"Aku kerja, nggak sempat bikin soal latihan sendiri.",t:"Nggak sempat bikin soal?",v:"home office desk with a laptop, mother checks the time, the child waiting beside her"},
+  {e:"Bingung menjelaskan jawaban soal karena tidak ada pembahasan.",h:"Mau jelasin ke anak, tapi nggak ada pembahasannya.",t:"Nggak ada pembahasan?",v:"study desk, mother points at a question, the child confused"}]}],
+"Routine":[
+ {m:"Saat rutinitas belajar malam anak",s:[
+  {e:"Setiap habis makan malam, anak latihan 20 menit.",h:"Habis makan malam, anakku latihan 20 menit aja.",t:"Cukup 20 menit sehari",v:"dining table after dinner, child solving a printed worksheet, mother smiling with a phone timer"},
+  {e:"Sebelum tidur, anak mengerjakan 5 soal lalu cek pembahasan.",h:"Sebelum tidur, lima soal dulu terus cek pembahasan.",t:"5 soal sebelum tidur",v:"child's bedroom, desk lamp, child checks answers on a phone with mother"},
+  {e:"Akhir pekan, latihan bareng orang tua sambil santai.",h:"Weekend kita latihan bareng sambil santai.",t:"Latihan santai weekend",v:"living room floor with snacks, mother and child doing worksheets together, cheerful"}]},
+ {m:"Saat menyelipkan latihan di aktivitas harian",s:[
+  {e:"Menunggu jemputan, anak latihan soal lewat HP.",h:"Sambil nunggu jemputan, latihan soal lewat HP.",t:"Latihan sambil nunggu",v:"school bench, child holds a phone showing questions, backpack beside"},
+  {e:"Di perjalanan mudik, tetap bisa latihan karena file ada di HP.",h:"Mudik pun tetap bisa latihan, filenya ada di HP.",t:"Latihan di perjalanan",v:"inside a parked car, child in the back seat holding a phone with the PDF"},
+  {e:"Print beberapa lembar tiap pagi untuk dikerjakan sepulang sekolah.",h:"Tiap pagi aku print beberapa lembar buat dikerjain pulang sekolah.",t:"Tinggal print",v:"home printer printing worksheet pages, mother taking the sheets"}]}],
+"Commitment":[
+ {m:"Saat TKA tinggal beberapa bulan lagi",s:[
+  {e:"Tiga bulan sebelum TKA, orang tua membuat jadwal latihan.",h:"TKA tinggal tiga bulan, aku bikin jadwal latihan.",t:"TKA tinggal 3 bulan",v:"wall calendar with a marked exam date, mother and child planning with a pen"},
+  {e:"Sebulan sebelum ujian, anak menargetkan nilai di atas 80.",h:"Sebulan lagi ujian, anakku target nilai di atas 80.",t:"Target nilai 80",v:"study desk, a sticky note 'target 80', child determined"},
+  {e:"Minggu terakhir sebelum TKA, fokus mengulang soal yang salah.",h:"Minggu terakhir, kita ulang soal-soal yang salah.",t:"Minggu terakhir TKA",v:"night study, child reviewing marked wrong answers, mother encouraging"}]},
+ {m:"Saat masuk kelas 6 dan mulai serius persiapan",s:[
+  {e:"Awal semester kelas 6, orang tua mulai cari persiapan dini.",h:"Baru masuk kelas 6, aku mulai siapin dari sekarang.",t:"Persiapan sejak awal",v:"school uniform child at the desk, new semester notebook, mother with phone"},
+  {e:"Setelah rapat orang tua di sekolah tentang TKA.",h:"Habis rapat sekolah, aku langsung cari latihan TKA.",t:"Habis rapat sekolah",v:"school hallway, mother holding a meeting flyer and her phone"},
+  {e:"Anak minta latihan sendiri karena teman-temannya sudah mulai.",h:"Anakku sendiri yang minta latihan, temannya udah mulai.",t:"Anak minta latihan",v:"child holding mother's phone excitedly, pointing at the screen"}]}],
+"Aspirational":[
+ {m:"Saat ingin anak percaya diri menghadapi ujian",s:[
+  {e:"Ingin anak masuk ruang ujian dengan tenang, bukan panik.",h:"Aku pengen anakku masuk ruang ujian dengan tenang.",t:"Ujian tanpa panik",v:"school gate in the morning, a calm confident child waving to mother"},
+  {e:"Ingin anak bisa masuk SMP favorit.",h:"Mimpi anakku masuk SMP favorit.",t:"Menuju SMP favorit",v:"child looking at a school brochure, mother smiling beside"},
+  {e:"Melihat anak tetangga juara, ingin anak juga berprestasi.",h:"Anak tetangga juara, aku juga mau anakku berprestasi.",t:"Anakku juga bisa",v:"living room, a trophy on a neighbor photo, mother and child motivated"}]},
+ {m:"Saat ingin jadi orang tua yang mendampingi belajar",s:[
+  {e:"Ingin mendampingi belajar tanpa harus jadi guru.",h:"Aku mau dampingi anak belajar tanpa harus jadi guru.",t:"Dampingi tanpa ribet",v:"mother and child at a desk, mother reading the explanation on a phone"},
+  {e:"Ingin waktu belajar jadi momen dekat dengan anak.",h:"Belajar jadi waktu paling dekat sama anakku.",t:"Belajar jadi momen dekat",v:"warm living room, mother hugging child while doing worksheets"},
+  {e:"Ingin anak mandiri belajar dengan pembahasan.",h:"Sekarang anakku bisa belajar sendiri pakai pembahasan.",t:"Anak belajar mandiri",v:"child alone at a desk confidently checking answers on a tablet"}]}],
+"Opportunistic":[
+ {m:"Saat ada harga promo bank soal",s:[
+  {e:"Lihat promo saat scroll, harganya lebih murah dari sekali les.",h:"Harganya lebih murah dari sekali les.",t:"Lebih murah dari 1x les",v:"mother on the sofa scrolling, surprised face, child beside"},
+  {e:"Sekali beli bisa dipakai kakak dan adiknya.",h:"Sekali beli, adiknya nanti juga bisa pakai.",t:"Sekali beli, dipakai berulang",v:"two siblings at a table sharing printed worksheets"},
+  {e:"File langsung dikirim, tidak perlu menunggu kiriman.",h:"Bayar, file langsung masuk. Nggak pakai nunggu.",t:"File langsung masuk",v:"phone screen showing a payment success and a download, mother smiling"}]},
+ {m:"Saat musim persiapan ujian",s:[
+  {e:"Musim tryout, banyak orang tua mencari latihan soal.",h:"Lagi musim tryout, semua ibu pada cari latihan soal.",t:"Musim tryout",v:"school WhatsApp group chat on a phone, mother reading"},
+  {e:"Awal tahun ajaran, waktu tepat mulai latihan.",h:"Awal tahun ajaran, waktu paling pas buat mulai.",t:"Mulai dari sekarang",v:"new school supplies on a desk, child excited"},
+  {e:"Membandingkan biaya les bulanan dengan sekali beli.",h:"Les sebulan bisa ratusan ribu, ini sekali beli aja.",t:"Hemat dibanding les",v:"table with a tuition receipt and a phone showing the PDF"}]}],
+"Emotional":[
+ {m:"Saat orang tua cemas dengan masa depan anak",s:[
+  {e:"Tidak bisa tidur memikirkan anak yang belum siap ujian.",h:"Aku sampai susah tidur mikirin ujian anakku.",t:"Susah tidur mikirin ujian?",v:"night bedroom, mother awake on the bed with her phone, worried"},
+  {e:"Anak menangis karena merasa tidak bisa mengerjakan soal.",h:"Anakku sempat nangis karena nggak bisa ngerjain soal.",t:"Anak sampai nangis?",v:"study desk, a child with teary eyes, mother comforting"},
+  {e:"Merasa bersalah tidak bisa membantu pelajaran anak.",h:"Aku sempat merasa bersalah nggak bisa bantu anakku.",t:"Merasa bersalah?",v:"kitchen table, mother looking sadly at a worksheet"}]},
+ {m:"Saat lega melihat anak berkembang",s:[
+  {e:"Anak tersenyum karena nilai tryout naik.",h:"Nilai tryout anakku naik, dia senyum terus.",t:"Nilai tryout naik!",v:"child proudly holding a tryout result, mother hugging"},
+  {e:"Anak bilang soalnya sekarang gampang.",h:"Anakku bilang, Bu, soalnya sekarang gampang.",t:"Kata anak: gampang!",v:"child smiling at a worksheet, giving a thumbs up"},
+  {e:"Orang tua lega karena anak sudah siap.",h:"Sekarang aku lega, anakku udah siap.",t:"Akhirnya lega",v:"mother relaxing on the sofa smiling while the child studies"}]}]}};
+// Advertised Value (VFO): t=jenis, f=fitur, o=outcome, l=kalimat lisan
+const AVS={
+fisik:[{t:"Concrete",f:"salep malam",o:"flek & bekas jerawat tampak memudar ±7 hari",l:"Seminggu pakai, flek di pipiku udah kelihatan memudar."},
+ {t:"Concrete",f:"pot 5 gram dipakai tipis",o:"awet ±1–1,5 bulan",l:"Potnya kecil tapi awet, sebulan lebih baru habis."},
+ {t:"Instinctive",f:"krim lembut",o:"cepat meresap, tidak lengket, tidak perih",l:"Teksturnya lembut, nggak lengket, sama sekali nggak perih."},
+ {t:"Instinctive",f:"pelembap",o:"bangun tidur kulit lembap & kenyal",l:"Bangun tidur kulitku lembap dan kenyal."},
+ {t:"Uncharted",f:"dipakai saat tidur",o:"dirawat saat kulit memulihkan diri",l:"Kerjanya pas aku tidur, jadi nggak ganggu aktivitas."},
+ {t:"Uncharted",f:"oles tipis rutin",o:"aman untuk kulit sensitif jangka panjang",l:"Dipakai tipis tiap malam, aman buat kulit sensitif."},
+ {t:"Aspirational",f:"efek glowing",o:"PD tampil tanpa makeup",l:"Sekarang aku PD keluar tanpa makeup."},
+ {t:"Aspirational",f:"anti-aging",o:"tampak lebih segar & awet muda",l:"Banyak yang bilang aku kelihatan lebih muda."}],
+digital:[{t:"Concrete",f:"ratusan latihan soal",o:"anak bisa latihan tiap hari",l:"Soalnya ratusan, anakku bisa latihan tiap hari."},
+ {t:"Concrete",f:"pembahasan tiap soal",o:"anak paham caranya, bukan hafal",l:"Tiap soal ada pembahasannya, jadi anak paham caranya."},
+ {t:"Concrete",f:"sekali beli",o:"jauh lebih hemat dibanding les",l:"Sekali beli, jauh lebih hemat dari les."},
+ {t:"Instinctive",f:"PDF di HP atau print",o:"langsung dipakai, praktis",l:"Tinggal buka di HP atau print, langsung latihan."},
+ {t:"Uncharted",f:"model soal mirip TKA",o:"anak tidak kaget saat ujian",l:"Model soalnya mirip TKA, anak nggak kaget pas ujian."},
+ {t:"Aspirational",f:"persiapan matang",o:"anak PD, orang tua tenang",l:"Sekarang anakku lebih PD, aku juga tenang."}]};
+const AV_PREF={"Problem-Solution":["Concrete","Instinctive"],"Routine":["Uncharted","Instinctive"],"Commitment":["Concrete"],"Aspirational":["Aspirational"],"Opportunistic":["Concrete"],"Emotional":["Aspirational","Instinctive"]};
+const SELL=["No Sell","Soft Sell","Hard Sell"];
+const CI=["Educate","Trigger","Inspire","Clarify","Validate","Entertain","Proof","Call to Act","Reinforce"];
+// Kalimat jembatan per Communication Intent (fisik / digital)
+const CI_LINE={fisik:{Educate:"Ternyata kuncinya bukan krim keras, tapi rutin tipis tiap malam.",Trigger:"Makin dibiarkan, flek makin susah hilang.",Inspire:"Aku mulai dari satu langkah kecil tiap malam.",Clarify:"Banyak yang kira harus krim keras biar cepat. Nggak juga.",Validate:"Kamu nggak sendirian, aku juga dulu gitu.",Entertain:"Sampai cermin pun kayaknya bosen dengar aku ngeluh.",Proof:"Buktinya ada di mukaku sekarang.",["Call to Act"]:"Mumpung lagi promo, jangan ditunda.",Reinforce:"Buat yang udah pakai, jangan putus di tengah jalan ya."},
+ digital:{Educate:"Ternyata kuncinya latihan soal yang mirip aslinya.",Trigger:"Makin mepet, anak makin panik.",Inspire:"Kami mulai dari 20 menit sehari.",Clarify:"Banyak yang kira harus les mahal. Nggak juga.",Validate:"Wajar kok cemas, aku juga dulu gitu.",Entertain:"Sampai aku ikut pusing lihat soalnya.",Proof:"Buktinya nilai tryout anakku naik.",["Call to Act"]:"Mumpung harganya lagi promo, mulai sekarang.",Reinforce:"Buat yang udah punya, lanjutkan latihannya ya."}};
+const CI_EXP={Educate:"calm, explaining with a friendly smile",Trigger:"worried at first, then determined",Inspire:"hopeful and warm",Clarify:"confident, slightly playful",Validate:"empathetic, gentle smile",Entertain:"playful, exaggerated funny reaction",Proof:"proud and happy",["Call to Act"]:"excited and urgent",Reinforce:"supportive, encouraging"};
+
 const SET=["kids study desk at home with printed worksheets","dining table with a child doing homework, parent beside","living room sofa, parent holding a smartphone","bathroom vanity counter with mirror reflection", "minimalist white skincare table with clean beauty setup", "bedside night table with soft lamp light", "cozy bedroom desk with soft aesthetic decor", "bedroom vanity mirror with ring light off to the side", "modern office work desk with laptop nearby", "cafe table with coffee cup and natural daylight", "kitchen marble counter during morning light", "inside a parked car dashboard area with daylight", "open handbag or pouch on a bed, everyday carry", "courier package just opened on the bed (unboxing)", "skincare storage shelf with organized beauty products"];
-const PM=["phone screen showing the PDF pages, scrolling slowly","printed worksheet pages fanned out on the table","tablet showing the cover page","product pulled into frame in the first second", "product held close to camera", "product turned to show label", "product lifted from table", "product gently pushed toward camera", "product slowly rotated", "product placed onto table", "product cap opened to reveal texture/inside", "product taken out of shipping package", "product placed next to competitor/old product for comparison"];
-const HM=["finger scrolling the phone screen","hand flipping printed worksheet pages","child's hand writing answers with a pencil","hand holding phone toward the camera showing the cover","hand casually holding product in frame", "hand presenting product to camera", "fingers rotating the bottle", "hand picking product up naturally", "hand opening the cap", "hand squeezing/dropping product onto fingertip or back of hand (texture swatch)", "hand applying product on skin", "thumb pointing at key label/claim", "hand unboxing product from package", "hand slowly lowering product onto table"];
-const CAM=["handheld POV view", "close-up product focus", "macro product close-up (texture detail)", "eye-level product shot", "slightly top-down angle", "over-the-table perspective", "slight side angle", "slow push-in camera movement", "front-camera selfie framing"];
+
 const LIT=["soft natural window light", "diffused daylight", "morning sunlight glow", "bright clean beauty lighting", "warm cozy indoor light", "soft home ambient lighting"];
 const RULES_BASE=`CRITICAL RULES: The product must appear within the first second. Natural TikTok style, not cinematic advertising. Simple realistic environment. Natural handheld smartphone feeling. Clean aesthetic background.
 CONSISTENCY RULES: The product must keep the exact same design from PRODUCT_IMAGE: same shape, label, color, and packaging. Do NOT modify the product design. Do NOT alter product packaging, logo, text, colors, or label details. The product must remain brand accurate and identical throughout the video.`;
 const RULES_NOMODEL=`Only product and hand interaction. No face, no full human model.`;
 const RULES_MODEL=`MODEL RULES: The model must keep the same face identity from MODEL_IMAGE across all scenes. Facial features, skin tone, and identity must remain consistent. Do NOT change facial structure, do NOT modify identity, do NOT distort facial proportions. Maintain natural realistic skin texture.`;
 const RULES_GLOBAL=`GLOBAL: Authentic TikTok UGC style. Natural lighting. Smartphone camera look. HD quality. Vertical 9:16 video. `;
-// Niche: noun (pengganti "skincare"), res (pengganti "Kulitku"), prob (10 hook problem), ang (index angle terbaik), set/pm/hm/cam/lit (opsi paling convert), model (saran model)
-const NICHE={
- "Skincare":{noun:"skincare",res:"Kulitku",ang:[5,6,9,1,3],model:0,
-  prob:["Kalau kulitmu kusam, coba lihat ini.","Kalau kulitmu kering, kamu harus lihat ini.","Kalau skincare kamu nggak mempan…","Kalau kamu punya masalah kulit ini…","Kalau kulitmu gampang breakout…","Kalau kamu bingung pilih skincare…","Kalau skincare kamu terasa berat…","Kalau kamu cari skincare simple…","Kalau kulitmu gampang iritasi…","Kalau kamu pernah malu difoto dari dekat…"],
-  set:["bathroom vanity counter with mirror reflection","minimalist white skincare table with clean beauty setup","bedside night table with soft lamp light"],
-  pm:["product cap opened to reveal texture/inside","product turned to show label","product held close to camera"],
-  hm:["hand squeezing/dropping product onto fingertip or back of hand (texture swatch)","hand applying product on skin","hand opening the cap"],
-  cam:["macro product close-up (texture detail)","close-up product focus","handheld POV view"],lit:["soft natural window light","bright clean beauty lighting"]},
- "Makeup / Kosmetik":{noun:"makeup",res:"Wajahku",ang:[9,6,8,1,7],model:1,
-  prob:["Kalau makeup kamu gampang luntur…","Kalau lipstik kamu cepat pudar…","Kalau foundation kamu cakey…","Kalau bedak kamu bikin abu-abu…","Kalau kamu malas touch up…","Kalau makeup kamu oxidize…","Kalau kamu cari makeup natural…","Kalau maskara kamu luntur…","Kalau kamu bingung pilih shade…","Kalau kamu butuh makeup tahan lama…"],
-  set:["bedroom vanity mirror with ring light off to the side","bathroom vanity counter with mirror reflection","inside a parked car dashboard area with daylight"],
-  pm:["product cap opened to reveal texture/inside","product placed next to competitor/old product for comparison","product held close to camera"],
-  hm:["hand squeezing/dropping product onto fingertip or back of hand (texture swatch)","hand applying product on skin","hand opening the cap"],
-  cam:["front-camera selfie framing","macro product close-up (texture detail)","close-up product focus"],lit:["soft natural window light","diffused daylight"]},
- "Fashion / Pakaian":{noun:"baju",res:"Penampilanku",ang:[6,0,7,8],model:1,
-  prob:["Kalau kamu bingung mix and match…","Kalau baju kamu gampang kusut…","Kalau bahan bajumu panas…","Kalau kamu susah cari ukuran pas…","Kalau outfit kamu itu-itu aja…","Kalau kamu pengen kelihatan lebih langsing…","Kalau baju kamu cepat melar…","Kalau kamu cari outfit kerja simple…","Kalau kamu takut beli baju online…","Kalau lemari penuh tapi nggak ada yang dipakai…"],
-  set:["bedroom vanity mirror with ring light off to the side","courier package just opened on the bed (unboxing)","cozy bedroom desk with soft aesthetic decor"],
-  pm:["product taken out of shipping package","product held close to camera","product turned to show label"],
-  hm:["hand unboxing product from package","hand presenting product to camera","thumb pointing at key label/claim"],
-  cam:["front-camera selfie framing","handheld POV view","macro product close-up (texture detail)"],lit:["soft natural window light","diffused daylight"]},
- "Hijab / Muslim Fashion":{noun:"hijab",res:"Penampilanku",ang:[6,0,4,5],model:1,
-  prob:["Kalau hijab kamu gampang lepek…","Kalau hijab kamu licin susah dibentuk…","Kalau bahan hijabmu panas…","Kalau kamu buru-buru tiap pagi…","Kalau hijab kamu nerawang…","Kalau pinggiran hijab kamu rusak…","Kalau kamu cari hijab instan rapi…","Kalau kamu bingung warna hijab…","Kalau hijab kamu gampang kusut…","Kalau kamu butuh hijab adem…"],
-  set:["bedroom vanity mirror with ring light off to the side","courier package just opened on the bed (unboxing)","cozy bedroom desk with soft aesthetic decor"],
-  pm:["product taken out of shipping package","product held close to camera","product lifted from table"],
-  hm:["hand unboxing product from package","hand presenting product to camera","hand casually holding product in frame"],
-  cam:["front-camera selfie framing","macro product close-up (texture detail)","handheld POV view"],lit:["soft natural window light","morning sunlight glow"]},
- "Suplemen / Kesehatan":{noun:"suplemen",res:"Badanku",ang:[5,3,10,0],model:0,
-  prob:["Kalau kamu gampang capek…","Kalau kamu sering begadang…","Kalau daya tahan tubuhmu lemah…","Kalau kamu susah tidur…","Kalau kamu sering pegal…","Kalau kamu jarang makan sayur…","Kalau kamu gampang sakit…","Kalau kamu sibuk kerja…","Kalau kamu bingung pilih vitamin…","Kalau kamu butuh energi seharian…"],
-  set:["kitchen marble counter during morning light","modern office work desk with laptop nearby","bedside night table with soft lamp light"],
-  pm:["product turned to show label","product placed beside glass of water","product cap opened to reveal texture/inside"],
-  hm:["hand holding capsule in palm","hand placing capsule next to bottle","thumb pointing at key label/claim"],
-  cam:["close-up product focus","handheld POV view","slightly top-down angle"],lit:["morning sunlight glow","soft natural window light"]},
- "Makanan & Minuman":{noun:"camilan",res:"Hariku",ang:[1,0,7],model:0,
-  prob:["Kalau kamu sering lapar tengah malam…","Kalau kamu bosan camilan itu-itu aja…","Kalau kamu cari camilan sehat…","Kalau kamu nggak sempat masak…","Kalau kamu butuh bekal praktis…","Kalau kamu lagi diet tapi pengen ngemil…","Kalau anak kamu susah makan…","Kalau kamu cari oleh-oleh unik…","Kalau kamu ngantuk di kantor…","Kalau kamu suka pedas…"],
-  set:["kitchen marble counter during morning light","cafe table with coffee cup and natural daylight","modern office work desk with laptop nearby"],
-  pm:["product cap opened to reveal texture/inside","product taken out of shipping package","product held close to camera"],
-  hm:["hand opening the cap","hand presenting product to camera","hand picking product up naturally"],
-  cam:["macro product close-up (texture detail)","handheld POV view","close-up product focus"],lit:["morning sunlight glow","warm cozy indoor light"]},
- "Rumah Tangga":{noun:"alat ini",res:"Rumahku",ang:[9,1,5,7],model:0,
-  prob:["Kalau noda susah hilang…","Kalau dapur kamu berantakan…","Kalau kamu capek bersih-bersih…","Kalau lantai kamu kusam…","Kalau rumah kamu sempit…","Kalau kamu sering kehilangan barang…","Kalau kamar mandi kamu berkerak…","Kalau kamu buang waktu tiap pagi…","Kalau bau ruangan nggak hilang…","Kalau kamu cari alat praktis…"],
-  set:["kitchen marble counter during morning light","bathroom vanity counter with mirror reflection","courier package just opened on the bed (unboxing)"],
-  pm:["product pulled into frame in the first second","product held close to camera","product taken out of shipping package"],
-  hm:["hand presenting product to camera","hand picking product up naturally","hand unboxing product from package"],
-  cam:["handheld POV view","over-the-table perspective","close-up product focus"],lit:["diffused daylight","soft natural window light"]},
- "Gadget & Aksesoris":{noun:"gadget ini",res:"Kerjaku",ang:[9,8,7,4,2],model:0,
-  prob:["Kalau HP kamu cepat lowbat…","Kalau kabel kamu gampang rusak…","Kalau meja kerjamu berantakan…","Kalau earphone kamu suaranya jelek…","Kalau kamu sering lupa charge…","Kalau HP kamu gampang panas…","Kalau kamu kerja dari mana aja…","Kalau kamu suka konten video…","Kalau kamu cari gadget murah tapi bagus…","Kalau casing HP kamu cepat kuning…"],
-  set:["modern office work desk with laptop nearby","inside a parked car dashboard area with daylight","courier package just opened on the bed (unboxing)"],
-  pm:["product taken out of shipping package","product placed next to competitor/old product for comparison","product turned to show label"],
-  hm:["hand unboxing product from package","thumb pointing at key label/claim","fingers rotating the bottle"],
-  cam:["macro product close-up (texture detail)","over-the-table perspective","handheld POV view"],lit:["diffused daylight","soft home ambient lighting"]},
- "Ibu & Bayi":{noun:"produk bayi",res:"Si kecil",ang:[5,3,0,6],model:0,
-  prob:["Kalau kulit bayi kamu gampang ruam…","Kalau si kecil susah tidur…","Kalau si kecil rewel…","Kalau kamu bingung pilih produk bayi…","Kalau popok bikin iritasi…","Kalau si kecil susah makan…","Kalau kamu ibu baru…","Kalau kamu takut bahan kimia…","Kalau si kecil gampang digigit nyamuk…","Kalau kamu butuh yang praktis dibawa…"],
-  set:["cozy bedroom desk with soft aesthetic decor","bedside night table with soft lamp light","open handbag or pouch on a bed, everyday carry"],
-  pm:["product turned to show label","product cap opened to reveal texture/inside","product held close to camera"],
-  hm:["hand squeezing/dropping product onto fingertip or back of hand (texture swatch)","thumb pointing at key label/claim","hand opening the cap"],
-  cam:["close-up product focus","handheld POV view","macro product close-up (texture detail)"],lit:["soft natural window light","warm cozy indoor light"]},
- "Produk Digital (Bank Soal / Ebook)":{digital:1,noun:"bank soal",res:"Nilai anakku",ang:[5,10,0,3],model:1,
-  prob:["Kalau anakmu kelas 6 dan mau TKA…","Kalau anakmu panik lihat soal TKA…","Kalau kamu bingung cari latihan soal TKA…","Kalau anakmu susah fokus belajar…","Kalau kamu nggak sempat bikin soal latihan…","Kalau hasil tryout anakmu belum aman…","Kalau anakmu kaget sama soal penalaran…","Kalau kamu nggak mau keluar uang buat les mahal…","Kalau anakmu cepat bosan sama buku tebal…","Kalau TKA tinggal beberapa bulan lagi…"],
-  set:["kids study desk at home with printed worksheets","dining table with a child doing homework, parent beside","living room sofa, parent holding a smartphone"],
-  pm:["phone screen showing the PDF pages, scrolling slowly","printed worksheet pages fanned out on the table","tablet showing the cover page"],
-  hm:["finger scrolling the phone screen","hand flipping printed worksheet pages","child's hand writing answers with a pencil","hand holding phone toward the camera showing the cover"],
-  cam:["handheld POV view","over-the-table perspective","front-camera selfie framing"],lit:["soft natural window light","warm cozy indoor light"]},
- "Parfum":{noun:"parfum",res:"Wangiku",ang:[8,7,0,4,1],model:1,
-  prob:["Kalau parfum kamu cepat hilang…","Kalau kamu gampang keringetan…","Kalau parfum kamu bikin pusing…","Kalau kamu cari wangi mewah tapi murah…","Kalau kamu bingung pilih aroma…","Kalau kamu kerja seharian di luar…","Kalau parfum kamu pasaran…","Kalau kamu pengen dipuji wangi…","Kalau kamu mau first date…","Kalau parfum mahal bikin kantong bolong…"],
-  set:["open handbag or pouch on a bed, everyday carry","inside a parked car dashboard area with daylight","bedroom vanity mirror with ring light off to the side"],
-  pm:["product placed next to competitor/old product for comparison","product held close to camera","product slowly rotated"],
-  hm:["hand casually holding product in frame","hand presenting product to camera","fingers rotating the bottle"],
-  cam:["close-up product focus","handheld POV view","slow push-in camera movement"],lit:["soft natural window light","warm cozy indoor light"]}};
+
 // Kamus ID→EN untuk deskripsi produk/model (tanpa AI, tanpa token). Frasa panjang dicek duluan.
 const DICT={"muat di telapak tangan":"fits in palm","seukuran jari":"finger-sized","di antara dua ujung jari":"between two fingertips","segenggaman tangan":"fits in one hand","tutup ulir":"screw lid","tutup flip":"flip cap","stiker merah muda":"pink sticker","jatuh alami":"falls naturally","kerutan tipis":"light wrinkles","bahu turun":"drop shoulder","lengan panjang":"long sleeves","lengan pendek":"short sleeves","pinggang karet":"elastic waist","kaki lebar":"wide leg","cepat meresap":"absorbs quickly","tidak lengket":"non-sticky","umur 20an":"in her 20s","umur 30an":"in her 30s","umur 40an":"in her 40s","pertengahan 30an":"mid 30s","kulit sawo matang":"tan skin","kulit kuning langsat":"light olive skin","rambut panjang":"long hair","rambut pendek":"short hair","berhijab":"wearing hijab",
 "toples":"jar","potnya":"the jar","pot":"jar","produk":"product","hanya":"only","bagian atasnya":"on top","bagian atas":"on top","di bagian atas":"on top","di bagian atasnya":"on top","di atas":"on top","di bawah":"at the bottom","untuk":"for","saja":"only","gram":"g","jar":"jar","botol":"bottle","tube":"tube","tabung":"tube","pump":"pump bottle","pipet":"dropper","sachet":"sachet","kotak":"box","dus":"box","pouch":"pouch","kemasan":"packaging","tutup":"lid","label":"label","stiker":"sticker","logo":"logo","segel":"seal",
@@ -204,150 +221,18 @@ const tr=t=>{let o=" "+t.toLowerCase().replace(/(\d+)\s*(cm|mm|ml|gr|gram|g)\b/g
   return pre+ch}).join(", ").replace(/\bsize ([a-z]{1,3})\b/g,(m,x)=>"size "+x.toUpperCase())};
 const NOUNS=["screw lid","flip cap","pump bottle","button-up shirt","jar","bottle","tube","dropper","sachet","box","pouch","packaging","lid","label","sticker","cream","ointment","serum","gel","powder","capsule","tablet","oil","lotion","texture","shirt","t-shirt","dress","skirt","pants","jacket","hijab","headscarf","fabric","cutting","woman","man","skin","hair"];
 const ADJ=new Set("acrylic glass plastic aluminum paper wooden metal clear transparent matte glossy shiny frosted white black red pink yellow green blue purple brown gray gold silver beige cream nude navy maroon orange liquid soft thick runny lightweight cotton linen rayon chiffon satin denim wool knit polyester flowy breathable thin stiff stretchy oversized loose tight fitted boxy small large medium mini round square oval fair light dark".split(" "));
-const TIPS={
- _:"Tulis bentuk & kemasan, ukuran dibanding tangan (mis. muat di telapak tangan), bahan (kaca/plastik, doff/glossy), warna, dan isi.",
- "Skincare":"Contoh: toples akrilik bening kecil, diameter 3cm, di antara dua ujung jari, tutup ulir putih, stiker merah muda, isi krim kuning lembut",
- "Makeup / Kosmetik":"Contoh: tube lipstik hitam doff, seukuran jari, isi warna nude",
- "Fashion / Pakaian":"Contoh: kaos oversize bahan katun adem, potongan boxy, bahu turun, ukuran M dipakai model, jatuh alami, kerutan tipis",
- "Hijab / Muslim Fashion":"Contoh: hijab segi empat bahan sifon jatuh, warna krem, tipis tidak transparan",
- "Suplemen / Kesehatan":"Contoh: botol plastik putih 10cm, muat di telapak tangan, label hijau, isi kapsul kuning",
- "Makanan & Minuman":"Contoh: pouch kertas coklat, segenggaman tangan, isi keripik, label merah",
- "Produk Digital (Bank Soal / Ebook)":"Contoh: file PDF bank soal kelas 6, cover warna biru-kuning, ditampilkan di layar HP dan lembar soal A4 yang di-print",
- "Parfum":"Contoh: botol kaca bening kotak persegi 30ml, tutup emas, isi cair kuning muda"};
-const $=id=>document.getElementById(id),out=$("out");let list=[];
-const fill=(el,arr,f)=>el.innerHTML=arr.map((x,i)=>`<option value="${i}">${f(x,i)}</option>`).join("");
-fill($("cep"),CEP,(x,i)=>`${i+1}. ${x[0]}`);fill($("ang"),ANG,(x,i)=>`${i+1}. ${x[0]}`);
-fill($("hook"),HOOKS,(x,i)=>`[${x[0]}] ${x[1]}`);fill($("tipe"),TIPE,x=>x);
-[["cep",CEP],["ang",ANG],["hook",HOOKS],["tipe",TIPE]].forEach(([id])=>$(id).insertAdjacentHTML("afterbegin",'<option value="-1" selected>🎲 Acak</option>'));
-[["set",SET],["pm",PM],["hm",HM],["cam",CAM],["lit",LIT]].forEach(([id,a])=>{fill($(id),a,(x,i)=>`${i+1}. ${x}`);$(id).insertAdjacentHTML("afterbegin",'<option value="-1" selected>🎲 Acak</option>')});
-const rnd=m=>Math.floor(Math.random()*m),pick=(id,a)=>{const v=+$(id).value;return a[v<0?rnd(a.length):v]};
-// Dialog per tipe konten: [agitasi/pembuka, perkenalan produk, manfaat] + filler untuk durasi panjang
-// Jembatan setelah hook: menjawab hook dan memperkenalkan produk, supaya dialog nyambung
-const BRIDGE={Problem:p=>`Aku punya solusinya: ${p}.`,Confession:p=>`Tapi setelah aku coba ${p} sendiri, ternyata beda.`,Curiosity:p=>`Jawabannya ${p} ini.`,Result:p=>`Semua ini karena ${p}.`,"Pattern Interrupt":p=>`Ini ${p}, dan aku harus cerita.`};
+
 const cap=x=>x.charAt(0).toUpperCase()+x.slice(1).replace(/[.\s]+$/,"");
-// Dialog per tipe konten: [setelah hook, produk, manfaat]
-const DIALOG={
- Problem:(p,b,ht)=>["Aku juga dulu gitu, udah coba macem-macem tapi nggak berubah.",`Sampai akhirnya aku nemu ${p}.`,`${cap(b)}.`],
- Education:(p,b,ht)=>["Ternyata masalahnya sering di pilihan produknya.",BRIDGE[ht](p),`${cap(b)}. Cukup dipakai tipis, rutin tiap hari.`],
- Manfaat:(p,b,ht)=>[BRIDGE[ht](p),`${cap(b)}.`,"Pantes banyak yang repeat order."],
- Testimoni:(p,b,ht)=>[`Aku udah pakai ${p} beberapa minggu.`,"Awalnya ragu, tapi aku coba rutin.",`Sekarang aku ngerasain sendiri: ${b.replace(/[.\s]+$/,"")}.`]};
-// Kalimat tambahan per peran segmen, dipakai sampai dialog cukup untuk durasi segmen
-const EXTRA={hook:["Aku ceritain pengalamanku ya, singkat aja.","Jujur, ini yang bikin aku akhirnya berani beli.","Buat kamu yang punya masalah sama, dengerin sampai habis."],
- 0:["Rasanya udah capek banget, mau nyerah aja.","Udah keluar uang banyak tapi hasilnya nihil.","Jujur ini bikin aku nggak pede tiap hari."],
- 1:["Cara pakainya cuma beberapa langkah aja.","Teksturnya ringan dan cepat meresap.","Aku pakai rutin, dan ini bagian favoritku."],
- 2:["Aku udah buktiin sendiri, sekarang giliran kamu.","Pokoknya kamu wajib coba, nggak bakal nyesel.","Jangan sampai kehabisan kayak aku kemarin."]};
 const words=x=>x.split(/\s+/).filter(Boolean).length;
-const stretch=(line,role,sec,pool)=>{const tgt=Math.round(sec*3),ex=[...(EXTRA[role]||pool)];let out=line;while(words(out)<tgt&&ex.length)out+=" "+ex.shift();return out};
-const FILLER=["Teksturnya enak, nggak lengket sama sekali.","Banyak yang nanya aku pakai apa.","Aku pakainya tiap hari, nggak pernah skip.","Dibanding yang dulu aku pakai, ini jauh lebih cocok.","Packagingnya juga rapi, aman dikirim.","Harganya masuk akal buat hasil segini."];
-const HOOK_EXP={Confession:["mengaku, sedikit malu, senyum tipis","pelan di awal, naik di akhir"],Curiosity:["penasaran, alis naik satu","bertanya, nada naik"],Problem:["kaget, alis naik, mata sedikit melebar","cepat, naik di akhir"],Result:["kaget senang, mata berbinar","antusias, cepat"],"Pattern Interrupt":["serius mendadak, menatap lensa","tegas, berhenti sejenak"]};
-const BEAT_EXP=[["kesal bercampur pasrah, bibir mengerucut sebentar","turun, pelan, seperti mengaku"],null,["tenang lalu ramah, alis rileks, senyum kecil","lembut lalu naik mengajak"]];
-// Pecah daftar manfaat, pilih 2-3: utamakan yang kata-katanya nyambung dengan hook, sisanya acak
-const SYN={kusam:"glowing cerah",kering:"lembab melembabkan",breakout:"jerawat",jerawat:"jerawat",iritasi:"sensitif perih",berat:"ringan",flek:"flek noda"};
-// ===== Bank dialog FILO (ditulis Opus sekali, dipakai gratis) =====
-// Urutan kalimat selalu: hook → jembatan → cerita → produk → cara pakai → manfaat → bukti → CTA, lalu dibagi ke segmen.
-const BANK_FILO={
- bridge:{
-  Confession:["Tapi setelah dua minggu pakai rutin, aku harus ngaku salah.","Ternyata aku yang terlalu cepat menilai.","Sampai akhirnya aku coba sendiri, dan ya… aku salah.","Untung aku nggak jadi skip, soalnya hasilnya beda."],
-  Curiosity:["Aku penasaran, jadi aku beli satu buat buktiin sendiri.","Jawabannya ternyata simpel banget.","Setelah aku coba sendiri, aku ngerti kenapa orang pada repeat order.","Aku cari tahu sendiri, dan ini jawabannya."],
-  Problem:["Aku dulu juga di posisi itu, dan rasanya bikin nggak pede.","Aku tahu rasanya, karena aku juga pernah ngalamin.","Dulu aku juga gitu, sampai males lihat kaca.","Aku pernah ada di titik yang sama, jadi aku ngerti banget."],
-  Result:["Padahal aku cuma pakai tipis tiap malam.","Jujur, aku nggak ngapa-ngapain selain ganti krim malam.","Aku sampai foto ulang di cahaya yang sama buat mastiin.","Bedanya kelihatan, bahkan di kamera depan."],
-  "Pattern Interrupt":["Ini krim malam yang lagi aku pakai, dan aku harus cerita.","Aku mau tunjukin satu jar kecil yang ngubah rutinitas malamku.","Sebentar aja, ini penting buat kulitmu.","Aku nggak biasanya review, tapi yang ini beda."]},
- story:{
-  Problem:["Flek di pipi makin jelas, apalagi kalau difoto pakai kamera depan.","Udah gonta-ganti krim, bekas jerawat tetap aja nempel.","Kulitku sensitif, jadi banyak krim yang malah bikin perih.","Tiap pagi bercermin, wajah kelihatan capek dan kusam."],
-  Education:["Ternyata flek dan bekas jerawat butuh perawatan rutin, bukan yang instan.","Banyak yang pakai krim tebal-tebal biar cepat hasil, padahal justru bikin iritasi.","Kulit itu memperbaiki diri paling maksimal waktu kita tidur.","Kuncinya bukan banyak produk, tapi satu yang cocok dan dipakai konsisten."],
-  Manfaat:["Aku cari krim malam yang nggak ribet, tapi kerjanya kerasa.","Rutinitas malamku sekarang cuma satu langkah.","Aku pengen yang praktis, nggak perlu sepuluh step.","Yang aku butuh cuma satu krim yang beneran ngefek."],
-  Testimoni:["Aku udah pakai sekitar tiga minggu, tiap malam sebelum tidur.","Awalnya aku beli karena lihat review, tapi tetap ragu.","Jujur aku tipe yang susah cocok sama krim.","Aku udah pakai dari jar pertama sampai sekarang jar kedua."]},
- product:["Ini {p}, krim malam dalam jar kecil 5 gram.","Namanya {p}. Kecil, tapi isinya padat.","Aku pakai {p}, krim malam yang teksturnya lembut.","Kenalin, {p}. Jarnya mungil, gampang ditaruh di samping kasur."],
- usage:["Cukup ambil sedikit, oles tipis, malam aja.","Pakainya tipis setelah cuci muka, terus tinggal tidur.","Seujung jari udah cukup buat satu wajah.","Teksturnya lembut, cepat meresap, nggak lengket di bantal."],
- ben:{
-  flek:["Seminggu pakai, flek di pipiku udah kelihatan memudar.","Flek hitam yang bertahun-tahun nempel, sekarang mulai hilang.","Flek di pipi udah samar banget, aku sampai kaget."],
-  jerawat:["Bekas jerawatku pudar, kulit jadi lebih rata.","Bekas jerawat yang merah-merah itu udah hampir nggak kelihatan.","Bekas jerawat bertahun-tahun akhirnya memudar."],
-  glowing:["Bangun tidur muka langsung glowing.","Kulitku jadi cerah dan glowing, banyak yang muji.","Wajah glowing banget, bahkan tanpa makeup."],
-  lembab:["Bangun tidur kulit terasa lembab, nggak ketarik.","Kulitku jadi lebih lembab dan kenyal.","Nggak ada lagi kulit kering pas bangun pagi."],
-  perih:["Sama sekali nggak perih atau panas waktu dipakai.","Dipakai juga nggak perih, nggak panas di kulit.","Nggak ada rasa panas atau perih sama sekali."],
-  sensitif:["Aman buat kulitku yang sensitif.","Kulitku yang sensitif aja cocok.","Buat kulit sensitif kayak aku, ini aman."],
-  lengket:["Teksturnya ringan, nggak lengket di wajah.","Cepat meresap, nggak lengket sama sekali."],
-  awet:["Kulit kelihatan lebih kencang dan awet muda.","Garis halus di wajah kelihatan lebih samar."]},
- proof:{
-  Problem:["Akhirnya aku berani foto pakai kamera depan lagi.","Sekarang aku lebih pede keluar tanpa foundation tebal."],
-  Education:["Jadi bukan soal mahal, tapi soal rutin.","Konsisten aja tiap malam, nanti kelihatan sendiri bedanya."],
-  Manfaat:["Satu jar kecil, tapi kerjanya banyak.","Pantes banyak yang repeat order."],
-  Testimoni:["Sekarang aku udah nggak mau ganti krim lain.","Temen kantor sampai nanya aku pakai apa."]},
- filler:["Jarnya kecil, jadi gampang dibawa kalau nginep.","Aku taruh di samping kasur biar nggak lupa.","Sebelumnya aku udah habis banyak buat krim yang nggak cocok.","Satu jar bisa awet karena pakainya tipis."],
- ctaSoft:["Kalau kamu ngalamin hal yang sama, coba cek di bawah ya.","Penasaran? Cek dulu di keranjang kuning.","Coba deh mulai malam ini, klik di bawah."],
- ctaHard:["Harganya cuma {harga}{promo}. Klik di bawah sebelum promonya habis!","Sekarang cuma {harga}{promo}, stoknya terbatas. Checkout sekarang ya!"],
- ctaHardPromo:["{Promo} cuma {harga}, langsung klik keranjang kuning sebelum kehabisan!"],
- ctaShort:["{harga}, {Promo}. Klik di bawah!","Cuma {harga}, {Promo}. Checkout sekarang!","{Promo} cuma {harga}, klik keranjang kuning!"]};
-const BKEY_FILO={lengket:/lengket/,flek:/flek|noda/,jerawat:/jerawat/,glowing:/glow|cerah|kusam/,lembab:/lembab|kering/,perih:/perih|panas/,sensitif:/sensitif/,awet:/awet|muda|keriput|kencang/};
+const rnd=m=>Math.floor(Math.random()*m);
 const pk=a=>a[rnd(a.length)];
-// ===== Bank dialog Bank Soal TKA SD (ditulis Opus sekali, dipakai gratis) =====
-const BANK_TKA={
- bridge:{
-  Confession:["Tapi setelah anakku latihan pakai ini, aku harus ngaku salah.","Ternyata aku yang meremehkan.","Sampai akhirnya aku coba, dan anakku malah semangat latihan.","Untung aku nggak jadi skip, soalnya anakku jadi lebih siap."],
-  Curiosity:["Aku penasaran, jadi aku beli buat anakku.","Jawabannya ternyata simpel banget.","Setelah aku lihat isinya, aku ngerti kenapa banyak ibu beli.","Aku cari tahu sendiri, dan ini jawabannya."],
-  Problem:["Aku dulu juga panik, soalnya TKA ini masih baru.","Aku tahu rasanya, anakku juga sempat begitu.","Dulu aku juga bingung harus mulai dari mana.","Aku pernah di posisi itu, jadi aku ngerti banget."],
-  Result:["Padahal latihannya cuma sebentar tiap malam.","Jujur, kuncinya cuma latihan soal yang tepat.","Anakku sendiri yang bilang soalnya jadi lebih gampang.","Bedanya kelihatan dari hasil tryout-nya."],
-  "Pattern Interrupt":["Ini yang lagi dipakai anakku buat persiapan TKA.","Aku mau tunjukin satu file yang ngubah cara anakku belajar.","Sebentar aja, ini penting buat ibu yang anaknya kelas 6.","Aku nggak biasanya review, tapi yang ini beda."]},
- story:{
-  Problem:["Anakku kelas 6, dan TKA makin dekat.","Tiap latihan, anakku bingung sama model soalnya.","Beli buku tebal, ujungnya nggak kepakai.","Aku nggak sempat bikin latihan soal sendiri."],
-  Education:["Ternyata soal TKA itu banyak penalaran, bukan cuma hafalan.","Banyak anak kesulitan bukan karena nggak pintar, tapi karena kaget sama model soalnya.","Kuncinya latihan rutin dengan soal yang mirip aslinya.","Anak lebih cepat paham kalau ada pembahasannya."],
-  Manfaat:["Aku cari latihan soal yang praktis, nggak ribet.","Sekarang belajar anakku cukup 20 menit sehari.","Aku pengen yang bisa langsung dipakai, tinggal print.","Yang aku butuh cuma soal yang mirip TKA plus pembahasannya."],
-  Testimoni:["Anakku udah latihan sekitar tiga minggu.","Awalnya aku beli karena lihat ibu-ibu lain cerita.","Jujur anakku tipe yang gampang bosan belajar.","Sekarang anakku sendiri yang minta latihan."]},
- product:["Ini {p}, file PDF yang bisa langsung dipakai.","Namanya {p}. Isinya lengkap, tinggal download.","Aku pakai {p}, bisa dibuka di HP atau di-print.","Kenalin, {p}. Sekali beli, bisa dipakai berulang."],
- usage:["Tinggal print, terus anak latihan beberapa soal tiap hari.","Bisa dikerjakan di HP atau di kertas, fleksibel.","Satu sesi cukup 20 menit, nggak bikin anak capek.","Habis ngerjain, langsung cocokkan sama pembahasannya."],
- ben:{
-  soal:["Soalnya banyak, jadi anak bisa latihan terus.","Latihan soalnya lengkap, nggak perlu cari ke mana-mana."],
-  pembahasan:["Setiap soal ada pembahasannya, jadi anak paham caranya.","Ada pembahasan lengkap, aku nggak perlu jelasin dari nol."],
-  mirip:["Model soalnya mirip TKA asli, jadi anak nggak kaget.","Soalnya disusun mengikuti kisi-kisi terbaru."],
-  mapel:["Ada Matematika dan Bahasa Indonesia, sesuai yang diujikan.","Materinya sesuai mapel yang keluar di TKA."],
-  print:["Bisa dibuka di HP atau di-print, praktis banget.","Tinggal print, nggak perlu nunggu kiriman."],
-  percaya:["Anakku jadi lebih percaya diri menghadapi TKA.","Sekarang anakku lebih tenang, nggak panik lagi."],
-  hemat:["Sekali beli, bisa dipakai berulang kali.","Jauh lebih hemat dibanding les tambahan."]},
- proof:{
-  Problem:["Sekarang aku lebih tenang lihat anakku belajar.","Hasil tryout anakku membaik, aku lega banget."],
-  Education:["Jadi bukan soal les mahal, tapi soal latihan yang tepat.","Konsisten aja tiap hari, nanti kelihatan bedanya."],
-  Manfaat:["Satu file, tapi isinya lengkap.","Pantes banyak ibu yang rekomendasiin."],
-  Testimoni:["Sekarang anakku udah nggak takut sama TKA.","Ibu-ibu di grup sekolah sampai nanya aku pakai apa."]},
- filler:["File-nya langsung dikirim, nggak pakai nunggu.","Aku simpan di HP, jadi bisa latihan di mana aja.","Sebelumnya aku udah habis banyak buat buku yang nggak kepakai.","Adiknya nanti juga bisa pakai."],
- ctaSoft:["Kalau anakmu juga mau TKA, cek di bawah ya.","Penasaran isinya? Cek dulu di link bawah.","Mulai latihan malam ini, klik di bawah."],
- ctaHard:["Harganya cuma {harga}{promo}. Klik di bawah sebelum promonya habis!","Sekarang cuma {harga}{promo}, file-nya langsung dikirim. Checkout sekarang ya!"],
- ctaHardPromo:["{Promo} cuma {harga}, langsung klik link di bawah sebelum kehabisan!"],
- key:{soal:/soal|latihan/,pembahasan:/pembahasan|kunci/,mirip:/mirip|kisi|asli|terbaru/,mapel:/matematika|bahasa|mapel/,print:/print|pdf|hp|cetak/,percaya:/percaya|pede|siap|tenang/,hemat:/hemat|sekali beli|berulang|les/}};
-function bankLines(o){
- const BANK=o.bank||BANK_FILO,BKEY=BANK.key||BKEY_FILO; // o: {p,hookType,hook,tipe,bens,hard,pr,pro,nSeg,D}
- const r=x=>x.replace(/\{p\}/g,o.p).replace(/\{harga\}/g,o.pr||"harga spesial").replace(/\{promo\}/g,o.pro?`, ${o.pro}`:"").replace(/\{Promo\}/g,o.pro?o.pro.charAt(0).toUpperCase()+o.pro.slice(1):"");
- const used=new Set(),CON=["","Terus, ","Plus, "];
- const bens=o.bens.map(b=>{const k=Object.keys(BKEY).find(k=>BKEY[k].test(b.toLowerCase())&&!used.has(k));
-  if(k){used.add(k);return pk(BANK.ben[k])}return `${b.charAt(0).toUpperCase()+b.slice(1)} juga kerasa.`});
- const cta=o.nSeg===1&&o.pro&&BANK.ctaShort?r(pk(BANK.ctaShort)):(x=>o.pro?x:x.replace("sebelum promonya habis","sebelum kehabisan"))(r(o.hard?(o.pro&&Math.random()<.4?pk(BANK.ctaHardPromo):pk(BANK.ctaHard)):pk(BANK.ctaSoft)));
- // cerita masalah hanya nyambung setelah hook Problem/Confession; hook lain langsung ke produk
- const withStory=o.hookType==="Problem"||o.hookType==="Confession"||o.tipe==="Testimoni";
- const one=o.nSeg===1;const prodL=r(pk(one?["Ini {p}.","Namanya {p}.","Kenalin, {p}."]:BANK.product)),useL=r(pk(BANK.usage)),dup=x=>/HP|print/i.test(x)&&/HP|print/i.test(prodL+useL);
- let B=[["bridge",r(pk(BANK.bridge[o.hookType]))],...(withStory?[["story",r(pk(BANK.story[o.tipe]))]]:[]),["product",prodL],["usage",useL],...bens.filter((t,i,a)=>!dup(t)||a.length<2).map(t=>["ben",t]),["proof",r(pk(BANK.proof[o.tipe]))]];
- const tgt=Math.round(o.D*(one?2.1:3)),mx=one?1.1:1.2,txt=()=>B.map(x=>x[1]),wc=()=>words([o.hook,...txt(),cta].join(" "));
- const fill=[...BANK.filler].sort(()=>Math.random()-.5);
- while(wc()<tgt&&fill.length)B.splice(B.length-1,0,["filler",fill.pop()]);
- // durasi pendek: buang berurutan cerita → cara pakai → bukti → jembatan → manfaat terakhir (minimal produk + 1 manfaat)
- for(const tag of one?["story","proof","usage","bridge"]:["story","proof","usage"]){if(wc()<=tgt*mx)break;const k=B.findIndex(x=>x[0]===tag);if(k>=0)B.splice(k,1)}
- while(wc()>tgt*mx&&B.filter(x=>x[0]==="ben").length>1){const k=B.map(x=>x[0]).lastIndexOf("ben");B.splice(k,1)}
- // kata sambung manfaat ke-2 dan ke-3
- let bi=0;B.forEach(x=>{if(x[0]==="ben"){if(bi)x[1]=CON[Math.min(bi,2)]+x[1].charAt(0).toLowerCase()+x[1].slice(1);bi++}});
- // bagi ke segmen berdasarkan jumlah kata (CTA ikut dihitung, selalu di segmen terakhir)
- const all=[o.hook,...txt()],tot=wc(),per=tot/o.nSeg,seg=Array.from({length:o.nSeg},()=>[]);let si=0,acc=0;
- all.forEach(x=>{const w=words(x);if(si<o.nSeg-1&&seg[si].length&&acc+w/2>per*(si+1))si++;seg[si].push(x);acc+=w});
- seg[o.nSeg-1].push(cta);
- for(let k=1;k<o.nSeg-1;k++)if(!seg[k].length&&seg[k-1].length>1)seg[k].push(seg[k-1].pop());
- return seg.map(s=>s.join(" ")||"…")}
-function pickBen(raw,hook){const all=raw.split(/\s*(?:,|;|\.|\n| dan )\s*/).map(x=>x.trim()).filter(Boolean);if(!all.length)return "hasil terlihat";
- const hw=hook.toLowerCase().split(/\W+/).flatMap(w=>[w,...(SYN[w]||"").split(" ")]).filter(w=>w.length>3);
- const sc=all.map(x=>({x,s:hw.filter(w=>x.toLowerCase().includes(w)).length+Math.random()*.9})).sort((a,b)=>b.s-a.s);
- const k=Math.min(all.length,2+rnd(2)),ch=sc.slice(0,k).map(o=>o.x);
- window.BENLIST=ch;return ch.length>1?ch.slice(0,-1).join(", ")+" dan "+ch[ch.length-1]:ch[0]}
+
 // Kata CTA per platform: Meta Ads (tombol Beli Sekarang / link), TikTok (keranjang kuning), Shopee
 function PF(t){const p=$("plat").value;if(p==="tiktok")return t;
  const M=p==="meta"?[[/langsung klik keranjang kuning/g,"langsung klik Beli Sekarang"],[/[Cc]ek dulu di keranjang kuning/g,"Cek dulu di link bawah"],[/[Cc]ek keranjang kuning/g,"Klik Beli Sekarang"],[/klik keranjang kuning/g,"klik Beli Sekarang"],[/keranjang kuning/g,"tombol Beli Sekarang"]]
   :[[/langsung klik keranjang kuning/g,"langsung checkout di Shopee"],[/[Cc]ek dulu di keranjang kuning/g,"Cek dulu di Shopee"],[/[Cc]ek keranjang kuning/g,"Cek di Shopee"],[/klik keranjang kuning/g,"checkout di Shopee"],[/keranjang kuning/g,"Shopee"],[/[Kk]lik di bawah/g,"Cek di Shopee"],[/Klik Beli Sekarang/g,"Checkout di Shopee"],[/link di bawah|link bawah/g,"Shopee"]];
  return M.reduce((a,[r,v])=>a.replace(r,v),t)}
+
 // Komposisi shot pembuka talking head: diacak supaya tiap gambar start frame beda pose, framing & sudut kamera
 const OPENERS=[P=>`Handheld front-camera selfie, close framing (face and shoulders), ${P} raised beside her cheek in the very first frame`,
  P=>`Mirror selfie, waist-up: she holds her phone in one hand (phone partly visible) and shows ${P} toward the mirror with the other`,
@@ -360,108 +245,7 @@ const OPENERS=[P=>`Handheld front-camera selfie, close framing (face and shoulde
  P=>`Seated at a table, elbows down, ${P} held between both hands near her chin, friendly eye contact`,
  P=>`Open jar moment: she shows the open jar with the cream inside toward the lens, the lid in her other hand (${P})`];
 const OPENER=P=>OPENERS[rnd(OPENERS.length)](P);
-function build(c,a,h,t,batch){
- const p=$("prod").value||"produk",b=pickBen($("ben").value,HOOKS[h][0]==="Problem"?N().prob[pIdx(h)]:HOOKS[h][1]),pr=$("price").value,pro=$("promo").value.trim();
- const pdesc=$("pdesc").value.replace(/\.{2,}/g,". ").replace(/(\s*,\s*)+$/,"").replace(/,\s*,/g,",").trim()||"the product",mdesc=$("mdesc").value.trim()||"a natural-looking woman";
- const n=N(),hk=(HOOKS[h][0]==="Problem"?n.prob[pIdx(h)]:HOOKS[h][1]).replace(/skincare/g,n.noun).replace(/Kulitku/g,n.res),C=CEP[c],A=ANG[a],H=[HOOKS[h][0],hk],T=TIPE[t];
- const sv=$("sell").value,hard=sv==="Hard"||(sv==="Auto"&&(A[0]==="Value Shock"||C[0]==="Opportunistic"||!!pro));
- // tiap klip pas 8 atau 10 detik; durasi total dibulatkan ke kelipatan klip
- const segLen=+$("seglen").value,nSeg=Math.max(1,Math.round(+$("dur").value/segLen)),D=nSeg*segLen;
- const KM={set:"set",pm:"pm",hm:"hm",cam:"cam",lit:"lit"},g=(id,arr)=>(batch||+$(id).value<0)?nPick(KM[id],arr):pick(id,arr),mdl=$("model").value==="1";
- const env=g("set",SET),lit=g("lit",LIT);
- const cta=hard?`${pr?`Cuma ${pr}`:"Harga spesial"}${pro?`, ${pro}`:""}. Klik di bawah sekarang, stok terbatas!`:`${pro?`Lagi ada ${pro}. `:""}Cek sendiri, klik di bawah.`;
- const dl=DIALOG[T](p,b,H[0]);
- // susun beat: hook, [agitasi, produk, filler...], manfaat+CTA
- const mid=nSeg>=4?[[dl[0],0],[dl[1],1],...FILLER.slice(0,nSeg-4).map(f=>[f,1])]:nSeg===3?[[dl[1],1]]:[];
- // segmen sedikit: gabungkan agitasi & produk supaya alur problem→produk→CTA tetap utuh
- const BL=$("dsrc").value!=="tpl"?bankLines({bank:$("dsrc").value==="tka"?BANK_TKA:BANK_FILO,p,hookType:H[0],hook:H[1],tipe:T,bens:window.BENLIST||[b],hard,pr,pro,nSeg,D}):null;
- const beats=nSeg===1?[[`${H[1]} ${dl[1]} ${cta}`,"hook"]]:nSeg===2?[[`${H[1]} ${dl[0]}`,"hook"],[`${dl[1]} ${dl[2]} ${cta}`,2]]:nSeg===3?[[H[1],"hook"],[`${dl[0]} ${dl[1]}`,1],[`${dl[2]} ${cta}`,2]]:[[H[1],"hook"],...mid,[`${dl[2]} ${cta}`,2]];
- const segs=beats.map(([line0,role],i)=>{
-  const line=BL?BL[i]:role===2?stretch(line0.replace(cta,""),2,segLen-2.5,FILLER).trim()+" "+cta:stretch(line0,role,segLen,FILLER);
-  const sh={pm:g("pm",PM),hm:g("hm",HM),cam:g("cam",CAM)};
-  const vo=!mdl||role===1;
-  const st=Math.round(i*segLen),en=Math.round((i+1)*segLen);
-  let vis;
-  if(i===0)vis=vo?`${sh.cam}, ${env}, ${lit}. ${pdesc} already in frame in the very first frame, ${sh.hm}, label facing the camera.`
-              :`${OPENER(pdesc)}, ${env}, ${lit}, ${mdesc}, label facing the camera. Real skin texture, no filter.`;
-  else if(vo)vis=`Close-up of hands only, ${env}: ${sh.hm}, ${sh.pm}, ${sh.cam}. Label stays sharp and unchanged.`;
-  else if(role===2)vis=`Same person, same room, ${sh.hm}, then holding ${pdesc} toward the lens. ${sh.cam}.`;
-  else vis=`Same person, same room, phone moves closer, ${sh.cam}; ${pdesc} still visible in her hand at the edge of frame. Shows the problem clearly.`;
-  const ex=role==="hook"?HOOK_EXP[H[0]]:role===1?[null,"netral menjelaskan, tempo sedang"]:BEAT_EXP[role];
-  return {env:g("set",SET),lit:g("lit",LIT),outfit:pk(/hijab/i.test(mdesc)?["simple modest tunic with hijab","soft knit cardigan over long dress with hijab","pastel oversized shirt with hijab","casual abaya with hijab"]:OUTFIT.filter(o=>!/hijab/.test(o))),t:`${st}-${en} dtk`,type:vo?"VO, tangan saja":"Talking head",vis,exp:vo?null:ex[0],into:ex[1],line}});
- const s={ben:b,key:[$("niche").value,c,a,h,t].join("|"),niche:$("niche").value,cep:C[0],angle:A[0],hookType:H[0],hook:H[1],tipe:T,dur:D,sell:hard?"Hard":"Soft",model:mdl,env,lit,segs};
- s.title=H[1].replace(/[.…]+$/,"");
- s.scenes=segs.map((x,i)=>[`SEG ${i+1} (${x.t})`,`${x.type} | ${x.vis}${x.exp?` Ekspresi: ${x.exp}`:""} | Intonasi: ${x.into} "${x.line}"`]);
- s.ctx={p,pdesc,mdesc,mdl,D,segLen,vmode:$("vmode").value};
- s.prompt=`Vertical 9:16 TikTok UGC video, ~${D} seconds, ${nSeg} segments of ~${Math.round(segLen)}s. Product: ${p}${pdesc!=="the product"?` (${pdesc})`:""}, use PRODUCT_IMAGE as exact reference.${mdl?` Person: ${mdesc}, use MODEL_IMAGE as exact face reference.`:""}
-`+segs.map((x,i)=>`SEG ${i+1} (${x.t}) [${x.type}] ${x.vis}${x.exp?` Expression: ${x.exp}.`:""} Spoken line (Bahasa Indonesia${x.type==="Talking head"?", lip-synced":", voice-over"}): "${x.line}"`).join("\n")+`
-${RULES_BASE}
-${mdl?RULES_MODEL:RULES_NOMODEL}
-${RULES_GLOBAL} Duration about ${D} seconds.`;
- // Thumbnail: frame pertama video (setting, lighting, produk, model sama) + teks kepo pendek
- // ===== Thumbnail = creative image ad (bisa dipakai sendiri sebagai iklan gambar) =====
- // Konsep visual ditentukan ANGLE, konteks CEP, warna highlight per CEP; pilihan acak diberi seed kombinasi supaya tiap kombinasi unik
- const seedStr=[c,a,h,t,$("niche").value].join("|");let sd=0;for(const ch of seedStr)sd=(sd*31+ch.charCodeAt(0))>>>0;
- const sp=arr=>arr[(sd+rnd(997))%arr.length];
- const CONCEPT={
-  "Social Proof / FOMO":["COMMENT PILE-UP: 3 realistic white comment bubbles overlapping beside her (not over face or jar), each a short customer quote, plus a small sticker 'Restock lagi!'","BESTSELLER STAMP: a slightly tilted red rubber-stamp style label 'TERJUAL 10.000+' near the jar, with a hand-drawn arrow 'akhirnya kebagian'"],
-  "Shock / Hasil Cepat":["DAY COUNTER: a giant outlined number '7' with the word 'HARI' placed in the background area behind her shoulder (depth effect, never over the face)","ZOOM BUBBLE: a circular magnifier bubble with a hand-drawn line pointing at her cheek, small label 'lihat bedanya'"],
-  "Curiosity Gap":["CENSOR BAR TEASE: one word of the headline covered by a hero-color bar like a secret, small text 'buka untuk lihat'","QUESTION MARKS: 2-3 hand-drawn question marks and a dotted arrow pointing at the jar"],
-  "Authority Effect":["EXPERT NOTE: a small clipboard-style white card with 3 hand-ticked checkmarks next to the jar, like a beautician's note","SPEC CARD: a minimal white card with thin lines listing the supporting benefits, tidy and trustworthy"],
-  "Hidden Gem / Discovery":["SECRET NOTE: a yellow sticky note 'rahasia kulitku 🤫' slightly overlapping the photo edge, arrow to the jar","FOUND IT: a hand-drawn marker circle around the jar and the word 'ketemu!'"],
-  "Relatable Pain / Emotional Story":["NOTES-APP CARD: a white phone-notes style card with the headline as a short honest confession","STICKY NOTE: a sticky note placed at the mirror/background edge with a handwritten line, soft emotional mood"],
-  "Transformation Desire":["SEBELUM/SESUDAH LABELS: two small pill labels 'Sebelum' and 'Sesudah' with a curved hand-drawn arrow toward her glowing face","SWIPE ARROW: a big curved hand-drawn arrow and the word 'glowing!' pointing at her cheek"],
-  "Value Shock":["PRICE TAG SHOCK: an oversized tilted price-tag sticker with the price, a small crossed-out higher price above it, placed next to the jar","RECEIPT STRIP: a narrow receipt-style strip comparing 'Klinik' (crossed out) vs this product price"],
-  "Comparison Curiosity":["VS BADGE: a big 'VS' badge with 'Klinik mahal' crossed out on one side and the jar on the other","1 vs 10: a sticker '1 pot vs 10 skincare' with a strike line through '10 skincare'"],
-  "Demonstration Proof":["TEST STAMP: a small stamp 'TES LANGSUNG' near the jar with an arrow to the cream","TEXTURE CALLOUT: a hand-drawn arrow with the label 'nggak lengket' pointing at the cream"],
-  "Regret Trigger":["REGRET NOTE: handwritten text 'andai tahu dari dulu' with a small scribble heart","CALENDAR CARD: a small calendar card with several crossed-out months beside her"]};
- const angK=CONCEPT[A[0]]?A[0]:"Relatable Pain / Emotional Story";
- const concept=sp(CONCEPT[angK]);
- const conceptTxt=[...concept.matchAll(/'([^']+)'/g)].map(m=>m[1]);
- const HERO_COL={"Problem-Solution":["hot pink","#FF2E7E"],"Routine":["sunny orange","#FF8A00"],"Commitment":["tomato red","#E8452C"],"Aspirational":["champagne gold","#D4A24C"],"Opportunistic":["electric yellow","#FFE14D"],"Emotional":["warm coral","#FF6F61"]}[C[0]]||["hot pink","#FF2E7E"];
- const CEP_CTX={"Problem-Solution":"the moment of finally solving a long-time skin problem","Routine":"an easy everyday night routine","Commitment":"getting ready before an important event (kondangan, reuni, hari raya)","Aspirational":"looking fresh and confident at her age","Opportunistic":"a limited-time deal that feels too good to skip","Emotional":"an emotional comeback of self-confidence"}[C[0]];
- const TH_TXT={Confession:["Aku salah soal ini…","Awalnya aku nggak percaya","Jujur, aku nyesel telat","Aku kira cuma gimmick"],
-  Curiosity:["Kenapa semua pakai ini?","Ini rahasianya…","Kok bisa sekecil ini?","Viral karena ini 👀"],
-  Problem:[hk.replace(/[.…,]+$/,"").split(" ").slice(0,5).join(" ")+"…","Udah coba semua tapi gagal?","Masalahku selesai di sini"],
-  Result:["Flek pudar dalam 7 hari 😳","Lihat bedanya!","Nggak nyangka segini","7 hari, ini hasilnya"],
-  "Pattern Interrupt":["STOP. Lihat ini dulu","Jangan skip!","Tunggu… lihat ini","Sebelum scroll, baca ini"]};
- const ANG_TXT={"Value Shock":[`${pr||"Harga"} dapat 2?!`,"Harga segini? Serius?!"],"Comparison Curiosity":["1 pot vs 10 skincare","Klinik vs salep malam"],"Regret Trigger":["Andai tahu dari dulu…","Nyesel baru tahu"],"Social Proof / FOMO":["Terjual 10.000+, kenapa?","Semua udah pakai, kamu?"],"Transformation Desire":["Sebelum vs sesudah 7 hari","Dari kusam ke glowing"],"Authority Effect":["Lembut untuk kulit sensitif","Tanpa perih, terbukti"]};
- const thTxt=ANG_TXT[A[0]]&&Math.random()<.5?sp(ANG_TXT[A[0]]):sp(TH_TXT[H[0]]);
- const badge=pro&&!thTxt.includes(pro)?pro:pr?`Cuma ${pr}`:"";
- const benS=(window.BENLIST||[b]).slice(0,2).map(x=>cap(x));
- const TSN=TESTI[(TESTI_CEP[C[0]]||TESTI_CEP["Problem-Solution"])[sd%4]];
- const proof=`“${TSN[1].replace(/&amp;/g,"&")}” ★★★★★`;
- const ctaPill=PF(sp(["Klik Beli Sekarang","Cek keranjang kuning","Ambil promonya","Cobain malam ini"]));
- const FONT=sp(["ultra-bold condensed sans (Anton / Bebas Neue style), tight letter spacing","heavy rounded sans (Poppins Black style)","bold grotesk sans (Archivo Black style) mixed with a casual hand-written marker accent word","chunky serif display (Recoleta Black style) for warmth, sans for small text"]);
- const EXPR={Confession:["guilty-happy half smile, biting her lip","covering her mouth with fingertips, eyes smiling"],Curiosity:["one eyebrow raised, leaning toward the lens as if sharing a secret","squinting playfully at the jar"],Problem:["tired face touching her cheek, then a hopeful look","slight frown looking at her cheek in the mirror"],Result:["genuine jaw-drop, eyes wide, mouth slightly open","delighted laugh while touching her glowing cheek"],"Pattern Interrupt":["palm raised toward the lens like 'stop', serious eye contact","sudden lean toward the camera, intense eye contact"]}[H[0]];
- s.thumbText=thTxt;
- // Thumbnail = frame pertama video: pakai setting/lighting/outfit milik segmen 1 (sama dengan Prompt Image SEG 1)
- const V0=$("vmode").value==="var",T0={env:V0&&segs[0].env||env,lit:V0&&segs[0].lit||lit,outfit:mdl&&V0&&segs[0].outfit?` Outfit: ${segs[0].outfit}.`:""};
- // Thumbnail = lapisan desain di atas gambar hasil ① Prompt Image (foto tidak digambar ulang)
- s.thumb=`EDIT THE UPLOADED IMAGE INTO A HIGH-PERFORMING META ADS IMAGE CREATIVE, ASPECT.
-BASE: use the uploaded image (result of Prompt Image SEG 1) exactly as it is. Do NOT regenerate or change the photo: same person, face, outfit, pose, background, lighting and product. Only ADD a graphic design layer on top (text, shapes, stickers). Crop/extend the background only if needed for the aspect ratio.
-PRODUCT: the jar must stay exactly as in the photo: same size, label and colors, fully visible, nothing placed over the label, no new text printed on the jar.
-STORY CONTEXT: ${CEP_CTX}. Angle: ${A[0]} (${A[1]}). Hook type: ${H[0]}.
-CREATIVE CONCEPT (graphic overlay only): ${concept}.
-VISUAL HIERARCHY (eye path): 1) headline → 2) her face/reaction → 3) the jar → 4) badge → 5) CTA. One clear focal point, breathing room, no clutter.
-HERO COLOR: ${HERO_COL[0]} ${HERO_COL[1]} is the ONLY highlight color: headline highlight box/underline, badge and CTA pill. Other text: off-white #FAF7F2 or near-black #141414. Strong contrast so it pops in the feed.
-TYPOGRAPHY: headline in ${FONT}, about 12–16% of image height, max 2 lines, slight tilt allowed (max 4°). Supporting text in a clean sans, about 4–5% of image height. Max 2 font families, no outlines/bevels.
-TEXT (Bahasa Indonesia, spell EXACTLY, no other words):
-- Headline: "${thTxt}"
-- Supporting line: "${benS.join(" • ")}"
-- Proof chip: "${proof}"${badge?`\n- Badge: "${badge}"`:""}
-- CTA pill: "${ctaPill}"${conceptTxt.map(x=>`\n- Sticker/stamp text: "${x}"`).join("")}
-LAYOUT: place text on empty areas (background, beside her), never over the face or the product label. SAFE_ZONE
-ANTI-AI-TEMPLATE: looks like a real seller's ad edited in CapCut/Canva. NO 3D chrome or glossy text, NO generic gradients, NO lens flares, NO floating sparkles, NO fake app UI, NO stock icons, max 1 emoji. Stickers and hand-drawn marks look hand-placed and slightly imperfect.
-CURIOSITY: leave one question unanswered (why / how fast / how cheap) so people tap to find out.`;
- s.thumb=noTT(s.thumb).replace(/Cek keranjang kuning/g,PF("Cek keranjang kuning"))+"\nNO watermark, NO app logo, NO username, NO social media interface.";
- s.thumbs=[["4:5 (feed)",s.thumb.replace("ASPECT","aspect ratio 4:5 vertical feed (1080x1350)").replace("SAFE_ZONE","Keep all text inside the central 90% of the frame.")],["9:16 (story/reels)",s.thumb.replace("ASPECT","aspect ratio 9:16 full vertical (1080x1920)").replace("SAFE_ZONE","Story safe zone: keep the top 14% and bottom 20% free of text (Instagram/Facebook UI covers them).")]];
- s.copy=`${H[1]} ${p} bantu ${b}. ${pr?`Sekarang cuma ${pr}.`:""}${pro?` 🔥 ${pro}!`:""} 👉 Klik Beli Sekarang!`;
- // CTA disesuaikan platform iklan
- s.segs.forEach(g=>g.line=PF(g.line));s.copy=PF(s.copy);s.thumbs.forEach(x=>x[1]=PF(x[1]));s.thumb=PF(s.thumb);s.plat=$("plat").value;
- s.scenes=s.segs.map((x,i)=>[`SEG ${i+1} (${x.t})`,`${x.type} | ${x.vis}${x.exp?` Ekspresi: ${x.exp}`:""} | Intonasi: ${x.into} "${x.line}"`]);
- return s}
-// Satu prompt per segmen: tiap klip digenerate terpisah lalu disambung, jadi tiap prompt berdiri sendiri + aturan kesinambungan
+
 const OUTFIT=["casual oversized t-shirt","soft knit cardigan","simple satin pajamas","clean white blouse","pastel hoodie","neutral linen shirt","simple modest tunic with hijab","sleeveless ribbed top with light cardigan"];
 // Kata "TikTok" bikin AI meniru watermark/UI TikTok, jadi diganti istilah netral
 const noTT=x=>x.replace(/TikTok UGC/g,"UGC smartphone").replace(/TikTok style/g,"social-media UGC style").replace(/TikTok\/?/g,"");
@@ -482,41 +266,9 @@ PRODUCT VIEW IN THIS SHOT: match ${VIEWS[a]}; when the product moves, it may pas
 PRODUCT SIZE: very small jar. 3 cm wide = about the width of two adult finger segments side by side (roughly a bottle-cap size); 2 cm tall = about one finger segment. It fits easily between thumb and index finger and covers only a small part of the palm. Never show it as big as a palm, a cup or a standard cream jar.
 CLEAR JAR = BLANK: the clear acrylic jar body (sides and bottom) is completely blank and transparent: NO printed text, NO label, NO logo, NO brand name, NO embossing, NO numbers, NO stickers on it. The ONLY text on the whole product is the round pink sticker on top of the white lid. When the jar is shown from the front or side (views 4 and 5), you see only clear acrylic, the white ribbed cap and the yellow cream inside, nothing written.
 NO ADDITIONS WHEN MOVING: the product is a rigid, solid object. While it is lifted, rotated, tilted, opened or moved, do NOT add anything to it: no extra stickers, side labels, text, logos, patterns, pumps, droppers, boxes, ribbons, glitter or reflections with writing; do NOT change its shape, size, color, label text or cap. Move it slowly and smoothly, keep the label in focus, and never let fingers cover the label.`};
-// Alur Flow: (1) generate gambar start frame per segmen → (2) upload gambar itu, generate video (image-to-video) → (3) thumbnail
-function segCtx(s,i){const c=s.ctx,g=s.segs[i],V=c.vmode==="var",D=N().digital;
- const env=V&&g.env?g.env:s.env,lit=V&&g.lit?g.lit:s.lit;
- let vis=V?g.vis.replace(s.env,env).replace(s.lit,lit).replace(/Same person, same room, /,"Same person in a new spot, "):g.vis;
- if(c.pdesc!=="the product")vis=vis.split(c.pdesc).join(D?"the product":"the jar");
- if(D)vis=vis.replace(/the product already raised beside her cheek/,"a smartphone held beside her cheek, its screen showing the product cover").replace(/label side \(as in PRODUCT_IMAGE\) facing the camera|label facing the camera/g,"screen facing the camera");
- vis=vis.replace(/label facing the camera/g,"label side (as in PRODUCT_IMAGE) facing the camera");
- return {c,g,V,env,lit,vis,outfit:c.mdl&&V&&g.outfit?` Outfit: ${g.outfit}.`:"",prod:`${c.p}${c.pdesc!=="the product"?` (${c.pdesc})`:""}`,rule:D?DIGITAL_RULE:PHYS_RULE(vis)}}
-function segImagePrompts(s){const n=s.segs.length;return s.segs.map((_,i)=>{const x=segCtx(s,i);
- return `STILL PHOTO, vertical 9:16, photorealistic smartphone UGC photo (start frame for video SEG ${i+1} of ${n}; also usable on its own as an image ad).
-NO text, NO captions, NO watermark, NO stickers, NO graphics. The only text in the image is the product's own original label.
-Product: ${x.prod}, use PRODUCT_IMAGE as exact reference.${x.c.mdl?` Person: ${x.c.mdesc}, use MODEL_IMAGE as exact face reference.`:""}
-Setting: ${x.env}. Lighting: ${x.lit}.${x.outfit}
-MOMENT TO CAPTURE: the very first moment of this shot: ${x.vis}${x.g.exp?` Expression: ${x.g.exp}.`:""}
-${x.rule}
-${RULES_BASE.replace("The product must appear within the first second. ","").replace(/throughout the video/,"in the image")}
-${x.c.mdl?RULES_MODEL:RULES_NOMODEL}
-${RULES_GLOBAL.replace("9:16 video","9:16 photo")} Sharp focus on the product label, natural skin texture, no beauty filter.`}).map(noTT)}
-function segPrompts(s,silent){const n=s.segs.length;return s.segs.map((_,i)=>{const x=segCtx(s,i),len=Math.round(x.c.segLen);
- const SIL=silent===undefined?$("audio").value==="silent":!!silent;
- // mode tanpa suara: tidak ada dialog/lip-sync, cerita lewat ekspresi & gerakan, cocok diberi musik + teks di editor
- const silAct=x.g.type==="Talking head"?`She does NOT talk: lips stay relaxed or smiling, no lip movement as if speaking. She tells the story with expressions and gestures only (${["reacts with surprise, then smiles and shows the product to the lens","touches her cheek, looks at the camera, then raises the product proudly","nods confidently while presenting the product","glances at the product, then gives a warm satisfied smile"][i%4]}).`:"Hands-only shot, no talking.";
- return `NO SUBTITLES, NO CAPTIONS, NO ON-SCREEN TEXT. ${SIL?"SILENT VIDEO: no voice, no speech, no narration (ambient sound or none).":"Audio only."} NO watermark, NO app logo, NO username, NO social media interface.
-IMAGE-TO-VIDEO: use the uploaded START IMAGE (from Image Prompt SEG ${i+1}) as the exact first frame. Keep the person, face, hair, outfit, setting, lighting and product EXACTLY as they appear in the start image; only add natural movement${SIL?"":", speech"} and camera motion.
-Vertical 9:16 UGC video clip, ${len} seconds. Clip ${i+1} of ${n} of one ~${x.c.D}s video.
-Product: ${x.prod}. The product in the start image is the final design: do NOT redraw, restyle or replace it.
-${x.rule}
-PACKAGING LOCK: packaging, label artwork, label text, colors, cap, jar shape and size must stay pixel-consistent with the start image and PRODUCT_IMAGE in every frame. Do NOT add, remove or change any text, sticker, logo or print on the product.
-MOTION [${SIL?"Silent b-roll":x.g.type}]: ${x.vis}${x.g.exp?` Expression: ${x.g.exp}.`:""}
-${SIL?silAct+" Natural pacing with small handheld camera movement, suitable for background music.":`Spoken line (Bahasa Indonesia${x.g.type==="Talking head"?", lip-synced, natural speaking pace":", voice-over"}): "${x.g.line}"`}
-${i<n-1?"End on a natural pause so the next clip can continue.":"End with the product clearly facing the camera."}
-${RULES_BASE.replace("The product must appear within the first second. ","")}
-${x.c.mdl?RULES_MODEL:RULES_NOMODEL}
-Reminder: absolutely no subtitles or text overlays; text will be added later in editing.
-${RULES_GLOBAL} Duration exactly ${len} seconds.`}).map(noTT)}
+
+const DIGITAL_RULE=`PRODUCT ACCURACY: the product is a DIGITAL PDF question bank. Show it only as (a) a smartphone or tablet screen displaying pages that match PRODUCT_IMAGE, or (b) printed A4 worksheet pages. The cover design, title, colors and layout must match PRODUCT_IMAGE exactly. Do NOT invent a physical box, book cover or other app. Keep the screen bright and the cover title readable; small question text may stay soft.`;
+
 const LPT={"atas": "<!-- {{HEAD}} -->\n<style>\n@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');\n.sg * { box-sizing: border-box; margin: 0; padding: 0; }\n.sg {\nfont-family: 'Plus Jakarta Sans', sans-serif;\ncolor: #0D1B2A;\nmax-width: 680px;\nmargin: 0 auto;\nbackground: #FAF6F2;\noverflow-x: hidden;\n}\n.sg-nav {\nbackground: #0D1B2A;\npadding: 14px 20px;\ndisplay: flex;\nalign-items: center;\njustify-content: space-between;\n}\n.sg-nav-brand { font-size: 13px; font-weight: 700; color: #fff; letter-spacing: .02em; }\n.sg-nav-brand span { color: #C94F7C; }\n.sg-nav-cta {\nbackground: #C9963A !important;\nbackground-color: #C9963A !important;\ncolor: #0D1B2A !important;\nfont-size: 12px !important;\nfont-weight: 800 !important;\npadding: 7px 14px !important;\nborder-radius: 6px !important;\ntext-decoration: none !important;\n}\n.sg-nav-cta:visited,.sg-nav-cta:hover,.sg-nav-cta:active,.sg-nav-cta:focus {\ncolor: #0D1B2A !important; background: #B8832A !important; text-decoration: none !important;\n}\n.sg-hero {\nbackground: linear-gradient(160deg, #0D1B2A 0%, #162840 100%);\npadding: 32px 20px 28px;\ntext-align: center;\nposition: relative;\noverflow: hidden;\n}\n.sg-hero::before {\ncontent: '';\nposition: absolute;\ntop: -40px; right: -40px;\nwidth: 200px; height: 200px;\nborder-radius: 50%;\nbackground: rgba(201,153,58,.08);\n}\n.sg-hero::after {\ncontent: '';\nposition: absolute;\nbottom: -30px; left: -30px;\nwidth: 150px; height: 150px;\nborder-radius: 50%;\nbackground: rgba(201,153,58,.05);\n}\n.sg-hero-eyebrow {\ndisplay: inline-block;\nbackground: rgba(201,79,124,.15);\nborder: 1px solid rgba(201,79,124,.35);\ncolor: #F4A7C3;\nfont-size: 11px;\nfont-weight: 700;\nletter-spacing: .08em;\ntext-transform: uppercase;\npadding: 5px 12px;\nborder-radius: 20px;\nmargin-bottom: 16px;\n}\n.sg-hero h1 {\nfont-size: 27px;\nfont-weight: 800;\ncolor: #fff;\nline-height: 1.2;\nmargin-bottom: 12px;\n}\n.sg-hero h1 em { font-style: normal; color: #C9963A; }\n.sg-hero-img{display:block;width:100%;max-width:420px;height:auto;margin:0 auto 18px;border-radius:14px;border:2px solid rgba(201,153,58,.45);position:relative;z-index:1}\n.sg-hero-sub {\nfont-size: 14px;\ncolor: rgba(255,255,255,.72);\nline-height: 1.6;\nmargin-bottom: 20px;\n}\n.sg-hero-stats {\ndisplay: flex;\njustify-content: center;\ngap: 0;\nborder: 1px solid rgba(255,255,255,.12);\nborder-radius: 10px;\noverflow: hidden;\nmargin-bottom: 20px;\n}\n.sg-hero-stat {\nflex: 1;\npadding: 12px 8px;\ntext-align: center;\nborder-right: 1px solid rgba(255,255,255,.12);\n}\n.sg-hero-stat:last-child { border-right: none; }\n.sg-hero-stat strong {\ndisplay: block;\nfont-size: 16px;\nfont-weight: 800;\ncolor: #C9963A;\nline-height: 1;\nmargin-bottom: 3px;\n}\n.sg-hero-stat span { font-size: 10px; color: rgba(255,255,255,.5); line-height: 1.3; }\n.sg-hero-btn {\ndisplay: block !important;\nbackground: #C9963A !important;\nbackground-color: #C9963A !important;\ncolor: #0D1B2A !important;\nfont-size: 16px !important;\nfont-weight: 800 !important;\npadding: 16px 24px !important;\nborder-radius: 10px !important;\ntext-decoration: none !important;\ntext-align: center !important;\nbox-shadow: 0 4px 14px rgba(201,150,58,.4) !important;\nline-height: 1.3 !important;\n-webkit-appearance: none !important;\n}\n.sg-hero-btn:visited,.sg-hero-btn:hover,.sg-hero-btn:active,.sg-hero-btn:focus {\ncolor: #0D1B2A !important; background: #B8832A !important; text-decoration: none !important;\n}\n.sg-hero-btn small {\ndisplay: block !important;\nfont-size: 11px !important;\nfont-weight: 500 !important;\nopacity: .75 !important;\nmargin-top: 2px !important;\ncolor: #0D1B2A !important;\ntext-decoration: none !important;\n}\n.sg mark{background:rgba(201,150,58,.28);color:inherit;padding:0 3px;border-radius:3px}\n.sg u{text-decoration-color:#C94F7C;text-decoration-thickness:2px;text-underline-offset:3px}\n.sg-divider { height: 3px; background: linear-gradient(90deg, transparent, #C94F7C, transparent); }\n.sg-section { padding: 28px 20px; }\n.sg-white { background: #fff; }\n.sg-krem { background: #FAF6F2; }\n.sg-plum { background: #0D1B2A; }\n.sg-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #C94F7C; margin-bottom: 6px; }\n.sg-eyebrow-white { color: #C9963A; }\n.sg-h2 { font-size: 20px; font-weight: 800; color: #0D1B2A; line-height: 1.25; margin-bottom: 6px; }\n.sg-h2-white { color: #fff; }\n.sg-sub { font-size: 14px; color: #2C4A6E; margin-bottom: 18px; line-height: 1.6; }\n.sg-sub-white { color: rgba(255,255,255,.65); }\n.sg-pain-list { display: flex; flex-direction: column; gap: 10px; }\n.sg-pain-item {\ndisplay: flex; gap: 12px; align-items: flex-start;\nbackground: #FFF5F5; border-left: 3px solid #C94F7C;\nborder-radius: 0 8px 8px 0; padding: 12px 14px;\n}\n.sg-pain-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }\n.sg-pain-text { font-size: 14px; line-height: 1.6; color: #374151; }\n.sg-pain-text strong, .sg-pain-text b { color: #0D1B2A; }\n.sg-pain-note {\nbackground: #0D1B2A; border-radius: 10px; padding: 16px; margin-top: 14px;\n}\n.sg-pain-note-title { font-size: 11px; font-weight: 700; color: #F4A7C3; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }\n.sg-pain-note-item {\nfont-size: 14px; color: rgba(255,255,255,.75); line-height: 1.5;\npadding-left: 16px; position: relative; margin-bottom: 8px;\n}\n.sg-pain-note-item:last-child { margin-bottom: 0; }\n.sg-pain-note-item::before { content: '\u2192'; position: absolute; left: 0; color: #C9963A; }\n.sg-benefit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }\n.sg-benefit-card {\nbackground: #FDF0F6; border-radius: 10px; padding: 14px 12px;\nborder: 1px solid #F0C0D8;\n}\n.sg-benefit-icon { font-size: 22px; margin-bottom: 8px; display: block; }\n.sg-benefit-title { font-size: 14px; font-weight: 700; color: #0D1B2A; margin-bottom: 4px; line-height: 1.3; }\n.sg-benefit-desc { font-size: 12px; color: #2C4A6E; line-height: 1.5; }\n.sg-keunggulan-list { display: flex; flex-direction: column; gap: 8px; }\n.sg-keunggulan-item {\ndisplay: flex; align-items: center; gap: 12px;\nbackground: #fff; border-radius: 8px; padding: 12px 14px;\nborder: 1px solid #F4A7C3;\n}\n.sg-keunggulan-icon { font-size: 20px; flex-shrink: 0; }\n.sg-keunggulan-text strong { display: block; font-size: 14px; font-weight: 700; color: #0D1B2A; margin-bottom: 2px; }\n.sg-keunggulan-text span { font-size: 12px; color: #2C4A6E; }\n.sg-keunggulan-badge {\nmargin-left: auto; font-size: 10px; font-weight: 700;\nbackground: #FDF0F6; color: #A03070; padding: 3px 8px;\nborder-radius: 20px; white-space: nowrap; flex-shrink: 0;\n}\n.sg-quiz-wrap { background: rgba(255,255,255,.07); border: 1px solid rgba(201,79,124,.25); border-radius: 12px; overflow: hidden; }\n.sg-quiz-header { background: rgba(255,255,255,.07); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }\n.sg-quiz-header-label { font-size: 11px; font-weight: 700; color: #F4A7C3; letter-spacing: .08em; text-transform: uppercase; }\n.sg-quiz-counter { font-size: 11px; color: rgba(255,255,255,.5); background: rgba(255,255,255,.1); padding: 3px 10px; border-radius: 20px; }\n.sg-quiz-body { padding: 16px; }\n.sg-quiz-q-block { margin-bottom: 4px; }\n.sg-quiz-q-num { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #F4A7C3; margin-bottom: 6px; }\n.sg-quiz-q-text { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 12px; line-height: 1.35; }\n.sg-quiz-opts { display: flex; flex-direction: column; gap: 8px; }\n.sg-quiz-opt {\ndisplay: flex; align-items: center; gap: 10px; position: relative;\npadding: 11px 14px; border-radius: 8px;\nbackground: rgba(255,255,255,.07); border: 1.5px solid rgba(255,255,255,.15);\nfont-size: 14px; color: rgba(255,255,255,.85); cursor: pointer;\nfont-family: 'Plus Jakarta Sans', sans-serif; text-align: left; width: 100%;\ntransition: all .15s;\n}\n.sg-quiz-opt:hover { border-color: #C94F7C; background: rgba(201,79,124,.15); }\n.sg-quiz-opt input{position:absolute;opacity:0;pointer-events:none}\n.sg-quiz-opt:has(input:checked){border-color:#C9963A;background:rgba(201,150,58,.15);color:#fff;font-weight:600}\n.sg-quiz-opt:has(input:checked) .sg-quiz-opt-key{background:#C9963A;color:#0D1B2A}\n.sg-quiz-body:has([name=sgq1]:checked):has([name=sgq2]:checked):has([name=sgq3]:checked) #sg-result{display:block!important}\n.sg-quiz-opt-key {\nwidth: 24px; height: 24px; border-radius: 50%;\nbackground: rgba(255,255,255,.15); display: flex; align-items: center; justify-content: center;\nfont-size: 11px; font-weight: 700; flex-shrink: 0; color: rgba(255,255,255,.7);\n}\n.sg-quiz-result-cta {\ndisplay: block !important; width: 100% !important;\nbackground: #C9963A !important; color: #0D1B2A !important;\nfont-size: 15px !important; font-weight: 800 !important;\npadding: 14px 20px !important; border-radius: 8px !important;\ntext-decoration: none !important; text-align: center !important;\n}\n.sg-quiz-result-cta:visited,.sg-quiz-result-cta:hover { color: #0D1B2A !important; background: #B8832A !important; text-decoration: none !important; }\n.sg-faq-item { border-bottom: 1px solid rgba(201,79,124,.15); }\n.sg-faq-item:last-child { border-bottom: none; }\n.sg-faq-q {\nwidth: 100%; background: none; border: none; padding: 14px 0;\ntext-align: left; font-size: 14px; font-weight: 700; color: #0D1B2A;\ncursor: pointer; display: flex; justify-content: space-between; align-items: center;\ngap: 12px; font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.4;\n}\n.sg-faq-q::after { content: '+'; font-size: 20px; color: #C94F7C; flex-shrink: 0; transition: transform .2s; line-height: 1; }\n.sg-faq-q{list-style:none}.sg-faq-q::-webkit-details-marker{display:none}\n.sg-faq-item[open] .sg-faq-q::after { transform: rotate(45deg); }\n.sg-faq-a { display: none; font-size: 14px; color: #4A3358; line-height: 1.7; padding-bottom: 14px; }\n.sg-faq-item[open] .sg-faq-a { display: block; }\n.sg-testi-card {\nbackground: #fff; border-radius: 12px; padding: 16px;\nmargin-bottom: 12px; border: 1px solid #F4A7C3;\n}\n.sg-testi-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }\n.sg-testi-avatar {\nwidth: 38px; height: 38px; border-radius: 50%;\ndisplay: flex; align-items: center; justify-content: center;\nfont-size: 15px; font-weight: 700; color: #fff; flex-shrink: 0;\n}\n.sg-testi-name { font-size: 14px; font-weight: 700; color: #0D1B2A; }\n.sg-testi-meta { font-size: 11px; color: #2C4A6E; }\n.sg-testi-badge { font-size: 10px; background: #FDF0F6; color: #A03070; padding: 2px 8px; border-radius: 20px; font-weight: 600; margin-left: auto; }\n.sg-testi-body { font-size: 13px; line-height: 1.6; color: #374151; }\n.sg-testi-highlight {\nbackground: linear-gradient(135deg, #FDF0F7, #FAF6F2);\nborder-left: 3px solid #C94F7C;\npadding: 10px 12px; border-radius: 0 8px 8px 0;\nfont-size: 13px; font-style: italic; color: #0D1B2A;\nmargin-top: 10px; font-weight: 600;\n}\n.sg-shots{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px 10px}\n.sg-shots figure{margin:0;min-width:0}\n.sg-shots img{display:block;width:100%;aspect-ratio:3/5;object-fit:cover;object-position:top;border:2px solid #0D1B2A;border-radius:10px;background:#FDF0F6}\n.sg-shots figcaption{font-size:11.5px;line-height:1.45;margin-top:6px;color:#374151}\n.sg-shots figcaption b{display:block;color:#0D1B2A;font-size:12px}\n.sg-proof-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }\n.sg-proof-item {\nbackground: rgba(255,255,255,.07); border-radius: 8px;\npadding: 14px 12px; text-align: center;\nborder: 1px solid rgba(201,153,58,.25);\n}\n.sg-proof-num { font-size: 24px; font-weight: 800; color: #C9963A; display: block; line-height: 1; margin-bottom: 4px; }\n.sg-proof-label { font-size: 11px; color: rgba(255,255,255,.6); line-height: 1.4; }\n.sg-promo-banner {\nbackground: linear-gradient(135deg, #FDF0F7, #FAF6F2);\nborder: 1px solid #C94F7C; border-radius: 8px;\npadding: 10px 14px; text-align: center;\nfont-size: 13px; font-weight: 700; color: #7B1040;\nmargin-bottom: 16px;\n}\n.sg-promo-banner span { color: #0D1B2A; }\n.sg-price-card {\nborder: 1px solid #e5e7eb; border-radius: 12px;\npadding: 18px; margin-bottom: 12px; position: relative;\n}\n.sg-price-card.featured { border: 2px solid #C9963A; background: linear-gradient(135deg, #FDF0F7, #fff); }\n.sg-best-tag {\nposition: absolute; top: -11px; left: 50%; transform: translateX(-50%);\nbackground: linear-gradient(135deg, #C9963A, #E8C87A);\ncolor: #0D1B2A; font-size: 10px; font-weight: 800;\nletter-spacing: .06em; text-transform: uppercase;\npadding: 4px 14px; border-radius: 20px; white-space: nowrap;\n}\n.sg-price-title { font-size: 15px; font-weight: 700; color: #0D1B2A; margin-bottom: 4px; }\n.sg-price-bonus { font-size: 12px; color: #C94F7C; font-weight: 600; margin-bottom: 10px; }\n.sg-price-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }\n.sg-price-old { font-size: 13px; color: #9ca3af; text-decoration: line-through; }\n.sg-price-new { font-size: 28px; font-weight: 800; color: #0D1B2A; }\n.sg-price-save { font-size: 11px; font-weight: 700; background: #FDF0F6; color: #A03070; padding: 3px 8px; border-radius: 20px; }\n.sg-form-note {\nbackground: #FDF0F6; border: 1.5px dashed #C94F7C;\nborder-radius: 10px; padding: 14px 16px; margin: 0 20px; text-align: center;\n}\n.sg-form-note-title { font-size: 14px; font-weight: 700; color: #7B1040; margin-bottom: 4px; }\n.sg-form-note-sub { font-size: 12px; color: #374151; line-height: 1.5; }\n<\/style>\n<div class=\"sg\">\n<!-- NAV -->\n<nav class=\"sg-nav\">\n<div class=\"sg-nav-brand\"><span>F<\/span> Filomall Beauty<\/div>\n<a href=\"#sg-order\" class=\"sg-nav-cta\">Lihat Paket<\/a>\n<\/nav>\n<!-- HERO -->\n<div class=\"sg-hero\">\n<div class=\"sg-hero-eyebrow\">\u2726 {{TAG}}<\/div>\n<h1>{{H1}}<\/h1>\n<p class=\"sg-hero-sub\">{{LEAD}}<\/p>\n<img class=\"sg-hero-img\" src=\"{{HEROIMG}}\" alt=\"Salep Glowing FILO\" width=\"480\" height=\"600\">\n<div class=\"sg-hero-stats\">\n<div class=\"sg-hero-stat\"><strong>10.000+<\/strong><span>Pelanggan puas<\/span><\/div>\n<div class=\"sg-hero-stat\"><strong>7\u20139 hari<\/strong><span>Mulai terasa<\/span><\/div>\n<div class=\"sg-hero-stat\"><strong>COD<\/strong><span>Bayar di tempat<\/span><\/div>\n<\/div>\n<a href=\"#sg-quiz\" class=\"sg-hero-btn\">\nCek Apakah Cocok Untukmu\n<small>Quiz 3 pertanyaan \u2014 hasil keluar otomatis<\/small>\n<\/a>\n<\/div>\n<div class=\"sg-divider\"><\/div>\n<!-- PAIN -->\n<div class=\"sg-section sg-white\">\n<p class=\"sg-eyebrow\">Yang sering terjadi<\/p>\n<h2 class=\"sg-h2\">{{PH2}}<\/h2>\n<div class=\"sg-pain-list\">{{PLIST}}<\/div>\n<div class=\"sg-pain-note\">\n<div class=\"sg-pain-note-title\">Yang terjadi kalau dibiarkan<\/div>\n<div class=\"sg-pain-note-item\">Flek makin gelap karena paparan matahari tanpa perawatan yang tepat<\/div>\n<div class=\"sg-pain-note-item\">Kepercayaan diri terus terkikis \u2014 tampil tanpa makeup jadi semakin tidak nyaman<\/div>\n<div class=\"sg-pain-note-item\">Terus mencoba produk baru yang mahal, terus kecewa, terus keluar uang<\/div>\n<\/div>\n<\/div>\n<div class=\"sg-divider\"><\/div>\n<!-- SOLUSI -->\n<div class=\"sg-section sg-krem\">\n<p class=\"sg-eyebrow\">Solusinya<\/p>\n<h2 class=\"sg-h2\">Rutinitas malam 1 langkah yang bekerja saat Anda tidur.<\/h2>\n<p class=\"sg-sub\">Oles tipis sebelum tidur, bekerja <b>saat kulit memulihkan diri<\/b>: flek memudar, wajah cerah, kulit lembap.<\/p>\n<div class=\"sg-benefit-grid\">\n<div class=\"sg-benefit-card\"><span class=\"sg-benefit-icon\">\ud83c\udf11<\/span><div class=\"sg-benefit-title\">Flek & noda memudar<\/div><div class=\"sg-benefit-desc\">Termasuk flek membandel yang sudah bertahun-tahun<\/div><\/div>\n<div class=\"sg-benefit-card\"><span class=\"sg-benefit-icon\">\u2728<\/span><div class=\"sg-benefit-title\">Kulit glowing & merata<\/div><div class=\"sg-benefit-desc\">Wajah lebih cerah dan warna kulit lebih seragam<\/div><\/div>\n<div class=\"sg-benefit-card\"><span class=\"sg-benefit-icon\">\ud83d\udca7<\/span><div class=\"sg-benefit-title\">Lembab seharian<\/div><div class=\"sg-benefit-desc\">Bangun tidur kulit terasa lembab dan kenyal<\/div><\/div>\n<div class=\"sg-benefit-card\"><span class=\"sg-benefit-icon\">\ud83d\udee1\ufe0f<\/span><div class=\"sg-benefit-title\">Aman kulit sensitif<\/div><div class=\"sg-benefit-desc\">Tidak perih, tidak panas, tidak mengelupas<\/div><\/div>\n<div class=\"sg-benefit-card\"><span class=\"sg-benefit-icon\">\ud83d\udd50<\/span><div class=\"sg-benefit-title\">Garis halus memudar<\/div><div class=\"sg-benefit-desc\">Kulit terlihat lebih kencang dan awet muda<\/div><\/div>\n<div class=\"sg-benefit-card\"><span class=\"sg-benefit-icon\">\ud83d\udc84<\/span><div class=\"sg-benefit-title\">Makeup nempel rata<\/div><div class=\"sg-benefit-desc\">Foundation nyatu, contouring tidak perlu tebal<\/div><\/div>\n<\/div>\n<\/div>\n<div class=\"sg-divider\"><\/div>\n<!-- KEUNGGULAN -->\n<div class=\"sg-section sg-white\">\n<p class=\"sg-eyebrow\">Kenapa FILO beda<\/p>\n<h2 class=\"sg-h2\">Bukan skincare yang bekerja dengan menyakiti kulitmu.<\/h2>\n<p class=\"sg-sub\" style=\"margin-bottom:16px\">Hasil tanpa perih, tanpa mengelupas.<\/p>\n<div class=\"sg-keunggulan-list\">\n<div class=\"sg-keunggulan-item\"><div class=\"sg-keunggulan-icon\">\ud83e\uddf4<\/div><div class=\"sg-keunggulan-text\"><strong>Krim lembut, cepat meresap<\/strong><span>Tidak berat di kulit, tidak menempel di bantal saat tidur<\/span><\/div><div class=\"sg-keunggulan-badge\">\u2713 Nyaman<\/div><\/div>\n<div class=\"sg-keunggulan-item\"><div class=\"sg-keunggulan-icon\">\ud83d\udd25<\/div><div class=\"sg-keunggulan-text\"><strong>Tidak panas, tidak perih<\/strong><span>Bahkan untuk kulit sensitif yang mudah bereaksi<\/span><\/div><div class=\"sg-keunggulan-badge\">\u2713 Aman<\/div><\/div>\n<div class=\"sg-keunggulan-item\"><div class=\"sg-keunggulan-icon\">\ud83d\udcc5<\/div><div class=\"sg-keunggulan-text\"><strong>Aman pemakaian jangka panjang<\/strong><span>Tidak bergantung bahan keras yang merusak kulit lama-lama<\/span><\/div><div class=\"sg-keunggulan-badge\">\u2713 Terpercaya<\/div><\/div>\n<div class=\"sg-keunggulan-item\"><div class=\"sg-keunggulan-icon\">\ud83c\udf19<\/div><div class=\"sg-keunggulan-text\"><strong>Bekerja saat kamu tidur<\/strong><span>Aktif di malam hari saat kulit dalam mode pemulihan alami<\/span><\/div><div class=\"sg-keunggulan-badge\">\u2713 Efektif<\/div><\/div>\n<\/div>\n<\/div>\n<div class=\"sg-divider\"><\/div>\n<!-- QUIZ -->\n<div class=\"sg-section sg-plum\" id=\"sg-quiz\">\n<p class=\"sg-eyebrow sg-eyebrow-white\">Cek Kesesuaian<\/p>\n<h2 class=\"sg-h2 sg-h2-white\">Apakah Salep Glowing FILO Cocok Untukmu?<\/h2>\n<p class=\"sg-sub sg-sub-white\" style=\"margin-bottom:16px\">Jawab 3 pertanyaan singkat \u2014 hasilnya keluar otomatis di akhir.<\/p>\n<div class=\"sg-quiz-wrap\">\n<div class=\"sg-quiz-header\"><span class=\"sg-quiz-header-label\">Quiz Singkat<\/span><span class=\"sg-quiz-counter\">3 pertanyaan<\/span><\/div>\n<div class=\"sg-quiz-body\">\n<div class=\"sg-quiz-q-block\">\n<div class=\"sg-quiz-q-num\">Pertanyaan 1 dari 3<\/div>\n<div class=\"sg-quiz-q-text\">Flek atau bercak kamu paling banyak di area mana?<\/div>\n<div class=\"sg-quiz-opts\">\n<label class=\"sg-quiz-opt\"><input type=\"radio\" name=\"sgq1\"><div class=\"sg-quiz-opt-key\">A<\/div>Pipi (kanan/kiri)<\/label>\n<label class=\"sg-quiz-opt\"><input type=\"radio\" name=\"sgq1\"><div class=\"sg-quiz-opt-key\">B<\/div>Atas bibir<\/label>\n<label class=\"sg-quiz-opt\"><input type=\"radio\" name=\"sgq1\"><div class=\"sg-quiz-opt-key\">C<\/div>Dahi<\/label>\n<label class=\"sg-quiz-opt\"><input type=\"radio\" name=\"sgq1\"><div class=\"sg-quiz-opt-key\">D<\/div>Tersebar di beberapa area<\/label>\n<\/div>\n<\/div>\n<div style=\"height:1px;background:rgba(255,255,255,.1);margin:16px 0\"><\/div>\n<div class=\"sg-quiz-q-block\">\n<div class=\"sg-quiz-q-num\">Pertanyaan 2 dari 3<\/div>\n<div class=\"sg-quiz-q-text\">Kulit kamu tipe apa?<\/div>\n<div class=\"sg-quiz-opts\">\n<label class=\"sg-quiz-opt\"><input type=\"radio\" name=\"sgq2\"><div class=\"sg-quiz-opt-key\">A<\/div>Sensitif \u2014 gampang merah & perih<\/label>\n<label class=\"sg-quiz-opt\"><input type=\"radio\" name=\"sgq2\"><div class=\"sg-quiz-opt-key\">B<\/div>Kering \u2014 sering ketarik<\/label>\n<label class=\"sg-quiz-opt\"><input type=\"radio\" name=\"sgq2\"><div class=\"sg-quiz-opt-key\">C<\/div>Normal atau kombinasi<\/label>\n<label class=\"sg-quiz-opt\"><input type=\"radio\" name=\"sgq2\"><div class=\"sg-quiz-opt-key\">D<\/div>Berminyak<\/label>\n<\/div>\n<\/div>\n<div style=\"height:1px;background:rgba(255,255,255,.1);margin:16px 0\"><\/div>\n<div class=\"sg-quiz-q-block\">\n<div class=\"sg-quiz-q-num\">Pertanyaan 3 dari 3<\/div>\n<div class=\"sg-quiz-q-text\">Berapa lama flek kamu sudah bertahan?<\/div>\n<div class=\"sg-quiz-opts\">\n<label class=\"sg-quiz-opt\"><input type=\"radio\" name=\"sgq3\"><div class=\"sg-quiz-opt-key\">A<\/div>Baru beberapa bulan<\/label>\n<label class=\"sg-quiz-opt\"><input type=\"radio\" name=\"sgq3\"><div class=\"sg-quiz-opt-key\">B<\/div>1 sampai 3 tahun<\/label>\n<label class=\"sg-quiz-opt\"><input type=\"radio\" name=\"sgq3\"><div class=\"sg-quiz-opt-key\">C<\/div>Lebih dari 3 tahun<\/label>\n<label class=\"sg-quiz-opt\"><input type=\"radio\" name=\"sgq3\"><div class=\"sg-quiz-opt-key\">D<\/div>Ganti-ganti \u2014 kadang muncul, kadang samar<\/label>\n<\/div>\n<\/div>\n<div style=\"font-size:12px;color:rgba(255,255,255,.4);text-align:center;margin-top:12px\">Ketuk salah satu jawaban di setiap pertanyaan.<\/div>\n<div id=\"sg-result\" style=\"display:none;margin-top:16px;background:rgba(201,150,58,.15);border:1px solid #C9963A;border-radius:10px;padding:16px;text-align:center\">\n<div style=\"font-size:24px;margin-bottom:8px\">\u2705<\/div>\n<div style=\"font-size:16px;font-weight:800;color:#fff;margin-bottom:8px\">Salep Glowing FILO Cocok Untukmu.<\/div>\n<div style=\"font-size:13px;color:rgba(255,255,255,.75);line-height:1.6;margin-bottom:14px\">Kulitmu termasuk yang <b>paling banyak terbantu<\/b> FILO: bertahap, tanpa perih.<\/div>\n<a href=\"#sg-order\" class=\"sg-quiz-result-cta\">Ambil Paketnya Sekarang \u2192<\/a>\n<\/div>\n<\/div>\n<\/div>\n<\/div>\n<div class=\"sg-divider\"><\/div>\n<!-- TESTIMONI -->\n<div class=\"sg-section sg-krem\" id=\"sg-testi\">\n<p class=\"sg-eyebrow\">Bukti dari pelanggan asli<\/p>\n<h2 class=\"sg-h2\">Mereka sudah membuktikannya.<\/h2>\n<p class=\"sg-sub\">Bukan endorse berbayar. Ini pelanggan nyata yang berbagi hasilnya sendiri.<\/p>\n<div class=\"sg-testi-card\">\n<div class=\"sg-testi-header\"><div class=\"sg-testi-avatar\" style=\"background:#8B5E3C;\">Y<\/div><div><div class=\"sg-testi-name\">Yuyun Soedjono \u00b7 58 thn<\/div><div class=\"sg-testi-meta\">\u2b50\u2b50\u2b50\u2b50\u2b50 \u00b7 Repeat order 2\u00d7<\/div><\/div><div class=\"sg-testi-badge\">Repeat Order<\/div><\/div>\n<p class=\"sg-testi-body\">Flek puluhan tahun, sudah ke dokter, laser, kolagen jutaan\u2026 ga ngaruh. Coba FILO, <b>flek memudar<\/b>. Order 2x.<\/p>\n<div class=\"sg-testi-highlight\">\"Udah ke dokter jutaan, laser berkali-kali. Baru FILO yang works.\"<\/div>\n<\/div>\n<div class=\"sg-testi-card\">\n<div class=\"sg-testi-header\"><div class=\"sg-testi-avatar\" style=\"background:#C0392B;\">A<\/div><div><div class=\"sg-testi-name\">Anik Udayani<\/div><div class=\"sg-testi-meta\">\u2b50\u2b50\u2b50\u2b50\u2b50<\/div><\/div><\/div>\n<p class=\"sg-testi-body\">Blm seminggu aku make, <b>flek ku entah kmn<\/b> \ud83d\ude2d krim dua jutaan aja ga ngefek.<\/p>\n<div class=\"sg-testi-highlight\">\"Krim 2 jutaan ga ngefek. Belum seminggu FILO, flek entah kemana.\"<\/div>\n<\/div>\n<div class=\"sg-testi-card\">\n<div class=\"sg-testi-header\"><div class=\"sg-testi-avatar\" style=\"background:#8E44AD;\">T<\/div><div><div class=\"sg-testi-name\">Teti Setiawati \u00b7 60 thn<\/div><div class=\"sg-testi-meta\">\u2b50\u2b50\u2b50\u2b50\u2b50<\/div><\/div><\/div>\n<p class=\"sg-testi-body\">Flek hitam membandel, <b>5 hari sudah kelihatan<\/b> hasilnya. Sekarang PD padahal usia 60.<\/p>\n<div class=\"sg-testi-highlight\">\"5 hari sudah kelihatan. Usia 60 tahun, PD lagi.\"<\/div>\n<\/div>\n<\/div>\n<div class=\"sg-section sg-krem\" style=\"padding-top:0\"><p class=\"sg-eyebrow\">Screenshot asli<\/p><div class=\"sg-shots\">{{TESTI}}<\/div><p style=\"font-size:11px;color:#6b7280;font-style:italic;margin-top:8px\">*Hasil tiap orang bisa berbeda.<\/p><\/div>\n<div class=\"sg-divider\"><\/div>\n<!-- SOCIAL PROOF -->\n<div class=\"sg-section sg-plum\" style=\"text-align:center\">\n<p class=\"sg-eyebrow sg-eyebrow-white\" style=\"margin-bottom:12px\">Dalam angka<\/p>\n<div class=\"sg-proof-grid\">\n<div class=\"sg-proof-item\"><span class=\"sg-proof-num\">10.000+<\/span><span class=\"sg-proof-label\">Pelanggan di seluruh Indonesia<\/span><\/div>\n<div class=\"sg-proof-item\"><span class=\"sg-proof-num\">7\u20139 hari<\/span><span class=\"sg-proof-label\">Rata-rata mulai terasa hasilnya<\/span><\/div>\n<div class=\"sg-proof-item\"><span class=\"sg-proof-num\">COD<\/span><span class=\"sg-proof-label\">Bayar di tempat, seluruh Indonesia<\/span><\/div>\n<div class=\"sg-proof-item\"><span class=\"sg-proof-num\">4.9 \u2605<\/span><span class=\"sg-proof-label\">Rating dari pelanggan setia<\/span><\/div>\n<\/div>\n<\/div>\n<div class=\"sg-divider\"><\/div>\n<!-- FAQ -->\n<div class=\"sg-section sg-krem\" style=\"padding-bottom:20px\">\n<p class=\"sg-eyebrow\">Sebelum Pesan<\/p>\n<h2 class=\"sg-h2\">Yang Sering Ditanyakan.<\/h2>\n<details class=\"sg-faq-item\" open><summary class=\"sg-faq-q\">Kulitku sensitif, aman nggak?<\/summary><div class=\"sg-faq-a\"><b>Aman.<\/b> Tidak panas, tidak perih. Baru pertama? Tes sedikit di belakang telinga dulu.<\/div><\/details>\n<details class=\"sg-faq-item\"><summary class=\"sg-faq-q\">Berapa lama sampai flek terlihat memudar?<\/summary><div class=\"sg-faq-a\"><b>Minggu pertama<\/b> flek mulai samar. Flek bertahun-tahun: 1\u20132 bulan rutin.<\/div><\/details>\n<details class=\"sg-faq-item\"><summary class=\"sg-faq-q\">Boleh dipakai pagi?<\/summary><div class=\"sg-faq-a\">Paling efektif <b>malam<\/b>. Pagi wajib sunscreen supaya flek tidak balik.<\/div><\/details>\n<details class=\"sg-faq-item\"><summary class=\"sg-faq-q\">Cocok untuk umur berapa?<\/summary><div class=\"sg-faq-a\">Pelanggan kami usia <b>25\u201363 tahun<\/b>.<\/div><\/details>\n<details class=\"sg-faq-item\"><summary class=\"sg-faq-q\">Bisa COD? Berapa lama sampai?<\/summary><div class=\"sg-faq-a\"><b>Bisa COD.<\/b> Jawa 1\u20132 hari, luar Jawa 2\u20135 hari.<\/div><\/details>\n<details class=\"sg-faq-item\"><summary class=\"sg-faq-q\">Kalau nggak cocok, bisa dikembalikan?<\/summary><div class=\"sg-faq-a\">COD bisa ditolak sebelum dibuka. Ada kendala? CS WhatsApp siap bantu.<\/div><\/details>\n<\/div>\n<div class=\"sg-divider\"><\/div>\n<!-- HARGA -->\n<div class=\"sg-section sg-white\" id=\"sg-order\" style=\"padding-bottom:12px\">\n<p class=\"sg-eyebrow\">Pilih paket<\/p>\n<h2 class=\"sg-h2\">Mulai perubahan hari ini.<\/h2>\n<p class=\"sg-sub\" style=\"margin-bottom:16px\">COD \u2014 bayar di tempat setelah barang datang. Dikirim ke seluruh Indonesia.<\/p>\n<div class=\"sg-promo-banner\">\ud83c\udf81 Pesan hari ini gratis <span>Sunscreen SPF 50<\/span> \u2014 stok terbatas!<\/div>\n<div class=\"sg-price-card\" style=\"border: 1.5px solid #C94F7C;\">\n<div class=\"sg-price-title\">{{PROMO}}<\/div>\n<div class=\"sg-price-bonus\">2 salep \u00b7 \u00b12 bulan pemakaian \u00b7 + Gratis Sunscreen<\/div>\n<div class=\"sg-price-row\"><span class=\"sg-price-old\">Rp179.000<\/span><span class=\"sg-price-new\">{{PRICE}}<\/span><\/div>\n<p style=\"font-size:13px;color:#4A4A4A;line-height:1.6;margin-top:10px;padding-top:10px;border-top:1px solid #F0E8D8\">Pas untuk mulai, cukup lihat perubahan awal.<\/p>\n<\/div>\n<div class=\"sg-price-card featured\">\n<div class=\"sg-best-tag\">\u2b50 PALING HEMAT<\/div>\n<div class=\"sg-price-title\">Beli 2, Gratis 2<\/div>\n<div class=\"sg-price-bonus\">4 salep \u00b7 \u00b14 bulan pemakaian \u00b7 + Gratis Sunscreen<\/div>\n<div class=\"sg-price-row\"><span class=\"sg-price-old\">Rp329.000<\/span><span class=\"sg-price-new\">Rp219.000<\/span><span class=\"sg-price-save\">Hemat Rp110.000<\/span><\/div>\n<p style=\"font-size:13px;color:#4A4A4A;line-height:1.6;margin-top:10px;padding-top:10px;border-top:1px solid #F0E8D8\">Hemat Rp59.000, cukup sampai flek benar-benar memudar.<\/p>\n<\/div>\n<\/div>\n<!-- FORM NOTE -->\n<div class=\"sg-form-note\" style=\"margin-top:4px\">\n<div class=\"sg-form-note-title\">\ud83d\udc47 Isi data di bawah untuk memesan<\/div>\n<div class=\"sg-form-note-sub\">Pilih paket di form, lengkapi nama dan nomor HP \u2014 CS kami akan konfirmasi pesanan via WhatsApp.<\/div>\n<\/div>\n<\/div>\n<!-- END SECTION 1 SALGLOW v2 -->\n", "bawah": "<!-- {{HEAD}} \u00b7 BAWAH (sesudah form) -->\n<style>\n@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');\n.sg3 * { box-sizing: border-box; margin: 0; padding: 0; }\n.sg3 { font-family: 'Plus Jakarta Sans', sans-serif; max-width: 680px; margin: 0 auto; background: #FAF6F2; overflow-x: hidden; }\n.sg3-divider { height: 3px; background: linear-gradient(90deg, transparent, #C94F7C, transparent); }\n.sg3-section { padding: 28px 20px; }\n.sg3-krem { background: #FAF6F2; }\n.sg3-plum { background: #0D1B2A; }\n.sg3-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #C94F7C; margin-bottom: 6px; }\n.sg3-h2 { font-size: 20px; font-weight: 800; color: #0D1B2A; line-height: 1.25; margin-bottom: 6px; }\n.sg3-h2-white { color: #fff; }\n.sg3-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; text-align: left; }\n.sg3-li { display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,.07); border-radius: 8px; padding: 12px 14px; }\n.sg3-li b { color: #C9963A; font-weight: 800; flex-shrink: 0; }\n.sg3-li span { font-size: 14px; color: rgba(255,255,255,.8); line-height: 1.55; }\n.sg3-promise { background: rgba(201,150,58,.12); border: 1px solid rgba(201,150,58,.3); border-radius: 10px; padding: 16px; margin-bottom: 20px; text-align: center; }\n.sg3-promise p:first-child { font-size: 15px; font-weight: 700; color: #C9963A; margin-bottom: 6px; }\n.sg3-promise p + p { font-size: 14px; color: rgba(255,255,255,.75); line-height: 1.6; }\n.sg3-btn { display: block !important; width: 100% !important; background: #C9963A !important; background-color: #C9963A !important; color: #0D1B2A !important; font-size: 16px !important; font-weight: 800 !important; text-align: center !important; padding: 17px 24px !important; border-radius: 10px !important; text-decoration: none !important; box-shadow: 0 4px 14px rgba(201,150,58,.35) !important; line-height: 1.3 !important; -webkit-appearance: none !important; appearance: none !important; margin-bottom: 10px !important; }\n.sg3-btn:visited,.sg3-btn:hover,.sg3-btn:active,.sg3-btn:focus { color: #0D1B2A !important; background: #B8832A !important; text-decoration: none !important; }\n.sg3-btn small { display: block !important; font-size: 11px !important; font-weight: 500 !important; opacity: .75 !important; margin-top: 3px !important; color: #0D1B2A !important; }\n.sg3-btn.ghost { background: transparent !important; color: #C9963A !important; border: 1.5px solid #C9963A !important; box-shadow: none !important; }\n.sg3-btn.ghost small { color: #C9963A !important; }\n.sg3-honest { background: #FDF0F6; border: 1px solid #F4A7C3; border-radius: 8px; padding: 14px 16px; font-size: 12px; color: #374151; line-height: 1.6; }\n.sg3-honest strong { color: #7B1040; display: block; margin-bottom: 4px; }\n.sg3-footer-bar { background: #060E18; padding: 20px; text-align: center; }\n.sg3-footer-brand { font-size: 13px; font-weight: 700; color: rgba(255,255,255,.5); margin-bottom: 6px; }\n.sg3-footer-brand span { color: #C94F7C; }\n.sg3-footer-note { font-size: 10px; color: rgba(255,255,255,.25); line-height: 1.6; }\n<\/style>\n<div class=\"sg3\">\n<div class=\"sg3-divider\"><\/div>\n<div class=\"sg3-section sg3-plum\" style=\"text-align:center\">\n<p class=\"sg3-eyebrow\">Kenapa ini penting<\/p>\n<h2 class=\"sg3-h2 sg3-h2-white\" style=\"margin-bottom:16px\">{{CLOSE}}<br><span style=\"color:#C9963A\">Flek tidak memudar sendiri, tapi bisa dirawat dengan cara yang benar.<\/span><\/h2>\n<div class=\"sg3-list\">\n<div class=\"sg3-li\"><b>\u2713<\/b><span>Semakin lama dibiarkan, flek semakin gelap dan semakin susah pudar \u2014 waktu terbaik adalah sekarang.<\/span><\/div>\n<div class=\"sg3-li\"><b>\u2713<\/b><span>Salep Glowing FILO bekerja saat kamu tidur \u2014 tidak perlu rutinitas panjang, tidak perlu keluar banyak biaya.<\/span><\/div>\n<div class=\"sg3-li\"><b>\u2713<\/b><span>Ribuan pelanggan sudah membuktikan \u2014 flek memudar, kulit lebih cerah, kepercayaan diri kembali.<\/span><\/div>\n<\/div>\n<div class=\"sg3-promise\">\n<p>Janji kami sederhana.<\/p>\n<p>Oles tipis sebelum tidur. Biarkan bekerja semalaman. Besok pagi mulai rasakan perbedaannya \u2014 tanpa perih, tanpa ribet, tanpa keluar banyak.<\/p>\n<\/div>\n<a href=\"#sg-order\" class=\"sg3-btn\">Ambil Promo {{PROMO}} \u00b7 {{PRICE}}<small>Bonus sunscreen untuk pembelian hari ini \u00b7 bisa COD<\/small><\/a>\n<a href=\"#sg-testi\" class=\"sg3-btn ghost\">Lihat Bukti dari Pelanggan Asli<small>Testimoni nyata \u2014 bukan endorse berbayar<\/small><\/a>\n<\/div>\n<div class=\"sg3-divider\"><\/div>\n<div class=\"sg3-section sg3-krem\">\n<div class=\"sg3-honest\">\n<strong>Catatan jujur.<\/strong>\nSalep Glowing FILO adalah produk perawatan kulit malam yang dipakai secara rutin. Hasil bervariasi antar individu tergantung kondisi kulit, keparahan flek, dan konsistensi pemakaian. Bukan obat dan tidak mengklaim menyembuhkan kondisi kulit medis.\n<\/div>\n<\/div>\n<div class=\"sg3-footer-bar\">\n<div class=\"sg3-footer-brand\"><span>F<\/span> Filomall Beauty<\/div>\n<div class=\"sg3-footer-note\">\u00a9 Filomall Beauty \u00b7 Salep Glowing FILO untuk perawatan malam.<br>Hasil bervariasi antar individu tergantung kondisi kulit dan konsistensi pemakaian.<br>Pembayaran diproses aman via Scalev.<\/div>\n<\/div>\n<\/div>\n"};
 // ===== Landing Page per CEP (problem & penutup) + angle (hero), template LP FILO Scalev =====
 const LP_CEP={
@@ -591,91 +343,151 @@ function buildLP(s){const C=LP_CEP[s.cep]||LP_CEP["Problem-Solution"],A=LP_ANG[s
  const FK=lpFormula(s.cep);const atas=applyFormula(f(LPT.atas.replace("{{HEAD}}",H).replace("{{TAG}}",A[0]).replace("{{H1}}",A[1]).replace("{{LEAD}}",A[2]).replace("{{PH2}}",C[0]).replace("{{PLIST}}",C[1].map((x,k)=>`<div class="sg-pain-item"><div class="sg-pain-icon">${["😔","😞","😰","😤"][k]}</div><div class="sg-pain-text">${x}</div></div>`).join("")).replace("{{BRIDGE}}",C[2]).replace("{{STRIP}}",strip).replace("{{TESTI}}",testiHTML(s.cep)).replace("{{HEROIMG}}",s.heroImg||"")),FK).split("{{PROMO}}").join(pro).split("{{PRICE}}").join(pr);
  const bawah=f(LPT.bawah.replace("{{HEAD}}",H).replace("{{CLOSE}}",C[3]));
  return {atas:lpTheme(s.cep,atas),bawah:lpTheme(s.cep,bawah),key:`${s.cep} · ${s.angle}`}}
+
+// ===== APP: CAVAC Creative Generator =====
+const CEPS=Object.keys(CAVAC.fisik);
+const ANG=[["Social Proof / FOMO","semua orang pakai"],["Shock / Hasil Cepat","hasil cepat yang mengejutkan"],["Curiosity Gap","info belum lengkap"],["Authority Effect","percaya ahli"],["Hidden Gem / Discovery","menemukan harta karun"],["Relatable Pain / Emotional Story","ini masalah saya"],["Transformation Desire","ingin hasil sama"],["Value Shock","deal terlalu bagus"],["Comparison Curiosity","perbandingan"],["Demonstration Proof","bukti visual"],["Regret Trigger","kenapa baru tahu"]];
+// angle yang paling nyambung per Communication Intent (dipakai saat angle acak)
+const CI_ANG={Educate:[2,9,3],Trigger:[5,0,1],Inspire:[6,4],Clarify:[2,8,3],Validate:[5,0],Entertain:[10,1,2],Proof:[0,9,6],["Call to Act"]:[7,0],Reinforce:[0,6]};
+const SELL_CI={"No Sell":["Educate","Inspire","Entertain","Validate","Clarify"],"Soft Sell":["Educate","Trigger","Inspire","Clarify","Validate","Proof","Reinforce"],"Hard Sell":["Trigger","Proof","Call to Act","Reinforce"]};
+const $=id=>document.getElementById(id),out=$("out");let list=[];
+const PT=()=>$("ptype").value;
+const opt=(el,arr,lab)=>el.innerHTML='<option value="-1" selected>🎲 Acak</option>'+arr.map((x,i)=>`<option value="${i}">${lab(x,i)}</option>`).join("");
+opt($("cep"),CEPS,x=>x);opt($("sell"),SELL,x=>x);opt($("ci"),CI,x=>x);opt($("ang"),ANG,x=>x[0]);
+const sv=(id,n)=>{const v=+$(id).value;return v>=0?v:rnd(n)};
+function fillMain(){const c=+$("cep").value,el=$("main");if(c<0){el.innerHTML='<option value="-1">🎲 Acak</option>';return}
+ el.innerHTML='<option value="-1">🎲 Acak</option>'+CAVAC[PT()][CEPS[c]].map((x,i)=>`<option value="${i}">${x.m}</option>`).join("")}
+$("cep").onchange=fillMain;$("ptype").onchange=()=>{fillMain();ptPreset()};fillMain();
+function ptPreset(){if(PT()==="digital")presetTka();else presetFilo()}
+// ---------- susun satu ide konten ----------
+function build(ci0){
+ const P=$("prod").value||"produk",pr=$("price").value,pro=$("promo").value.trim(),D=PT()==="digital";
+ const pdesc=($("pdesc").value.replace(/\.{2,}/g,". ").trim())||"the product",mdesc=$("mdesc").value.trim()||"a natural-looking Indonesian woman",mdl=$("model").value==="1";
+ const c=sv("cep",6),cep=CEPS[c],mains=CAVAC[PT()][cep],mi=+$("main").value>=0?+$("main").value:rnd(mains.length),M=mains[mi],si=rnd(M.s.length),S=M.s[si];
+ const sell=SELL[sv("sell",3)];
+ let ci=+$("ci").value>=0?CI[+$("ci").value]:pk(SELL_CI[sell]);if(ci0)ci=ci0;
+ const a=+$("ang").value>=0?+$("ang").value:(Math.random()<.75?pk(CI_ANG[ci]):rnd(ANG.length)),A=ANG[a];
+ const pref=AV_PREF[cep],pool=AVS[PT()],avp=pool.filter(x=>pref.includes(x.t)),AV=pk(Math.random()<.7&&avp.length?avp:pool);
+ // dialog: hook sub-CEP → jembatan CI → value → CTA sesuai selling intent
+ const intro=D?`Aku pakai ${P}.`:pk([`Ini ${P}.`,`Kenalin, ${P}.`,`Aku pakai ${P}.`]);
+ const cta=sell==="No Sell"?"":sell==="Soft Sell"?PF(pk(["Cek di bawah ya.","Coba deh, cek di bawah."])):PF(`${pr?`Cuma ${pr}`:"Harga spesial"}${pro?`, ${pro}`:""}. Klik Beli Sekarang!`);
+ const two=$("fmt").value==="2x8";
+ let L=[S.h,CI_LINE[PT()][ci],intro,AV.l,cta].filter(Boolean);
+ if(!two&&words(L.join(" "))>24)L=L.filter(x=>x!==CI_LINE[PT()][ci]);
+ if(!two&&words(L.join(" "))>26&&sell==="Hard Sell")L[L.length-1]=PF(`${pr||""}${pro?` ${pro}`:""}. Klik Beli Sekarang!`.trim());
+ if(!two&&words(L.join(" "))>26)L=L.filter(x=>x!==intro).map((x,k)=>k===1?x.replace(/^/,`${P}: `):x);
+ const segN=two?2:1,len=two?8:10,cut=two?Math.ceil(L.length/2):L.length;
+ const lines=two?[L.slice(0,cut).join(" "),L.slice(cut).join(" ")]:[L.join(" ")];
+ // visual per segmen: seg1 = momen sub-CEP, seg2 = interaksi produk di tempat yang sama
+ const P_EN=D?"a smartphone showing the product cover":"the small jar";
+ const act=D?pk(["finger scrolling the PDF on the phone","pointing at a question on the printed worksheet","child writing answers with a pencil"]):pk(["dabbing a little cream onto her cheek","taking a small dab of cream on her fingertip","holding the jar toward the lens"]);
+ const cam=pk(["handheld front-camera selfie framing","medium shot from a phone propped nearby","close framing on face and hands","slightly over-the-shoulder angle"]);
+ const vis=[`${S.v}. ${mdl?`Camera: ${cam}; ${P_EN} clearly visible in her hand or right beside her, label toward the camera`:`hands only, ${P_EN} in frame`}`,`Same person and place: ${mdl?"she":"a hand is"} ${act}, then shows ${P_EN} to the camera`];
+ const s={id:Date.now()+Math.random(),ptype:PT(),cep,main:M.m,sub:S.e,hook:S.h,head:S.t,av:AV,sell,ci,angle:A[0],angDesc:A[1],lines,vis:vis.slice(0,segN),len,segN,mdl,pdesc,mdesc,P,env:S.v,
+  key:[PT(),c,mi,si,a,ci,sell].join("|")};
+ s.concept=pk(CONCEPT[A[0]]);s.ideaImg=`Foto momen: ${S.e} Overlay: ${s.concept.split(":")[0].toLowerCase()} + headline "${S.t}" + nilai "${AV.o}".`;
+ s.ideaVid=`${segN} scene × ${len} detik, ${mdl?"talking head":"VO tangan"}: buka dengan "${S.h}", ${ci.toLowerCase()} lewat "${AV.l}"${cta?`, tutup ${sell.toLowerCase()}`:", tanpa ajakan beli (awareness)"}.`;
+ return s}
+// ---------- prompt ----------
+const rule=(s,vis)=>s.ptype==="digital"?DIGITAL_RULE:PHYS_RULE(vis);
+function imgPrompt(s,i){const vis=s.vis[i];
+ return noTT(`STILL PHOTO, vertical 9:16, photorealistic smartphone UGC photo (start frame for video SEG ${i+1}; also usable as an image ad).
+NO text, NO captions, NO watermark, NO stickers, NO graphics. The only text in the image is the product's own original label.
+Product: ${s.P}${s.pdesc!=="the product"?` (${s.pdesc})`:""}, use PRODUCT_IMAGE as exact reference.${s.mdl?` Person: ${s.mdesc}, use MODEL_IMAGE as exact face reference.`:""}
+MOMENT CONTEXT (do not write this text in the image): ${s.sub}
+SCENE: ${vis}. Expression: ${CI_EXP[s.ci]}. Real skin texture, no filter.
+${rule(s,vis)}
+${RULES_BASE.replace("The product must appear within the first second. ","").replace(/throughout the video/,"in the image")}
+${s.mdl?RULES_MODEL:RULES_NOMODEL}
+GLOBAL: authentic UGC smartphone look, natural lighting, HD, vertical 9:16 photo.`)}
+function vidPrompt(s,i,silent){const vis=s.vis[i];
+ return noTT(`NO SUBTITLES, NO CAPTIONS, NO ON-SCREEN TEXT. ${silent?"SILENT VIDEO: no voice, no speech, no narration (ambient sound or none).":"Audio only."} NO watermark, NO app logo, NO username, NO social media interface.
+IMAGE-TO-VIDEO: use the uploaded START IMAGE (from Prompt Image SEG ${i+1}) as the exact first frame. Keep the person, face, hair, outfit, setting, lighting and product EXACTLY as in the start image; only add natural movement${silent?"":", speech"} and camera motion.
+Vertical 9:16 UGC video clip, ${s.len} seconds. Clip ${i+1} of ${s.segN}.
+Product: ${s.P}${s.pdesc!=="the product"?` (${s.pdesc})`:""}. The product in the start image is the final design: do NOT redraw, restyle or replace it.
+${rule(s,vis)}
+PACKAGING LOCK: packaging, label artwork, label text, colors, cap, shape and size stay identical to the start image and PRODUCT_IMAGE in every frame. Do NOT add, remove or change any text, sticker, logo or print on the product.
+MOTION: ${vis}. Expression: ${CI_EXP[s.ci]}.
+${silent?`She does NOT talk: lips relaxed or smiling, no lip movement as if speaking. She tells the story with expressions and gestures only. Natural handheld camera, suitable for background music.`:`Spoken line (Bahasa Indonesia, ${s.mdl?"lip-synced":"voice-over"}, natural pace): "${s.lines[i]}"`}
+${i<s.segN-1?"End on a natural pause so the next clip can continue.":"End with the product clearly facing the camera."}
+${RULES_BASE.replace("The product must appear within the first second. ","")}
+${s.mdl?RULES_MODEL:RULES_NOMODEL}
+Duration exactly ${s.len} seconds.`)}
+// thumbnail = lapisan desain di atas gambar ① (foto tidak digambar ulang)
+const CONCEPT={"Social Proof / FOMO":["COMMENT PILE-UP: 3 white comment bubbles beside her with short customer quotes, plus a sticker 'Banyak yang order lagi'","BESTSELLER STAMP: a tilted red rubber-stamp label 'TERJUAL 10.000+' near the product, hand-drawn arrow 'akhirnya kebagian'"],
+ "Shock / Hasil Cepat":["DAY COUNTER: a giant outlined '7 HARI' in the background area behind her shoulder (never over the face)","ZOOM BUBBLE: a circular magnifier bubble with a line pointing at the result, label 'lihat bedanya'"],
+ "Curiosity Gap":["CENSOR BAR: one headline word covered by a hero-color bar like a secret, tiny text 'buka untuk lihat'","QUESTION MARKS: 2-3 hand-drawn question marks and a dotted arrow to the product"],
+ "Authority Effect":["EXPERT NOTE: a small clipboard card with 3 hand-ticked checkmarks next to the product","SPEC CARD: a minimal white card with thin lines listing the benefits"],
+ "Hidden Gem / Discovery":["SECRET NOTE: a yellow sticky note 'rahasia kecilku 🤫' with an arrow to the product","FOUND IT: a hand-drawn marker circle around the product and the word 'ketemu!'"],
+ "Relatable Pain / Emotional Story":["NOTES-APP CARD: a white phone-notes style card with the headline as an honest confession","STICKY NOTE: a handwritten sticky note at the background edge, soft emotional mood"],
+ "Transformation Desire":["SEBELUM/SESUDAH: two pill labels 'Sebelum' and 'Sesudah' with a curved hand-drawn arrow","SWIPE ARROW: a big curved arrow with the word 'berubah!'"],
+ "Value Shock":["PRICE TAG: an oversized tilted price-tag sticker with the price and a small crossed-out higher price","RECEIPT STRIP: a narrow receipt strip comparing the expensive alternative (crossed out) vs this price"],
+ "Comparison Curiosity":["VS BADGE: a big 'VS' badge, the expensive alternative crossed out vs this product","1 vs 10: a sticker '1 ini vs 10 lainnya' with a strike line"],
+ "Demonstration Proof":["TEST STAMP: a small stamp 'TES LANGSUNG' with an arrow to the product","CALLOUT: a hand-drawn arrow with a 2-word label pointing at the key detail"],
+ "Regret Trigger":["REGRET NOTE: handwritten 'andai tahu dari dulu' with a small scribble heart","CALENDAR CARD: a small calendar card with crossed-out months"]};
+const HERO_COL={"Problem-Solution":["hot pink","#FF2E7E"],"Routine":["sunny orange","#FF8A00"],"Commitment":["tomato red","#E8452C"],"Aspirational":["champagne gold","#D4A24C"],"Opportunistic":["electric yellow","#FFE14D"],"Emotional":["warm coral","#FF6F61"]};
+function thumbPrompt(s,ratio){const con=s.concept||(s.concept=pk(CONCEPT[s.angle])),ctxt=[...con.matchAll(/'([^']+)'/g)].map(m=>m[1]),H=HERO_COL[s.cep],pr=$("price").value,pro=$("promo").value.trim();
+ const badge=s.sell==="No Sell"?"":pro||(pr?`Cuma ${pr}`:"");const cta=s.sell==="No Sell"?"":PF(s.sell==="Hard Sell"?"Klik Beli Sekarang":"Cek di bawah");
+ const font=s.font||(s.font=pk(["ultra-bold condensed sans (Anton / Bebas Neue style)","heavy rounded sans (Poppins Black style)","bold grotesk (Archivo Black style) with one hand-written marker accent word","chunky serif display (Recoleta Black style)"]));
+ const safe=ratio==="9:16"?"Story safe zone: keep the top 14% and bottom 20% free of text.":"Keep all text inside the central 90% of the frame.";
+ return `EDIT THE UPLOADED IMAGE (result of Prompt Image SEG 1) INTO A HIGH-PERFORMING META ADS IMAGE CREATIVE, aspect ratio ${ratio==="9:16"?"9:16 (1080x1920)":"4:5 (1080x1350)"}.
+BASE: use the uploaded image exactly as it is — same person, face, outfit, pose, background, lighting and product. Only ADD a graphic layer (text, shapes, stickers). Extend/crop background only if needed for the ratio. Never cover the face or the product label; no new text on the product.
+STRATEGY: ${s.cep} · sub-CEP "${s.sub}" · value: ${s.av.o} · ${s.sell} + ${s.ci} · angle ${s.angle}.
+CREATIVE CONCEPT (overlay only): ${con}.
+EYE PATH: headline → face/reaction → product → ${badge?"badge → ":""}${cta?"CTA":"brand"}. One focal point, breathing room.
+HERO COLOR: ${H[0]} ${H[1]} is the ONLY highlight color (headline highlight box/underline${badge?", badge":""}${cta?", CTA pill":""}). Other text off-white #FAF7F2 or near-black #141414.
+TYPOGRAPHY: headline in ${font}, 12–16% of image height, max 2 lines, slight tilt max 4°. Supporting text clean sans 4–5%. Max 2 font families, no outlines/bevels.
+TEXT (Bahasa Indonesia, spell EXACTLY, no other words):
+- Headline: "${s.head}"
+- Supporting line: "${cap(s.av.o)}"${badge?`\n- Badge: "${badge}"`:""}${cta?`\n- CTA pill: "${cta}"`:""}${ctxt.map(x=>`\n- Sticker text: "${x}"`).join("")}
+LAYOUT: ${safe}
+ANTI-AI-TEMPLATE: looks like a real seller's ad edited in CapCut/Canva. NO 3D/glossy text, NO generic gradients, NO lens flares, NO floating sparkles, NO fake app UI, NO stock icons, max 1 emoji; stickers slightly imperfect, hand-placed.
+CURIOSITY: leave one question unanswered so people tap to find out.
+NO watermark, NO app logo, NO username, NO social media interface.`}
+// ---------- render ----------
+const esc=t=>t.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const box=(t,txt,cls,k)=>`<details style="margin-top:6px"><summary><b>${t}</b></summary><pre>${esc(txt)}</pre><button class="sec cp" data-k="${cls}${k}" style="width:auto">Copy</button></details>`;
 function render(s,i,old){const d=document.createElement("div");d.className="card";s.no=i;
- d.innerHTML=`<div class="row" style="align-items:center"><div class="hook" style="flex:3">${i}. ${s.title}</div><button class="ai" style="flex:1">${s.ai?"✨ Tulis ulang lagi":"✨ Dialog AI (Opus 5.5)"}</button></div><div class="mut aist"></div>
- <div class="mut" style="margin-bottom:6px">Tipe: ${s.tipe} | Sell: ${s.sell} | Hook ${s.hookType} | MODEL: ${s.model?"YA":"TIDAK"} | ${s.dur} dtk</div>
- <div><span class="tag">Manfaat: ${s.ben}</span><span class="tag">${s.niche}</span><span class="tag">CEP: ${s.cep}</span><span class="tag">Angle: ${s.angle}</span></div>
- ${s.segs.map((x,k)=>`<p style="margin:10px 0"><b>SEG ${k+1} (${x.t})</b> | <i>${x.type}</i> ${x.vis}${x.exp?` <b>Ekspresi:</b> ${x.exp}`:""} | <b>Intonasi:</b> ${x.into} <b>“${x.line}”</b></p>`).join("")}
- <table><tr><th>Ad copy</th><td>${s.copy}</td></tr></table>
- ${(()=>{const IP=segImagePrompts(s),VP=segPrompts(s,false),VS=segPrompts(s,true),box=(t,sub,txt,cls,k,btn)=>`<details style="margin-top:8px"><summary><b>${t}</b> <span class="mut">${sub}</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${txt.replace(/</g,"&lt;")}</pre><button class="sec ${cls}" data-k="${k}" style="width:auto">${btn}</button></details>`;
-  return s.segs.map((g,k)=>`<div style="border-left:3px solid var(--ac);padding-left:10px;margin-top:10px"><b>SEG ${k+1} (${g.t})</b>${box("① Prompt Image","(generate dulu → jadi start frame / bisa dipakai sebagai image ad)",IP[k],"ci",k,"Copy image SEG "+(k+1))}${box("② Prompt Video · dengan dialog","(upload gambar ① di Flow, lalu pakai prompt ini)",VP[k],"cp",k,"Copy video SEG "+(k+1))}${box("② Prompt Video · tanpa suara","(b-roll, tambah musik + teks di editor)",VS[k],"cs",k,"Copy video tanpa suara SEG "+(k+1))}</div>`).join("")})()}
- <details style="margin-top:8px" class="lpbox"><summary><b>④ Landing Page Scalev</b> <span class="mut">(1 LP per CEP + angle: ${s.cep} · ${s.angle} · formula ${lpFormula(s.cep)})</span></summary>
- <p class="mut" style="margin:6px 0">Semua scene dengan CEP &amp; angle yang sama memakai LP yang sama. Paste ATAS sebelum form checkout, BAWAH sesudahnya.</p>
- <div style="margin:6px 0 8px"><label>Gambar utama LP (upload hasil ① Prompt Image SEG 1)</label><input type="file" accept="image/*" class="lpimg"><div class="mut lpst">${s.heroImg?"✓ Gambar sudah dipasang":"Upload gambar dulu untuk mengaktifkan LP."}</div></div>
- <div class="row"><button class="sec lpa" style="width:auto" ${s.heroImg?"":"disabled"}>Copy LP ATAS</button><button class="sec lpb" style="width:auto" ${s.heroImg?"":"disabled"}>Copy LP BAWAH</button><button class="sec lpv" style="width:auto" ${s.heroImg?"":"disabled"}>Preview LP</button></div>
- <div class="lpf"></div></details>
- <div style="margin-top:10px"><b>③ Thumbnail</b></div>
- ${s.thumbs.map((x,k)=>`<details style="margin-top:8px"><summary><b>Thumbnail ${x[0]}</b> <span class="mut">(teks: “${s.thumbText}”)</span></summary><pre style="white-space:pre-wrap;font-size:12px;background:var(--bg);padding:10px;border-radius:7px">${x[1].replace(/</g,"&lt;")}</pre><button class="sec ct" data-k="${k}" style="width:auto">Copy thumbnail ${x[0]}</button></details>`).join("")}`;
- const SP=segPrompts(s,false),SS=segPrompts(s,true),IPs=segImagePrompts(s);d.querySelectorAll(".cs").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(SS[+b.dataset.k]));d.querySelectorAll(".ci").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(IPs[+b.dataset.k]));{const LP=()=>buildLP(s);
- // kecilkan gambar upload jadi WebP 480x600 (4:5) supaya LP tetap ringan
+ const P={};s.vis.forEach((_,k)=>{P["i"+k]=imgPrompt(s,k)+(k===0?"\n\n\n===== PROMPT THUMBNAIL 4:5 (upload hasil gambar di atas) =====\n\n"+thumbPrompt(s,"4:5")+"\n\n\n===== PROMPT THUMBNAIL 9:16 =====\n\n"+thumbPrompt(s,"9:16"):"");P["v"+k]=vidPrompt(s,k,false);P["s"+k]=vidPrompt(s,k,true)});
+ s._P=P;
+ d.innerHTML=`<div class="hook">${i}. ${s.head}</div>
+ <table class="cav"><tr><th>01 Tipe CEP</th><td>${s.cep}</td></tr><tr><th>02 CEP utama</th><td>${s.main}</td></tr><tr><th>03 Sub-CEP</th><td>${s.sub}</td></tr>
+ <tr><th>04 Advertised Value</th><td><b>${s.av.t}</b> · ${s.av.f} → ${s.av.o}</td></tr><tr><th>05 Intent</th><td>${s.sell} + ${s.ci}</td></tr><tr><th>06 Angle</th><td>${s.angle} <span class="mut">(${s.angDesc})</span></td></tr>
+ <tr><th>07 Content</th><td>🖼️ <b>Image:</b> ${s.ideaImg}<br>🎬 <b>Video:</b> ${s.ideaVid}</td></tr></table>
+ ${s.lines.map((l,k)=>`<p style="margin:8px 0"><b>Dialog SEG ${k+1} (${s.len} dtk):</b> “${l}”</p>`).join("")}
+ ${s.vis.map((_,k)=>`<div style="border-left:3px solid var(--ac);padding-left:10px;margin-top:8px"><b>SEG ${k+1}</b>${box("① Prompt Image"+(k===0?" + Thumbnail":""),P["i"+k],"i",k)}${box("② Prompt Video · dengan dialog",P["v"+k],"v",k)}${box("② Prompt Video · tanpa suara",P["s"+k],"s",k)}</div>`).join("")}
+ ${s.ptype==="digital"?`<p class="mut" style="margin-top:8px">③ Landing Page: template LP saat ini khusus Salep Glowing FILO (produk fisik).</p><div hidden><input class="lpimg"><div class="lpst"></div><button class="lpa"></button><button class="lpb"></button><button class="lpv"></button><div class="lpf"></div></div>`:`<details style="margin-top:8px"><summary><b>③ Landing Page Scalev</b> <span class="mut">(${s.cep} · ${s.angle} · formula ${lpFormula(s.cep)})</span></summary>
+ <div style="margin:6px 0"><label>Gambar utama LP (upload hasil ① Prompt Image)</label><input type="file" accept="image/*" class="lpimg"><div class="mut lpst">${s.heroImg?"✓ Gambar sudah dipasang":"Upload gambar dulu untuk mengaktifkan LP."}</div></div>
+ <div class="row"><button class="sec lpa" ${s.heroImg?"":"disabled"}>Copy LP ATAS</button><button class="sec lpb" ${s.heroImg?"":"disabled"}>Copy LP BAWAH</button><button class="sec lpv" ${s.heroImg?"":"disabled"}>Preview LP</button></div><div class="lpf"></div></details>`}`;
+ d.querySelectorAll(".cp").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(P[b.dataset.k]));
+ const LP=()=>buildLP(s);
  d.querySelector(".lpimg").onchange=e=>{const fl=e.target.files[0];if(!fl)return;const im=new Image();im.onload=()=>{const W=432,H=540,c=document.createElement("canvas");c.width=W;c.height=H;const r=Math.max(W/im.width,H/im.height),w=im.width*r,h=im.height*r;c.getContext("2d").drawImage(im,(W-w)/2,(H-h)/2.6,w,h);
-  s.heroImg=c.toDataURL("image/webp",.5);const st=d.querySelector(".lpst");st.textContent=`✓ Gambar dipasang (${Math.round(s.heroImg.length*.75/1024)} KB)`;d.querySelectorAll(".lpa,.lpb,.lpv").forEach(b=>b.disabled=false);URL.revokeObjectURL(im.src)};im.src=URL.createObjectURL(fl)};d.querySelector(".lpa").onclick=()=>navigator.clipboard.writeText(LP().atas);d.querySelector(".lpb").onclick=()=>navigator.clipboard.writeText(LP().bawah);
- d.querySelector(".lpv").onclick=()=>{const L=LP(),fr=document.createElement("iframe");fr.style.cssText="width:100%;height:640px;border:1px solid var(--bd);border-radius:8px;margin-top:8px;background:#fff";fr.srcdoc='<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><body style="margin:0">'+L.atas+'<div style="max-width:560px;margin:0 auto;padding:20px;text-align:center;border:2px dashed #ccc;font:13px Arial;color:#888">[ Form checkout Scalev ]</div>'+L.bawah;const box=d.querySelector(".lpf");box.innerHTML="";box.appendChild(fr)}}
- d.querySelectorAll(".ct").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(s.thumbs[+b.dataset.k][1]));d.querySelectorAll(".cp").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(SP[+b.dataset.k]));
- d.querySelector(".ai").onclick=()=>aiRewrite(s,d);d._s=s;old?old.replaceWith(d):out.prepend(d)}
-function add(c,a,h,t,b){const s=build(c,a,h,t,b);list.push(s);render(s,list.length)}
-const N=()=>NICHE[$("niche").value];
-const sel=(id,m)=>{const v=+$(id).value;if(v>=0)return v;if(id==="ang"&&Math.random()<.7){const b=N().ang;return b[rnd(b.length)]}return rnd(m)};
-// 70% ambil dari opsi terbaik niche, 30% dari semua opsi (variasi untuk testing)
-const nPick=(k,arr)=>{const b=N()[k];return b&&Math.random()<.7?b[rnd(b.length)]:arr[rnd(arr.length)]};
-$("niche").innerHTML=Object.keys(NICHE).map(k=>`<option>${k}</option>`).join("");
-const nh=()=>{const n=N();$("dsrc").value=n.digital?"tka":$("niche").value==="Skincare"?"bank":"tpl";$("nhint").textContent="Angle terbaik: "+n.ang.map(i=>ANG[i][0]).join(", ")+(n.model?" · Saran: pakai model":"");$("model").value="1"};
-$("niche").onchange=nh;nh();
-const fmtSet=()=>{const two=$("fmt").value==="2x8";$("dur").value=two?"15":"10";$("seglen").value=two?"8":"10"};$("fmt").onchange=fmtSet;fmtSet();
-setTimeout(()=>{if(!$("pdesc").value)presetFilo()},0); // default: Salep Glowing Filo
-// Preset deskripsi detail FILO (dari foto 4 sisi produk)
-const DIGITAL_RULE=`PRODUCT ACCURACY: the product is a DIGITAL PDF question bank. Show it only as (a) a smartphone or tablet screen displaying pages that match PRODUCT_IMAGE, or (b) printed A4 worksheet pages. The cover design, title, colors and layout must match PRODUCT_IMAGE exactly. Do NOT invent a physical box, book cover or other app. Keep the screen bright and the cover title readable; small question text may stay soft.`;
-function presetTka(){
- $("niche").value="Produk Digital (Bank Soal / Ebook)";nh();ptip();$("prod").value="Bank Soal TKA SD";
- $("ben").value="ratusan latihan soal, pembahasan lengkap, model soal mirip TKA asli, Matematika dan Bahasa Indonesia, bisa dibuka di HP atau di-print, anak lebih percaya diri, sekali beli bisa dipakai berulang";
- $("pid").value="File PDF bank soal TKA kelas 6 SD, ditampilkan di layar HP dengan cover berwarna, dan halaman soal pilihan ganda yang di-print ukuran A4.";
- $("pdesc").value="digital PDF question bank for Indonesian grade 6 TKA exam. Shown on a smartphone screen with the colorful cover page (exactly as in PRODUCT_IMAGE) and as printed A4 worksheet pages with numbered multiple-choice questions and answer explanations";
- if(!$("mdesc").value)$("mdesc").value="Indonesian mother in her 30s, warm and friendly, casual home outfit";}
-function presetFilo(){
- $("prod").value="Salep Glowing Filo";$("niche").value="Skincare";nh();ptip();
+  s.heroImg=c.toDataURL("image/webp",.5);d.querySelector(".lpst").textContent=`✓ Gambar dipasang (${Math.round(s.heroImg.length*.75/1024)} KB)`;d.querySelectorAll(".lpa,.lpb,.lpv").forEach(b=>b.disabled=false);URL.revokeObjectURL(im.src)};im.src=URL.createObjectURL(fl)};
+ d.querySelector(".lpa").onclick=()=>navigator.clipboard.writeText(LP().atas);d.querySelector(".lpb").onclick=()=>navigator.clipboard.writeText(LP().bawah);
+ d.querySelector(".lpv").onclick=()=>{const L=LP(),fr=document.createElement("iframe");fr.style.cssText="width:100%;height:640px;border:1px solid var(--bd);border-radius:8px;margin-top:8px;background:#fff";fr.srcdoc='<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><body style="margin:0">'+L.atas+'<div style="max-width:560px;margin:0 auto;padding:20px;text-align:center;border:2px dashed #ccc;font:13px Arial;color:#888">[ Form checkout Scalev ]</div>'+L.bawah;const bx=d.querySelector(".lpf");bx.innerHTML="";bx.appendChild(fr)};
+ old?old.replaceWith(d):out.prepend(d)}
+function add(ci){const s=build(ci);list.push(s);render(s,list.length);return s}
+function gen1(){add()}
+// batch: tidak ada ide kembar (CEP utama+sub+angle+intent sama) dan intent/angle tidak berturut-turut sama
+function genBatch(){const n=Math.min(100,+$("n").value||10),seen=new Set(list.map(s=>s.key));let k=0,g=0,last=null;
+ while(k<n&&g++<3000){const s=build();if(seen.has(s.key))continue;if(last&&g<2500&&(s.ci===last.ci||s.angle===last.angle||s.sub===last.sub))continue;seen.add(s.key);list.push(s);render(s,list.length);last=s;k++}}
+// ---------- preset produk ----------
+function presetFilo(){$("prod").value="Salep Glowing Filo";$("price").value="Rp139.000";$("promo").value="Beli 1 Gratis 1";
  $("pid").value="Ukuran pot diameter 3cm, tinggi sekitar 2cm, isi produk 5 gram, warna cream kuning, tidak lengket. Potnya bening acrylic, ada stiker pink hanya di bagian atas tutup. Tutup ulir putih bergerigi.";
- $("pdesc").value="tiny round clear acrylic jar, only 3 cm in diameter (about the width of two finger segments) and about 2 cm tall (about one finger segment), small enough to sit between thumb and index finger. Thick crystal-clear transparent walls that are completely blank: no text, no label, no logo on the sides or bottom. White screw cap with fine vertical ridges around its edge. The ONLY label is a flat circular pink sticker on top of the cap: white curved band at the top reading \"FILOMALL BEAUTY\", small gold crown \"F\" logo, large bold black script text \"Salep Glowing\", small text \"Expired Date: Desember 2028\", and a white curved band at the bottom reading \"Memudarkan Flek - Wajah Glowing & Bersih\". Inside: 5 g of smooth pale butter-yellow cream, soft and non-sticky, with a small swirl peak when opened. Through the clear walls the yellow cream is visible at the bottom of the jar";}
-const durInfo=()=>{const L=+$("seglen").value,n=Math.max(1,Math.round(+$("dur").value/L));$("durinfo").textContent=`= ${n} klip × ${L} detik = ${n*L} detik total. Dialog ±${Math.round(L*3)} kata per klip.`};
-$("seglen").addEventListener("change",durInfo);$("dur").addEventListener("change",durInfo);durInfo();
-const ptip=()=>{const t=TIPS[$("niche").value]||TIPS._;$("ptip").textContent="💡 "+TIPS._+" "+t;$("pid").placeholder=t.replace(/^Contoh: /,"")};
-$("niche").addEventListener("change",ptip);ptip();
+ $("pdesc").value="tiny round clear acrylic jar, only 3 cm in diameter (about the width of two finger segments) and about 2 cm tall (about one finger segment), small enough to sit between thumb and index finger. Thick crystal-clear transparent walls that are completely blank: no text, no label, no logo on the sides or bottom. White screw cap with fine vertical ridges around its edge. The ONLY label is a flat circular pink sticker on top of the cap: white curved band at the top reading \"FILOMALL BEAUTY\", small gold crown \"F\" logo, large bold black script text \"Salep Glowing\", small text \"Expired Date: Desember 2028\", and a white curved band at the bottom reading \"Memudarkan Flek - Wajah Glowing & Bersih\". Inside: 5 g of smooth pale butter-yellow cream, soft and non-sticky, with a small swirl peak when opened"}
+function presetTka(){$("prod").value="Bank Soal TKA SD";$("price").value="Rp79.000";$("promo").value="";
+ $("pid").value="File PDF bank soal TKA kelas 6 SD, ditampilkan di layar HP dengan cover berwarna, dan halaman soal pilihan ganda yang di-print ukuran A4.";
+ $("pdesc").value="digital PDF question bank for Indonesian grade 6 TKA exam, shown on a smartphone screen with the colorful cover page (exactly as in PRODUCT_IMAGE) and as printed A4 worksheet pages with numbered multiple-choice questions";
+ if(!$("mid").value){$("mid").value="ibu umur 30an, ramah, baju rumah santai";$("mdesc").value="Indonesian mother in her 30s, warm and friendly, casual home outfit"}}
 $("pid").oninput=()=>$("pdesc").value=tr($("pid").value);$("mid").oninput=()=>$("mdesc").value=tr($("mid").value);
-function gen1(){add(sel("cep",6),sel("ang",ANG.length),sel("hook",HOOKS.length),sel("tipe",4))}
-function genBatch(){const n=Math.min(200,+$("n").value||10),seen=new Set(list.map(s=>s.key));
- const r=m=>Math.floor(Math.random()*m);let k=0,g=0,lastA=-1,lastH="";
- while(k<n&&g++<5000){const c=sel("cep",6),a=sel("ang",ANG.length),h=sel("hook",HOOKS.length),t=sel("tipe",4),key=[$("niche").value,c,a,h,t].join("|");
-  if(seen.has(key))continue;const ht=HOOKS[h][0];if(g<4000&&(a===lastA||ht===lastH))continue;lastA=a;lastH=ht;seen.add(key);add(c,a,h,t,1);k++}}
-// ===== Dialog AI (Claude Opus 5.5 via artifact sample) =====
-let SAMPLE=null;(async()=>{try{SAMPLE=await claude.use("sample")}catch(e){}if(!SAMPLE)document.querySelectorAll(".ai").forEach(b=>b.title="AI hanya aktif di link artifact claude.ai")})();
-async function aiRewrite(s,d){
- const st=d.querySelector(".aist");if(!SAMPLE){st.textContent="AI tidak tersedia di tampilan ini (buka lewat link artifact claude.ai).";return}
- const btn=d.querySelector(".ai");btn.disabled=true;st.textContent="Opus 5.5 sedang menulis dialog…";
- // contoh dialog scene lain supaya hasilnya tidak mirip
- const others=list.filter(x=>x!==s).slice(-6).map(x=>x.segs.map(g=>g.line).join(" / ")).join("\n- ");
- const segInfo=s.segs.map((g,i)=>`SEG ${i+1} (${g.t}, ${g.type}, ±${Math.round(((+g.t.split("-")[1].split(" ")[0])-(+g.t.split("-")[0]))*3)} kata). Ekspresi: ${g.exp||"-"}. Intonasi: ${g.into}.`).join("\n");
- const prompt=`Kamu copywriter iklan UGC TikTok/Meta Ads Indonesia yang jago bikin orang beli. Tulis ulang dialog voice-over/talking head untuk video ini.
-PRODUK: ${$("prod").value}. Keterangan: ${$("pid").value||"-"}. Harga: ${$("price").value||"-"}. Promo: ${$("promo").value||"-"}.
-MANFAAT YANG DITONJOLKAN (hanya ini, 2-3): ${s.ben}.
-NICHE: ${s.niche}. CEP: ${s.cep}. ANGLE PSIKOLOGI: ${s.angle}. TIPE KONTEN: ${s.tipe}. SELL: ${s.sell}. MODEL: ${s.model?"ada (talking head)":"tidak ada, VO tangan saja"}.
-HOOK WAJIB jadi kalimat pertama SEG 1 (boleh dipoles sedikit): "${s.hook}"
-SEGMEN:\n${segInfo}
-ATURAN: bahasa lisan sehari-hari (aku/kamu, nggak, banget), terasa jujur & spesifik seperti orang beneran cerita, bukan iklan. Tiap segmen nyambung dengan sebelumnya. Jumlah kata sesuai target tiap segmen. Segmen terakhir ditutup CTA untuk ${({meta:"Meta Ads: ajak klik tombol Beli Sekarang / link, JANGAN sebut keranjang kuning",tiktok:"TikTok: boleh sebut keranjang kuning",shopee:"Shopee: ajak checkout di Shopee"})[$("plat").value]}, ${s.sell==="Hard"?"tegas dengan harga/promo dan urgensi":"lembut mengajak klik"}. Buat klaim hasil yang meyakinkan dan bikin pengen beli (mis. "flek memudar dalam 7 hari", "kulit langsung glowing", "banyak yang muji"), tapi jangan pakai kata "menyembuhkan", "dijamin 100%", atau "permanen". Jangan pakai kalimat klise yang sama dengan dialog scene lain berikut:\n- ${others||"(belum ada)"}
-Juga buat judul konsep pendek (maks 8 kata) yang menggambarkan momen video, contoh: "Flek yang baru kelihatan di kamera depan".
-Balas JSON saja: {"title":"...","lines":["dialog SEG 1","dialog SEG 2",...]} dengan tepat ${s.segs.length} item.`;
- try{const r=await SAMPLE.json(prompt,{model:"claude-opus-5-5",cache:false});
-  if(!r||!Array.isArray(r.lines)||r.lines.length!==s.segs.length)throw{message:"format jawaban tidak sesuai"};
-  s.segs.forEach((g,i)=>{const nl=String(r.lines[i]).trim();s.prompt=s.prompt.split(`"${g.line}"`).join(`"${nl}"`);g.line=nl});
-  s.scenes=s.segs.map((x,i)=>[`SEG ${i+1} (${x.t})`,`${x.type} | ${x.vis}${x.exp?` Ekspresi: ${x.exp}`:""} | Intonasi: ${x.into} "${x.line}"`]);
-  if(r.title)s.title=String(r.title);s.ai=1;render(s,s.no,d)}
- catch(e){btn.disabled=false;st.textContent=e&&e.code==="not_granted"?"Izin AI ditolak. Aktifkan lewat menu Permissions artifact.":e&&e.code==="rate_limited"?"Terlalu banyak permintaan, tunggu sebentar lalu coba lagi.":"Gagal: "+(e&&e.message||e)}}
-async function aiAll(){if(!SAMPLE)return alert("AI hanya aktif di link artifact claude.ai.");
- for(const d of [...out.querySelectorAll(".card")].reverse()){if(d._s&&!d._s.ai){await aiRewrite(d._s,d)}}}
+presetFilo();
+// ---------- CSV ----------
 let DL=null;(async()=>{try{DL=await claude.use("downloads")}catch(e){}})();
-function exportCSV(){if(!list.length)return alert("Belum ada scene");
- const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Niche","CEP","Angle","Hook Type","Hook","Tipe","Durasi","Sell","Model","Judul","Script","Ad Copy","Image Prompt","Video Prompt (dialog)","Video Prompt (tanpa suara)","Thumbnail 4:5","Thumbnail 9:16"];
- const rows=list.map(s=>[s.niche,s.cep,s.angle,s.hookType,s.hook,s.tipe,s.dur+"s",s.sell,s.model?"YA":"TIDAK",s.title,s.scenes.map(x=>x[0]+" | "+x[1]).join("\n"),s.copy,segImagePrompts(s).join("\n\n=====\n\n"),segPrompts(s,false).join("\n\n=====\n\n"),segPrompts(s,true).join("\n\n=====\n\n"),s.thumbs[0][1],s.thumbs[1][1]].map(q).join(","));
- const csv="﻿"+[hd.join(","),...rows].join("\n");if(DL){DL.save({filename:"scene-meta-ads.csv",data:csv}).catch(()=>{});return}
- const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
- a.download="scene-meta-ads.csv";a.click()}
+function exportCSV(){if(!list.length)return alert("Belum ada ide");
+ const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Produk","Tipe CEP","CEP utama","Sub-CEP","Advertised Value","Selling Intent","Communication Intent","Angle","Ide Image","Ide Video","Dialog","Prompt Image + Thumbnail","Prompt Video (dialog)","Prompt Video (tanpa suara)"];
+ const rows=list.map(s=>{const P=s._P,ks=s.vis.map((_,k)=>k);return [s.ptype,s.cep,s.main,s.sub,`${s.av.t}: ${s.av.f} → ${s.av.o}`,s.sell,s.ci,s.angle,s.ideaImg,s.ideaVid,s.lines.join(" | "),ks.map(k=>P["i"+k]).join("\n\n=====\n\n"),ks.map(k=>P["v"+k]).join("\n\n=====\n\n"),ks.map(k=>P["s"+k]).join("\n\n=====\n\n")].map(q).join(",")});
+ const csv="﻿"+[hd.join(","),...rows].join("\n");if(DL){DL.save({filename:"ide-konten-cavac.csv",data:csv}).catch(()=>{});return}
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="ide-konten-cavac.csv";a.click()}
+
 </script>
 </body></html>
