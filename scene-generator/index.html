@@ -439,8 +439,11 @@ ${RULES_GLOBAL} Duration about ${D} seconds.`;
  const thTxt=Math.random()<.5?pk(EMO_TXT):pk(TH_TXT[H[0]]);
  const badge=pro&&!thTxt.includes(pro)?pro:pr?`Cuma ${pr}`:"";
  s.thumbText=thTxt;
+ // Thumbnail = frame pertama video: pakai setting/lighting/outfit milik segmen 1 (sama dengan Prompt Image SEG 1)
+ const V0=$("vmode").value==="var",T0={env:V0&&segs[0].env||env,lit:V0&&segs[0].lit||lit,outfit:mdl&&V0&&segs[0].outfit?` Outfit: ${segs[0].outfit}.`:""};
  s.thumb=`ASPECT thumbnail image, first frame of the same video. Base photo: smartphone UGC look.
-Setting: ${env}. Lighting: ${lit}. Same environment and lighting as the video.
+BASE PHOTO: if available, use the generated image from "Prompt Image SEG 1" as the base photo and only add the graphic design on top; otherwise recreate the same scene.
+Setting: ${T0.env}. Lighting: ${T0.lit}.${T0.outfit} Same person, outfit, place and lighting as Prompt Image SEG 1.
 Product: ${pdesc}, use PRODUCT_IMAGE as exact reference, label sharp.
 Composition: ${pk(TH_COMP)}.
 ${mdl?`Person: ${mdesc}, use MODEL_IMAGE as exact face reference, ${pk(TH_VIS[H[0]])}. Face and product both clearly visible.`:`No face, only hands and product.`}
