@@ -392,7 +392,7 @@ ${RULES_GLOBAL} Duration about ${D} seconds.`;
  const seedStr=[c,a,h,t,$("niche").value].join("|");let sd=0;for(const ch of seedStr)sd=(sd*31+ch.charCodeAt(0))>>>0;
  const sp=arr=>arr[(sd+rnd(997))%arr.length];
  const CONCEPT={
-  "Social Proof / FOMO":["COMMENT PILE-UP: 3 realistic chat/comment bubbles overlap around her (not covering face or label), each with a short real customer quote; small sticker 'Restock lagi!'","SOLD-OUT STAMP: a slightly tilted red rubber-stamp style label 'SOLD OUT 3X' near the jar, with a hand-written arrow 'akhirnya dapet'"],
+  "Social Proof / FOMO":["COMMENT PILE-UP: 3 realistic chat/comment bubbles overlap around her (not covering face or label), each with a short real customer quote; small sticker 'Restock lagi!'","REPEAT-ORDER STAMP: a slightly tilted rubber-stamp style label 'Banyak yang order lagi' near the jar, with a hand-written arrow 'akhirnya cocok'"],
   "Shock / Hasil Cepat":["DAY COUNTER: a giant number '7' (about 35% of image height) behind her shoulder with the word 'HARI', her jaw-drop reaction in front (depth effect)","REACTION ZOOM: extreme close-up of her surprised face on one side, a circled zoom-in bubble showing the smooth cheek area on the other side"],
   "Curiosity Gap":["PARTIAL REVEAL: the jar half-hidden behind her fingers or a torn paper edge, only the pink lid peeking out, headline ending with '…'","CENSOR BAR TEASE: a bold color bar covers part of the headline word like a secret, small text 'buka untuk lihat'"],
   "Authority Effect":["EXPERT NOTE: a clean clipboard-style card with 3 hand-ticked checkmarks next to the jar, like a beautician's recommendation note","INGREDIENT LABEL CARD: minimal white card with thin lines listing 3 benefits like a product spec sheet, tidy and trustworthy"],
@@ -405,6 +405,7 @@ ${RULES_GLOBAL} Duration about ${D} seconds.`;
   "Regret Trigger":["CALENDAR REGRET: a small calendar card with many crossed-out months beside her, handwritten 'andai tahu dari dulu'","FACEPALM REGRET: playful face-palm with a smile, jar raised in the other hand, scribbled text 'nyesel baru tahu'"]};
  const angK=CONCEPT[A[0]]?A[0]:"Relatable Pain / Emotional Story";
  const concept=sp(CONCEPT[angK]);
+ const conceptTxt=[...concept.matchAll(/'([^']+)'/g)].map(m=>m[1]);
  const HERO_COL={"Problem-Solution":["hot pink","#FF2E7E"],"Routine":["sunny orange","#FF8A00"],"Commitment":["tomato red","#E8452C"],"Aspirational":["champagne gold","#D4A24C"],"Opportunistic":["electric yellow","#FFE14D"],"Emotional":["warm coral","#FF6F61"]}[C[0]]||["hot pink","#FF2E7E"];
  const CEP_CTX={"Problem-Solution":"the moment of finally solving a long-time skin problem","Routine":"an easy everyday night routine","Commitment":"getting ready before an important event (kondangan, reuni, hari raya)","Aspirational":"looking fresh and confident at her age","Opportunistic":"a limited-time deal that feels too good to skip","Emotional":"an emotional comeback of self-confidence"}[C[0]];
  const TH_TXT={Confession:["Aku salah soal ini…","Awalnya aku nggak percaya","Jujur, aku nyesel telat","Aku kira cuma gimmick"],
@@ -412,7 +413,7 @@ ${RULES_GLOBAL} Duration about ${D} seconds.`;
   Problem:[hk.replace(/[.…,]+$/,"").split(" ").slice(0,5).join(" ")+"…","Udah coba semua tapi gagal?","Masalahku selesai di sini"],
   Result:["Flek pudar dalam 7 hari 😳","Lihat bedanya!","Nggak nyangka segini","7 hari, ini hasilnya"],
   "Pattern Interrupt":["STOP. Lihat ini dulu","Jangan skip!","Tunggu… lihat ini","Sebelum scroll, baca ini"]};
- const ANG_TXT={"Value Shock":[`${pr||"Harga"} dapat 2?!`,"Harga segini? Serius?!"],"Comparison Curiosity":["1 pot vs 10 skincare","Klinik vs salep malam"],"Regret Trigger":["Andai tahu dari dulu…","Nyesel baru tahu"],"Social Proof / FOMO":["Sold out lagi?!","Semua udah pakai, kamu?"],"Transformation Desire":["Sebelum vs sesudah 7 hari","Dari kusam ke glowing"],"Authority Effect":["Lembut untuk kulit sensitif","Tanpa perih, terbukti"]};
+ const ANG_TXT={"Value Shock":[`${pr||"Harga"} dapat 2?!`,"Harga segini? Serius?!"],"Comparison Curiosity":["1 pot vs 10 skincare","Klinik vs salep malam"],"Regret Trigger":["Andai tahu dari dulu…","Nyesel baru tahu"],"Social Proof / FOMO":["Kenapa pada order lagi?","Semua udah pakai, kamu?"],"Transformation Desire":["Sebelum vs sesudah 7 hari","Dari kusam ke glowing"],"Authority Effect":["Lembut untuk kulit sensitif","Tanpa perih, terbukti"]};
  const thTxt=ANG_TXT[A[0]]&&Math.random()<.5?sp(ANG_TXT[A[0]]):sp(TH_TXT[H[0]]);
  const badge=pro&&!thTxt.includes(pro)?pro:pr?`Cuma ${pr}`:"";
  const benS=(window.BENLIST||[b]).slice(0,2).map(x=>cap(x));
@@ -438,7 +439,7 @@ TEXT (Bahasa Indonesia, spell EXACTLY, no other words):
 - Headline: "${thTxt}"
 - Supporting line: "${benS.join(" • ")}"
 - Proof chip: "${proof}"${badge?`\n- Badge: "${badge}"`:""}
-- CTA pill: "${ctaPill}"
+- CTA pill: "${ctaPill}"${conceptTxt.map(x=>`\n- Sticker/stamp text: "${x}"`).join("")}
 LAYOUT RULES: keep text off the face and off the product label; product fully visible. SAFE_ZONE
 ANTI-AI-TEMPLATE: must look like a real seller's ad edited in CapCut/Canva, not an AI poster. NO 3D chrome or glossy text, NO generic purple/blue gradients, NO lens flares, NO floating sparkles/bokeh hearts, NO fake app UI, NO stock icons, NO extra products ${A[0]==="Comparison Curiosity"?"except the crossed-out comparison items":""}, max 1 emoji. Stickers and hand-drawn elements look hand-placed and slightly imperfect.
 CURIOSITY: the image must leave one question unanswered (why / how fast / how cheap) so people tap to find out.
