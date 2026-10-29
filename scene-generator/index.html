@@ -538,6 +538,12 @@ const LP_ANG={
  "Comparison Curiosity":["Bandingkan sendiri","Bukan Perawatan Klinik Mahal, <em>Cukup Satu Salep Malam.</em>","Dipakai di rumah, tipis tiap malam. <b>{{PROMO}} {{PRICE}}</b> untuk 2 pot, ±2–3 bulan pemakaian."],
  "Demonstration Proof":["Lihat teksturnya","Lembut, Cepat Meresap, <em>Tidak Lengket Di Bantal.</em>","Krim kuning lembut dalam pot mungil. <b>Dioles tipis</b> untuk memudarkan flek &amp; bekas jerawat."],
  "Regret Trigger":["Kata pelanggan","Banyak Yang Bilang: <em>“Nyesel Baru Tahu Sekarang.”</em>","Setelah bertahun-tahun ganti-ganti produk, banyak pelanggan akhirnya <b>cocok dengan satu salep malam ini</b>."]};
+// Palet per CEP: [gelap, aksen, latar lembut, highlight di atas gelap, krem]
+const LP_PAL={"Problem-Solution":["#3D1730","#D9497A","#F9E3EA","#FFB3CB","#FFF7F2"],"Routine":["#0F3D4A","#0D7FA6","#E3F2F6","#FFC27A","#F4FAFB"],
+ "Commitment":["#202F3F","#B8733A","#F4E8DC","#F1C08F","#FBF6F0"],"Aspirational":["#254056","#9C7A62","#EFE7E0","#E8CDB5","#F8F5F1"],
+ "Opportunistic":["#00122D","#C26A00","#FFF1D6","#FFB63A","#FFF9EE"],"Emotional":["#5E2424","#B84A5E","#F3E3E0","#F4B3B3","#F6F5EF"]};
+function lpTheme(cep,t){const P=LP_PAL[cep]||LP_PAL["Problem-Solution"];
+ return t.replace(/#3D1730/g,P[0]).replace(/#D9497A/g,P[1]).replace(/#F9E3EA/g,P[2]).replace(/#FFB3CB/g,P[3]).replace(/#FFF7F2/g,P[4]).replace(/rgba\(249,227,234,/g,"rgba(255,255,255,").replace(/#f0dbe2/g,P[2])}
 function buildLP(s){const C=LP_CEP[s.cep]||LP_CEP["Problem-Solution"],A=LP_ANG[s.angle]||LP_ANG["Relatable Pain"];
  const pr=$("price").value||"Rp139.000",pro=$("promo").value||"Beli 1 Gratis 1";
  const f=t=>t.split("{{PRICE}}").join(pr).split("{{PROMO}}").join(pro);
@@ -545,7 +551,7 @@ function buildLP(s){const C=LP_CEP[s.cep]||LP_CEP["Problem-Solution"],A=LP_ANG[s
  const head=`<!-- LP Salep Glowing FILO · CEP ${s.cep} · Angle ${s.angle} · dibuat dari Scene Generator -->\n`;
  const atas=head+f(LPT.atas.replace("{{TAG}}",A[0]).replace("{{H1}}",A[1]).replace("{{LEAD}}",A[2]).replace("{{PH2}}",C[0]).replace("{{PLIST}}",C[1].map(x=>`<li><span>${x}</span></li>`).join("")).replace("{{BRIDGE}}",C[2]).replace("{{STRIP}}",strip));
  const bawah=head+f(LPT.bawah.replace("{{CLOSE}}",C[3]));
- return {atas,bawah,key:`${s.cep} · ${s.angle}`}}
+ return {atas:lpTheme(s.cep,atas),bawah:lpTheme(s.cep,bawah),key:`${s.cep} · ${s.angle}`}}
 function render(s,i,old){const d=document.createElement("div");d.className="card";s.no=i;
  d.innerHTML=`<div class="row" style="align-items:center"><div class="hook" style="flex:3">${i}. ${s.title}</div><button class="ai" style="flex:1">${s.ai?"✨ Tulis ulang lagi":"✨ Dialog AI (Opus 5.5)"}</button></div><div class="mut aist"></div>
  <div class="mut" style="margin-bottom:6px">Tipe: ${s.tipe} | Sell: ${s.sell} | Hook ${s.hookType} | MODEL: ${s.model?"YA":"TIDAK"} | ${s.dur} dtk</div>
