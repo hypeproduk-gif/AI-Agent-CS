@@ -504,6 +504,14 @@ const aiName=()=>$("aimodel").value.includes("opus")?"Opus":"Sonnet";
 function syncAiLabel(){document.querySelectorAll(".aimn").forEach(e=>e.textContent=aiName())}
 // ===== ✨ Brief Image AI: Claude menulis prompt image ad khusus per ide (pakai token) =====
 let SAMPLE=null;(async()=>{try{SAMPLE=await claude.use("sample")}catch(e){}})();
+// Blok kunci produk/model yang SELALU ditempel di akhir brief AI (tidak bergantung pada model yang menulis)
+function aiLock(s){const vis=s.vis[0];
+ return noTT(`===== PRODUCT & CONSISTENCY LOCK (WAJIB, berlaku di atas semua instruksi lain) =====
+${rule(s,vis)}
+Do NOT change, redraw, restyle or replace the product: keep the exact same design as PRODUCT_IMAGE (same shape, size, colors, packaging, label artwork, logo and label text). Do NOT add, remove or alter any text, sticker, logo or print on the product. Nothing may cover the label.
+${s.mdl?"The model must keep the exact same face identity as MODEL_IMAGE: same facial structure, skin tone and proportions; natural realistic skin texture; no beautifying, no face swap, no age change.":"No face and no full human model: only hands and the product."}
+Only add the graphic/text layer described above; do not alter the photo of the product or the person beyond what is described. Spell every text exactly as written, with no extra words.
+NO watermark, NO app logo, NO username, NO social media interface.`)}
 async function aiBrief(s,d){const st=d.querySelector(".aist"),btn=d.querySelector(".aib");
  if(!SAMPLE){st.textContent="AI hanya aktif di link artifact claude.ai.";return}
  const MODEL=$("aimodel").value,MN=MODEL.includes("opus")?"Opus":"Sonnet";
@@ -535,7 +543,7 @@ ${BRIEF_EXAMPLE}
 ---
 Balas HANYA prompt final dalam bahasa Inggris dengan struktur di atas, siap di-paste ke generator gambar. Tambahkan di baris BACKGROUND: "use PRODUCT_IMAGE${s.mdl?" and MODEL_IMAGE":""} as exact references".`;
  try{const r=await SAMPLE(q,{model:MODEL,cache:false,onText:u=>{st.textContent="Menulis… "+u.text.length+" karakter"}});
-  s.aiImg=r.text.trim();s.aiModel=MN;s._P.ai=s.aiImg;render(s,s.no,d)}
+  s.aiImg=r.text.trim()+"\n\n"+aiLock(s);s.aiModel=MN;s._P.ai=s.aiImg;render(s,s.no,d)}
  catch(e){btn.disabled=false;st.textContent=e&&e.code==="not_granted"?"Izin AI ditolak, aktifkan lewat menu Permissions artifact.":e&&e.code==="rate_limited"?"Terlalu banyak permintaan, coba lagi sebentar.":"Gagal: "+(e&&e.message||e)}}
 
 </script>
