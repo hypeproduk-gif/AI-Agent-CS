@@ -348,6 +348,18 @@ function PF(t){const p=$("plat").value;if(p==="tiktok")return t;
  const M=p==="meta"?[[/langsung klik keranjang kuning/g,"langsung klik Beli Sekarang"],[/[Cc]ek dulu di keranjang kuning/g,"Cek dulu di link bawah"],[/[Cc]ek keranjang kuning/g,"Klik Beli Sekarang"],[/klik keranjang kuning/g,"klik Beli Sekarang"],[/keranjang kuning/g,"tombol Beli Sekarang"]]
   :[[/langsung klik keranjang kuning/g,"langsung checkout di Shopee"],[/[Cc]ek dulu di keranjang kuning/g,"Cek dulu di Shopee"],[/[Cc]ek keranjang kuning/g,"Cek di Shopee"],[/klik keranjang kuning/g,"checkout di Shopee"],[/keranjang kuning/g,"Shopee"],[/[Kk]lik di bawah/g,"Cek di Shopee"],[/Klik Beli Sekarang/g,"Checkout di Shopee"],[/link di bawah|link bawah/g,"Shopee"]];
  return M.reduce((a,[r,v])=>a.replace(r,v),t)}
+// Komposisi shot pembuka talking head: diacak supaya tiap gambar start frame beda pose, framing & sudut kamera
+const OPENERS=[P=>`Handheld front-camera selfie, close framing (face and shoulders), ${P} raised beside her cheek in the very first frame`,
+ P=>`Mirror selfie, waist-up: she holds her phone in one hand (phone partly visible) and shows ${P} toward the mirror with the other`,
+ P=>`Medium shot from a phone propped on the counter: she sits leaning slightly toward the lens, ${P} held at chin level`,
+ P=>`Product-first close-up: ${P} held close to the lens in sharp focus, her face softly out of focus behind it`,
+ P=>`Top-down selfie while lying on the bed, hair spread on the pillow, ${P} held above her face`,
+ P=>`Over-the-shoulder angle, three-quarter profile: she looks at ${P} resting on her fingertips`,
+ P=>`Candid mid-laugh moment, slightly off-center framing, ${P} in her hand at chest level`,
+ P=>`She points at her cheek with one finger while holding ${P} next to her face with the other hand`,
+ P=>`Seated at a table, elbows down, ${P} held between both hands near her chin, friendly eye contact`,
+ P=>`Open jar moment: she shows the open jar with the cream inside toward the lens, the lid in her other hand (${P})`];
+const OPENER=P=>OPENERS[rnd(OPENERS.length)](P);
 function build(c,a,h,t,batch){
  const p=$("prod").value||"produk",b=pickBen($("ben").value,HOOKS[h][0]==="Problem"?N().prob[pIdx(h)]:HOOKS[h][1]),pr=$("price").value,pro=$("promo").value.trim();
  const pdesc=$("pdesc").value.replace(/\.{2,}/g,". ").replace(/(\s*,\s*)+$/,"").replace(/,\s*,/g,",").trim()||"the product",mdesc=$("mdesc").value.trim()||"a natural-looking woman";
@@ -371,7 +383,7 @@ function build(c,a,h,t,batch){
   const st=Math.round(i*segLen),en=Math.round((i+1)*segLen);
   let vis;
   if(i===0)vis=vo?`${sh.cam}, ${env}, ${lit}. ${pdesc} already in frame in the very first frame, ${sh.hm}, label facing the camera.`
-              :`Handheld front-camera selfie, ${env}, ${lit}, ${mdesc}, ${pdesc} already raised beside her cheek in the very first frame, label facing the camera. Real skin texture, no filter.`;
+              :`${OPENER(pdesc)}, ${env}, ${lit}, ${mdesc}, label facing the camera. Real skin texture, no filter.`;
   else if(vo)vis=`Close-up of hands only, ${env}: ${sh.hm}, ${sh.pm}, ${sh.cam}. Label stays sharp and unchanged.`;
   else if(role===2)vis=`Same person, same room, ${sh.hm}, then holding ${pdesc} toward the lens. ${sh.cam}.`;
   else vis=`Same person, same room, phone moves closer, ${sh.cam}; ${pdesc} still visible in her hand at the edge of frame. Shows the problem clearly.`;
@@ -457,6 +469,9 @@ const noTT=x=>x.replace(/TikTok UGC/g,"UGC smartphone").replace(/TikTok style/g,
 const VIEWS=["view 1: top view of the lid with the round pink label","view 2: jar open with the lid tilted beside it","view 3: held between thumb and fingertips (true size)","view 4: front side view showing the clear acrylic jar wall and white ribbed cap, label visible only as a thin edge on top","view 5: 45-degree angle showing both the top label and the clear side","view 6: open jar from above showing the pale yellow cream with a small swirl peak"];
 function pickView(v){v=v.toLowerCase().replace(/real skin texture/g,"");
  if(/beside her cheek|very first frame/.test(v))return[2,0];
+ if(/open jar|cream inside/.test(v))return[5,1];
+ if(/close to the lens|product-first/.test(v))return[4,0];
+ if(/holds|held|in her hand|fingertips|between both hands|next to her face/.test(v)&&!/cap opened|swatch|applying/.test(v))return[2,4];
  if(/cap opened|opening the cap|swatch|applying|texture|inside/.test(v))return[5,1];
  if(/rotat|tilt|turned/.test(v))return[4,3];
  if(/top-down|over-the-table|show label|label/.test(v)&&!/side angle/.test(v))return[0,4];
