@@ -387,81 +387,65 @@ ${RULES_BASE}
 ${mdl?RULES_MODEL:RULES_NOMODEL}
 ${RULES_GLOBAL} Duration about ${D} seconds.`;
  // Thumbnail: frame pertama video (setting, lighting, produk, model sama) + teks kepo pendek
- // Thumbnail: tiap scene dapat kombinasi acak teks, komposisi, ekspresi, gaya teks & elemen penasaran supaya tidak mirip-mirip
- const TH_TXT={Confession:["Aku salah soal ini…","Awalnya aku nggak percaya","Jujur, aku nyesel telat","Aku kira cuma gimmick","Ternyata aku keliru 🙈"],
-  Curiosity:["Kenapa semua pakai ini?","Ini rahasianya…","Kok bisa sekecil ini?","Ada apa di pot ini?","Viral karena ini 👀"],
-  Problem:[hk.replace(/[.…,]+$/,"").split(" ").slice(0,5).join(" ")+"…","Udah coba semua tapi gagal?","Ini yang aku pakai sekarang","Masalahku selesai di sini"],
-  Result:["Hasilnya bikin kaget 😳","Lihat bedanya!","Cuma pakai tipis tiap malam","Nggak nyangka segini","Before vs after 👀"],
-  "Pattern Interrupt":["STOP. Lihat ini dulu","Jangan skip!","Tunggu… lihat ini","Kamu harus tahu ini","Sebelum scroll, lihat ini"]};
- const TH_VIS={Confession:["slightly embarrassed half-smile, looking at the product","biting her lip, guilty but happy smile","covering her mouth with her fingers, eyes smiling"],
-  Curiosity:["one eyebrow raised, curious look straight into the lens","squinting playfully at the product","leaning in close to the lens as if sharing a secret"],
-  Problem:["frustrated expression, finger pointing at the problem area on her cheek","tired face touching her cheek, then glancing at the product","sigh with a slight frown, looking into the mirror"],
-  Result:["genuine shocked face, mouth slightly open, eyes wide","delighted laugh, touching her glowing cheek","proud confident smile, chin slightly up"],
-  "Pattern Interrupt":["hand raised toward the lens like saying stop, serious look","eyes wide, finger on lips like 'shh'","sudden lean toward the camera, intense eye contact"]};
- const TH_COMP=mdl?["extreme close-up selfie, half of the face fills the frame, product raised next to the cheek",
-  "mirror selfie with the phone partly visible, product held up toward the mirror",
-  "product held very close to the lens in sharp focus, her face softly blurred behind it",
-  "she points at the product with her other hand, product in the foreground looking slightly larger from perspective",
-  "lying on the bed shot from above, product held above her face",
-  "over-the-shoulder view, she looks at the product resting on her fingertips",
-  "sitting at a vanity, leaning toward the camera with the product at chin level",
-  "candid mid-laugh shot, product in hand slightly off-center"]
- :["hand holding the product toward the lens, background softly blurred","flat lay from above, product on a textured surface with a few simple props",
-  "open jar with a fingertip cream swatch right next to it, macro","low-angle hero shot of the product standing on the edge of a table",
-  "product resting on an open palm in natural light","one hand holding the lid, the other holding the open jar"];
-  const TH_CUR={"Transformation Desire":["split before/after with the 'after' side partly hidden","half of the cheek glowing, half blurred"],
-  "Value Shock":[`small price sticker "${pr||"murah banget"}" next to the product`,`starburst badge "${pro||"Promo"}" near the product`],
-  "Comparison Curiosity":["two products side by side with a question mark","a big 'VS' between the old product and this one"]}[A[0]]||
-  ["red circle around the product","hand-drawn arrow pointing at the jar","small '?' doodle next to the product","😳 emoji sticker near the face","yellow highlight scribble under the key word"];
- // ===== Desain thumbnail ala creative image ads: layout, font, palet, emosi, hirarki teks =====
- const EMO=(/Value Shock/.test(A[0])||C[0]==="Opportunistic"||hard&&Math.random()<.3)?"urgensi":/FOMO|Regret/.test(A[0])?"fomo":/Shock|Instant|Transformation/.test(A[0])||H[0]==="Result"?"wow":/Curiosity|Hidden|Curated|Comparison/.test(A[0])||H[0]==="Curiosity"?"penasaran":/Authority|Social|Demonstration/.test(A[0])?"percaya":"relate";
- const EMOD={urgensi:{mood:"urgent, loud, deal-hunting energy",pal:[["bold red & yellow","#E63946","#FFD60A","#111111"],["hot pink & lemon","#FF2E7E","#FFE14D","#1A1A1A"]],font:["heavy condensed sans like Bebas Neue / Anton, all caps","chunky rounded sans like Poppins Black, all caps"],deco:"starburst price badge, slight tilt, exclamation marks"},
-  fomo:{mood:"fear of missing out, everyone has it but you",pal:[["black & neon pink","#111111","#FF2E7E","#FFFFFF"],["deep purple & lime","#3C1A5B","#C6FF3D","#FFFFFF"]],font:["bold italic sans with motion feel","heavy condensed sans like Bebas Neue"],deco:"small fire emoji, countdown-like strip, 'stok terbatas' tag"},
-  wow:{mood:"shock and surprise, jaw-drop moment",pal:[["electric yellow & black","#FFE14D","#111111","#FFFFFF"],["hot pink & white","#FF2E7E","#FFFFFF","#1A1A1A"]],font:["giant chunky rounded sans like Poppins Black","bold comic-style display font"],deco:"😳 emoji, burst lines around the face, tilted headline"},
-  penasaran:{mood:"mystery and curiosity, makes people want to know more",pal:[["lilac & deep purple","#CDB4FF","#3C1A5B","#FFFFFF"],["mint & navy","#BFF0DC","#14213D","#FFFFFF"]],font:["clean bold sans with an ellipsis…","handwritten marker mixed with bold sans"],deco:"question mark doodles, part of the cheek slightly blurred, hand-drawn arrow"},
-  percaya:{mood:"calm, trustworthy, safe and proven",pal:[["soft blush & plum","#F7C6D0","#5B2245","#FFFFFF"],["cream & forest green","#FFF4E6","#1F4D3A","#C9A227"]],font:["elegant bold serif like Playfair Display","clean geometric sans like Montserrat Bold"],deco:"small check-mark list, thin lines, star rating ★★★★★"},
-  relate:{mood:"empathy and honesty, 'this is me' feeling",pal:[["coral & cream","#FF6F59","#FFF4E6","#2B2B2B"],["dusty pink & brown","#E8B4B8","#5C3D2E","#FFFFFF"]],font:["casual handwritten brush script for the headline + simple sans for subtext","soft rounded sans like Nunito ExtraBold"],deco:"quote marks, speech bubble, soft hand-drawn underline"}}[EMO];
- const pal=pk(EMOD.pal),font=pk(EMOD.font);
- const LAYOUTS=[
-  "BIG HEADLINE TOP: headline across the top 30% in 2 short lines, very large; photo below",
-  "SIDE SPLIT: left 40% is a solid color panel with stacked text, right 60% is the photo",
-  "BOTTOM BANNER: full photo, bottom 25% is a solid color band with headline and a CTA pill",
-  "STICKER STYLE: headline on a tilted torn-paper sticker, promo badge as a starburst in a corner",
-  "SPEECH BUBBLE: headline inside a speech bubble coming from her mouth, as if she says it",
-  "MAGAZINE COVER: huge masthead-style headline at the top, small callouts around the photo",
-  "CALLOUT ARROWS: headline on top, 2 short benefit callouts with arrows pointing at the product",
-  "TEXT BEHIND HEAD: giant headline word placed behind her head (depth effect), subtext in front"];
- const layout=pk(mdl?LAYOUTS:LAYOUTS.filter(l=>!/SPEECH|BEHIND HEAD/.test(l)));
- const benS=(window.BENLIST||[b]).slice(0,2).map(x=>cap(x));
- const ctaPill=pk(["Cek keranjang kuning","Klik sekarang","Ambil promonya","Cobain malam ini"]);
- const EMO_TXT={urgensi:[`${pro||"Promo"} hari ini!`,"Jangan sampai kehabisan!","Harga segini? Serius?!"],fomo:["Semua udah pakai, kamu?","Sold out lagi?!","Telat tahu, nyesel!"],
-  wow:["Flek pudar dalam 7 hari 😳","Nggak nyangka segini!","Hasilnya bikin kaget!"],penasaran:["Rahasianya cuma ini…","Kok bisa sekecil ini?","Isinya bikin penasaran…"],
-  percaya:["Flek memudar, tanpa perih","Terbukti dari chat pelanggan","Aman buat kulit sensitif"],relate:["Ini aku banget…","Capek nutupin flek?","Akhirnya nemu yang cocok"]}[EMO];
- const thTxt=Math.random()<.5?pk(EMO_TXT):pk(TH_TXT[H[0]]);
+ // ===== Thumbnail = creative image ad (bisa dipakai sendiri sebagai iklan gambar) =====
+ // Konsep visual ditentukan ANGLE, konteks CEP, warna highlight per CEP; pilihan acak diberi seed kombinasi supaya tiap kombinasi unik
+ const seedStr=[c,a,h,t,$("niche").value].join("|");let sd=0;for(const ch of seedStr)sd=(sd*31+ch.charCodeAt(0))>>>0;
+ const sp=arr=>arr[(sd+rnd(997))%arr.length];
+ const CONCEPT={
+  "Social Proof / FOMO":["COMMENT PILE-UP: 3 realistic chat/comment bubbles overlap around her (not covering face or label), each with a short real customer quote; small sticker 'Restock lagi!'","SOLD-OUT STAMP: a slightly tilted red rubber-stamp style label 'SOLD OUT 3X' near the jar, with a hand-written arrow 'akhirnya dapet'"],
+  "Shock / Hasil Cepat":["DAY COUNTER: a giant number '7' (about 35% of image height) behind her shoulder with the word 'HARI', her jaw-drop reaction in front (depth effect)","REACTION ZOOM: extreme close-up of her surprised face on one side, a circled zoom-in bubble showing the smooth cheek area on the other side"],
+  "Curiosity Gap":["PARTIAL REVEAL: the jar half-hidden behind her fingers or a torn paper edge, only the pink lid peeking out, headline ending with '…'","CENSOR BAR TEASE: a bold color bar covers part of the headline word like a secret, small text 'buka untuk lihat'"],
+  "Authority Effect":["EXPERT NOTE: a clean clipboard-style card with 3 hand-ticked checkmarks next to the jar, like a beautician's recommendation note","INGREDIENT LABEL CARD: minimal white card with thin lines listing 3 benefits like a product spec sheet, tidy and trustworthy"],
+  "Hidden Gem / Discovery":["SECRET STASH: the tiny jar being pulled out of an open handbag or drawer, a yellow sticky note 'rahasia kulitku 🤫'","FOUND IT: her hand holding the jar up like a found treasure, a hand-drawn circle and the word 'ketemu!' in marker"],
+  "Relatable Pain / Emotional Story":["NOTES-APP CONFESSION: a phone notes-style white card overlay with a short honest confession line, she looks into the mirror thoughtfully","STICKY NOTE MIRROR: a sticky note on the mirror edge with a handwritten line, soft emotional mood, her calm hopeful smile"],
+  "Transformation Desire":["DIAGONAL SPLIT: image split diagonally into 'Sebelum' (slightly duller, desaturated) and 'Sesudah' (brighter, glowing) of the same face, jar in the 'Sesudah' side","SWIPE ARROW: a big curved hand-drawn arrow from a small 'before' inset photo to the glowing main photo"],
+  "Value Shock":["PRICE TAG SHOCK: an oversized tilted price-tag sticker with the price, small crossed-out higher price above it, jar right next to the tag","RECEIPT COMPARE: a narrow receipt-style strip comparing 'Klinik' (crossed out) vs this product price, jar on top of the receipt"],
+  "Comparison Curiosity":["VS LAYOUT: left side a messy pile of many skincare bottles crossed out with a red X, right side the single tiny jar glowing, big 'VS' in the middle","1 vs 10: one hand holds the tiny jar, the other side shows a row of big bottles with a strike line, headline about simplicity"],
+  "Demonstration Proof":["MACRO SWATCH: macro close-up of a fingertip with the yellow cream swatch next to the open jar, small stamp 'TES LANGSUNG'","TEXTURE STRETCH: cream lightly stretched between thumb and index finger showing non-sticky texture, arrow callout 'nggak lengket'"],
+  "Regret Trigger":["CALENDAR REGRET: a small calendar card with many crossed-out months beside her, handwritten 'andai tahu dari dulu'","FACEPALM REGRET: playful face-palm with a smile, jar raised in the other hand, scribbled text 'nyesel baru tahu'"]};
+ const angK=CONCEPT[A[0]]?A[0]:"Relatable Pain / Emotional Story";
+ const concept=sp(CONCEPT[angK]);
+ const HERO_COL={"Problem-Solution":["hot pink","#FF2E7E"],"Routine":["sunny orange","#FF8A00"],"Commitment":["tomato red","#E8452C"],"Aspirational":["champagne gold","#D4A24C"],"Opportunistic":["electric yellow","#FFE14D"],"Emotional":["warm coral","#FF6F61"]}[C[0]]||["hot pink","#FF2E7E"];
+ const CEP_CTX={"Problem-Solution":"the moment of finally solving a long-time skin problem","Routine":"an easy everyday night routine","Commitment":"getting ready before an important event (kondangan, reuni, hari raya)","Aspirational":"looking fresh and confident at her age","Opportunistic":"a limited-time deal that feels too good to skip","Emotional":"an emotional comeback of self-confidence"}[C[0]];
+ const TH_TXT={Confession:["Aku salah soal ini…","Awalnya aku nggak percaya","Jujur, aku nyesel telat","Aku kira cuma gimmick"],
+  Curiosity:["Kenapa semua pakai ini?","Ini rahasianya…","Kok bisa sekecil ini?","Viral karena ini 👀"],
+  Problem:[hk.replace(/[.…,]+$/,"").split(" ").slice(0,5).join(" ")+"…","Udah coba semua tapi gagal?","Masalahku selesai di sini"],
+  Result:["Flek pudar dalam 7 hari 😳","Lihat bedanya!","Nggak nyangka segini","7 hari, ini hasilnya"],
+  "Pattern Interrupt":["STOP. Lihat ini dulu","Jangan skip!","Tunggu… lihat ini","Sebelum scroll, baca ini"]};
+ const ANG_TXT={"Value Shock":[`${pr||"Harga"} dapat 2?!`,"Harga segini? Serius?!"],"Comparison Curiosity":["1 pot vs 10 skincare","Klinik vs salep malam"],"Regret Trigger":["Andai tahu dari dulu…","Nyesel baru tahu"],"Social Proof / FOMO":["Sold out lagi?!","Semua udah pakai, kamu?"],"Transformation Desire":["Sebelum vs sesudah 7 hari","Dari kusam ke glowing"],"Authority Effect":["Lembut untuk kulit sensitif","Tanpa perih, terbukti"]};
+ const thTxt=ANG_TXT[A[0]]&&Math.random()<.5?sp(ANG_TXT[A[0]]):sp(TH_TXT[H[0]]);
  const badge=pro&&!thTxt.includes(pro)?pro:pr?`Cuma ${pr}`:"";
+ const benS=(window.BENLIST||[b]).slice(0,2).map(x=>cap(x));
+ const TSN=TESTI[(TESTI_CEP[C[0]]||TESTI_CEP["Problem-Solution"])[sd%4]];
+ const proof=`“${TSN[1].replace(/&amp;/g,"&")}” ★★★★★`;
+ const ctaPill=PF(sp(["Klik Beli Sekarang","Cek keranjang kuning","Ambil promonya","Cobain malam ini"]));
+ const FONT=sp(["ultra-bold condensed sans (Anton / Bebas Neue style), tight letter spacing","heavy rounded sans (Poppins Black style)","bold grotesk sans (Archivo Black style) mixed with a casual hand-written marker accent word","chunky serif display (Recoleta Black style) for warmth, sans for small text"]);
+ const EXPR={Confession:["guilty-happy half smile, biting her lip","covering her mouth with fingertips, eyes smiling"],Curiosity:["one eyebrow raised, leaning toward the lens as if sharing a secret","squinting playfully at the jar"],Problem:["tired face touching her cheek, then a hopeful look","slight frown looking at her cheek in the mirror"],Result:["genuine jaw-drop, eyes wide, mouth slightly open","delighted laugh while touching her glowing cheek"],"Pattern Interrupt":["palm raised toward the lens like 'stop', serious eye contact","sudden lean toward the camera, intense eye contact"]}[H[0]];
  s.thumbText=thTxt;
  // Thumbnail = frame pertama video: pakai setting/lighting/outfit milik segmen 1 (sama dengan Prompt Image SEG 1)
  const V0=$("vmode").value==="var",T0={env:V0&&segs[0].env||env,lit:V0&&segs[0].lit||lit,outfit:mdl&&V0&&segs[0].outfit?` Outfit: ${segs[0].outfit}.`:""};
- s.thumb=`ASPECT thumbnail image, first frame of the same video. Base photo: smartphone UGC look.
-BASE PHOTO: if available, use the generated image from "Prompt Image SEG 1" as the base photo and only add the graphic design on top; otherwise recreate the same scene.
-Setting: ${T0.env}. Lighting: ${T0.lit}.${T0.outfit} Same person, outfit, place and lighting as Prompt Image SEG 1.
-Product: ${pdesc}, use PRODUCT_IMAGE as exact reference, label sharp.
-Composition: ${pk(TH_COMP)}.
-${mdl?`Person: ${mdesc}, use MODEL_IMAGE as exact face reference, ${pk(TH_VIS[H[0]])}. Face and product both clearly visible.`:`No face, only hands and product.`}
-DESIGN STYLE: scroll-stopping creative image ad (like a high-performing Meta shop ad), not a plain photo. Bold graphic design layered on top of the UGC photo.
-EMOTION TO CONVEY: ${EMO.toUpperCase()} (${EMOD.mood}). Every design choice must push this emotion.
-LAYOUT: ${layout}.
-TYPOGRAPHY: headline in ${font}; clear size hierarchy: headline very large (about 12-15% of image height), subheadline medium (about 5%), badge and CTA small but bold. Max 2 font families. High contrast, readable on a phone at a glance.
-COLOR PALETTE: ${pal[0]}: ${pal[1]}, ${pal[2]}, accent ${pal[3]}. Use these for text, panels and badges so it stands out from the photo.
-DECORATION: ${EMOD.deco}; ${pk(TH_CUR)}.
-TEXT (Bahasa Indonesia, spell EXACTLY as written, no other words):
+ s.thumb=`HIGH-PERFORMING META ADS IMAGE CREATIVE, ASPECT. Must work on its own as a scroll-stopping image ad.
+BASE PHOTO: if available, use the generated image from "Prompt Image SEG 1" as the base photo and design on top of it; otherwise recreate the same scene. Real smartphone photo, natural skin texture and pores, slight grain, true-to-life colors.
+Setting: ${T0.env}. Lighting: ${T0.lit}.${T0.outfit}
+Product: ${pdesc}, use PRODUCT_IMAGE as exact reference; the jar stays small (true size in the hand), sharp, label readable, unchanged.
+${mdl?`Person: ${mdesc}, use MODEL_IMAGE as exact face reference. Expression: ${sp(EXPR)}.`:"No face: hands and product only."}
+STORY CONTEXT: ${CEP_CTX}. Angle: ${A[0]} (${A[1]}). Hook type: ${H[0]}. Content type: ${T}.
+CREATIVE CONCEPT (the one big idea of this ad): ${concept}.
+VISUAL HIERARCHY (eye path): 1) headline → 2) her face/reaction → 3) the jar → 4) badge → 5) CTA. One clear focal point, lots of breathing room, no clutter.
+HERO COLOR: ${HERO_COL[0]} ${HERO_COL[1]} is the ONLY highlight color. Use it for the headline highlight box/underline, the badge and the CTA pill. Everything else stays neutral (off-white #FAF7F2, near-black #141414, and the photo's natural tones). Strong contrast so the hero color pops in the feed.
+TYPOGRAPHY: headline in ${FONT}, about 12–16% of image height, max 2 lines, left-aligned or slightly tilted (max 4°). Supporting text in a clean sans, about 4–5% of image height. Max 2 font families, no outlines/bevels.
+TEXT (Bahasa Indonesia, spell EXACTLY, no other words):
 - Headline: "${thTxt}"
-- Subheadline: "${benS.join(" • ")}"${badge?`\n- Badge: "${badge}"`:""}
+- Supporting line: "${benS.join(" • ")}"
+- Proof chip: "${proof}"${badge?`\n- Badge: "${badge}"`:""}
 - CTA pill: "${ctaPill}"
-Keep text away from the face and the product label; the product must stay fully visible and unchanged.
+LAYOUT RULES: keep text off the face and off the product label; product fully visible. SAFE_ZONE
+ANTI-AI-TEMPLATE: must look like a real seller's ad edited in CapCut/Canva, not an AI poster. NO 3D chrome or glossy text, NO generic purple/blue gradients, NO lens flares, NO floating sparkles/bokeh hearts, NO fake app UI, NO stock icons, NO extra products ${A[0]==="Comparison Curiosity"?"except the crossed-out comparison items":""}, max 1 emoji. Stickers and hand-drawn elements look hand-placed and slightly imperfect.
+CURIOSITY: the image must leave one question unanswered (why / how fast / how cheap) so people tap to find out.
 ${RULES_BASE.replace("The product must appear within the first second. ","").replace(/throughout the video/,"in the image")}
 ${mdl?RULES_MODEL:RULES_NOMODEL}`;
- s.thumb=noTT(s.thumb)+"\nNO watermark, NO app logo, NO username, NO social media interface.";s.thumbs=[["4:5 (feed)",s.thumb.replace("ASPECT","Aspect ratio 4:5 vertical feed")],["9:16 (story/reels)",s.thumb.replace("ASPECT","Aspect ratio 9:16 full vertical")]];
+ s.thumb=noTT(s.thumb).replace(/Cek keranjang kuning/g,PF("Cek keranjang kuning"))+"\nNO watermark, NO app logo, NO username, NO social media interface.";
+ s.thumbs=[["4:5 (feed)",s.thumb.replace("ASPECT","aspect ratio 4:5 vertical feed (1080x1350)").replace("SAFE_ZONE","Keep all text inside the central 90% of the frame.")],["9:16 (story/reels)",s.thumb.replace("ASPECT","aspect ratio 9:16 full vertical (1080x1920)").replace("SAFE_ZONE","Story safe zone: keep the top 14% and bottom 20% free of text (Instagram/Facebook UI covers them).")]];
  s.copy=`${H[1]} ${p} bantu ${b}. ${pr?`Sekarang cuma ${pr}.`:""}${pro?` 🔥 ${pro}!`:""} 👉 Klik Beli Sekarang!`;
  // CTA disesuaikan platform iklan
  s.segs.forEach(g=>g.line=PF(g.line));s.copy=PF(s.copy);s.thumbs.forEach(x=>x[1]=PF(x[1]));s.thumb=PF(s.thumb);s.plat=$("plat").value;
