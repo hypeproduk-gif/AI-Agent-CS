@@ -50,6 +50,8 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
  <div class="row" style="margin-top:10px">
   <button onclick="gen1()">Generate 1 Ide</button>
   <button onclick="genBatch()">Generate Batch (tanpa ide kembar)</button>
+  <button class="sec" onclick="savePDF(list.map((s,i)=>[s,i+1]).filter(x=>x[0].fav),'ide-favorit-cavac.pdf')">⭐ Download favorit (PDF)</button>
+  <button class="sec" onclick="savePDF(list.map((s,i)=>[s,i+1]),'semua-ide-cavac.pdf')">⬇️ Download semua (PDF)</button>
   <button class="sec" onclick="exportCSV()">Export CSV</button>
   <button class="sec" onclick="out.innerHTML='';list=[]">Reset</button>
  </div>
@@ -464,7 +466,7 @@ function render(s,i,old){const d=document.createElement("div");d.className="card
  const P={};s.vis.forEach((_,k)=>{P["i"+k]=imgPrompt(s,k)+(k===0?"\n\n\n===== PROMPT THUMBNAIL 4:5 (upload hasil gambar di atas) =====\n\n"+thumbPrompt(s,"4:5")+"\n\n\n===== PROMPT THUMBNAIL 9:16 =====\n\n"+thumbPrompt(s,"9:16"):"");P["v"+k]=vidPrompt(s,k,false);P["s"+k]=vidPrompt(s,k,true)});
  s._P=P;
  if(s.aiImg)P.ai=s.aiImg;if(s.aiBrief)P.bf=s.aiBrief;if(s.adcopy){P.pt=s.adcopy.short;P.pl=s.adcopy.long;P.hl=s.adcopy.head;P.ds=s.adcopy.desc}
- d.innerHTML=`<div class="row" style="align-items:center"><div class="hook" style="flex:3">${i}. ${s.head}</div><button class="aib" style="flex:1">${s.aiImg?"✨ Tulis ulang brief":"✨ Brief Image AI"} (<span class="aimn">${aiName()}</span>)</button><button class="acb" style="flex:1">${s.adcopy?"✍️ Tulis ulang ad copy":"✍️ Ad Copy & Headline AI"} (<span class="aimn">${aiName()}</span>)</button></div><div class="mut aist"></div>${s.adcopy?adBox(s):""}${s.aiImg?`<div style="border:2px solid var(--ac);border-radius:8px;padding:8px 10px;margin:6px 0"><div class="mut" style="margin-bottom:4px">✨ ${s.aiModel||""}${s.aiStyle?` · gaya ${s.aiStyle}`:""}${s.aiHook?` · hook "${s.aiHook}"`:""}${s.aiCta?` · CTA "${s.aiCta}"`:""}</div>${s.aiBrief?boxO("📋 Brief konten (untuk tim kreatif)",s.aiBrief,"bf",""):""}${box("🍌 Prompt siap copy ke Nano Banana",s.aiImg,"ai","")}</div>`:""}
+ d.innerHTML=`<div class="row" style="align-items:center"><div class="hook" style="flex:3">${i}. ${s.head}</div><button class="aib" style="flex:1">${s.aiImg?"✨ Tulis ulang brief":"✨ Brief Image AI"} (<span class="aimn">${aiName()}</span>)</button><button class="acb" style="flex:1">${s.adcopy?"✍️ Tulis ulang ad copy":"✍️ Ad Copy & Headline AI"} (<span class="aimn">${aiName()}</span>)</button></div><div class="row" style="margin:4px 0"><button class="sec favb" style="flex:1">${s.fav?"⭐ Favorit (klik untuk lepas)":"☆ Tandai favorit"}</button><button class="sec pdfb" style="flex:1">💾 Simpan PDF ide ini</button></div><div class="mut aist"></div>${s.adcopy?adBox(s):""}${s.aiImg?`<div style="border:2px solid var(--ac);border-radius:8px;padding:8px 10px;margin:6px 0"><div class="mut" style="margin-bottom:4px">✨ ${s.aiModel||""}${s.aiStyle?` · gaya ${s.aiStyle}`:""}${s.aiHook?` · hook "${s.aiHook}"`:""}${s.aiCta?` · CTA "${s.aiCta}"`:""}</div>${s.aiBrief?boxO("📋 Brief konten (untuk tim kreatif)",s.aiBrief,"bf",""):""}${box("🍌 Prompt siap copy ke Nano Banana",s.aiImg,"ai","")}</div>`:""}
  <table class="cav"><tr><th>01 Tipe CEP</th><td>${s.cep}</td></tr><tr><th>02 CEP utama</th><td>${s.main}</td></tr><tr><th>03 Sub-CEP</th><td>${s.sub}</td></tr>
  <tr><th>04 Advertised Value</th><td><b>${s.av.t}</b> · ${s.av.f} → ${s.av.o}</td></tr><tr><th>05 Intent</th><td>${s.sell} + ${s.ci}</td></tr><tr><th>06 Angle</th><td>${s.angle} <span class="mut">(${s.angDesc})</span></td></tr>
  <tr><th>07 Content</th><td><b>${s.fmt}</b><br>🖼️ <b>Image:</b> ${s.ideaImg}<br>🎬 <b>Video:</b> ${s.ideaVid}</td></tr></table>
@@ -474,7 +476,7 @@ function render(s,i,old){const d=document.createElement("div");d.className="card
  <div style="margin:6px 0"><label>Gambar utama LP (upload hasil ① Prompt Image)</label><input type="file" accept="image/*" class="lpimg"><div class="mut lpst">${s.heroImg?"✓ Gambar sudah dipasang":"Upload gambar dulu untuk mengaktifkan LP."}</div></div>
  <div class="row"><button class="sec lpa" ${s.heroImg?"":"disabled"}>Copy LP ATAS</button><button class="sec lpb" ${s.heroImg?"":"disabled"}>Copy LP BAWAH</button><button class="sec lpv" ${s.heroImg?"":"disabled"}>Preview LP</button></div><div class="lpf"></div></details>`}`;
  d.querySelectorAll(".cp").forEach(b=>b.onclick=()=>navigator.clipboard.writeText(P[b.dataset.k]));
- d.querySelector(".aib").onclick=()=>aiBrief(s,d);d.querySelector(".acb").onclick=()=>adCopy(s,d);
+ d.querySelector(".aib").onclick=()=>aiBrief(s,d);d.querySelector(".favb").onclick=e=>{s.fav=!s.fav;e.target.textContent=s.fav?"⭐ Favorit (klik untuk lepas)":"☆ Tandai favorit";d.style.outline=s.fav?"2px solid #f5b301":"";};d.querySelector(".pdfb").onclick=()=>savePDF([[s,s.no]],`ide-${s.no}-${(s.head||"konten").toLowerCase().replace(/[^a-z0-9]+/g,"-").slice(0,40)}.pdf`);if(s.fav)d.style.outline="2px solid #f5b301";d.querySelector(".acb").onclick=()=>adCopy(s,d);
  const LP=()=>buildLP(s);
  d.querySelector(".lpimg").onchange=e=>{const fl=e.target.files[0];if(!fl)return;const im=new Image();im.onload=()=>{const W=432,H=540,c=document.createElement("canvas");c.width=W;c.height=H;const r=Math.max(W/im.width,H/im.height),w=im.width*r,h=im.height*r;c.getContext("2d").drawImage(im,(W-w)/2,(H-h)/2.6,w,h);
   s.heroImg=c.toDataURL("image/webp",.5);d.querySelector(".lpst").textContent=`✓ Gambar dipasang (${Math.round(s.heroImg.length*.75/1024)} KB)`;d.querySelectorAll(".lpa,.lpb,.lpv").forEach(b=>b.disabled=false);URL.revokeObjectURL(im.src)};im.src=URL.createObjectURL(fl)};
@@ -496,6 +498,48 @@ function presetTka(){$("prod").value="Bank Soal TKA SD";$("price").value="Rp79.0
  $("mdesc").value="Indonesian mother in her 30s, warm and friendly, casual home outfit"}
 $("pid").oninput=()=>$("pdesc").value=tr($("pid").value);
 presetFilo();
+// ===== Simpan sebagai PDF (tanpa library, teks Helvetica) =====
+const HW={32:278,33:278,34:355,35:556,36:556,37:889,38:667,39:191,40:333,41:333,42:389,43:584,44:278,45:333,46:278,47:278,58:278,59:278,60:584,61:584,62:584,63:556,64:1015,65:667,66:667,67:722,68:722,69:667,70:611,71:778,72:722,73:278,74:500,75:667,76:556,77:833,78:722,79:778,80:667,81:778,82:722,83:667,84:611,85:722,86:667,87:944,88:667,89:667,90:611,91:278,92:278,93:278,94:469,95:556,96:333,97:556,98:556,99:500,100:556,101:556,102:278,103:556,104:556,105:222,106:222,107:500,108:222,109:833,110:556,111:556,112:556,113:556,114:333,115:500,116:278,117:556,118:500,119:722,120:500,121:500,122:500,123:334,124:260,125:334,126:584};
+const cw=c=>HW[c]||556;
+function pdfClean(t){return String(t==null?"":t).replace(/→/g,"->").replace(/←/g,"<-").replace(/…/g,"...").replace(/[“”„]/g,'"').replace(/[‘’]/g,"'").replace(/[–—]/g,"-").replace(/[•·]/g,"-").replace(/✓/g,"v").replace(/★/g,"*").replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}️‍]/gu,"").replace(/[^\n\x20-\x7E\xA0-\xFF]/g,"").replace(/\t/g," ")}
+function pdfWrap(text,size,maxW,bold){const k=size/1000*(bold?1.07:1),out=[];
+ for(const para of pdfClean(text).split("\n")){if(!para.trim()){out.push("");continue}
+  let line="",w=0;for(const word of para.split(/ +/)){const ww=[...word].reduce((a,c)=>a+cw(c.charCodeAt(0)),0)*k,sp=line?cw(32)*k:0;
+   if(line&&w+sp+ww>maxW){out.push(line);line="";w=0}
+   if(ww>maxW){let part="",pw=0;for(const c of word){const x=cw(c.charCodeAt(0))*k;if(pw+x>maxW){out.push((line?line+" ":"")+part);line="";w=0;part="";pw=0}part+=c;pw+=x}word2:{line=(line&&!part?line:"")+part;w=pw;continue}}
+   line=line?line+" "+word:word;w=line?w+sp+ww:ww}
+  out.push(line)}return out}
+function makePDF(blocks,title){const PW=595,PH=842,M=42,TW=PW-2*M,pages=[];let cur=[],y=PH-M;
+ const esc=s=>s.replace(/\\/g,"\\\\").replace(/\(/g,"\\(").replace(/\)/g,"\\)");
+ const newPage=()=>{pages.push(cur);cur=[];y=PH-M};
+ for(const b of blocks){const st={h1:[15,1,6,10],h2:[11.5,1,4,7],p:[9.2,0,0,0.5],pre:[8.3,0,0,0],sp:[0,0,0,0]}[b.k];if(b.k==="sp"){y-=8;continue}
+  const [size,bold,gapB,gapA]=st,lh=size*1.34,lines=pdfWrap(b.t,size,TW-(b.k==="pre"?10:0),bold);
+  if(y-gapA-lh<M+14)newPage();y-=gapA;
+  for(const ln of lines){if(y-lh<M+14)newPage();y-=lh;if(ln)cur.push(`BT /F${bold?2:1} ${size} Tf 1 0 0 1 ${M+(b.k==="pre"?10:0)} ${y.toFixed(1)} Tm (${esc(ln)}) Tj ET`)}
+  y-=gapB}
+ pages.push(cur);
+ const objs=[];const add=s=>{objs.push(s);return objs.length};
+ add("<< /Type /Catalog /Pages 2 0 R >>");add("PAGES");add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>");add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");
+ const kids=[];pages.forEach((ops,i)=>{const foot=`BT /F1 8 Tf 1 0 0 1 ${M} 24 Tm (${esc(pdfClean(title||""))}   -   hal. ${i+1}/${pages.length}) Tj ET`,c=ops.join("\n")+"\n"+foot,ci=add(`<< /Length ${c.length} >>\nstream\n${c}\nendstream`),pi=add(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PW} ${PH}] /Contents ${ci} 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> >>`);kids.push(pi+" 0 R")});
+ objs[1]=`<< /Type /Pages /Kids [${kids.join(" ")}] /Count ${pages.length} >>`;
+ let out="%PDF-1.4\n";const offs=[];objs.forEach((o,i)=>{offs.push(out.length);out+=`${i+1} 0 obj\n${o}\nendobj\n`});
+ const xr=out.length;out+=`xref\n0 ${objs.length+1}\n0000000000 65535 f \n`+offs.map(o=>String(o).padStart(10,"0")+" 00000 n \n").join("")+`trailer\n<< /Size ${objs.length+1} /Root 1 0 R >>\nstartxref\n${xr}\n%%EOF`;
+ const u8=new Uint8Array(out.length);for(let i=0;i<out.length;i++)u8[i]=out.charCodeAt(i)&255;return new Blob([u8],{type:"application/pdf"})}
+// isi PDF satu ide: ringkasan strategi, dialog, brief & prompt AI, ad copy, lalu prompt template
+function ideaBlocks(s,no){const P=s._P||{},B=[];const h1=t=>B.push({k:"h1",t}),h2=t=>B.push({k:"h2",t}),p=t=>B.push({k:"p",t}),pre=t=>B.push({k:"pre",t});
+ h1(`${no}. ${s.head}`);p(`${s.P} | ${s.ptype==="fisik"?"Produk fisik":"Produk digital"} | ${s.sell} + ${s.ci} | ${s.angle}`);
+ h2("Breakdown CAVAC");[["01 Tipe CEP",s.cep],["02 CEP utama",s.main],["03 Sub-CEP",s.sub],["04 Advertised Value",`${s.av.t}: ${s.av.f} -> ${s.av.o}`],["05 Intent",`${s.sell} + ${s.ci}`],["06 Angle",`${s.angle} (${s.angDesc})`],["07 Content",s.fmt||""]].forEach(([a,b])=>p(`${a}: ${b}`));
+ p(`Ide image: ${s.ideaImg}`);p(`Ide video: ${s.ideaVid}`);
+ h2("Dialog");s.lines.forEach((l,k)=>p(`SEG ${k+1} (${s.len} detik): "${l}"`));
+ if(s.aiBrief||s.aiImg){h2(`Brief image AI${s.aiModel?" ("+s.aiModel+")":""}${s.aiStyle?" - gaya "+s.aiStyle:""}`);if(s.aiBrief)pre(s.aiBrief);if(s.aiImg){B.push({k:"sp"});h2("Prompt siap copy ke Nano Banana");pre(s.aiImg)}}
+ if(s.adcopy){const a=s.adcopy;h2("Ad copy & headline");h2("Primary text (pendek)");pre(a.short);h2("Primary text (panjang)");pre(a.long);if(a.head){h2("Headline");pre(a.head)}if(a.desc){h2("Deskripsi");pre(a.desc)}}
+ s.vis.forEach((_,k)=>{h2(`Prompt image + thumbnail (SEG ${k+1})`);pre(P["i"+k]||"");h2(`Prompt video dengan dialog (SEG ${k+1})`);pre(P["v"+k]||"");h2(`Prompt video tanpa suara (SEG ${k+1})`);pre(P["s"+k]||"")});
+ return B}
+async function savePDF(items,fname){if(!items.length)return alert("Belum ada ide yang dipilih.");
+ let B=[];items.forEach(([s,no],i)=>{if(i)B.push({k:"sp"},{k:"sp"});B=B.concat(ideaBlocks(s,no))});
+ const blob=makePDF(B,"CAVAC Creative Generator");
+ if(DL){DL.save({filename:fname,data:blob}).catch(()=>{});return}
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=fname;a.click()}
 // ---------- CSV ----------
 let DL=null;(async()=>{try{DL=await claude.use("downloads")}catch(e){}})();
 function exportCSV(){if(!list.length)return alert("Belum ada ide");
