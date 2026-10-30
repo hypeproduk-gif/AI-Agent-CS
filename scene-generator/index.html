@@ -456,11 +456,12 @@ NO watermark, NO app logo, NO username, NO social media interface.`}
 // ---------- render ----------
 const esc=t=>t.replace(/&/g,"&amp;").replace(/</g,"&lt;");
 const box=(t,txt,cls,k)=>`<details style="margin-top:6px"><summary><b>${t}</b></summary><pre>${esc(txt)}</pre><button class="sec cp" data-k="${cls}${k}" style="width:auto">Copy</button></details>`;
+const boxO=(t,txt,cls,k)=>box(t,txt,cls,k).replace("<details ","<details open ");
 function render(s,i,old){const d=document.createElement("div");d.className="card";s.no=i;
  const P={};s.vis.forEach((_,k)=>{P["i"+k]=imgPrompt(s,k)+(k===0?"\n\n\n===== PROMPT THUMBNAIL 4:5 (upload hasil gambar di atas) =====\n\n"+thumbPrompt(s,"4:5")+"\n\n\n===== PROMPT THUMBNAIL 9:16 =====\n\n"+thumbPrompt(s,"9:16"):"");P["v"+k]=vidPrompt(s,k,false);P["s"+k]=vidPrompt(s,k,true)});
  s._P=P;
- if(s.aiImg)P.ai=s.aiImg;
- d.innerHTML=`<div class="row" style="align-items:center"><div class="hook" style="flex:3">${i}. ${s.head}</div><button class="aib" style="flex:1">${s.aiImg?"✨ Tulis ulang brief":"✨ Brief Image AI"} (<span class="aimn">${aiName()}</span>)</button></div><div class="mut aist"></div>${s.aiImg?`<div style="border:2px solid var(--ac);border-radius:8px;padding:6px 10px;margin:6px 0">${box(`✨ Prompt Image AI · ${s.aiModel||""}${s.aiHook?` · hook "${s.aiHook}"`:""}${s.aiCta?` · CTA "${s.aiCta}"`:""}`,s.aiImg,"ai","")}</div>`:""}
+ if(s.aiImg)P.ai=s.aiImg;if(s.aiBrief)P.bf=s.aiBrief;
+ d.innerHTML=`<div class="row" style="align-items:center"><div class="hook" style="flex:3">${i}. ${s.head}</div><button class="aib" style="flex:1">${s.aiImg?"✨ Tulis ulang brief":"✨ Brief Image AI"} (<span class="aimn">${aiName()}</span>)</button></div><div class="mut aist"></div>${s.aiImg?`<div style="border:2px solid var(--ac);border-radius:8px;padding:8px 10px;margin:6px 0"><div class="mut" style="margin-bottom:4px">✨ ${s.aiModel||""}${s.aiHook?` · hook "${s.aiHook}"`:""}${s.aiCta?` · CTA "${s.aiCta}"`:""}</div>${s.aiBrief?boxO("📋 Brief konten (untuk tim kreatif)",s.aiBrief,"bf",""):""}${box("🍌 Prompt siap copy ke Nano Banana",s.aiImg,"ai","")}</div>`:""}
  <table class="cav"><tr><th>01 Tipe CEP</th><td>${s.cep}</td></tr><tr><th>02 CEP utama</th><td>${s.main}</td></tr><tr><th>03 Sub-CEP</th><td>${s.sub}</td></tr>
  <tr><th>04 Advertised Value</th><td><b>${s.av.t}</b> · ${s.av.f} → ${s.av.o}</td></tr><tr><th>05 Intent</th><td>${s.sell} + ${s.ci}</td></tr><tr><th>06 Angle</th><td>${s.angle} <span class="mut">(${s.angDesc})</span></td></tr>
  <tr><th>07 Content</th><td><b>${s.fmt}</b><br>🖼️ <b>Image:</b> ${s.ideaImg}<br>🎬 <b>Video:</b> ${s.ideaVid}</td></tr></table>
@@ -495,8 +496,8 @@ presetFilo();
 // ---------- CSV ----------
 let DL=null;(async()=>{try{DL=await claude.use("downloads")}catch(e){}})();
 function exportCSV(){if(!list.length)return alert("Belum ada ide");
- const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Produk","Tipe CEP","CEP utama","Sub-CEP","Advertised Value","Selling Intent","Communication Intent","Angle","Ide Image","Ide Video","Dialog","Prompt Image + Thumbnail","Prompt Video (dialog)","Prompt Video (tanpa suara)","Brief Image AI"];
- const rows=list.map(s=>{const P=s._P,ks=s.vis.map((_,k)=>k);return [s.ptype,s.cep,s.main,s.sub,`${s.av.t}: ${s.av.f} → ${s.av.o}`,s.sell,s.ci,s.angle,s.ideaImg,s.ideaVid,s.lines.join(" | "),ks.map(k=>P["i"+k]).join("\n\n=====\n\n"),ks.map(k=>P["v"+k]).join("\n\n=====\n\n"),ks.map(k=>P["s"+k]).join("\n\n=====\n\n"),s.aiImg||""].map(q).join(",")});
+ const q=v=>`"${String(v).replace(/"/g,'""')}"`,hd=["Produk","Tipe CEP","CEP utama","Sub-CEP","Advertised Value","Selling Intent","Communication Intent","Angle","Ide Image","Ide Video","Dialog","Prompt Image + Thumbnail","Prompt Video (dialog)","Prompt Video (tanpa suara)","Brief Konten AI","Prompt Image AI (Nano Banana)"];
+ const rows=list.map(s=>{const P=s._P,ks=s.vis.map((_,k)=>k);return [s.ptype,s.cep,s.main,s.sub,`${s.av.t}: ${s.av.f} → ${s.av.o}`,s.sell,s.ci,s.angle,s.ideaImg,s.ideaVid,s.lines.join(" | "),ks.map(k=>P["i"+k]).join("\n\n=====\n\n"),ks.map(k=>P["v"+k]).join("\n\n=====\n\n"),ks.map(k=>P["s"+k]).join("\n\n=====\n\n"),s.aiBrief||"",s.aiImg||""].map(q).join(",")});
  const csv="﻿"+[hd.join(","),...rows].join("\n");if(DL){DL.save({filename:"ide-konten-cavac.csv",data:csv}).catch(()=>{});return}
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="ide-konten-cavac.csv";a.click()}
 const BRIEF_EXAMPLE_OLD="CANVAS LOCKED: exactly 1080\u00d71350 px, 4:5 vertical. Safe zone 3% (\u224840px) on all edges, no text or key object inside it. Left/right margins \u226580px, spacing airy, plenty of empty wall space. Native Meta Ads look made by a human, shot on a smartphone, not a poster, not an AI template. No brush/stroke shapes behind any text. No decorative sparkles, icons, stickers or extra frames.\n\nBACKGROUND + HERO PHOTO (full canvas, candid smartphone UGC, soft window light from the left, slight grain, no beauty filter, no retouching): saturated mustard #E8B42C painted wall, plain, slightly textured, a bit of a simple wooden shelf edge at the far right bottom. Indonesian woman ~33 years old, casual olive-green linen shirt, hair tied back, sitting close to the camera, upper body in frame. Her face at x 110\u2013540, y 360\u2013860: real skin, slightly dull and uneven tone, visible pores, mild dark spots, no makeup, expression: wry half-smile, eyebrows slightly raised, \"ini aku banget\". She holds her phone in her right hand beside her cheek (x 560\u2013900, y 380\u2013880), screen facing the camera, showing a large bright selfie of the same woman a few years younger, glowing even skin, smiling, soft daylight. The phone screen shows only the photo: no UI, no icons, no readable text. Hands anatomically correct, five fingers each.\n\nZONE 1 (y 80\u2013300): speech bubble, solid krem #F6EEDC, rounded corners 36px, x 80\u2013760, small tail pointing down toward her mouth. Two-line headline, olive #3F4A24, Inter Bold ~66px, left aligned, 36px inner padding:\nLine 1: \"Dulu kulitmu\"\nLine 2: \"lebih cerah?\"\n\nZONE 2 (y 900\u20131075, x 80\u2013440): her left hand holding the real FILO salep pot between thumb and index finger, pot small relative to the hand (shows 5 gram size), lid color and label as in the attached product photo, label readable only as the real product label. Natural soft shadow. Small round tag overlapping the pot's lower-right edge (diameter ~110px, krem #F6EEDC, olive text, Inter Bold ~30px): \"5 gram\".\n\nZONE 3 (y 1095\u20131180): solid strip, olive #3F4A24, rounded 18px, x 80\u20131000. Text krem #F6EEDC, Inter SemiBold ~40px, centered, one line:\n\"Dipakai tipis \u2192 awet \u00b11\u20131,5 bulan\"\n\nZONE 4 (y 1195\u20131225): small footnote, olive #3F4A24 Inter Regular ~24px, left aligned x 80:\n\"Pemakaian mandiri, hasil tiap kulit berbeda\"\n\nZONE 5 (y 1245\u20131300): pill CTA, solid mustard-dark #C98F12, x 80\u2013560, rounded full, text olive #3F4A24 Inter SemiBold ~32px:\n\"Kenalan sama salep glowing FILO\"\n\nFORBIDDEN: pink/cyan, glitter or glow effects on skin, claims like \"hilang flek/dalam 7 hari\", before-after labels, extra text, readable text on the phone, product logo distortion, extra fingers.\n";
@@ -555,9 +556,28 @@ ${(()=>{const prev=list.filter(x=>x!==s&&x.aiImg).slice(-8).map(x=>"- "+x.aiImg.
 ---
 ${BRIEF_EXAMPLE}
 ---
-Balas prompt final dalam bahasa Inggris dengan struktur di atas, siap di-paste ke generator gambar. Setelah itu, di BARIS TERAKHIR tulis persis format ini (akan dihapus otomatis): META: hook="<hook yang dipakai>" | cta="<cta yang dipakai>" Tambahkan di baris BACKGROUND: "use PRODUCT_IMAGE${s.mdl?" and MODEL_IMAGE":""} as exact references".`;
+FORMAT JAWABAN (ikuti persis, tiga bagian dengan pembatas):
+===BRIEF===
+Brief konten dalam Bahasa Indonesia, ringkas dan bisa langsung dibaca tim kreatif, dengan label persis berikut (satu baris per label, tanpa markdown):
+KONSEP: <1 kalimat ide besar gambar ini>
+HOOK (teks utama): "<hook>" — kenapa dipilih: <alasan singkat terkait sub-CEP/angle>
+ISI KONTEN / YANG DITONJOLKAN: <value utama dan bukti/properti visual yang menyampaikannya>
+VISUAL: <apa yang terlihat: momen sub-CEP, model, pose, properti, latar, warna>
+LAYOUT: <susunan dari atas ke bawah; semua teks di 70% atas; bagian bawah 30% hanya foto>
+CTA: "<cta>" — kenapa nyambung dengan isi konten
+JEJAK CAVAC: <Sub-CEP> → <hook> → <value> → <intent> → <angle> → <visual> (tunjukkan bahwa semuanya konsisten)
+===PROMPT===
+Prompt final dalam bahasa Inggris dengan struktur di atas, siap di-copy ke generator gambar (Nano Banana). Wajib mencerminkan persis hook, isi, visual, layout, dan CTA di BRIEF (kata-kata hook dan CTA identik). Tambahkan di baris BACKGROUND: "use PRODUCT_IMAGE${s.mdl?" and MODEL_IMAGE":""} as exact references".
+===META===
+META: hook="<hook yang dipakai>" | cta="<cta yang dipakai>"
+Pastikan hook, isi, visual, layout, dan CTA di BRIEF dan PROMPT selaras dengan breakdown CEP 01–07 di atas, dari Tipe CEP sampai Content, tanpa ada yang bertentangan.`;
+
  try{const r=await SAMPLE(q,{model:MODEL,cache:false,onText:u=>{st.textContent="Menulis… "+u.text.length+" karakter"}});
-  let tx=r.text.trim();const mm=tx.match(/\n?\s*META:\s*hook="([^"]*)"\s*\|\s*cta="([^"]*)"\s*$/);if(mm){s.aiHook=mm[1];s.aiCta=mm[2];tx=tx.slice(0,mm.index).trim()}else{s.aiHook=s.aiHook||"";s.aiCta=s.aiCta||""}
+  let tx=r.text.trim(),br="";const mt=tx.match(/===META===\s*META:\s*hook="([^"]*)"\s*\|\s*cta="([^"]*)"/)||tx.match(/\n?\s*META:\s*hook="([^"]*)"\s*\|\s*cta="([^"]*)"\s*$/);
+  if(mt){s.aiHook=mt[1];s.aiCta=mt[2]}else{s.aiHook=s.aiHook||"";s.aiCta=s.aiCta||""}
+  tx=tx.replace(/\n?\s*===META===[\s\S]*$/,"").replace(/\n?\s*META:\s*hook="[^"]*"\s*\|\s*cta="[^"]*"\s*$/,"").trim();
+  const pm=tx.match(/===BRIEF===\s*([\s\S]*?)\s*===PROMPT===\s*([\s\S]*)$/);if(pm){br=pm[1].trim();tx=pm[2].trim()}else{tx=tx.replace(/^===BRIEF===\s*/,"")}
+  s.aiBrief=br;
   s.aiImg=tx+"\n\n"+aiLock(s);s.aiModel=MN;s._P.ai=s.aiImg;render(s,s.no,d)}
  catch(e){btn.disabled=false;st.textContent=e&&e.code==="not_granted"?"Izin AI ditolak, aktifkan lewat menu Permissions artifact.":e&&e.code==="rate_limited"?"Terlalu banyak permintaan, coba lagi sebentar.":"Gagal: "+(e&&e.message||e)}}
 
