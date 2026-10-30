@@ -88,8 +88,28 @@ LARANGAN: klaim medis/menyembuhkan, angka/testimoni palsu, kata "dijamin 100%",
 bahasa kaku/formal, kalimat iklan klise. Kalimat pendek, banyak jeda baris, enak dibaca di HP."""
 
 
-def make_caption(produk: str, shopee: str, info: str = "") -> dict:
+def ask_ai(system: str, prompt: str) -> str:
+    """AI_PROVIDER=gemini (ada kuota gratis) atau anthropic (berbayar)."""
+    if os.getenv("AI_PROVIDER", "anthropic") == "gemini":
+        model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+        r = requests.post(
+            f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+            params={"key": os.environ["GEMINI_API_KEY"]},
+            json={"system_instruction": {"parts": [{"text": system}]},
+                  "contents": [{"parts": [{"text": prompt}]}],
+                  "generationConfig": {"responseMimeType": "application/json"}},
+            timeout=120)
+        if not r.ok:
+            raise RuntimeError(f"Gemini {r.status_code}: {r.text[:300]}")
+        return r.json()["candidates"][0]["content"]["parts"][0]["text"]
     import anthropic
+    msg = anthropic.Anthropic().messages.create(
+        model=os.getenv("CLAUDE_MODEL", "claude-sonnet-5-5"), max_tokens=1500,
+        system=system, messages=[{"role": "user", "content": prompt}])
+    return msg.content[0].text
+
+
+def make_caption(produk: str, shopee: str, info: str = "") -> dict:
     prompt = (
         f"Produk: {produk}\n"
         + (f"Info tambahan (target, masalah, harga, promo, keunggulan): {info}\n" if info else "")
@@ -103,11 +123,7 @@ def make_caption(produk: str, shopee: str, info: str = "") -> dict:
         "santai seperti curhat, tanpa hashtag, tanpa nada iklan, maks 450 karakter\n"
         '- "hashtags": 8-12 hashtag relevan tanpa tanda #'
     )
-    msg = anthropic.Anthropic().messages.create(
-        model=os.getenv("CLAUDE_MODEL", "claude-sonnet-5-5"), max_tokens=1500,
-        system=COPY_SYSTEM, messages=[{"role": "user", "content": prompt}],
-    )
-    text = msg.content[0].text
+    text = ask_ai(COPY_SYSTEM, prompt)
     data = json.loads(text[text.find("{"): text.rfind("}") + 1])
     tags = " ".join("#" + t.lstrip("#") for t in data["hashtags"])
     data["fb"] = f"{data['headline']}\n\n{data['fb']}\n\n🛒 Cek di sini 👉 {shopee}\n\n{tags}"
