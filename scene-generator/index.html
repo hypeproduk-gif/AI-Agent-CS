@@ -42,6 +42,8 @@ th{color:var(--mut);font-weight:600;width:110px}.hook{font-size:17px;font-weight
   <div><label>06 Angle</label><select id="ang"></select></div>
   <div><label>07 Content (format video)</label><select id="cfmt"></select></div>
   <div><label>Formula LP</label><select id="lpform"><option value="auto" selected>Otomatis sesuai CEP</option><option>PAS</option><option>AIDA</option><option>PASTOR</option><option>BAB</option><option>4P</option><option>ODC</option></select></div>
+  <div><label>Gaya visual (Brief Image AI &amp; thumbnail)</label><select id="style"></select></div>
+  <div><label>CTA di dalam gambar</label><select id="ctaimg"><option value="none" selected>Tanpa CTA (pakai tombol CTA Meta)</option><option value="yes">Ada CTA di gambar</option></select></div>
   <div><label>Model Brief Image AI (tombol ✨)</label><select id="aimodel" onchange="syncAiLabel()"><option value="claude-sonnet-5-5" selected>Sonnet 5.5 (cepat, hemat token)</option><option value="claude-opus-5-5">Opus 5.5 (terbaik, lebih mahal)</option></select><div class="mut">Coba keduanya di ide yang sama untuk membandingkan.</div></div>
   <div><label>Jumlah ide (batch)</label><input id="n" type="number" value="5" min="1" max="100"></div>
  </div>
@@ -436,7 +438,7 @@ const CONCEPT={"Storytelling":["STORY STRIP: 3 small numbered caption chips '1 d
  "FOMO":["BESTSELLER STAMP: a tilted red rubber-stamp label 'TERJUAL 10.000+' near the product, hand-drawn arrow 'akhirnya kebagian'","COUNTDOWN STRIP: a bold strip 'PROMO HARI INI' with a small clock icon drawn by hand"]};
 const HERO_COL={"Problem-Solution":["hot pink","#FF2E7E"],"Routine":["sunny orange","#FF8A00"],"Commitment":["tomato red","#E8452C"],"Aspirational":["champagne gold","#D4A24C"],"Opportunistic":["electric yellow","#FFE14D"],"Emotional":["warm coral","#FF6F61"]};
 function thumbPrompt(s,ratio){const con=s.concept||(s.concept=pk(CONCEPT[s.angle])),ctxt=[...con.matchAll(/'([^']+)'/g)].map(m=>m[1]),H=HERO_COL[s.cep],pr=$("price").value,pro=$("promo").value.trim();
- const badge=s.sell==="No Sell"?"":pro||(pr?`Cuma ${pr}`:"");const cta=s.sell==="No Sell"?"":PF(s.sell==="Hard Sell"?"Klik Beli Sekarang":"Cek di bawah");
+ const badge=s.sell==="No Sell"?"":pro||(pr?`Cuma ${pr}`:"");const cta=(s.sell==="No Sell"||$("ctaimg").value==="none")?"":PF(s.sell==="Hard Sell"?"Klik Beli Sekarang":"Cek di bawah");
  const font=s.font||(s.font=pk(["ultra-bold condensed sans (Anton / Bebas Neue style)","heavy rounded sans (Poppins Black style)","bold grotesk (Archivo Black style) with one hand-written marker accent word","chunky serif display (Recoleta Black style)"]));
  const safe=ratio==="9:16"?"Story safe zone: keep the top 14% and the bottom 30% free of text (Meta CTA/link bar covers the bottom).":"Keep ALL text inside the top 70% of the frame and the central 90% horizontally; the bottom 30% must have no text (Meta CTA/link bar covers it).";
  return `EDIT THE UPLOADED IMAGE (result of Prompt Image SEG 1) INTO A HIGH-PERFORMING META ADS IMAGE CREATIVE, aspect ratio ${ratio==="9:16"?"9:16 (1080x1920)":"4:5 (1080x1350)"}.
@@ -444,7 +446,8 @@ BASE: use the uploaded image exactly as it is — same person, face, outfit, pos
 STRATEGY: ${s.cep} · sub-CEP "${s.sub}" · value: ${s.av.o} · ${s.sell} + ${s.ci} · angle ${s.angle}.
 CREATIVE CONCEPT (overlay only): ${con}.
 EYE PATH: headline → face/reaction → product → ${badge?"badge → ":""}${cta?"CTA":"brand"}. One focal point, breathing room.
-HERO COLOR: ${H[0]} ${H[1]} is the ONLY highlight color (headline highlight box/underline${badge?", badge":""}${cta?", CTA pill":""}). Other text off-white #FAF7F2 or near-black #141414.
+VISUAL STYLE: ${STY().n} — ${STY().d}
+HERO COLOR: ${H[0]} ${H[1]} (use only if it fits the chosen style; otherwise use the style palette) is the ONLY highlight color (headline highlight box/underline${badge?", badge":""}${cta?", CTA pill":""}). Other text off-white #FAF7F2 or near-black #141414.
 TYPOGRAPHY: headline in ${font}, 12–16% of image height, max 2 lines, slight tilt max 4°. Supporting text clean sans 4–5%. Max 2 font families, no outlines/bevels.
 TEXT (Bahasa Indonesia, spell EXACTLY, no other words):
 - Headline: "${s.head}"
@@ -461,7 +464,7 @@ function render(s,i,old){const d=document.createElement("div");d.className="card
  const P={};s.vis.forEach((_,k)=>{P["i"+k]=imgPrompt(s,k)+(k===0?"\n\n\n===== PROMPT THUMBNAIL 4:5 (upload hasil gambar di atas) =====\n\n"+thumbPrompt(s,"4:5")+"\n\n\n===== PROMPT THUMBNAIL 9:16 =====\n\n"+thumbPrompt(s,"9:16"):"");P["v"+k]=vidPrompt(s,k,false);P["s"+k]=vidPrompt(s,k,true)});
  s._P=P;
  if(s.aiImg)P.ai=s.aiImg;if(s.aiBrief)P.bf=s.aiBrief;
- d.innerHTML=`<div class="row" style="align-items:center"><div class="hook" style="flex:3">${i}. ${s.head}</div><button class="aib" style="flex:1">${s.aiImg?"✨ Tulis ulang brief":"✨ Brief Image AI"} (<span class="aimn">${aiName()}</span>)</button></div><div class="mut aist"></div>${s.aiImg?`<div style="border:2px solid var(--ac);border-radius:8px;padding:8px 10px;margin:6px 0"><div class="mut" style="margin-bottom:4px">✨ ${s.aiModel||""}${s.aiHook?` · hook "${s.aiHook}"`:""}${s.aiCta?` · CTA "${s.aiCta}"`:""}</div>${s.aiBrief?boxO("📋 Brief konten (untuk tim kreatif)",s.aiBrief,"bf",""):""}${box("🍌 Prompt siap copy ke Nano Banana",s.aiImg,"ai","")}</div>`:""}
+ d.innerHTML=`<div class="row" style="align-items:center"><div class="hook" style="flex:3">${i}. ${s.head}</div><button class="aib" style="flex:1">${s.aiImg?"✨ Tulis ulang brief":"✨ Brief Image AI"} (<span class="aimn">${aiName()}</span>)</button></div><div class="mut aist"></div>${s.aiImg?`<div style="border:2px solid var(--ac);border-radius:8px;padding:8px 10px;margin:6px 0"><div class="mut" style="margin-bottom:4px">✨ ${s.aiModel||""}${s.aiStyle?` · gaya ${s.aiStyle}`:""}${s.aiHook?` · hook "${s.aiHook}"`:""}${s.aiCta?` · CTA "${s.aiCta}"`:""}</div>${s.aiBrief?boxO("📋 Brief konten (untuk tim kreatif)",s.aiBrief,"bf",""):""}${box("🍌 Prompt siap copy ke Nano Banana",s.aiImg,"ai","")}</div>`:""}
  <table class="cav"><tr><th>01 Tipe CEP</th><td>${s.cep}</td></tr><tr><th>02 CEP utama</th><td>${s.main}</td></tr><tr><th>03 Sub-CEP</th><td>${s.sub}</td></tr>
  <tr><th>04 Advertised Value</th><td><b>${s.av.t}</b> · ${s.av.f} → ${s.av.o}</td></tr><tr><th>05 Intent</th><td>${s.sell} + ${s.ci}</td></tr><tr><th>06 Angle</th><td>${s.angle} <span class="mut">(${s.angDesc})</span></td></tr>
  <tr><th>07 Content</th><td><b>${s.fmt}</b><br>🖼️ <b>Image:</b> ${s.ideaImg}<br>🎬 <b>Video:</b> ${s.ideaVid}</td></tr></table>
@@ -512,6 +515,21 @@ const HOOK_USER={
  "Problem":["Kalau kulitmu kusam, coba lihat ini.","Kalau kulitmu kering, kamu harus lihat ini.","Kalau skincare kamu nggak mempan…","Kalau kamu punya masalah kulit ini…","Kalau kulitmu gampang breakout…","Kalau kamu bingung pilih skincare…","Kalau skincare kamu terasa berat…","Kalau kamu cari skincare simple…","Kalau kulitmu gampang iritasi…","Kalau kamu pernah malu difoto dari dekat…"],
  "Result":["Aku nggak nyangka hasilnya kayak gini.","Ini hasil setelah pakai ini.","Kulitku berubah setelah pakai ini.","Aku kaget lihat hasilnya.","7 hari pakai, ini hasilnya.","Ini lebih bagus dari yang aku kira."],
  "Pattern Interrupt":["Stop scroll dulu.","Tunggu… lihat ini.","Oke ini agak aneh.","Ini kelihatan biasa… tapi tunggu.","Aku baru sadar ini penting.","Harga segini dapat 2? Serius?"]};
+// ===== GAYA VISUAL (dipilih di form; menggantikan gaya UGC/palet contoh, struktur & aturan tetap) =====
+const STYLES=[
+ {n:"UGC natural (smartphone, candid)",d:"candid smartphone UGC look: soft window light, slight grain, real skin texture, simple real room, casual outfit, one bold accent color, clean bold sans typography, no heavy graphic effects."},
+ {n:"Elegan premium (luxury)",d:"elegant premium luxury look: deep navy or charcoal backdrop with warm soft lamp glow, champagne-gold accents and thin gold lines, refined serif display typography (Playfair/Cormorant style) with small clean sans for details, silk or linen textures, soft rim light, generous negative space; keep skin natural, no cheap glitter."},
+ {n:"Minimalis bersih",d:"clean minimalist look: off-white or light-grey seamless backdrop, lots of empty space, soft diffused studio light, one accent color, thin geometric sans typography, face and product crisp, at most one prop."},
+ {n:"Pastel soft aesthetic",d:"soft pastel aesthetic: blush/lilac/mint backdrop, airy diffused daylight, dreamy but realistic, rounded friendly typography, very few delicate hand-drawn accents, calm and gentle mood."},
+ {n:"Hangat cozy (earthy)",d:"warm earthy cozy look: terracotta, cream and olive palette, wood and linen textures, golden-hour window light, relaxed home setting, humanist serif or soft rounded sans typography."},
+ {n:"Editorial majalah",d:"fashion-magazine editorial look: bold masthead-style serif headline, tight confident cropping, one strongly saturated color-blocked background, crisp high-contrast light, small caption-style supporting text."},
+ {n:"Pop berani (playful)",d:"bold playful pop look: saturated flat backdrop (hot pink / sunny yellow / cobalt), chunky rounded typography, energetic expression, direct flash photo feel, callouts used sparingly and orderly."},
+ {n:"Klinis bersih & terpercaya",d:"clean trustworthy look (no medical claims): white and soft teal palette, bright even light, tidy vanity or bathroom setting, neat typography with thin dividers, checklist-style facts; no lab coats, syringes or medical symbols."},
+ {n:"Retro film 90an",d:"90s retro film snapshot look: warm film grain, slightly faded colors, flash-lit candid framing, vintage serif or typewriter-style type; no date stamp, no extra text."},
+ {n:"Dark moody malam",d:"dark moody night look: low-key lighting, deep shadows, one warm light source (lamp or phone glow), rich dark teal or burgundy backdrop, light high-contrast type, intimate mood."},
+ {n:"Kolase scrapbook",d:"handmade collage/scrapbook look: paper textures, torn paper edges, a taped polaroid-style photo, limited hand-written marker accents, muted craft palette with one accent; layout stays orderly and readable."}];
+const STY=()=>STYLES[+$("style").value||0];
+$("style").innerHTML=STYLES.map((x,i)=>`<option value="${i}">${x.n}</option>`).join("");
 // Blok kunci produk/model yang SELALU ditempel di akhir brief AI (tidak bergantung pada model yang menulis)
 function aiLock(s){const vis=s.vis[0];
  return noTT(`===== PRODUCT & CONSISTENCY LOCK (WAJIB, berlaku di atas semua instruksi lain) =====
@@ -519,6 +537,7 @@ ${rule(s,vis)}
 Do NOT change, redraw, restyle or replace the product: keep the exact same design as PRODUCT_IMAGE (same shape, size, colors, packaging, label artwork, logo and label text). Do NOT add, remove or alter any text, sticker, logo or print on the product. Nothing may cover the label.
 ${s.mdl?"The model must keep the exact same face identity as MODEL_IMAGE: same facial structure, skin tone and proportions; natural realistic skin texture; no beautifying, no face swap, no age change.":"No face and no full human model: only hands and the product."}
 Only add the graphic/text layer described above; do not alter the photo of the product or the person beyond what is described. Spell every text exactly as written, with no extra words.
+OUTPUT ASPECT RATIO: exactly 4:5 vertical (1080×1350 px). Not 3:4, not 1:1, not 9:16.
 TEXT SAFE ZONE: no text anywhere in the bottom 30% of the canvas (below y 945 on 1080×1350); all text stays in the top 70% so the Meta CTA/link bar does not cover it.
 NO watermark, NO app logo, NO username, NO social media interface.`)}
 async function aiBrief(s,d){const st=d.querySelector(".aist"),btn=d.querySelector(".aib");
@@ -526,6 +545,7 @@ async function aiBrief(s,d){const st=d.querySelector(".aist"),btn=d.querySelecto
  const MODEL=$("aimodel").value,MN=MODEL.includes("opus")?"Opus":"Sonnet";
  btn.disabled=true;st.textContent=`${MN} sedang menyusun brief creative…`;
  const pr=$("price").value,pro=$("promo").value.trim(),H=HERO_COL[s.cep];
+ const NOCTA=$("ctaimg").value==="none",ST=STY();
  const HOOK_USER_TXT=s.ptype==="fisik"?"DAFTAR HOOK PEMILIK (pilihan, tidak wajib): "+Object.values(HOOK_USER).flat().map(h=>`"${h}"`).join(" · "):"Produk digital: tidak ada daftar hook; buat hook baru yang relevan dengan orang tua dan persiapan ujian anak.";
  const q=`Kamu creative strategist + art director Meta Ads Indonesia kelas atas. Olah breakdown CAVAC ini menjadi SATU prompt generate image (bahasa Inggris) untuk iklan gambar Meta Ads 4:5.
 PRODUK: ${s.P}. Deskripsi visual produk (WAJIB dipatuhi persis): ${s.pdesc}. Harga ${pr||"-"}, promo ${pro||"-"}. ${s.mdl?`Model: ${s.mdesc} (pakai MODEL_IMAGE sebagai referensi wajah).`:"Tanpa model wajah, tangan saja."}
@@ -548,9 +568,11 @@ SYARAT (semua wajib dipenuhi, cek diam-diam sebelum menjawab):
 9. FORBIDDEN spesifik untuk ide ini: tulis 6–10 larangan konkret (teks 3D/glossy, gradasi generik, sparkle, UI palsu, watermark, emoji >1, teks terbaca di layar HP, jari ekstra, distorsi logo/label, dan larangan khas ide ini).
 11. HOOK (wajib tampil sebagai teks terbesar di gambar): pilih SATU hook paling convert untuk kombinasi sub-CEP + angle + intent ini. Sumber boleh (a) daftar hook milik pemilik di bawah (adaptasi kata "skincare/kulit" agar cocok dengan produk), (b) hook lisan ide ini: "${s.hook}", atau (c) EKSPLORASI hook baru yang menurutmu lebih kuat (pertanyaan relatable, kontras, angka spesifik, pengakuan jujur, atau pola-interupsi). Pilih yang paling spesifik dan paling bikin penasaran, bukan yang paling aman.
 ${HOOK_USER_TXT}
-12. CTA: tulis CTA yang NYAMBUNG dengan isi konten ini (momen sub-CEP, value, dan ide visual), bukan CTA generik dan jangan sama dengan CTA di brief lain. Kalau ${s.sell}="No Sell" tanpa CTA beli (boleh ajakan rasa ingin tahu). Contoh gaya (jangan disalin mentah): "Intip isi potnya →", "Lihat cara pakainya →", "Ambil paket kondangannya →", "Coba 7 hari dulu →", "Cek sebelum kehabisan →". Maksimal 5 kata, boleh pakai panah.
+12. CTA: ${NOCTA?"TANPA CTA di dalam gambar: jangan buat pill/tombol/teks ajakan beli; hapus ZONE CTA dari contoh acuan. Tombol CTA dipasang oleh Meta (dari Ads Manager), jadi bagian bawah murni foto. Di BRIEF tulis label TOMBOL META yang disarankan (pilih satu: Belanja Sekarang / Pesan Sekarang / Pelajari Selengkapnya / Kirim Pesan WhatsApp) sesuai intent dan isi konten, beserta alasannya.":`tulis CTA yang NYAMBUNG dengan isi konten ini (momen sub-CEP, value, dan ide visual), bukan CTA generik dan jangan sama dengan CTA di brief lain. Kalau ${s.sell}=\"No Sell\" tanpa CTA beli (boleh ajakan rasa ingin tahu). Contoh gaya (jangan disalin mentah): \"Intip isi potnya →\", \"Lihat cara pakainya →\", \"Coba 7 hari dulu →\". Maksimal 5 kata.`}
 13. ZONA AMAN META: SEMUA teks (hook, value, CTA, dan teks lain) HARUS berada di y 40–945 px pada kanvas 1080×1350. Bagian bawah 30% (y 945–1350) TIDAK BOLEH ada teks apa pun karena tertutup tombol/link CTA iklan Meta; hanya foto (tangan, produk, pakaian, latar) yang boleh ada di sana. Cek ulang koordinat semua ZONE sebelum menjawab.
-14. FORMAT KELUARAN: ikuti struktur contoh acuan (CANVAS LOCKED → BACKGROUND + HERO PHOTO dengan koordinat piksel → ZONE 1..n dengan koordinat y/x, bentuk, warna hex, font+px, teks persis → FORBIDDEN). Setiap koordinat tidak boleh tumpang tindih; semua elemen berada di luar safe zone 40px.
+14. GAYA VISUAL TERPILIH: ${ST.n}. Arah gaya: ${ST.d} Gaya ini MENGGANTIKAN deskripsi "candid smartphone UGC" dan palet warna pada contoh acuan, tapi struktur format, koordinat piksel, zona aman bawah 30%, dan semua aturan produk/model tetap berlaku. Sesuaikan latar, pencahayaan, outfit, warna, font, dan properti dengan gaya ini.
+15. RASIO: kanvas WAJIB persis 4:5 (1080×1350). Tulis "aspect ratio 4:5, 1080×1350 px, NOT 3:4, NOT 1:1, NOT 9:16" di baris CANVAS LOCKED.
+16. FORMAT KELUARAN: ikuti struktur contoh acuan (CANVAS LOCKED → BACKGROUND + HERO PHOTO dengan koordinat piksel → ZONE 1..n dengan koordinat y/x, bentuk, warna hex, font+px, teks persis → FORBIDDEN). Setiap koordinat tidak boleh tumpang tindih; semua elemen berada di luar safe zone 40px.
 ${(()=>{const used=list.filter(x=>x!==s&&x.aiHook).slice(-10).map(x=>`hook "${x.aiHook}" · CTA "${x.aiCta}"`);return used.length?`HOOK & CTA YANG SUDAH DIPAKAI (jangan ulangi, cari yang berbeda): ${used.join(" | ")}\n`:""})()}
 ${(()=>{const prev=list.filter(x=>x!==s&&x.aiImg).slice(-8).map(x=>"- "+x.aiImg.replace(/\s+/g," ").slice(0,260));return prev.length?`SUDAH DIPAKAI di brief lain (JANGAN ulangi ide visual/properti, palet warna, bentuk elemen teks, maupun layout yang sama; buat yang benar-benar berbeda):\n${prev.join("\n")}\n`:""})()}CONTOH ACUAN (ide berbeda, tapi tiru PERSIS struktur & tingkat detailnya: CANVAS LOCKED → BACKGROUND + HERO PHOTO dengan koordinat piksel wajah/tangan/properti → ZONE 1..n dengan koordinat y/x piksel, bentuk, warna hex, font & ukuran px, teks persis → FORBIDDEN. Palet harus 2–3 warna yang menyatu dengan foto, BUKAN copy palet contoh kecuali cocok):
 ---
@@ -564,12 +586,12 @@ HOOK (teks utama): "<hook>" — kenapa dipilih: <alasan singkat terkait sub-CEP/
 ISI KONTEN / YANG DITONJOLKAN: <value utama dan bukti/properti visual yang menyampaikannya>
 VISUAL: <apa yang terlihat: momen sub-CEP, model, pose, properti, latar, warna>
 LAYOUT: <susunan dari atas ke bawah; semua teks di 70% atas; bagian bawah 30% hanya foto>
-CTA: "<cta>" — kenapa nyambung dengan isi konten
+${NOCTA?"TOMBOL META: <nama tombol> — kenapa cocok (tidak ada CTA di dalam gambar)":"CTA: \"<cta>\" — kenapa nyambung dengan isi konten"}
 JEJAK CAVAC: <Sub-CEP> → <hook> → <value> → <intent> → <angle> → <visual> (tunjukkan bahwa semuanya konsisten)
 ===PROMPT===
 Prompt final dalam bahasa Inggris dengan struktur di atas, siap di-copy ke generator gambar (Nano Banana). Wajib mencerminkan persis hook, isi, visual, layout, dan CTA di BRIEF (kata-kata hook dan CTA identik). Tambahkan di baris BACKGROUND: "use PRODUCT_IMAGE${s.mdl?" and MODEL_IMAGE":""} as exact references".
 ===META===
-META: hook="<hook yang dipakai>" | cta="<cta yang dipakai>"
+META: hook="<hook yang dipakai>" | cta="${NOCTA?"<nama tombol Meta>":"<cta yang dipakai>"}"
 Pastikan hook, isi, visual, layout, dan CTA di BRIEF dan PROMPT selaras dengan breakdown CEP 01–07 di atas, dari Tipe CEP sampai Content, tanpa ada yang bertentangan.`;
 
  try{const r=await SAMPLE(q,{model:MODEL,cache:false,onText:u=>{st.textContent="Menulis… "+u.text.length+" karakter"}});
@@ -578,7 +600,7 @@ Pastikan hook, isi, visual, layout, dan CTA di BRIEF dan PROMPT selaras dengan b
   tx=tx.replace(/\n?\s*===META===[\s\S]*$/,"").replace(/\n?\s*META:\s*hook="[^"]*"\s*\|\s*cta="[^"]*"\s*$/,"").trim();
   const pm=tx.match(/===BRIEF===\s*([\s\S]*?)\s*===PROMPT===\s*([\s\S]*)$/);if(pm){br=pm[1].trim();tx=pm[2].trim()}else{tx=tx.replace(/^===BRIEF===\s*/,"")}
   s.aiBrief=br;
-  s.aiImg=tx+"\n\n"+aiLock(s);s.aiModel=MN;s._P.ai=s.aiImg;render(s,s.no,d)}
+  s.aiImg=tx+"\n\n"+aiLock(s);s.aiModel=MN;s.aiStyle=ST.n;s._P.ai=s.aiImg;render(s,s.no,d)}
  catch(e){btn.disabled=false;st.textContent=e&&e.code==="not_granted"?"Izin AI ditolak, aktifkan lewat menu Permissions artifact.":e&&e.code==="rate_limited"?"Terlalu banyak permintaan, coba lagi sebentar.":"Gagal: "+(e&&e.message||e)}}
 
 </script>
