@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Generate Gambar dari Prompt (OpenAI API)</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1b1f24;--mut:#667;--ac:#2f6fed;--bd:#dde1e6}
+@media (prefers-color-scheme:dark){:root{--bg:#121417;--card:#1c1f24;--tx:#e8eaed;--mut:#9aa;--ac:#6b9bff;--bd:#2c3138}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,sans-serif}
+.wrap{max-width:980px;margin:auto;padding:16px}h1{font-size:21px;margin:4px 0 6px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:14px}
+label{font-size:12px;color:var(--mut);display:block;margin:8px 0 3px}
+input,select,textarea,button{width:100%;padding:8px;border:1px solid var(--bd);border-radius:7px;background:var(--card);color:var(--tx);font:inherit}
+textarea{min-height:230px;font:12.5px/1.45 ui-monospace,monospace}
+button{background:var(--ac);color:#fff;border:0;cursor:pointer;font-weight:600}button:disabled{opacity:.5;cursor:default}button.sec{background:transparent;color:var(--ac);border:1px solid var(--ac)}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.mut{color:var(--mut);font-size:12.5px}.warn{background:#fff4e5;color:#7a4b00;border:1px solid #f1c27d;border-radius:8px;padding:8px 10px;font-size:13px}
+.res{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px}
+.res figure{margin:0}.res img{width:100%;border-radius:10px;border:1px solid var(--bd);display:block}.res .row2{display:flex;gap:6px;margin-top:6px}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.thumbs img{height:70px;border-radius:6px;border:1px solid var(--bd)}
+</style></head><body><div class="wrap">
+<h1>🖼️ Generate gambar dari prompt (OpenAI API)</h1>
+<p class="mut">Tempel prompt dari generator CAVAC (prompt ✨ / template), lampirkan foto produk dan model, lalu generate. Dibuat khusus dibuka sebagai <b>file lokal</b> di komputer Anda.</p>
+<div id="warn" class="warn" style="display:none;margin-bottom:12px"></div>
+<div class="card">
+ <div class="row">
+  <div><label>OpenAI API key (disimpan hanya di browser ini)</label><input id="key" type="password" placeholder="sk-..." autocomplete="off"></div>
+  <div><label>Model gambar</label><input id="model" value="gpt-image-1"></div>
+  <div><label>Kualitas</label><select id="q"><option>medium</option><option>high</option><option>low</option><option>auto</option></select></div>
+  <div><label>Jumlah hasil</label><select id="n"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+ </div>
+ <label><input id="rem" type="checkbox" style="width:auto"> Ingat API key di browser ini (localStorage)</label>
+ <label>Gambar referensi (urutan penting: 1. PRODUCT_IMAGE, 2. MODEL_IMAGE, 3. gambar dasar bila untuk thumbnail). Boleh kosong.</label>
+ <input id="files" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+ <div id="thumbs" class="thumbs"></div>
+ <label>Prompt</label><textarea id="prompt" placeholder="Tempel prompt dari generator di sini"></textarea>
+ <label><input id="r45" type="checkbox" checked style="width:auto"> Rasio 4:5 (render 1024×1536, lalu dipotong otomatis ke 4:5 / 1024×1280)</label>
+ <div class="row" style="margin-top:10px"><button id="go">Generate gambar</button></div>
+ <p id="st" class="mut"></p>
+ <div id="res" class="res"></div>
+</div>
+<p class="mut">Biaya mengikuti tarif OpenAI per gambar. API key tidak dikirim ke mana pun selain api.openai.com. Jangan memasukkan key di halaman yang dibuka dari link publik atau artifact; pakai file lokal saja.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);let imgs=[];
+if(location.protocol!=="file:"){const w=$("warn");w.style.display="block";w.textContent="Halaman ini tidak dibuka sebagai file lokal. Browser biasanya memblokir panggilan ke OpenAI dari halaman online, dan sebaiknya jangan memasukkan API key di sini. Simpan file ini, lalu buka dari komputer Anda."}
+try{const k=localStorage.getItem("oai_key");if(k){$("key").value=k;$("rem").checked=true}}catch(e){}
+$("files").onchange=e=>{imgs=[...e.target.files];$("thumbs").innerHTML="";imgs.forEach((f,i)=>{const im=new Image();im.src=URL.createObjectURL(f);im.title=(i+1)+". "+f.name;$("thumbs").appendChild(im)})};
+const R45="\n\nCANVAS INSTRUCTION: render on a tall 1024×1536 canvas but keep ALL content, all text and the main subject inside the central 4:5 area (1024×1280): leave the top 128 px and the bottom 128 px as plain extra photo background with no text and no important object, because the image will be cropped to 4:5 afterwards.";
+function cropTo45(src){return new Promise(res=>{const im=new Image();im.onload=()=>{const W=im.width,H=Math.round(W*5/4),c=document.createElement("canvas");c.width=W;c.height=H;c.getContext("2d").drawImage(im,0,(H-im.height)/2);res(c.toDataURL("image/png"))};im.src=src})}
+function save(url,name){const a=document.createElement("a");a.href=url;a.download=name;a.click()}
+$("go").onclick=async()=>{const key=$("key").value.trim(),pr=$("prompt").value.trim();if(!key)return alert("Isi API key dulu.");if(!pr)return alert("Tempel prompt dulu.");
+ try{if($("rem").checked)localStorage.setItem("oai_key",key);else localStorage.removeItem("oai_key")}catch(e){}
+ const full=pr+($("r45").checked?R45:""),size="1024x1536",n=$("n").value;
+ $("go").disabled=true;$("st").textContent="Sedang membuat gambar… biasanya 30–120 detik.";$("res").innerHTML="";
+ try{let r;if(imgs.length){const fd=new FormData();fd.append("model",$("model").value.trim());fd.append("prompt",full);fd.append("size",size);fd.append("quality",$("q").value);fd.append("n",n);imgs.forEach(f=>fd.append("image[]",f,f.name));
+   r=await fetch("https://api.openai.com/v1/images/edits",{method:"POST",headers:{Authorization:"Bearer "+key},body:fd})}
+  else r=await fetch("https://api.openai.com/v1/images/generations",{method:"POST",headers:{Authorization:"Bearer "+key,"Content-Type":"application/json"},body:JSON.stringify({model:$("model").value.trim(),prompt:full,size,quality:$("q").value,n:+n})});
+  const j=await r.json();if(!r.ok)throw new Error((j.error&&j.error.message)||("HTTP "+r.status));
+  let k=0;for(const d of j.data){k++;const raw="data:image/png;base64,"+d.b64_json,fin=$("r45").checked?await cropTo45(raw):raw,fig=document.createElement("figure");
+   fig.innerHTML=`<img src="${fin}" alt="hasil ${k}"><div class="row2"><button class="sec">Download ${$("r45").checked?"4:5":"PNG"}</button><button class="sec">Download asli</button></div>`;
+   const b=fig.querySelectorAll("button");b[0].onclick=()=>save(fin,`gambar-${k}-${$("r45").checked?"4x5":"asli"}.png`);b[1].onclick=()=>save(raw,`gambar-${k}-asli.png`);$("res").appendChild(fig)}
+  $("st").textContent=`Selesai: ${j.data.length} gambar.`}
+ catch(e){$("st").textContent="Gagal: "+e.message+(String(e.message).includes("Failed to fetch")?" (kemungkinan diblokir browser/jaringan; pastikan file dibuka dari komputer, bukan link online)":"")}
+ $("go").disabled=false};
+</script></body></html>
