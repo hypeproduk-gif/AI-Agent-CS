@@ -12,7 +12,9 @@
   <label>Teks thumbnail <small>(kosongkan = dibuat AI)</small></label>
   <input type="text" name="judul">
   <small>Semua video di satu kiriman memakai produk & link yang sama. Caption tetap dibuat beda per video.</small>
-  <label>Link Shopee <small>dipakai semua platform</small></label>
+  <label>Link produk Shopee biasa <small>otomatis dibuat link affiliate fb/ig/threads + ambil harga & rating (butuh Shopee Open API)</small></label>
+  <input type="url" name="product_url" placeholder="https://shopee.co.id/...-i.123.456">
+  <label>atau link affiliate siap pakai <small>dipakai semua platform</small></label>
   <input type="url" name="shopee" placeholder="https://s.shopee.co.id/...">
   <details><summary style="margin-top:12px;cursor:pointer">Link beda per platform (Sub ID)</summary>
   <div class="row">{% for k, n in platforms.items() %}

@@ -10,6 +10,7 @@ from flask import (Flask, Response, abort, redirect, render_template, request,
                    send_from_directory, url_for)
 
 import autopost as ap
+import shopee_api
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 300 * 1024 * 1024  # 300 MB
@@ -56,6 +57,16 @@ def index():
 def generate():
     f = request.form
     links = {k: (f.get(f"shopee_{k}") or f.get("shopee") or "").strip() for k in PLATFORMS}
+    info = f.get("info", "")
+    product_url = f.get("product_url", "").strip()
+    if product_url and shopee_api.enabled():
+        try:
+            auto = shopee_api.links_per_platform(product_url)
+            links = {k: links[k] or auto[k] for k in PLATFORMS}
+            extra = shopee_api.product_info(product_url)
+            info = f"{info}\n{extra}".strip() if extra else info
+        except Exception as e:
+            return f"Gagal mengambil dari Shopee API: {e}", 500
     sources = []
     base = time.strftime("%Y%m%d-%H%M%S")
     for i, up in enumerate(u for u in request.files.getlist("video") if u.filename):
@@ -71,7 +82,7 @@ def generate():
         return "Isi video atau link Pinterest", 400
     for slug, url in sources:
         save(slug, {"slug": slug, "produk": f["produk"], "judul": f.get("judul", ""),
-                    "video": "video.mp4", "links": links, "info": f.get("info", ""), "headline": "", "pin": url,
+                    "video": "video.mp4", "links": links, "info": info, "headline": "", "pin": url,
                     "text": {k: "" for k in PLATFORMS}, "status": {}, "gen": "antre..."})
     threading.Thread(target=run_generate, args=([s for s, _ in sources],), daemon=True).start()
     return redirect(url_for("job", slug=sources[0][0]) if len(sources) == 1 else url_for("index"))
