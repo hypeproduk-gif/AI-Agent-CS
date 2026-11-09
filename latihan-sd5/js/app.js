@@ -16,7 +16,7 @@ let pilihHari = null;
 const today = () => new Date().toISOString().slice(0, 10);
 function home() {
   $("#homeBtn").hidden = true;
-  if (!window.PREVIEW && !ST.kode && location.protocol.startsWith("http") && !/localhost|127\.0\.0\.1/.test(location.hostname)) return aktivasi();
+  if (!window.PREVIEW && !ST.kode && (window.KODE_HASH || (location.protocol.startsWith("http") && !/localhost|127\.0\.0\.1/.test(location.hostname)))) return aktivasi();
   if (!ST.nama) return setup();
   const d = pilihHari || hariAktif(); const lv = levelHari(d);
   const selesai = Array.from({ length: HARI }, (_, i) => hariSelesai(i + 1)).filter(Boolean).length;
@@ -33,7 +33,10 @@ function home() {
   $("#review").onclick = review; $("#rapor").onclick = rapor; $("#cetak").onclick = () => cetak(d); $("#ortu").onclick = ortu;
 }
 // ---- Kode akses ----
+async function sha(t) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join(""); }
 async function cekKode(kode) {
+  // Versi satu file (Scalev): hash kode tertanam di halaman. Versi Netlify: cek ke server.
+  if (window.KODE_HASH) { try { return window.KODE_HASH.includes(await sha(kode)); } catch { return false; } }
   try { const r = await fetch("/api/verify", { method: "POST", body: JSON.stringify({ kode }) }); return (await r.json()).ok; } catch { return false; }
 }
 function aktivasi() {

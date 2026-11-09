@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Latihan Harian SD 5</title>
+<meta name="theme-color" content="#2563eb">
+
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--ink:#1f2937;--mut:#6b7280;--pri:#2563eb;--ok:#16a34a;--no:#dc2626;--line:#e5e7eb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--pri);color:#fff;padding:14px 16px;position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px}
+header h1{font-size:18px;margin:0;flex:1}header button{background:#fff3;color:#fff;border:0;border-radius:8px;padding:6px 10px;font-size:14px}
+main{max-width:720px;margin:0 auto;padding:16px}
+.card{background:var(--card);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 1px 3px #0001}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mapel{border:2px solid var(--line);border-radius:14px;padding:14px;background:#fff;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.mapel b{display:block;font-size:17px}.mapel small{color:var(--mut)}.mapel.done{border-color:var(--ok);background:#f0fdf4}
+.mapel .ic{font-size:28px}
+.lvl{display:inline-block;padding:2px 10px;border-radius:99px;font-size:13px;font-weight:600}
+.l1{background:#dcfce7;color:#166534}.l2{background:#fef9c3;color:#854d0e}.l3{background:#fee2e2;color:#991b1b}
+.btn{display:inline-block;background:var(--pri);color:#fff;border:0;border-radius:10px;padding:12px 18px;font:inherit;font-weight:600;cursor:pointer}
+.btn.sec{background:#e0e7ff;color:#1e3a8a}.btn.full{width:100%}
+.q{font-size:18px;margin:8px 0 12px}.q blockquote{margin:10px 0;padding:10px 12px;background:#f8fafc;border-left:4px solid #93c5fd;font-size:16px}
+.img{text-align:center;margin:8px 0}.img svg{max-width:100%;height:auto}
+.opt{display:block;width:100%;text-align:left;border:2px solid var(--line);background:#fff;border-radius:12px;padding:12px 14px;margin:8px 0;font:inherit;cursor:pointer}
+.opt.ok{border-color:var(--ok);background:#dcfce7}.opt.no{border-color:var(--no);background:#fee2e2}
+.bahas{background:#eff6ff;border-radius:10px;padding:12px;margin-top:10px}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pri)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mut{color:var(--mut);font-size:14px}.big{font-size:40px;font-weight:800}
+table{width:100%;border-collapse:collapse}td,th{padding:6px;border-bottom:1px solid var(--line);text-align:left;font-size:14px}
+input,select{font:inherit;padding:10px;border:1px solid var(--line);border-radius:10px;width:100%}
+.days{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}.days button{border:0;border-radius:6px;padding:6px 0;font-size:12px;background:#e5e7eb;cursor:pointer}
+.days .d{background:#86efac}.days .c{outline:2px solid var(--pri)}
+#print{display:none}
+@media print{header,main{display:none!important}#print{display:block;font-size:12px}#print .pq{break-inside:avoid;margin:8px 0}#print svg{max-height:140px;width:auto}#print h2{break-before:page}#print h2:first-child{break-before:auto}}
+</style>
+</head>
+<body>
+<header><h1 id="title">📚 Latihan Harian SD Kelas 5</h1><button id="homeBtn" hidden>🏠 Beranda</button></header>
+<main id="app"></main>
+<div id="print"></div>
+<script>window.KODE_HASH=["2f5713c442b57ef1951e8eb1a0c57d4c98a42840a3efc596ad3c4f4be4b86d89","c03fbfb25d65e3a859d69080bf3be14c690e12187af8620c323a1851a043f0c0","013629145cad5e9f8749fd2e4509ba9cc98c6a85660d1a0c7ab9dc7109572e72","937da8647f01fc1bf4909b3b81c4866393353b8b8be6bf176a264c00a1cbb698","cf8b28ec9646408b703db3ccd20562e5b546313849e8293b7c08aca81307c4a5","529991cc4406dd685544212d406dc72d69b4d61ef92c7a293d2d329c941deca9","373f8d98b569e3d8e37ea9ffdb582fdb874ee0cef4026e37fb800a2a7a5e6a93","9af6c4d7ed010d70c3f224d877065803d17e5a2b59de146b22c443ceff44b9ed","cbf6747ea8ce4db24201d6cd31f70e1f4b3835816f246f65329dac5466ef9933","6797c5b341f74f47f87125cf52018e4b59932e3608a52637a939efbca860c542","48009be4d36261e0ed5b9368880acea58aab575fbb5cfcf3c4556f86545673cb","90fda9d5aff0abffd91a040a619a2a373daae76613cb9a1bf5a0f768f9eb9122","15aeebe2bddbd5ee96e3a41031914cb0ff7fa173692ba50ada12cc4194387521","4dff3b08ab7e4b32d40fd039e90ea9f56252f00d28ed004a30bc270a5b725f2e","2547e3979f946f4b30cf4778e89e91444dffcd4b2f7e8efc1df1be1b5d6b3e29","f3bbf7e4455d8927a84fcae3b2a57b3cb3ab6e3a70ca8af4fd292cba618fc9aa","a849dc1cec717fe1567c8120edd5d6e3f03e09e222c452d50d6c5d229d087f68","e313687081f1d28c1c140f8e050c40fabde1fb69808433101ebd437556949fcb","6d6174862956746db190e37487cb13c9867b5036d1c32f9802eae078d1391313","8c0c53a16c86a06b958dcc125287e9e7953d8ee6448d9910bc8c979f3564a8d8","ced471081ea71c9d83b21fd86ef040d4321f6cd4c6de11979c000897102977f9","be268972c1fdcc6452eedd9bb904c9a066e846a4b5dcf264129c76969737cc28","8ef607d01e24a0335b353d27e092db2410a5c78821b82a8e594e6fc589f033bd","a90c17521cb1558435c5ad5a68c564e7c769e07d14e349524aaf85f49c0fbcf3","42843573c1e4b3f6ed8812b6656dd10541905c1d72a9f30e511fdc38fe24429d","ee193d0412a676f2c68cad462b289b0e1f7b3c0b65f0acf504a2b47756a7c44d","4a9e29ffa996d24b1783ed96a1e0439f60f2995df99fa77c3352b8cb3f1e08a9","6b253ff0788b0e0a485cc4e080769c90601922b6dfd857d9a59e6b409fe3df7c","5dae342baa9c793730db0e0d4024a9a0f0ec8d63b9eb7b4076fabaab74410c04","8d6f7c1dcbef59faea410a120e35cc505cca78afbb20404fe7e4710b16b45ac4","bc15fc3ea23ff60fa337df2147cdcf0b8a8ba252a43b53f1c13bc4b15ea36ffe","b819c70ab456cd5ebe458821692d7e2b7cb995057a81b678252bfd3051d945d0","9acea92c2f67fdedb80c5a5ccf963744be3a97eb0a6c566619184fe81fd740ba","342dc1291446c2cf399b6133d935902942204b9da96d3eb12a40ea2344da7c39","0b249c233339da29ca14f30c9ea0e2617723a3d207a39f06a2d4dfa8fac1c918","234bf8c39ff8b086faf99848827d29d4410e883f63beab71e95c5fe90884df6e","d7026116799ff5fd1b1aed2697ba4137b65a7ab9c191b5e248c09e60be1c3d9e","3d747357197d4206aa876187abd8edef7a402ac27badc181aea42ecb6036d947","93adcc63b79b50bc2dbe0a1dd5857920392511d907d188f59d92937184580d94","2dd2d46367557e7b47329504a78a3789f4a068815405cdf85c9cb26438cc3057","0703d3c2e78dd177f29bf3e8771faa95cbc7e7841e9382d743055cfafc70fb64","df6cab03287f607b044aa06eb4a9f7b43828a1d7a2f6267d7ff06be7456e297f","fa4ddc8aef20d057e80e77ec812353991213c1ecfa45611cc84a1e417b36e1a9","505d27fee48adc250f7e8db743e5e058b7c551d5b073146a95bcee685981d578","48a05a0734c8d3b2da7cc7c06fcc46a6af2aa4f0d6eb914afb31b67a1b67a066","d3b09277fb18963252d2c387bc6552d4b14d7aba1f012d62aa52b6b7cb60c5c5","1e187e403004aabde23ed6046bc03e0030fe0c6e35c8b54497315fd159fbe32a","0dd635d87c241e6da7b44dd472e919c47d573f98f70fa3d591177829d3e07270","c3f05c447fc11adef24b4ae2c21f986c4f103ae87f4a1a32b52d2070cc31d974","ed1b4df64f23bc497985340d10d28fb9aae0aef830f324c294f675ed0a2f0818","593451284d997b5a6181b6009aa742ab81a382d89efd1c1ad37c489132337b5a","64379320d7fba88a870a48773865b40595153b98848f70e48d39523c5b4c87c1","077e06babdfabb0acd56b3bf06a1eea27e5ea1ed4d8f8fcaac1006a44d400d12","b5c72a2505a8c21f378e4e9aaa3461b9c028f40e812a65fe6d0f6990d13132e3","0d2a2825d0b90bb1dffefcefb423789cf2064b547bf5bace1c9da4468c544c51","1c2bde861d1851fdeb49a14952f9b6beb2c72452907d93dbdd50fc11c5cd0387","3d441f92dfbdceb7f6e7895cfb0fb261605337ebf5c378d0fda09f8053091449","4f135e92d9508fcb1aa6dc299f13cb2660ff99ab7a2cc0aebb5253e9384fc088","e568e8421d296ac7e0c43d3dd94b44ad49b618c79361c5cb8ca72352c5db587f","de5fa9dd47b891286155467a86f5009a4cc661e6f3da8f82c957235e81a6f2b1","3fa06042c0c10ea2620e5d11a91ab2d47093197fed46845af468b99a9574accf","5e6febeba0272fbc0dcb81fc0507fa778a23c5014c6b0e1a49896419f95e7e88","6a9f2808d40cc0863ad97e150ebba9f8f9095caa93932b178002918145d3ba03","0c26fbbd83bb402d05385bba3a1bf5c0241c6a29cc1f60095073340ff85babd8","da910407c42739bccfc3b1102dd16676734607530d035efd254e9bad34ede87c","b4284c0b1bbeb47130692395d4c04b75afee94072a32704376b1dd8b378a55de","12b6800d21431d1950c6a9e48b958f87c14382da1cd8cf3e15089fdbd7c41a24","bf8670f7574dfe38a52235b971d9cc4e1bb347850911db89eace6840cab77f14","45928f2cab288907094bf711729b8c57e56e2fceed187c6d37a6f1a7cd003efd","cb72e462dfb64a9fbd800fd992d3b7e441e90f34582579097e1dcc01abce5c0e","4933376edd80759c7987301e785197f55cac6e24ebe2bd49b7f082fc85f4110a","abae13805016da8f49f5e8bec6e07669799b0ac185dd37e364872b9acc72ec95","880b974cedb96f398cc01d79a1747234601b166629641510be9f397b4fdcb795","4c3586c870c00545b8d75d59c666249bbb7312eec3d4e546990e90188c04bf2c","dc6a2a20abb53255c6c0a611d80ba2afd4ecdb47d47572125949f81b70b954a8","7a38f5621fbd3fae9a770d6770aa5328f4b504ed73b265057df1441c036599b6","48f4ffdd72fb59b48e1dc7d5848c60ce4f75b59deb99a925e6bf8f4ce633c06c","09b219995195ffa45d40d4ada8777b427b3273d5d42d9a847b564fc4bcd4dae5","c1ded24ba86ed0c3f1580488adf9e352d22204e4da74880f3a79741193da1eba","ee365c0698b6ba0ee9ee4d5e2e306db67d35c2290fa98c100e9065e30f9a4b01","cdee7fb626b27e3a741a71f33d5f319274865d43a0a9e27cb6e77432c4352123","7e1b9bfa8e7b6e3f01e0ec26e0a767a1a3ebc1d0732120e61a6146ab1e012507","6258bce6b6fe5e37ec0d2781d70a36c05bc7eea83e5cbb5340d66676dfd83dac","da948d11788ffde1b50e7accb82ee1dd791a195208bd9578c444b199df01e250","af08746c6cf410a0077d9c8696881bb34ba60bf0035b7712ed6550db630645ac","348de58ac0ad6495fcdce0ff668fd37fd31c3749057a422030239b62b4fa7dbd","1241ec395da693fc9857daa4a3c0962a3bd482be438668ca738178ceeb41d821","27a3c88bfa5782a47c62ce6fd1648ff013dd52bb95e631282e8ac4cdcf069c1a","6a470fbbadff200c8a0feac53d53540953e095e02b2bc29dec082c0cdaad9a96","c7f592bcd5ac95e8f897818d6153bdcc5c43edc55fee4ae4160379e8c8848f88","dc107e98534a38a3ca6c5599899906699fc4f05b382cf0b06e1be1679e6a88cb","1987498a2488d6c8a5760c1d472518ed84bf0482ae5568ac92f90c69eee157df","63333d6242acd8ee2930238cd5037613eaf7a39cd4bda68787008ea60ebf1672","60daa1966baeb4dea3eb7f8d66820e56a8d59e8e4c63fe8a07b75154706a6350","b8886e83aa36976699b52f2321a4aaac1ad7420159c14f71b79585e3fa9361ed","13a4e52d2d674d19d64cefe5fba75db73517461a07f76498313750f5c061c9e5","cfd7f7b76d4096c824107e0deb32f73ede1eea2bbb9968dbb2ef3654c687eabd","91dc5387a67dd3df610a58a70b78b9e50b9ec59bb0e1053f729268b2934b4fbb","874885413691edcfd8c6b07d5d84fbd04d825b3054f3164d741ce098158fd762","75c8b122ef6d07c1a7b535553717bec4d4f95a85d577cc95b9a2701ed8658bce"]</script><script>// Inti generator: RNG berbibit (bank soal selalu sama), pembuat soal pilihan ganda, helper SVG.
+(function (G) {
+  function rng(seed) {
+    let a = seed >>> 0;
+    return function () {
+      a |= 0; a = (a + 0x6d2b79f5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function makeKit(seed) {
+    const r = rng(seed);
+    const K = {
+      r,
+      int: (a, b) => a + Math.floor(r() * (b - a + 1)),
+      pick: (arr) => arr[Math.floor(r() * arr.length)],
+      shuffle(arr) { const x = arr.slice(); for (let i = x.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [x[i], x[j]] = [x[j], x[i]]; } return x; },
+      sample(arr, n) { return K.shuffle(arr).slice(0, n); },
+      gcd: (a, b) => (b ? K.gcd(b, a % b) : Math.abs(a)),
+      lcm: (a, b) => (a / K.gcd(a, b)) * b,
+      fr(n, d) { // pecahan disederhanakan -> string
+        const g = K.gcd(n, d); n /= g; d /= g;
+        if (d === 1) return String(n);
+        if (n > d) { const w = Math.floor(n / d); return w + " " + (n % d) + "/" + d; }
+        return n + "/" + d;
+      },
+      num: (x) => Number(x).toLocaleString("id-ID", { maximumFractionDigits: 3 }),
+      // Buat soal PG: jawaban benar + pengecoh -> 4 opsi unik teracak
+      mk(level, topik, q, benar, pengecoh, bahas, img) {
+        benar = String(benar);
+        const seen = new Set([benar]); const d = [];
+        for (const p of pengecoh) { const s = String(p); if (!seen.has(s)) { seen.add(s); d.push(s); } if (d.length === 3) break; }
+        if (d.length < 3) return null;
+        const opsi = K.shuffle([benar, ...d]);
+        return { level, topik, q, img: img || null, opsi, jawab: opsi.indexOf(benar), bahas: bahas || "" };
+      },
+      // Pengecoh angka di sekitar jawaban
+      near(x, spread) { const out = []; const s = spread || Math.max(1, Math.round(Math.abs(x) * 0.15)); for (let i = 0; i < 12; i++) { const v = x + K.pick([-1, 1]) * K.int(1, s); if (v !== x && v >= 0) out.push(v); } return out; },
+    };
+    return K;
+  }
+  // Kumpulkan soal unik sampai kuota per level terpenuhi
+  function build(mapel, seed, templates, quota) {
+    const K = makeKit(seed); const out = []; const seen = new Set();
+    for (const lv of [1, 2, 3]) {
+      const ts = templates[lv]; let got = 0, tries = 0, i = 0;
+      const cap = Math.ceil((quota[lv] * 2.5) / ts.length), used = ts.map(() => 0);
+      while (got < quota[lv] && tries < quota[lv] * 80) {
+        tries++; const ti = i++ % ts.length; const t = ts[ti];
+        if (used[ti] >= cap && tries < quota[lv] * 40) continue;
+        const s = t(K); if (!s) continue;
+        const key = s.q + "|" + (s.img || "") + "|" + s.opsi[s.jawab];
+        if (seen.has(key)) continue;
+        seen.add(key); used[ti]++; s.level = lv; s.mapel = mapel; out.push(s); got++;
+      }
+    }
+    // Acak dalam level supaya topik bercampur tiap hari
+    const res = [];
+    for (const lv of [1, 2, 3]) res.push(...K.shuffle(out.filter((x) => x.level === lv)));
+    res.forEach((s, i) => (s.id = mapel + "-" + String(i + 1).padStart(4, "0")));
+    return res;
+  }
+  // ---------- SVG ----------
+  const S = {
+    wrap: (w, h, body) => `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="14">${body}</svg>`,
+    text: (x, y, t, o) => `<text x="${x}" y="${y}" text-anchor="${(o && o.a) || "middle"}" fill="${(o && o.c) || "#222"}" font-size="${(o && o.s) || 14}">${t}</text>`,
+    rectLabel(p, l, sat) {
+      const W = 220, H = Math.max(60, Math.min(140, Math.round((220 * l) / p)));
+      return S.wrap(300, H + 50, `<rect x="40" y="10" width="${W}" height="${H}" fill="#ffe8a3" stroke="#c48a00" stroke-width="2"/>` + S.text(150, H + 32, p + " " + sat) + S.text(270, 10 + H / 2 + 5, l + " " + sat, { a: "start" }));
+    },
+    square(s, sat) { return S.wrap(240, 180, `<rect x="50" y="15" width="130" height="130" fill="#cfe9ff" stroke="#1a6fb5" stroke-width="2"/>` + S.text(115, 168, s + " " + sat)); },
+    triangle(a, t, sat) {
+      return S.wrap(280, 190, `<polygon points="30,160 250,160 110,20" fill="#d6f5d6" stroke="#2e8b57" stroke-width="2"/><line x1="110" y1="20" x2="110" y2="160" stroke="#c00" stroke-dasharray="5 4"/><rect x="110" y="150" width="10" height="10" fill="none" stroke="#c00"/>` + S.text(140, 182, "alas = " + a + " " + sat) + S.text(115, 95, "t = " + t + " " + sat, { a: "start", c: "#c00" }));
+    },
+    box(p, l, t, sat) { // balok/kubus isometrik
+      const P = 150, L = 60, T = p === l && l === t ? 110 : 90;
+      const x = 30, y = 50;
+      return S.wrap(300, 210,
+        `<polygon points="${x},${y} ${x + P},${y} ${x + P + L},${y - 35} ${x + L},${y - 35}" fill="#e3d4ff" stroke="#5b3fa8" stroke-width="2"/>` +
+        `<polygon points="${x + P},${y} ${x + P + L},${y - 35} ${x + P + L},${y - 35 + T} ${x + P},${y + T}" fill="#c9b3f5" stroke="#5b3fa8" stroke-width="2"/>` +
+        `<rect x="${x}" y="${y}" width="${P}" height="${T}" fill="#efe6ff" stroke="#5b3fa8" stroke-width="2"/>` +
+        S.text(x + P / 2, y + T + 20, p + " " + sat) + S.text(x + P + L / 2 + 22, y + T - 5, l + " " + sat) + S.text(x - 4, y + T / 2, t + " " + sat, { a: "end" }));
+    },
+    lshape(a, b, c, d, sat) { // gabungan: persegi panjang a x b dikurangi sudut c x d
+      const k = 180 / Math.max(a, b); const A = a * k, B = b * k, C = c * k, D = d * k;
+      return S.wrap(300, 240, `<polygon points="40,20 ${40 + A - C},20 ${40 + A - C},${20 + D} ${40 + A},${20 + D} ${40 + A},${20 + B} 40,${20 + B}" fill="#ffd9d9" stroke="#b22" stroke-width="2"/>` +
+        S.text(40 + A / 2, 40 + B, a + " " + sat) + S.text(32, 20 + B / 2, b + " " + sat, { a: "end" }) + S.text(40 + (A - C) / 2, 15, a - c + " " + sat) + S.text(48 + A, 20 + D + (B - D) / 2, b - d + " " + sat, { a: "start" }));
+    },
+    bars(labels, vals, title, unit) {
+      const max = Math.max(...vals), W = 60 + labels.length * 55, H = 200;
+      let b = S.text(W / 2, 16, title, { s: 13 });
+      const top = Math.ceil(max / 5) * 5 || 5;
+      for (let i = 0; i <= 5; i++) { const v = (top / 5) * i, y = 170 - (v / top) * 140; b += `<line x1="40" x2="${W - 10}" y1="${y}" y2="${y}" stroke="#ddd"/>` + S.text(34, y + 4, v, { a: "end", s: 11 }); }
+      labels.forEach((l, i) => { const h = (vals[i] / top) * 140; b += `<rect x="${52 + i * 55}" y="${170 - h}" width="34" height="${h}" fill="#4f8edc"/>` + S.text(69 + i * 55, 188, l, { s: 11 }); });
+      return S.wrap(W, H + 10, b + (unit ? S.text(8, 30, unit, { a: "start", s: 10 }) : ""));
+    },
+    fracCircle(n, d) {
+      let b = ""; const cx = 90, cy = 90, R = 70;
+      for (let i = 0; i < d; i++) {
+        const a1 = (2 * Math.PI * i) / d - Math.PI / 2, a2 = (2 * Math.PI * (i + 1)) / d - Math.PI / 2;
+        const x1 = cx + R * Math.cos(a1), y1 = cy + R * Math.sin(a1), x2 = cx + R * Math.cos(a2), y2 = cy + R * Math.sin(a2);
+        b += `<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${R},${R} 0 ${d === 1 ? 1 : 0} 1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${i < n ? "#ff9f43" : "#fff"}" stroke="#333" stroke-width="2"/>`;
+      }
+      return S.wrap(180, 180, b);
+    },
+    fracGrid(n, d) {
+      const w = Math.min(40, 260 / d); let b = "";
+      for (let i = 0; i < d; i++) b += `<rect x="${10 + i * w}" y="10" width="${w}" height="60" fill="${i < n ? "#2ecc71" : "#fff"}" stroke="#333" stroke-width="2"/>`;
+      return S.wrap(20 + d * w, 80, b);
+    },
+    clock(h, m) {
+      const ah = ((h % 12) + m / 60) * 30 * (Math.PI / 180), am = m * 6 * (Math.PI / 180);
+      let b = `<circle cx="90" cy="90" r="80" fill="#fff" stroke="#333" stroke-width="4"/>`;
+      for (let i = 1; i <= 12; i++) { const a = (i * 30 * Math.PI) / 180; b += S.text(90 + 64 * Math.sin(a), 95 - 64 * Math.cos(a), i, { s: 15 }); }
+      b += `<line x1="90" y1="90" x2="${(90 + 40 * Math.sin(ah)).toFixed(1)}" y2="${(90 - 40 * Math.cos(ah)).toFixed(1)}" stroke="#222" stroke-width="6" stroke-linecap="round"/>`;
+      b += `<line x1="90" y1="90" x2="${(90 + 60 * Math.sin(am)).toFixed(1)}" y2="${(90 - 60 * Math.cos(am)).toFixed(1)}" stroke="#d33" stroke-width="3" stroke-linecap="round"/><circle cx="90" cy="90" r="5"/>`;
+      return S.wrap(180, 180, b);
+    },
+    angle(deg) {
+      const a = (deg * Math.PI) / 180, x = 40, y = 130;
+      return S.wrap(260, 150, `<line x1="${x}" y1="${y}" x2="${x + 190}" y2="${y}" stroke="#333" stroke-width="3"/><line x1="${x}" y1="${y}" x2="${(x + 150 * Math.cos(a)).toFixed(1)}" y2="${(y - 150 * Math.sin(a)).toFixed(1)}" stroke="#333" stroke-width="3"/><path d="M${x + 30},${y} A30,30 0 0 0 ${(x + 30 * Math.cos(a)).toFixed(1)},${(y - 30 * Math.sin(a)).toFixed(1)}" fill="none" stroke="#d33" stroke-width="2"/>`);
+    },
+    chain(items) { // rantai makanan dengan panah
+      const w = 110; let b = `<defs><marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#2e7d32"/></marker></defs>`;
+      items.forEach((it, i) => {
+        b += `<rect x="${10 + i * w}" y="20" width="85" height="44" rx="10" fill="#e8f5e9" stroke="#2e7d32"/>` + S.text(52 + i * w, 47, it, { s: 13 });
+        if (i < items.length - 1) b += `<line x1="${96 + i * w}" y1="42" x2="${118 + i * w}" y2="42" stroke="#2e7d32" stroke-width="2" marker-end="url(#ar)"/>`;
+      });
+      return S.wrap(items.length * w, 84, b);
+    },
+    circuit(type, n) { // rangkaian seri / paralel dengan n lampu
+      let b = `<rect x="20" y="70" width="14" height="40" fill="#555"/><rect x="38" y="80" width="6" height="20" fill="#555"/>` + S.text(30, 128, "baterai", { s: 11 });
+      const bulb = (x, y) => `<circle cx="${x}" cy="${y}" r="13" fill="#fff59d" stroke="#333" stroke-width="2"/><path d="M${x - 6},${y - 6} L${x + 6},${y + 6} M${x + 6},${y - 6} L${x - 6},${y + 6}" stroke="#333"/>`;
+      if (type === "seri") {
+        b += `<polyline points="27,70 27,20 280,20 280,160 27,160 27,110" fill="none" stroke="#333" stroke-width="2"/>`;
+        for (let i = 0; i < n; i++) b += bulb(90 + i * (170 / n), 20);
+      } else {
+        b += `<polyline points="27,70 27,20 280,20 M27,110 27,160 280,160" fill="none" stroke="#333" stroke-width="2"/>`;
+        for (let i = 0; i < n; i++) { const x = 120 + i * (150 / n); b += `<line x1="${x}" y1="20" x2="${x}" y2="160" stroke="#333" stroke-width="2"/>` + bulb(x, 90); }
+      }
+      return S.wrap(300, 180, b);
+    },
+    prep(kind) { // kotak dan bola untuk preposisi
+      const box = `<rect x="110" y="70" width="90" height="70" fill="#d7a86e" stroke="#7a4f1d" stroke-width="2"/>`;
+      const ball = (x, y) => `<circle cx="${x}" cy="${y}" r="16" fill="#e74c3c" stroke="#900"/>`;
+      const pos = { on: [155, 54], under: [155, 158], "next to": [230, 124], behind: [175, 72], "in front of": [155, 115], in: [155, 105] };
+      const [x, y] = pos[kind];
+      if (kind === "behind") return S.wrap(300, 180, ball(x, y) + box);
+      if (kind === "in") return S.wrap(300, 180, `<rect x="110" y="70" width="90" height="70" fill="#d7a86e" stroke="#7a4f1d" stroke-width="2" fill-opacity="0.45"/>` + ball(x, y));
+      return S.wrap(300, 180, box + ball(x, y));
+    },
+    mirror(kind) {
+      const shapes = { datar: `<line x1="40" y1="30" x2="40" y2="150" stroke="#4a90d9" stroke-width="8"/>`, cekung: `<path d="M60,30 Q20,90 60,150" fill="none" stroke="#4a90d9" stroke-width="8"/>`, cembung: `<path d="M30,30 Q70,90 30,150" fill="none" stroke="#4a90d9" stroke-width="8"/>` };
+      return S.wrap(180, 180, shapes[kind] + `<line x1="160" y1="60" x2="55" y2="90" stroke="#f39c12" stroke-width="3"/>`);
+    },
+    emoji(e, label) { return S.wrap(160, 130, `<text x="80" y="85" text-anchor="middle" font-size="72">${e}</text>` + (label ? S.text(80, 120, label) : "")); },
+  };
+  const api = { rng, makeKit, build, S, quota: { 1: 350, 2: 350, 3: 300 } };
+  if (typeof module !== "undefined") module.exports = api; else G.CORE = api;
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+<script>// Matematika Kelas 5 — Kurikulum Merdeka Fase C
+(function (G) {
+  const C = typeof module !== "undefined" ? require("./core.js") : G.CORE;
+  const S = C.S;
+  const nama = ["Andi", "Budi", "Citra", "Dewi", "Eka", "Fajar", "Gita", "Hana", "Intan", "Joko", "Kiki", "Lina", "Rafi", "Nadia", "Sari", "Tono"];
+  const T = {
+    1: [
+      (K) => { const d = K.pick([5, 6, 7, 8, 9, 10, 12]); const a = K.int(1, d - 2), b = K.int(1, d - a - 1);
+        return K.mk(1, "Pecahan", `Hasil dari ${a}/${d} + ${b}/${d} adalah ...`, K.fr(a + b, d), [`${a + b}/${d + d}`, K.fr(a + b + 1, d), K.fr(Math.abs(a - b) || 1, d), `${a * b}/${d}`], `Penyebut sama, jumlahkan pembilangnya: ${a} + ${b} = ${a + b}. Jadi ${a + b}/${d}${K.fr(a + b, d) !== a + b + "/" + d ? " = " + K.fr(a + b, d) : ""}.`); },
+      (K) => { const d = K.pick([3, 4, 5, 6, 8]); const n = K.int(1, d - 1); const img = K.r() < 0.5 ? S.fracCircle(n, d) : S.fracGrid(n, d);
+        return K.mk(1, "Pecahan", "Bagian yang diwarnai pada gambar menunjukkan pecahan ...", `${n}/${d}`, [`${d - n}/${d}`, `${n}/${d + 1}`, `${d}/${n}`, `${n + 1}/${d}`], `Ada ${d} bagian sama besar, ${n} bagian diwarnai → ${n}/${d}.`, img); },
+      (K) => { const [n, d] = K.pick([[1, 2], [1, 4], [3, 4], [1, 5], [2, 5], [3, 5], [4, 5], [1, 10], [3, 10], [7, 10], [9, 10], [1, 20], [3, 20], [1, 25], [7, 25], [13, 100], [47, 100]]); const v = n / d;
+        return K.mk(1, "Desimal", `Pecahan ${n}/${d} jika diubah ke bentuk desimal adalah ...`, K.num(v), [K.num(v * 10), K.num(v / 10), K.num(n + d / 100), K.num(1 - v)], `${n}/${d} = ${n} : ${d} = ${K.num(v)}.`); },
+      (K) => { const p = K.pick([5, 10, 20, 25, 40, 50, 60, 75, 80, 15, 35, 45, 30, 70, 90]);
+        return K.mk(1, "Persen", `${p}% jika diubah ke pecahan paling sederhana adalah ...`, K.fr(p, 100), [`${p}/10`, K.fr(p, 1000), K.fr(100 - p, 100), `1/${p}`], `${p}% = ${p}/100 = ${K.fr(p, 100)}.`); },
+      (K) => { const p = K.int(5, 30), l = K.int(3, p - 1); const sat = K.pick(["cm", "m"]);
+        return K.mk(1, "Keliling", "Keliling persegi panjang pada gambar adalah ...", `${2 * (p + l)} ${sat}`, [`${p * l} ${sat}`, `${p + l} ${sat}`, `${2 * p + l} ${sat}`, `${2 * (p + l) + 2} ${sat}`], `K = 2 × (p + l) = 2 × (${p} + ${l}) = ${2 * (p + l)} ${sat}.`, S.rectLabel(p, l, sat)); },
+      (K) => { const s = K.int(3, 25); const sat = K.pick(["cm", "m"]);
+        return K.mk(1, "Luas Bangun Datar", "Luas persegi pada gambar adalah ...", `${s * s} ${sat}²`, [`${4 * s} ${sat}²`, `${2 * s} ${sat}²`, `${s * s + s} ${sat}²`, `${(s + 1) * (s + 1)} ${sat}²`], `L = s × s = ${s} × ${s} = ${s * s} ${sat}².`, S.square(s, sat)); },
+      (K) => { const n = K.int(100000, 999999); const s = String(n); const i = K.int(0, 5); const names = ["ratus ribuan", "puluh ribuan", "ribuan", "ratusan", "puluhan", "satuan"]; const val = Number(s[i]) * 10 ** (5 - i);
+        if (s.indexOf(s[i]) !== i || s[i] === "0") return null;
+        return K.mk(1, "Bilangan Cacah", `Pada bilangan ${K.num(n)}, angka ${s[i]} menempati nilai tempat ...`, names[i], names.filter((x) => x !== names[i]).slice(0, 3).concat(names[(i + 3) % 6]), `Angka ${s[i]} bernilai ${K.num(val)}, jadi menempati tempat ${names[i]}.`); },
+      (K) => { const n = K.int(10000, 999999); const sat = [1000, 100, 10][K.int(0, 2)]; const r = Math.round(n / sat) * sat; const nm = { 1000: "ribuan", 100: "ratusan", 10: "puluhan" }[sat];
+        return K.mk(1, "Pembulatan", `${K.num(n)} dibulatkan ke ${nm} terdekat menjadi ...`, K.num(r), [K.num(r + sat), K.num(r - sat), K.num(Math.floor(n / sat) * sat === r ? r + sat * 2 : Math.floor(n / sat) * sat)], `Lihat angka setelah tempat ${nm}: ≥5 naik, <5 tetap. Hasil ${K.num(r)}.`); },
+      (K) => { const c = K.pick([["km", "m", 1000], ["m", "cm", 100], ["kg", "g", 1000], ["L", "mL", 1000], ["jam", "menit", 60], ["menit", "detik", 60], ["hm", "m", 100], ["kg", "ons", 10]]); const x = K.int(2, 15);
+        return K.mk(1, "Pengukuran", `${x} ${c[0]} = ... ${c[1]}`, K.num(x * c[2]), [K.num(x * c[2] * 10), K.num(x * c[2] / 10), K.num(x + c[2])], `1 ${c[0]} = ${K.num(c[2])} ${c[1]}, maka ${x} × ${K.num(c[2])} = ${K.num(x * c[2])} ${c[1]}.`); },
+      (K) => { const lab = K.sample(["Sen", "Sel", "Rab", "Kam", "Jum"], 4); const vals = lab.map(() => K.int(2, 20)); const mx = Math.max(...vals); if (vals.filter((v) => v === mx).length > 1) return null; const benda = K.pick(["buku terjual", "pengunjung perpustakaan", "botol terkumpul", "siswa piket"]);
+        return K.mk(1, "Penyajian Data", `Diagram batang menunjukkan banyak ${benda}. Hari dengan jumlah paling banyak adalah ...`, lab[vals.indexOf(mx)], lab.filter((_, i) => vals[i] !== mx).concat(["Sabtu"]), `Batang tertinggi = ${mx}, yaitu hari ${lab[vals.indexOf(mx)]}.`, S.bars(lab, vals, "Banyak " + benda)); },
+      (K) => { const a = K.int(1200, 9800), b = K.int(1100, 8900); const op = K.pick(["+", "−"]); if (op === "−" && b > a) return null; const r = op === "+" ? a + b : a - b;
+        return K.mk(1, "Operasi Hitung", `${K.num(a)} ${op} ${K.num(b)} = ...`, K.num(r), K.near(r, 110).map(K.num), `Hitung bersusun: ${K.num(a)} ${op} ${K.num(b)} = ${K.num(r)}.`); },
+      (K) => { const a = K.int(12, 99), b = K.int(11, 45);
+        return K.mk(1, "Operasi Hitung", `${a} × ${b} = ...`, K.num(a * b), [K.num(a * b + a), K.num(a * b - b), K.num(a * b + 10), K.num(a * (b - 1))], `${a} × ${b} = ${K.num(a * b)}.`); },
+    ],
+    2: [
+      (K) => { const d1 = K.pick([2, 3, 4, 5, 6]), d2 = K.pick([3, 4, 6, 8, 10]); if (d1 === d2) return null; const a = K.int(1, d1 - 1), b = K.int(1, d2 - 1); const L = K.lcm(d1, d2), n = a * (L / d1) + b * (L / d2);
+        return K.mk(2, "Pecahan", `Hasil dari ${a}/${d1} + ${b}/${d2} adalah ...`, K.fr(n, L), [`${a + b}/${d1 + d2}`, K.fr(n + 1, L), K.fr(n - 1 || 2, L), `${a + b}/${L}`], `Samakan penyebut (KPK ${d1} dan ${d2} = ${L}): ${a * (L / d1)}/${L} + ${b * (L / d2)}/${L} = ${K.fr(n, L)}.`); },
+      (K) => { const d1 = K.pick([2, 3, 4, 5]), d2 = K.pick([4, 6, 8, 10]); const a = K.int(1, d1 - 1), b = K.int(1, d2 - 1); const L = K.lcm(d1, d2), n = a * (L / d1) - b * (L / d2); if (n <= 0) return null;
+        return K.mk(2, "Pecahan", `Hasil dari ${a}/${d1} − ${b}/${d2} adalah ...`, K.fr(n, L), [`${Math.abs(a - b)}/${Math.abs(d2 - d1) || 1}`, K.fr(n + 1, L), K.fr(n + 2, L), `${a}/${L}`], `Samakan penyebut ${L}: ${a * (L / d1)}/${L} − ${b * (L / d2)}/${L} = ${K.fr(n, L)}.`); },
+      (K) => { const d = K.pick([3, 4, 5, 6, 8]), n = K.int(1, d - 1), k = d * K.int(2, 12);
+        return K.mk(2, "Pecahan", `${n}/${d} × ${k} = ...`, K.num((n * k) / d), [K.num(k / d), K.num(n * k), K.num((n * k) / d + n), K.num(k - n)], `${n}/${d} × ${k} = ${n * k}/${d} = ${K.num((n * k) / d)}.`); },
+      (K) => { let a = K.int(4, 30), b = K.int(4, 30); if (a === b) return null;
+        return K.mk(2, "KPK dan FPB", `KPK dari ${a} dan ${b} adalah ...`, K.lcm(a, b), [a * b === K.lcm(a, b) ? K.lcm(a, b) * 2 : a * b, K.gcd(a, b), K.lcm(a, b) + a, Math.max(a, b)], `Faktorkan, ambil faktor prima pangkat terbesar → KPK = ${K.lcm(a, b)}.`); },
+      (K) => { const g = K.int(2, 15), a = g * K.int(2, 9), b = g * K.int(2, 9); if (a === b) return null; const f = K.gcd(a, b);
+        return K.mk(2, "KPK dan FPB", `FPB dari ${a} dan ${b} adalah ...`, f, [K.lcm(a, b), f * 2, Math.max(1, f / 2 | 0) === f ? f + 1 : Math.max(1, f / 2 | 0), f + 3], `Faktor persekutuan terbesar ${a} dan ${b} adalah ${f}.`); },
+      (K) => { const s = K.int(2, 15); const sat = K.pick(["cm", "dm", "m"]);
+        return K.mk(2, "Volume Bangun Ruang", "Volume kubus pada gambar adalah ...", `${K.num(s ** 3)} ${sat}³`, [`${K.num(s * s)} ${sat}³`, `${K.num(6 * s * s)} ${sat}³`, `${K.num(s * 12)} ${sat}³`, `${K.num((s + 1) ** 3)} ${sat}³`], `V = s × s × s = ${s} × ${s} × ${s} = ${K.num(s ** 3)} ${sat}³.`, S.box(s, s, s, sat)); },
+      (K) => { const p = K.int(5, 20), l = K.int(2, 10), t = K.int(2, 12); if (p === l) return null;
+        return K.mk(2, "Volume Bangun Ruang", "Volume balok pada gambar adalah ...", `${K.num(p * l * t)} cm³`, [`${K.num(p + l + t)} cm³`, `${K.num(2 * (p * l + p * t + l * t))} cm³`, `${K.num(p * l)} cm³`, `${K.num(p * l * t + p)} cm³`], `V = p × l × t = ${p} × ${l} × ${t} = ${K.num(p * l * t)} cm³.`, S.box(p, l, t, "cm")); },
+      (K) => { const a = 2 * K.int(3, 20), t = K.int(4, 20);
+        return K.mk(2, "Luas Bangun Datar", "Luas segitiga pada gambar adalah ...", `${(a * t) / 2} cm²`, [`${a * t} cm²`, `${a + t} cm²`, `${(a * t) / 2 + t} cm²`, `${2 * (a + t)} cm²`], `L = ½ × a × t = ½ × ${a} × ${t} = ${(a * t) / 2} cm².`, S.triangle(a, t, "cm")); },
+      (K) => { const v = K.pick([4, 5, 10, 12, 15, 20, 30, 40, 45, 50, 60, 70, 80]), w = K.int(2, 6); const kend = v <= 15 ? "sepeda" : v <= 50 ? "sepeda motor" : "mobil"; const n = K.pick(nama);
+        return K.mk(2, "Kecepatan", `${n} naik ${kend} dengan kecepatan ${v} km/jam selama ${w} jam. Jarak yang ditempuh adalah ...`, `${v * w} km`, [`${v + w} km`, `${v * (w + 1)} km`, `${v * w * 2} km`, `${v * (w - 1)} km`], `Jarak = kecepatan × waktu = ${v} × ${w} = ${v * w} km.`); },
+      (K) => { const p = K.pick([10, 15, 20, 25, 30, 40, 50, 60, 75]), x = K.pick([40, 60, 80, 120, 200, 240, 300, 400, 500, 600, 800]); const r = (p * x) / 100; if (r % 1) return null;
+        return K.mk(2, "Persen", `${p}% dari ${x} adalah ...`, K.num(r), [K.num(r * 2), K.num(x - r), K.num(p + x), K.num(r + 10)], `${p}/100 × ${x} = ${K.num(r)}.`); },
+      (K) => { const n = K.int(4, 6); const v = Array.from({ length: n }, () => K.int(60, 95)); const s = v.reduce((a, b) => a + b, 0); if (s % n) return null;
+        return K.mk(2, "Penyajian Data", `Nilai ulangan ${K.pick(nama)}: ${v.join(", ")}. Rata-rata nilainya adalah ...`, s / n, [s / n + 2, s / n - 3, Math.max(...v), s / n + 5], `Rata-rata = jumlah : banyak data = ${s} : ${n} = ${s / n}.`); },
+      (K) => { const deg = K.pick([20, 30, 35, 40, 45, 50, 60, 65, 70, 75, 80, 90, 100, 110, 120, 130, 135, 140, 150, 160]); const jenis = deg < 90 ? "sudut lancip" : deg === 90 ? "sudut siku-siku" : "sudut tumpul";
+        return K.mk(2, "Sudut", `Sudut pada gambar besarnya ${deg}°. Sudut tersebut termasuk ...`, jenis, ["sudut lancip", "sudut siku-siku", "sudut tumpul", "sudut lurus"].filter((x) => x !== jenis), `Lancip < 90°, siku-siku = 90°, tumpul antara 90° dan 180°. ${deg}° termasuk ${jenis}.`, S.angle(deg)); },
+      (K) => { const a = K.int(15, 160);
+        return K.mk(2, "Sudut", `Dua sudut saling berpelurus. Jika salah satunya ${a}°, besar sudut yang lain adalah ...`, `${180 - a}°`, [`${90 - a > 0 ? 90 - a : 360 - a}°`, `${180 + a}°`, `${180 - a + 10}°`, `${a}°`], `Sudut berpelurus jumlahnya 180°: 180° − ${a}° = ${180 - a}°.`); },
+    ],
+    3: [
+      (K) => { const a = K.pick([4, 6, 8, 10, 12, 15]), b = K.pick([6, 9, 10, 12, 18, 20]); if (a === b) return null; const h = K.int(6, 8); const L = K.lcm(a, b); const tot = h * 60 + L; const jam = `${String(Math.floor(tot / 60)).padStart(2, "0")}.${String(tot % 60).padStart(2, "0")}`; if (tot >= 24 * 60) return null;
+        return K.mk(3, "KPK dan FPB", `Lampu merah menyala setiap ${a} menit dan lampu hijau setiap ${b} menit. Jika keduanya menyala bersama pukul 0${h}.00, keduanya akan menyala bersama lagi pukul ...`, jam, [`${String(h).padStart(2, "0")}.${String(a * b % 60).padStart(2, "0")}`, `${String(h + Math.floor((a + b) / 60)).padStart(2, "0")}.${String((a + b) % 60).padStart(2, "0")}`, `${String(h + 1).padStart(2, "0")}.00`, `${String(h + Math.floor((L + 10) / 60)).padStart(2, "0")}.${String((L + 10) % 60).padStart(2, "0")}`], `Cari KPK ${a} dan ${b} = ${L} menit. ${String(h).padStart(2, "0")}.00 + ${L} menit = ${jam}.`); },
+      (K) => { const g = K.int(3, 12), x = g * K.int(2, 7), y = g * K.int(2, 7); if (x === y) return null; const f = K.gcd(x, y); const [b1, b2] = K.pick([["apel", "jeruk"], ["pensil", "buku"], ["kue", "permen"], ["kelereng merah", "kelereng biru"]]);
+        return K.mk(3, "KPK dan FPB", `Ibu punya ${x} ${b1} dan ${y} ${b2}. Semua akan dimasukkan ke kantong dengan isi sama banyak dan jenisnya sama rata. Paling banyak kantong yang dapat dibuat adalah ...`, `${f} kantong`, [`${K.lcm(x, y)} kantong`, `${f * 2} kantong`, `${x + y} kantong`, `${f + 1} kantong`], `Gunakan FPB ${x} dan ${y} = ${f}. Tiap kantong berisi ${x / f} ${b1} dan ${y / f} ${b2}.`); },
+      (K) => { const p = K.pick([40, 50, 60, 80, 100]), l = K.pick([20, 25, 30, 40, 50]), t = K.pick([20, 30, 40, 50]); const v = (p * l * t) / 1000;
+        return K.mk(3, "Volume Bangun Ruang", `Akuarium berbentuk balok berukuran panjang ${p} cm, lebar ${l} cm, dan tinggi ${t} cm diisi air sampai penuh. Banyak air adalah ... liter.`, K.num(v), [K.num(v * 10), K.num(v / 2), K.num(p + l + t), K.num(v + 5)], `V = ${p} × ${l} × ${t} = ${K.num(p * l * t)} cm³ = ${K.num(v)} dm³ = ${K.num(v)} liter.`, S.box(p, l, t, "cm")); },
+      (K) => { const deb = K.pick([2, 3, 4, 5, 6, 8, 10, 12, 15, 20]), w = K.pick([5, 10, 12, 15, 20, 25, 30]);
+        return K.mk(3, "Debit", `Sebuah keran mengalirkan air dengan debit ${deb} liter/menit. Dalam ${w} menit, volume air yang keluar adalah ...`, `${deb * w} liter`, [`${deb + w} liter`, `${deb * w * 60} liter`, `${deb * (w + 5)} liter`, `${Math.round((w / deb) * 10) / 10} liter`], `Volume = debit × waktu = ${deb} × ${w} = ${deb * w} liter.`); },
+      (K) => { const V = K.pick([60, 90, 120, 150, 180, 240, 300, 360]), w = K.pick([2, 3, 4, 5, 6]); if (V % w) return null;
+        return K.mk(3, "Debit", `Bak mandi berisi ${V} liter air dikuras habis dalam ${w} menit. Debit air yang keluar adalah ...`, `${V / w} liter/menit`, [`${V * w} liter/menit`, `${V - w} liter/menit`, `${V / w + 5} liter/menit`, `${V / w * 60} liter/menit`], `Debit = volume : waktu = ${V} : ${w} = ${V / w} liter/menit.`); },
+      (K) => { const a = K.int(2, 5), b = K.int(2, 7); if (a === b || K.gcd(a, b) > 1) return null; const k = K.int(3, 12); const [n1, n2] = K.sample(nama, 2); const tot = (a + b) * k;
+        return K.mk(3, "Perbandingan", `Perbandingan kelereng ${n1} dan ${n2} adalah ${a} : ${b}. Jika jumlah kelereng mereka ${tot}, banyak kelereng ${n2} adalah ...`, b * k, [a * k, tot - a, b * k + k, tot / 2 % 1 ? b * k - 1 : tot / 2], `Bagian ${n2} = ${b}/${a + b} × ${tot} = ${b * k}.`); },
+      (K) => { const sk = K.pick([100000, 200000, 250000, 500000, 1000000, 1500000, 2000000]), cm = K.int(2, 12); const km = (sk * cm) / 100000;
+        return K.mk(3, "Skala", `Jarak dua kota pada peta ${cm} cm. Skala peta 1 : ${K.num(sk)}. Jarak sebenarnya adalah ...`, `${K.num(km)} km`, [`${K.num(km * 10)} km`, `${K.num(km / 10)} km`, `${K.num(sk * cm)} km`, `${K.num(km + cm)} km`], `${cm} × ${K.num(sk)} = ${K.num(sk * cm)} cm = ${K.num(km)} km.`); },
+      (K) => { const a = K.int(1, 7), b = K.pick([2, 3, 4, 5, 8]), c = K.int(1, 5), d = K.pick([2, 3, 4, 6]); if (a >= b * 2 || c >= d) return null;
+        return K.mk(3, "Pecahan", `Hasil dari ${a}/${b} : ${c}/${d} adalah ...`, K.fr(a * d, b * c), [K.fr(a * c, b * d), K.fr(b * c, a * d), K.fr(a * d + 1, b * c), K.fr(a + c, b + d)], `Bagi pecahan = kali kebalikan: ${a}/${b} × ${d}/${c} = ${a * d}/${b * c} = ${K.fr(a * d, b * c)}.`); },
+      (K) => { const a = K.int(8, 16), b = K.int(8, 16), c = K.int(2, a - 4), d = K.int(2, b - 4); const L = a * b - c * d;
+        return K.mk(3, "Luas Bangun Datar", "Luas bangun gabungan pada gambar adalah ... (satuan cm)", `${L} cm²`, [`${a * b} cm²`, `${2 * (a + b)} cm²`, `${L + c * d * 2} cm²`, `${L - 4} cm²`], `Luas = persegi panjang besar ${a}×${b} = ${a * b} dikurangi potongan ${c}×${d} = ${c * d}. Hasil ${L} cm².`, S.lshape(a, b, c, d, "cm")); },
+      (K) => { const h = K.pick([50, 75, 80, 120, 150, 200, 250, 300, 400]) * 1000, p = K.pick([10, 15, 20, 25, 30, 40, 50]); const bayar = h - (h * p) / 100; const brg = K.pick(["sepatu", "tas sekolah", "baju", "sepeda mini", "jam tangan"]);
+        return K.mk(3, "Persen", `Harga ${brg} Rp${K.num(h)} mendapat diskon ${p}%. Uang yang harus dibayar adalah ...`, "Rp" + K.num(bayar), ["Rp" + K.num((h * p) / 100), "Rp" + K.num(h - p * 1000), "Rp" + K.num(bayar + 5000), "Rp" + K.num(h)], `Diskon = ${p}% × ${K.num(h)} = ${K.num((h * p) / 100)}. Bayar = ${K.num(h)} − ${K.num((h * p) / 100)} = ${K.num(bayar)}.`); },
+      (K) => { const lab = ["Jan", "Feb", "Mar", "Apr", "Mei"]; const vals = lab.map(() => K.int(3, 25)); const i = K.int(0, 4); let j = K.int(0, 4); if (i === j) return null; const tot = vals.reduce((a, b) => a + b, 0); const mode = K.r() < 0.5;
+        return mode ? K.mk(3, "Penyajian Data", `Diagram menunjukkan panen jambu (kuintal). Selisih panen bulan ${lab[i]} dan ${lab[j]} adalah ...`, `${Math.abs(vals[i] - vals[j])} kuintal`, [`${vals[i] + vals[j]} kuintal`, `${Math.abs(vals[i] - vals[j]) + 2} kuintal`, `${Math.max(vals[i], vals[j])} kuintal`, `${Math.abs(vals[i] - vals[j]) + 1} kuintal`], `${lab[i]} = ${vals[i]}, ${lab[j]} = ${vals[j]}. Selisih = ${Math.abs(vals[i] - vals[j])}.`, S.bars(lab, vals, "Hasil panen jambu (kuintal)"))
+          : K.mk(3, "Penyajian Data", "Diagram menunjukkan panen jambu (kuintal). Jumlah panen selama 5 bulan adalah ...", `${tot} kuintal`, [`${tot + 5} kuintal`, `${tot - 3} kuintal`, `${Math.max(...vals) * 5} kuintal`, `${tot + 10} kuintal`], `${vals.join(" + ")} = ${tot} kuintal.`, S.bars(lab, vals, "Hasil panen jambu (kuintal)")); },
+      (K) => { const v = K.pick([30, 40, 45, 50, 60, 75, 80]), jarak = v * K.pick([2, 3, 4, 5]) / K.pick([1, 2]); if (jarak % 1) return null; const w = jarak / v; const berangkat = K.int(6, 10);
+        const mins = Math.round(w * 60), tiba = berangkat * 60 + mins; const fmt = (x) => `${String(Math.floor(x / 60)).padStart(2, "0")}.${String(x % 60).padStart(2, "0")}`;
+        return K.mk(3, "Kecepatan", `Ayah berangkat pukul ${fmt(berangkat * 60)} menempuh jarak ${jarak} km dengan kecepatan rata-rata ${v} km/jam. Ayah tiba pukul ...`, fmt(tiba), [fmt(tiba + 30), fmt(tiba - 30), fmt(berangkat * 60 + jarak), fmt(tiba + 15)], `Waktu = jarak : kecepatan = ${jarak} : ${v} = ${K.num(w)} jam (${mins} menit). ${fmt(berangkat * 60)} + ${mins} menit = ${fmt(tiba)}.`); },
+      (K) => { const s = K.int(3, 12); const V = s ** 3;
+        return K.mk(3, "Volume Bangun Ruang", `Sebuah kubus memiliki volume ${K.num(V)} cm³. Panjang rusuk kubus tersebut adalah ...`, `${s} cm`, [`${s + 1} cm`, `${s - 1} cm`, `${s * 2} cm`, `${Math.round(V / 3)} cm`], `Rusuk = ∛${V} = ${s} cm, karena ${s} × ${s} × ${s} = ${V}.`); },
+    ],
+  };
+  const gen = () => C.build("MTK", 1105, T, C.quota);
+  if (typeof module !== "undefined") module.exports = gen; else (G.GEN = G.GEN || {}).MTK = gen;
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+<script>// Bahasa Indonesia Kelas 5 — Kurikulum Merdeka Fase C
+(function (G) {
+  const C = typeof module !== "undefined" ? require("./core.js") : G.CORE;
+  const S = C.S;
+  const sinonim = [["pandai", "pintar"], ["indah", "elok"], ["besar", "agung"], ["cepat", "lekas"], ["sedih", "duka"], ["gembira", "senang"], ["bohong", "dusta"], ["rajin", "tekun"], ["hemat", "irit"], ["luas", "lebar"], ["cerdik", "cerdas"], ["sulit", "sukar"], ["mulai", "awal"], ["hadiah", "kado"], ["teman", "sahabat"], ["ayah", "bapak"], ["kuat", "kokoh"], ["marah", "murka"], ["takut", "gentar"], ["benar", "betul"], ["pergi", "berangkat"], ["bunga", "kembang"], ["jelita", "cantik"], ["ramai", "riuh"], ["sepi", "sunyi"], ["kaya", "berada"], ["hampir", "nyaris"], ["lelah", "letih"], ["jujur", "lurus hati"], ["umur", "usia"], ["pakaian", "busana"], ["sekolah", "madrasah"], ["mati", "wafat"], ["makan", "santap"], ["rumah", "hunian"], ["tujuan", "maksud"], ["paham", "mengerti"], ["sejuk", "dingin"], ["tamat", "selesai"], ["wanita", "perempuan"], ["pria", "laki-laki"], ["penting", "utama"], ["kabar", "berita"], ["cita-cita", "harapan"], ["laba", "untung"], ["ganjaran", "hukuman"], ["girang", "riang"], ["bersih", "suci"], ["siasat", "taktik"], ["sahih", "valid"]];
+  const antonim = [["tinggi", "rendah"], ["panjang", "pendek"], ["besar", "kecil"], ["cepat", "lambat"], ["rajin", "malas"], ["kaya", "miskin"], ["terang", "gelap"], ["panas", "dingin"], ["maju", "mundur"], ["jujur", "curang"], ["berani", "takut"], ["ramai", "sepi"], ["lebar", "sempit"], ["tebal", "tipis"], ["kasar", "halus"], ["mudah", "sulit"], ["murah", "mahal"], ["senang", "sedih"], ["awal", "akhir"], ["datang", "pergi"], ["naik", "turun"], ["masuk", "keluar"], ["menang", "kalah"], ["basah", "kering"], ["kuat", "lemah"], ["bersih", "kotor"], ["tua", "muda"], ["jauh", "dekat"], ["pintar", "bodoh"], ["boros", "hemat"], ["ingat", "lupa"], ["untung", "rugi"], ["benar", "salah"], ["setuju", "menolak"], ["membeli", "menjual"], ["hidup", "mati"], ["siang", "malam"], ["penuh", "kosong"], ["keras", "lunak"], ["mundur", "maju"], ["optimis", "pesimis"], ["sehat", "sakit"], ["kawan", "lawan"], ["baru", "lama"], ["dalam", "dangkal"], ["lurus", "bengkok"], ["mewah", "sederhana"], ["sopan", "kurang ajar"]];
+  const baku = [["aktivitas", "aktifitas"], ["apotek", "apotik"], ["jadwal", "jadual"], ["kualitas", "kwalitas"], ["sistem", "sistim"], ["nasihat", "nasehat"], ["teknik", "tehnik"], ["praktik", "praktek"], ["analisis", "analisa"], ["izin", "ijin"], ["risiko", "resiko"], ["karier", "karir"], ["cendekiawan", "cendikiawan"], ["kategori", "katagori"], ["telur", "telor"], ["lembap", "lembab"], ["sekadar", "sekedar"], ["silakan", "silahkan"], ["zaman", "jaman"], ["rezeki", "rejeki"], ["kreatif", "kreatip"], ["ambulans", "ambulan"], ["hakikat", "hakekat"], ["jenazah", "jenasah"], ["kuitansi", "kwitansi"], ["objek", "obyek"], ["paham", "faham"], ["sepatu", "spatu"], ["ubah", "rubah"], ["provinsi", "propinsi"], ["frekuensi", "frekwensi"], ["atlet", "atlit"], ["februari", "pebruari"], ["andal", "handal"], ["hipotesis", "hipotesa"], ["kaus", "kaos"], ["nanas", "nenas"], ["detail", "detil"], ["imbau", "himbau"], ["konkret", "kongkrit"], ["mengubah", "merubah"], ["napas", "nafas"], ["utang", "hutang"], ["hafal", "hapal"], ["Senin", "Senen"], ["Jumat", "Jum'at"], ["sekretaris", "sekertaris"], ["standar", "standard"], ["ijazah", "ijasah"], ["varietas", "varitas"]];
+  const imb = [ // [dasar, kalimat dengan ___, bentuk benar, salah...]
+    ["sapu", "Setiap pagi Ibu ___ halaman rumah.", "menyapu", ["mensapu", "menyapukan", "disapu"]], ["tulis", "Rina sedang ___ surat untuk neneknya.", "menulis", ["mentulis", "menuliskan", "ditulis"]], ["pukul", "Ayah ___ paku ke dinding.", "memukul", ["mempukul", "memukuli", "dipukul"]], ["tanam", "Petani ___ padi di sawah.", "menanam", ["mentanam", "bertanam", "ditanam"]], ["kirim", "Kakak ___ paket ke rumah paman.", "mengirim", ["mekirim", "mengkirim", "dikirim"]], ["sepeda", "Setiap sore Dodi ___ keliling kompleks.", "bersepeda", ["menyepeda", "disepeda", "kesepeda"]], ["lari", "Kami ___ pagi di lapangan.", "berlari", ["melari", "dilari", "terlari"]], ["baca", "Buku itu sudah ___ oleh Sinta.", "dibaca", ["membaca", "terbaca", "bacaan"]], ["potong", "Rambut adik ___ oleh tukang cukur.", "dipotong", ["memotong", "pemotong", "terpotong"]], ["masak", "Nenek ___ sayur asem untuk makan siang.", "memasak", ["memmasak", "dimasak", "masakan"]], ["cuci", "Aku ___ piring setelah makan.", "mencuci", ["mecuci", "mencucikan", "dicuci"]], ["gambar", "Adik ___ pemandangan gunung.", "menggambar", ["megambar", "bergambar", "digambar"]], ["renang", "Ikan ___ di kolam.", "berenang", ["merenang", "berrenang", "direnang"]], ["jual", "Pak Ali ___ buah di pasar.", "menjual", ["mejual", "berjual", "dijual"]], ["bantu", "Kami saling ___ dalam kerja bakti.", "membantu", ["mebantu", "membantui", "dibantu"]], ["sikat", "Aku ___ gigi sebelum tidur.", "menyikat", ["mensikat", "menyikatkan", "bersikat"]], ["tidur", "Bayi itu sudah ___ lelap.", "tertidur", ["menidur", "ditidur", "bertidurkan"]], ["kebun", "Kakek senang ___ di belakang rumah.", "berkebun", ["mengebun", "dikebun", "perkebun"]], ["ajar", "Bu Guru ___ matematika di kelas lima.", "mengajar", ["menajar", "berajar", "terajar"]], ["minum", "Setelah olahraga, kami ___ air putih.", "minum", ["meminum-minum", "diminum", "berminum"]], ["kumpul", "Siswa ___ di lapangan untuk upacara.", "berkumpul", ["mengumpul", "dikumpul", "pengumpul"]], ["dengar", "Aku ___ suara ayam berkokok.", "mendengar", ["medengar", "mengdengar", "didengar"]], ["temu", "Dompet yang hilang akhirnya ___ di laci.", "ditemukan", ["menemukan", "temuan", "bertemu"]], ["jemput", "Ayah ___ adik dari sekolah.", "menjemput", ["mejemput", "dijemput", "jemputan"]], ["simpan", "Uang itu ___ di celengan.", "disimpan", ["menyimpan", "simpanan", "tersimpan-simpan"]], ["pakai", "Hari Senin kami ___ seragam putih merah.", "memakai", ["mempakai", "dipakai", "pakaian"]], ["tanya", "Rudi ___ kepada guru tentang tugas.", "bertanya", ["menanya", "ditanya", "tanyaan"]], ["sapa", "Kita harus ___ guru dengan sopan.", "menyapa", ["mensapa", "bersapa", "disapa"]], ["siram", "Setiap sore aku ___ tanaman.", "menyiram", ["mensiram", "bersiram", "disiram"]], ["kupas", "Ibu ___ mangga untuk tamu.", "mengupas", ["mekupas", "mengkupas", "dikupas"]],
+  ];
+  const fakta = ["Jakarta adalah ibu kota Indonesia.", "Indonesia merdeka pada tanggal 17 Agustus 1945.", "Matahari terbit di sebelah timur.", "Air mendidih pada suhu 100 derajat Celsius.", "Harimau termasuk hewan karnivora.", "Candi Borobudur terletak di Jawa Tengah.", "Satu minggu terdiri atas tujuh hari.", "Gajah adalah hewan darat yang berukuran besar.", "Bendera Indonesia berwarna merah dan putih.", "Kota Bandung terletak di Provinsi Jawa Barat.", "Pulau Kalimantan memiliki banyak hutan hujan tropis.", "Sekolah kami memiliki dua puluh ruang kelas.", "Padi adalah tanaman penghasil beras.", "Bulan mengelilingi bumi.", "Danau Toba berada di Sumatra Utara."];
+  const opini = ["Nasi goreng adalah makanan paling enak di dunia.", "Pelajaran matematika sangat menyenangkan.", "Film itu pasti disukai semua orang.", "Warna biru adalah warna paling indah.", "Liburan ke pantai lebih seru daripada ke gunung.", "Kucing adalah hewan peliharaan yang paling lucu.", "Lagu itu adalah lagu terbaik tahun ini.", "Sepertinya besok akan turun hujan deras.", "Bermain sepak bola lebih asyik daripada bulu tangkis.", "Rumah Pak Budi adalah rumah tercantik di desa ini.", "Buku cerita lebih bermanfaat daripada komik.", "Menurut saya, sekolah seharusnya masuk lebih siang.", "Es krim cokelat pasti rasanya paling disukai anak-anak.", "Guru kami adalah guru paling baik di dunia.", "Kota itu tampaknya sangat nyaman untuk ditinggali."];
+  const paragraf = [ // [kalimat utama, [penjelas...], ide pokok]
+    ["Sampah plastik sangat berbahaya bagi lingkungan.", ["Plastik membutuhkan ratusan tahun untuk terurai.", "Sampah plastik di laut sering termakan oleh ikan dan penyu.", "Selain itu, plastik yang dibakar menghasilkan asap beracun."], "bahaya sampah plastik bagi lingkungan"],
+    ["Membaca buku memiliki banyak manfaat.", ["Dengan membaca, pengetahuan kita bertambah luas.", "Membaca juga melatih daya ingat dan konsentrasi.", "Kosakata kita pun semakin banyak."], "manfaat membaca buku"],
+    ["Sarapan pagi penting bagi anak sekolah.", ["Sarapan memberi energi untuk belajar.", "Anak yang sarapan lebih mudah berkonsentrasi.", "Sarapan juga mencegah sakit perut di sekolah."], "pentingnya sarapan bagi anak sekolah"],
+    ["Indonesia kaya akan kebudayaan daerah.", ["Setiap daerah memiliki tarian tradisional yang khas.", "Rumah adat tiap provinsi juga berbeda-beda.", "Bahasa daerah di Indonesia jumlahnya ratusan."], "kekayaan budaya daerah Indonesia"],
+    ["Hutan memiliki peran penting bagi kehidupan.", ["Pohon di hutan menghasilkan oksigen.", "Akar pohon menahan air sehingga mencegah banjir.", "Hutan juga menjadi rumah bagi banyak hewan."], "peran penting hutan"],
+    ["Berolahraga secara teratur membuat tubuh sehat.", ["Olahraga melancarkan peredaran darah.", "Otot dan tulang menjadi lebih kuat.", "Tidur pun menjadi lebih nyenyak."], "manfaat olahraga teratur"],
+    ["Gotong royong masih dilakukan warga Desa Sukamaju.", ["Setiap hari Minggu warga membersihkan selokan bersama.", "Mereka juga bergotong royong memperbaiki jalan desa.", "Ibu-ibu menyiapkan makanan untuk para pekerja."], "gotong royong warga Desa Sukamaju"],
+    ["Banjir sering melanda kota besar saat musim hujan.", ["Banyak warga membuang sampah ke sungai.", "Lahan resapan air semakin sedikit karena dibangun gedung.", "Saluran air juga banyak yang tersumbat."], "penyebab banjir di kota besar"],
+    ["Menabung adalah kebiasaan yang baik.", ["Uang tabungan dapat dipakai untuk keperluan mendadak.", "Menabung melatih kita untuk hemat.", "Dengan menabung, kita bisa membeli barang impian."], "manfaat kebiasaan menabung"],
+    ["Kucing adalah hewan peliharaan yang banyak disukai.", ["Bulunya lembut dan tingkahnya menggemaskan.", "Kucing mudah dirawat dan bersih.", "Kucing juga dapat membantu mengusir tikus."], "alasan kucing disukai sebagai peliharaan"],
+    ["Air bersih sangat dibutuhkan manusia.", ["Kita membutuhkan air untuk minum dan memasak.", "Air juga dipakai untuk mandi dan mencuci.", "Tanpa air bersih, manusia mudah terserang penyakit."], "kebutuhan manusia akan air bersih"],
+    ["Pantai Kuta adalah tempat wisata terkenal di Bali.", ["Pasirnya putih dan ombaknya cocok untuk berselancar.", "Setiap sore, wisatawan menikmati matahari terbenam.", "Di sekitarnya banyak penjual oleh-oleh khas Bali."], "Pantai Kuta sebagai tempat wisata terkenal"],
+    ["Gigi harus dirawat dengan baik.", ["Sikatlah gigi minimal dua kali sehari.", "Kurangi makanan yang terlalu manis.", "Periksakan gigi ke dokter setiap enam bulan."], "cara merawat gigi"],
+    ["Teknologi membawa banyak kemudahan.", ["Kita dapat berkomunikasi dengan cepat melalui ponsel.", "Belajar bisa dilakukan secara daring.", "Berbelanja pun dapat dilakukan dari rumah."], "kemudahan karena teknologi"],
+    ["Perpustakaan sekolah kami sangat nyaman.", ["Ruangannya bersih dan sejuk.", "Koleksi bukunya lengkap dan tertata rapi.", "Petugasnya ramah membantu siswa mencari buku."], "kenyamanan perpustakaan sekolah"],
+  ];
+  const majas = [["Bulan tersenyum melihat kami bermain.", "personifikasi"], ["Angin berbisik di telingaku.", "personifikasi"], ["Pohon kelapa melambai-lambai di tepi pantai.", "personifikasi"], ["Wajahnya bersinar bagai bulan purnama.", "simile (perumpamaan)"], ["Suaranya merdu seperti burung kenari.", "simile (perumpamaan)"], ["Larinya cepat bagaikan kilat.", "simile (perumpamaan)"], ["Tangisnya membanjiri seisi rumah.", "hiperbola"], ["Suaranya menggelegar membelah langit.", "hiperbola"], ["Tumpukan tugasnya setinggi gunung.", "hiperbola"], ["Dia adalah bintang kelas kami.", "metafora"], ["Ani si kutu buku selalu ke perpustakaan.", "metafora"], ["Ayah adalah tulang punggung keluarga.", "metafora"]];
+  const tanyaKata = [["menanyakan tempat", "di mana"], ["menanyakan waktu", "kapan"], ["menanyakan alasan", "mengapa"], ["menanyakan orang", "siapa"], ["menanyakan cara", "bagaimana"], ["menanyakan benda", "apa"], ["menanyakan jumlah", "berapa"]];
+  const tokoh = ["Rina", "Bayu", "Pak Darto", "Bu Sari", "Siswa SD Harapan", "Warga Desa Mekar", "Tim Pramuka", "Dimas"];
+  const acara = ["lomba kebersihan kelas", "kerja bakti membersihkan sungai", "pentas seni", "lomba membaca puisi", "penanaman seribu pohon", "bazar buku murah", "donor darah", "festival layang-layang"];
+  const tempat = ["lapangan sekolah", "balai desa", "tepi Sungai Ciliwung", "aula kecamatan", "taman kota", "pantai Parangtritis"];
+  const hari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+  const cap = (s) => s[0].toUpperCase() + s.slice(1);
+  const T = {
+    1: [
+      (K) => { const [a, b] = K.pick(sinonim); return K.mk(1, "Sinonim", `Sinonim (persamaan kata) dari kata "${a}" adalah ...`, b, K.sample(sinonim.filter((x) => x[0] !== a), 3).map((x) => x[1]), `"${a}" bermakna sama dengan "${b}".`); },
+      (K) => { const [a, b] = K.pick(antonim); return K.mk(1, "Antonim", `Lawan kata (antonim) dari "${a}" adalah ...`, b, [K.pick(sinonim)[1], ...K.sample(antonim.filter((x) => x[0] !== a && x[1] !== b), 2).map((x) => x[1])], `Lawan kata "${a}" adalah "${b}".`); },
+      (K) => { const [b, t] = K.pick(baku); return K.mk(1, "Kata Baku", `Penulisan kata baku yang benar adalah ...`, b, [t, ...K.sample(baku.filter((x) => x[0] !== b), 2).map((x) => x[1])], `Kata baku: "${b}", bukan "${t}".`); },
+      (K) => { const x = K.pick(imb); return K.mk(1, "Imbuhan", `Kata "${x[0]}" yang tepat untuk melengkapi kalimat berikut adalah ...<br><i>${x[1]}</i>`, x[2], x[3], `Kalimat yang benar: ${x[1].replace("___", x[2])}`); },
+      (K) => { const nm = K.pick(["budi", "siti", "andi", "rina"]), kota = K.pick(["surabaya", "medan", "makassar", "semarang", "palembang"]), h = K.pick(hari).toLowerCase(); const benar = `${cap(nm)} pergi ke ${cap(kota)} pada hari ${cap(h)}.`; return K.mk(1, "Huruf Kapital", "Penulisan huruf kapital yang benar terdapat pada kalimat ...", benar, [`${nm} pergi ke ${cap(kota)} pada hari ${cap(h)}.`, `${cap(nm)} pergi ke ${kota} pada hari ${cap(h)}.`, `${cap(nm)} Pergi ke ${cap(kota)} pada Hari ${h}.`], "Huruf kapital dipakai di awal kalimat, nama orang, nama kota, dan nama hari."); },
+      (K) => { const [k, w] = K.pick(tanyaKata); return K.mk(1, "Kata Tanya", `Kata tanya yang digunakan untuk ${k} adalah ...`, w, K.sample(tanyaKata.filter((x) => x[1] !== w).map((x) => x[1]), 3), `"${cap(w)}" dipakai untuk ${k}.`); },
+      (K) => { const isF = K.r() < 0.5; const s = K.pick(isF ? fakta : opini); return K.mk(1, "Fakta dan Opini", `"${s}"<br>Kalimat tersebut termasuk ...`, isF ? "fakta" : "opini", isF ? ["opini", "saran", "ajakan"] : ["fakta", "berita", "perintah"], isF ? "Fakta adalah kenyataan yang dapat dibuktikan kebenarannya." : "Opini adalah pendapat pribadi yang belum tentu benar."); },
+      (K) => { const s = K.pick(fakta); return K.mk(1, "Fakta dan Opini", "Kalimat berikut yang merupakan fakta adalah ...", s, K.sample(opini, 3), "Fakta dapat dibuktikan kebenarannya."); },
+      (K) => { const s = K.pick(opini); return K.mk(1, "Fakta dan Opini", "Kalimat berikut yang merupakan opini adalah ...", s, K.sample(fakta, 3), "Opini berisi pendapat atau perasaan seseorang."); },
+    ],
+    2: [
+      (K) => { const e = K.pick([["😀", "senang", "sedih"], ["😢", "sedih", "senang"], ["😴", "mengantuk", "segar"], ["🔥", "panas", "dingin"], ["🌙", "malam", "siang"], ["🐘", "besar", "kecil"], ["🐢", "lambat", "cepat"], ["🦒", "tinggi", "rendah"], ["🌑", "gelap", "terang"], ["🪶", "ringan", "berat"]]); return K.mk(2, "Antonim", `Gambar menunjukkan sesuatu yang "${e[1]}". Lawan kata dari "${e[1]}" adalah ...`, e[2], [e[1], ...K.sample(antonim.filter((x) => x[1] !== e[2]), 2).map((x) => x[1])], `Lawan kata "${e[1]}" adalah "${e[2]}".`, S.emoji(e[0])); },
+      (K) => { const p = K.pick(paragraf); const lain = K.sample(paragraf.filter((x) => x !== p), 3).map((x) => x[2]); const ind = K.r() < 0.5; const teks = ind ? p[1].join(" ") + " " + p[0] : p[0] + " " + p[1].join(" "); return K.mk(2, "Ide Pokok", `Bacalah paragraf berikut!<blockquote>${teks}</blockquote>Ide pokok paragraf tersebut adalah ...`, p[2], lain, `Kalimat utama: "${p[0]}" Ide pokoknya: ${p[2]}.`); },
+      (K) => { const p = K.pick(paragraf); const ind = K.r() < 0.5; const teks = ind ? p[1].join(" ") + " " + p[0] : p[0] + " " + p[1].join(" "); return K.mk(2, "Kalimat Utama", `Bacalah paragraf berikut!<blockquote>${teks}</blockquote>Kalimat utama paragraf tersebut adalah ...`, p[0], p[1], `Kalimat utama berisi gagasan umum yang dijelaskan kalimat lain: "${p[0]}"`); },
+      (K) => { const p = K.pick(paragraf); const ind = K.r() < 0.5; const teks = ind ? p[1].join(" ") + " " + p[0] : p[0] + " " + p[1].join(" "); const j = ind ? "induktif (kalimat utama di akhir)" : "deduktif (kalimat utama di awal)"; return K.mk(2, "Jenis Paragraf", `<blockquote>${teks}</blockquote>Berdasarkan letak kalimat utamanya, paragraf tersebut termasuk paragraf ...`, j, ["deduktif (kalimat utama di awal)", "induktif (kalimat utama di akhir)", "campuran (kalimat utama di awal dan akhir)", "deskriptif tanpa kalimat utama"].filter((x) => x !== j), `Kalimat utama "${p[0]}" terletak di ${ind ? "akhir" : "awal"} paragraf.`); },
+      (K) => { const [k, j] = K.pick(majas); return K.mk(2, "Majas", `"${k}"<br>Kalimat tersebut menggunakan majas ...`, j, ["personifikasi", "simile (perumpamaan)", "hiperbola", "metafora"].filter((x) => x !== j), { personifikasi: "Benda mati dibuat seolah-olah bersifat seperti manusia.", "simile (perumpamaan)": "Membandingkan dengan kata seperti/bagai/bagaikan.", hiperbola: "Melebih-lebihkan sesuatu.", metafora: "Membandingkan secara langsung tanpa kata pembanding." }[j]); },
+      (K) => { const [a, b] = K.pick(sinonim); const s = `Kata "${a}" dalam kalimat "Anak itu sangat ${a}." dapat diganti dengan kata ...`; return K.mk(2, "Sinonim", s, b, K.sample(antonim, 3).map((x) => x[1]), `"${a}" = "${b}".`); },
+      (K) => { const [a, b] = K.pick(antonim); return K.mk(2, "Antonim", `Pasangan kata yang berlawanan makna adalah ...`, `${a} – ${b}`, K.sample(sinonim, 3).map((x) => `${x[0]} – ${x[1]}`), `"${a}" berlawanan dengan "${b}".`); },
+      (K) => { const [a, b] = K.pick(sinonim); return K.mk(2, "Sinonim", `Pasangan kata yang bersinonim adalah ...`, `${a} – ${b}`, K.sample(antonim, 3).map((x) => `${x[0]} – ${x[1]}`), `"${a}" bermakna sama dengan "${b}".`); },
+      (K) => { const t = K.pick(tokoh), a = K.pick(acara), p = K.pick(tempat), h = K.pick(hari), tg = K.int(1, 28); const berita = `Pada hari ${h}, ${tg} Mei 2026, ${t} mengikuti ${a} di ${p}. Kegiatan ini diadakan untuk menumbuhkan rasa peduli dan kebersamaan.`; const q = K.pick([["Di mana kegiatan tersebut berlangsung?", p, K.sample(tempat.filter((x) => x !== p), 3)], ["Siapa yang mengikuti kegiatan tersebut?", t, K.sample(tokoh.filter((x) => x !== t), 3)], ["Kapan kegiatan tersebut dilaksanakan?", `${h}, ${tg} Mei 2026`, [`${hari[(hari.indexOf(h) + 1) % 7]}, ${tg} Mei 2026`, `${h}, ${tg % 28 + 1} Mei 2026`, `${h}, ${tg} Juni 2026`]], ["Apa kegiatan yang diikuti?", a, K.sample(acara.filter((x) => x !== a), 3)]]);
+        return K.mk(2, "Informasi Teks", `Bacalah teks berikut!<blockquote>${berita}</blockquote>${q[0]}`, q[1], q[2], `Jawaban terdapat langsung di dalam teks.`); },
+      (K) => { const [b, t] = K.pick(baku); const kal = K.pick([`Kami membaca tentang ${t} di buku.`, `Guru menjelaskan kata "${t}" kepada siswa.`]); return K.mk(2, "Kata Baku", `Kata tidak baku pada kalimat berikut adalah "${t}".<br><i>${kal}</i><br>Bentuk bakunya adalah ...`, b, [t, ...K.sample(baku.filter((x) => x[0] !== b), 2).map((x) => x[0])], `Bentuk baku "${t}" adalah "${b}".`); },
+    ],
+    3: [
+      (K) => { const p = K.pick(paragraf); const teks = p[0] + " " + p[1].join(" "); const pj = K.pick(p[1]); return K.mk(3, "Kalimat Penjelas", `<blockquote>${teks}</blockquote>Berikut yang merupakan kalimat penjelas paragraf tersebut adalah ...`, pj, [p[0], ...K.sample(paragraf.filter((x) => x !== p), 2).map((x) => x[1][0])], `Kalimat penjelas mendukung kalimat utama "${p[0]}"`); },
+      (K) => { const p = K.pick(paragraf); const teks = p[0] + " " + p[1].join(" "); const salah = K.pick(paragraf.filter((x) => x !== p))[1][K.int(0, 2)]; return K.mk(3, "Kalimat Penjelas", `<blockquote>${teks}</blockquote>Kalimat yang TIDAK sesuai dengan isi paragraf adalah ...`, salah, p[1], `Kalimat "${salah}" tidak berhubungan dengan ide pokok: ${p[2]}.`); },
+      (K) => { const p = K.pick(paragraf); const benar = `"${p[0]}"`; return K.mk(3, "Kalimat Utama", `Kalimat-kalimat penjelas berikut:<blockquote>${p[1].map((x, i) => `(${i + 1}) ${x}`).join("<br>")}</blockquote>Kalimat utama yang tepat untuk melengkapi paragraf tersebut adalah ...`, benar, K.sample(paragraf.filter((x) => x !== p), 3).map((x) => `"${x[0]}"`), `Kalimat penjelas semua membahas ${p[2]}.`); },
+      (K) => { const p = K.pick(paragraf); const benar = cap(p[2]); return K.mk(3, "Judul", `<blockquote>${p[0]} ${p[1].join(" ")}</blockquote>Judul yang paling tepat untuk paragraf tersebut adalah ...`, benar, K.sample(paragraf.filter((x) => x !== p), 3).map((x) => cap(x[2])), "Judul sebaiknya menggambarkan ide pokok bacaan."); },
+      (K) => { const x = K.pick(imb); const kal = x[1].replace("___", x[2]); return K.mk(3, "Imbuhan", `<i>${kal}</i><br>Kata berimbuhan dalam kalimat tersebut dibentuk dari kata dasar ...`, x[0], [x[2], K.pick(imb.filter((y) => y !== x))[0], x[2].slice(0, 3)], `"${x[2]}" berasal dari kata dasar "${x[0]}".`); },
+      (K) => { const [a, b] = K.pick(antonim); const t = K.pick(tokoh); return K.mk(3, "Antonim", `"${t} terkenal sebagai orang yang ${a}."<br>Lawan kata yang tepat untuk kata bercetak miring "${a}" adalah ...`, b, [a, ...K.sample(antonim.filter((x) => x[0] !== a && x[1] !== b), 2).map((x) => x[1])], `Lawan kata "${a}" adalah "${b}".`); },
+      (K) => { const s = K.sample([...fakta.map((f) => [f, "F"]), ...opini.map((o) => [o, "O"])], 4); const benar = s.map((x) => x[1]).join(", "); const flip = (k) => s.map((x, i) => (i === k ? (x[1] === "F" ? "O" : "F") : x[1])).join(", ");
+        return K.mk(3, "Fakta dan Opini", `Tentukan fakta (F) atau opini (O) secara berurutan!<blockquote>${s.map((x, i) => `(${i + 1}) ${x[0]}`).join("<br>")}</blockquote>`, benar, [flip(0), flip(1), flip(2), flip(3)], "Fakta dapat dibuktikan, opini adalah pendapat."); },
+      (K) => { const [a, b] = K.pick(majas); const contoh = K.pick(majas.filter((x) => x[1] === b && x[0] !== a)); return K.mk(3, "Majas", `Kalimat berikut yang menggunakan majas yang SAMA dengan "${a}" adalah ...`, contoh[0], K.sample(majas.filter((x) => x[1] !== b), 3).map((x) => x[0]), `Keduanya majas ${b}.`); },
+      (K) => { const [k, w] = K.pick(tanyaKata); const t = K.pick(tokoh), a = K.pick(acara), p = K.pick(tempat); const jaw = { "di mana": `di ${p}`, kapan: "pada hari Sabtu pagi", mengapa: "karena ingin menjaga lingkungan", siapa: t, bagaimana: "dengan penuh semangat", apa: a, berapa: `${K.int(20, 90)} orang` }[w]; return K.mk(3, "Kata Tanya", `Jawaban: "${t} mengikuti ${a} ${jaw}."<br>Pertanyaan yang tepat untuk bagian "${jaw}" diawali kata tanya ...`, cap(w), K.sample(tanyaKata.filter((x) => x[1] !== w).map((x) => cap(x[1])), 3), `Bagian "${jaw}" ${k}, jadi memakai "${w}".`); },
+    ],
+  };
+  const gen = () => C.build("BIND", 3301, T, C.quota);
+  if (typeof module !== "undefined") module.exports = gen; else (G.GEN = G.GEN || {}).BIND = gen;
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+<script>// Bahasa Inggris Kelas 5 — Kurikulum Merdeka Fase C
+(function (G) {
+  const C = typeof module !== "undefined" ? require("./core.js") : G.CORE;
+  const S = C.S;
+  const vocab = [ // [english, indonesia, emoji, kategori]
+    ["apple", "apel", "🍎", "food"], ["banana", "pisang", "🍌", "food"], ["bread", "roti", "🍞", "food"], ["rice", "nasi", "🍚", "food"], ["egg", "telur", "🥚", "food"], ["milk", "susu", "🥛", "food"], ["carrot", "wortel", "🥕", "food"], ["grapes", "anggur", "🍇", "food"], ["watermelon", "semangka", "🍉", "food"], ["corn", "jagung", "🌽", "food"],
+    ["cat", "kucing", "🐱", "animal"], ["dog", "anjing", "🐶", "animal"], ["elephant", "gajah", "🐘", "animal"], ["rabbit", "kelinci", "🐰", "animal"], ["snake", "ular", "🐍", "animal"], ["tiger", "harimau", "🐯", "animal"], ["monkey", "monyet", "🐵", "animal"], ["fish", "ikan", "🐟", "animal"], ["bird", "burung", "🐦", "animal"], ["cow", "sapi", "🐮", "animal"], ["horse", "kuda", "🐴", "animal"], ["turtle", "kura-kura", "🐢", "animal"],
+    ["doctor", "dokter", "👩‍⚕️", "job"], ["teacher", "guru", "👨‍🏫", "job"], ["farmer", "petani", "👨‍🌾", "job"], ["chef", "koki", "👨‍🍳", "job"], ["police officer", "polisi", "👮", "job"], ["firefighter", "pemadam kebakaran", "👩‍🚒", "job"], ["pilot", "pilot", "👨‍✈️", "job"], ["singer", "penyanyi", "🎤", "job"],
+    ["sunny", "cerah", "☀️", "weather"], ["rainy", "hujan", "🌧️", "weather"], ["cloudy", "berawan", "☁️", "weather"], ["windy", "berangin", "💨", "weather"], ["stormy", "badai", "⛈️", "weather"], ["snowy", "bersalju", "❄️", "weather"],
+    ["hospital", "rumah sakit", "🏥", "place"], ["school", "sekolah", "🏫", "place"], ["bank", "bank", "🏦", "place"], ["post office", "kantor pos", "🏤", "place"], ["mosque", "masjid", "🕌", "place"], ["library", "perpustakaan", "📚", "place"], ["market", "pasar", "🛒", "place"], ["park", "taman", "🌳", "place"],
+    ["bicycle", "sepeda", "🚲", "thing"], ["car", "mobil", "🚗", "thing"], ["bus", "bus", "🚌", "thing"], ["train", "kereta api", "🚆", "thing"], ["airplane", "pesawat", "✈️", "thing"], ["ship", "kapal", "🚢", "thing"], ["umbrella", "payung", "☂️", "thing"], ["book", "buku", "📕", "thing"], ["pencil", "pensil", "✏️", "thing"], ["scissors", "gunting", "✂️", "thing"], ["clock", "jam dinding", "🕰️", "thing"], ["ball", "bola", "⚽", "thing"], ["hat", "topi", "👒", "thing"], ["shoes", "sepatu", "👟", "thing"], ["bag", "tas", "🎒", "thing"], ["key", "kunci", "🔑", "thing"],
+    ["eye", "mata", "👁️", "body"], ["ear", "telinga", "👂", "body"], ["nose", "hidung", "👃", "body"], ["mouth", "mulut", "👄", "body"], ["hand", "tangan", "✋", "body"], ["foot", "kaki", "🦶", "body"], ["tooth", "gigi", "🦷", "body"],
+    ["happy", "senang", "😀", "feel"], ["sad", "sedih", "😢", "feel"], ["angry", "marah", "😠", "feel"], ["sleepy", "mengantuk", "😴", "feel"], ["sick", "sakit", "🤒", "feel"], ["surprised", "terkejut", "😮", "feel"], ["hungry", "lapar", "🍽️", "feel"], ["thirsty", "haus", "🥤", "feel"],
+  ];
+  const jobDesc = [["doctor", "treats sick people in the hospital"], ["teacher", "teaches students at school"], ["farmer", "grows rice and vegetables in the field"], ["chef", "cooks food in a restaurant"], ["police officer", "keeps the city safe and directs traffic"], ["firefighter", "puts out fires"], ["pilot", "flies an airplane"], ["singer", "sings songs on stage"], ["dentist", "takes care of our teeth"], ["tailor", "makes clothes"], ["postman", "delivers letters"], ["mechanic", "repairs cars and motorcycles"], ["fisherman", "catches fish in the sea"], ["librarian", "works in a library"]];
+  const placeDo = [["hospital", "see a doctor"], ["library", "borrow books"], ["bank", "save money"], ["post office", "send a letter"], ["market", "buy vegetables"], ["bakery", "buy bread"], ["mosque", "pray"], ["airport", "take an airplane"], ["swimming pool", "swim"], ["restaurant", "eat dinner"], ["bookstore", "buy books"], ["zoo", "see animals"], ["pharmacy", "buy medicine"], ["cinema", "watch a movie"], ["gas station", "fill the car with petrol"]];
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+  const ord = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth", "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth", "nineteenth", "twentieth"];
+  const ones = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+  const tens = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+  const words = (n) => { if (n < 20) return ones[n]; if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 ? "-" + ones[n % 10] : ""); if (n < 1000) return ones[Math.floor(n / 100)] + " hundred" + (n % 100 ? " and " + words(n % 100) : ""); return words(Math.floor(n / 1000)) + " thousand" + (n % 1000 ? (n % 1000 < 100 ? " and " : " ") + words(n % 1000) : ""); };
+  const subj = [["I", 1], ["You", 1], ["We", 1], ["They", 1], ["He", 3], ["She", 3], ["My mother", 3], ["Rina", 3], ["The cat", 3], ["My friends", 1], ["Budi and Andi", 1], ["My father", 3]];
+  const verbs = [["go", "goes", "went", "to school every day"], ["eat", "eats", "ate", "breakfast at 6 a.m."], ["play", "plays", "played", "football in the afternoon"], ["read", "reads", "read", "a story book before bed"], ["watch", "watches", "watched", "TV in the evening"], ["study", "studies", "studied", "English on Monday"], ["brush", "brushes", "brushed", "teeth twice a day"], ["wash", "washes", "washed", "the dishes after dinner"], ["drink", "drinks", "drank", "milk every morning"], ["ride", "rides", "rode", "a bicycle to the park"], ["cook", "cooks", "cooked", "fried rice for lunch"], ["write", "writes", "wrote", "a letter to grandma"], ["clean", "cleans", "cleaned", "the room on Sunday"], ["swim", "swims", "swam", "in the pool on Saturday"], ["sing", "sings", "sang", "a song in music class"], ["help", "helps", "helped", "mother in the kitchen"]];
+  const ing = (v) => (v.endsWith("e") && v !== "see" ? v.slice(0, -1) + "ing" : ["swim"].includes(v) ? "swimming" : v + "ing");
+  const adj = [["tall", "taller", "tallest"], ["short", "shorter", "shortest"], ["big", "bigger", "biggest"], ["small", "smaller", "smallest"], ["fast", "faster", "fastest"], ["old", "older", "oldest"], ["young", "younger", "youngest"], ["long", "longer", "longest"], ["heavy", "heavier", "heaviest"], ["cheap", "cheaper", "cheapest"], ["hot", "hotter", "hottest"], ["happy", "happier", "happiest"], ["strong", "stronger", "strongest"], ["clean", "cleaner", "cleanest"]];
+  const preps = ["on", "under", "next to", "behind", "in front of", "in"];
+  const prepId = { on: "di atas", under: "di bawah", "next to": "di samping", behind: "di belakang", "in front of": "di depan", in: "di dalam" };
+  const time = (h, m) => (m === 0 ? `${ones[h] || words(h)} o'clock` : m === 30 ? `half past ${words(h)}` : m === 15 ? `a quarter past ${words(h)}` : m === 45 ? `a quarter to ${words(h % 12 + 1)}` : m < 30 ? `${words(m)} past ${words(h)}` : `${words(60 - m)} to ${words(h % 12 + 1)}`);
+  const T = {
+    1: [
+      (K) => { const v = K.pick(vocab); return K.mk(1, "Vocabulary", "What is the picture?", v[0], K.sample(vocab.filter((x) => x[3] === v[3] && x !== v), 3).map((x) => x[0]), `The picture shows ${/^[aeiou]/.test(v[0]) ? "an" : "a"} ${v[0]} (${v[1]}).`, S.emoji(v[2])); },
+      (K) => { const v = K.pick(vocab); return K.mk(1, "Vocabulary", `Bahasa Inggris dari "${v[1]}" adalah ...`, v[0], K.sample(vocab.filter((x) => x !== v), 3).map((x) => x[0]), `${v[1]} = ${v[0]}.`); },
+      (K) => { const v = K.pick(vocab); return K.mk(1, "Vocabulary", `"${v[0][0].toUpperCase() + v[0].slice(1)}" artinya ...`, v[1], K.sample(vocab.filter((x) => x !== v && x[3] === v[3]), 3).map((x) => x[1]), `${v[0]} = ${v[1]}.`); },
+      (K) => { const i = K.int(0, 6), k = K.pick([1, 2, -1]); const ans = days[(i + k + 7) % 7]; const ph = k === 1 ? `the day after ${days[i]}` : k === 2 ? `two days after ${days[i]}` : `the day before ${days[i]}`; return K.mk(1, "Days and Months", `What is ${ph}?`, ans, K.sample(days.filter((d) => d !== ans), 3), `Urutan hari: ${days.join(", ")}.`); },
+      (K) => { const i = K.int(0, 11); return K.mk(1, "Days and Months", `Bulan "${bulan[i]}" dalam bahasa Inggris adalah ...`, months[i], K.sample(months.filter((_, j) => j !== i), 3), `${bulan[i]} = ${months[i]}.`); },
+      (K) => { const i = K.int(0, 11); return K.mk(1, "Days and Months", `${months[i]} is the ... month of the year.`, ord[i], K.sample(ord.slice(0, 12).filter((_, j) => j !== i), 3), `${months[i]} adalah bulan ke-${i + 1} = ${ord[i]}.`); },
+      (K) => { const n = K.int(11, 999); return K.mk(1, "Numbers", `${n} in English is ...`, words(n), [words(n + 10), words(n % 100 + Math.floor(n / 100) * 100 + 1), words(Math.max(11, n - 100))], `${n} = ${words(n)}.`); },
+      (K) => { const h = K.int(1, 12), m = K.pick([0, 30]); return K.mk(1, "Telling Time", "What time is it?", `It is ${time(h, m)}.`, [`It is ${time(h % 12 + 1, m)}.`, `It is ${time(h, m === 0 ? 30 : 0)}.`, `It is ${time((h + 10) % 12 + 1, m)}.`], `Jarum pendek di ${h}${m ? " lewat sedikit" : ""}, jarum panjang di ${m ? 6 : 12}.`, S.clock(h, m)); },
+      (K) => { const p = K.pick(preps); return K.mk(1, "Prepositions", "Where is the ball?", `The ball is ${p} the box.`, preps.filter((x) => x !== p).map((x) => `The ball is ${x} the box.`), `${p} = ${prepId[p]}.`, S.prep(p)); },
+      (K) => { const v = K.pick(vocab.filter((x) => x[3] === "feel")); return K.mk(1, "Feelings", "How does he feel?", `He is ${v[0]}.`, K.sample(vocab.filter((x) => x[3] === "feel" && x !== v), 3).map((x) => `He is ${x[0]}.`), `${v[0]} = ${v[1]}.`, S.emoji(v[2])); },
+    ],
+    2: [
+      (K) => { const [s, p] = K.pick(subj); const v = K.pick(verbs); const ans = p === 3 ? v[1] : v[0]; return K.mk(2, "Simple Present", `${s} ... ${v[3]}.`, ans, [p === 3 ? v[0] : v[1], v[2], ing(v[0])], p === 3 ? `Subjek tunggal orang ketiga (${s}) → kata kerja + s/es: ${v[1]}.` : `Subjek ${s} → kata kerja bentuk dasar: ${v[0]}.`); },
+      (K) => { const [s, p] = K.pick(subj); const v = K.pick(verbs); const be = s === "I" ? "am" : p === 3 ? "is" : "are"; const ans = `${be} ${ing(v[0])}`; return K.mk(2, "Present Continuous", `Look! ${s} ... ${v[3].replace(/ (every|twice|on|at|in the|before|after).*/, "")} now.`, ans, [`${be} ${v[0]}`, `${s === "I" ? "is" : be === "is" ? "are" : "is"} ${ing(v[0])}`, `${v[1]}`], `Kejadian sedang berlangsung: to be (${be}) + verb-ing.`); },
+      (K) => { const [j, d] = K.pick(jobDesc); return K.mk(2, "Jobs", `A person who ${d} is a ...`, j, K.sample(jobDesc.filter((x) => x[0] !== j), 3).map((x) => x[0]), `${j}: ${d}.`); },
+      (K) => { const [pl, d] = K.pick(placeDo); return K.mk(2, "Places", `We go to the ... to ${d}.`, pl, K.sample(placeDo.filter((x) => x[0] !== pl), 3).map((x) => x[0]), `Kita ke ${pl} untuk ${d}.`); },
+      (K) => { const h = K.int(1, 12), m = K.pick([5, 10, 15, 20, 25, 35, 40, 45, 50, 55]); return K.mk(2, "Telling Time", "What time is it?", `It is ${time(h, m)}.`, [`It is ${time(h, 60 - m)}.`, `It is ${time(h % 12 + 1, m)}.`, `It is ${time((h + 10) % 12 + 1, m)}.`], m < 30 ? `Menit < 30 → "past". ${m} menit lewat jam ${h}.` : `Menit > 30 → "to". ${60 - m} menit menuju jam ${h % 12 + 1}.`, S.clock(h, m)); },
+      (K) => { const a = K.pick(adj); const [x, y] = K.sample(["Rina", "Dodi", "Sinta", "Bima", "the cat", "the dog", "my bag", "this car"], 2); return K.mk(2, "Comparison", `${x[0].toUpperCase() + x.slice(1)} is ... than ${y}.`, a[1], [a[0], a[2], "more " + a[0]], `Membandingkan dua benda: adjective + er (${a[1]}) + than.`); },
+      (K) => { const i = K.int(0, 19); const n = i + 1; return K.mk(2, "Numbers", `Urutan ke-${n} dalam bahasa Inggris adalah ...`, ord[i], K.sample(ord.filter((_, j) => j !== i), 3), `Ke-${n} = ${ord[i]}.`); },
+      (K) => { const price = K.int(2, 99) * 1000; return K.mk(2, "Shopping", `The book costs Rp${price.toLocaleString("id-ID")}. How do you say the price?`, `${words(price / 1000)} thousand rupiahs`, [`${words(price / 1000 + 1)} thousand rupiahs`, `${words(price / 1000)} hundred rupiahs`, `${words((price / 1000) % 10 || 1)} thousand rupiahs`], `${price.toLocaleString("id-ID")} = ${words(price / 1000)} thousand.`); },
+      (K) => { const w = K.pick(vocab.filter((x) => x[3] === "weather")); return K.mk(2, "Weather", `Look at the picture. How is the weather today?`, `It is ${w[0]}.`, K.sample(vocab.filter((x) => x[3] === "weather" && x !== w), 3).map((x) => `It is ${x[0]}.`), `${w[0]} = ${w[1]}.`, S.emoji(w[2])); },
+    ],
+    3: [
+      (K) => { const [s, p] = K.pick(subj.filter((x) => x[0] !== "I")); const v = K.pick(verbs); const aux = p === 3 ? "does" : "do"; return K.mk(3, "Simple Present", `... ${s.toLowerCase().startsWith("my") || s.startsWith("The") ? s.toLowerCase() : s} ${v[0]} ${v[3]}?`, aux[0].toUpperCase() + aux.slice(1), [p === 3 ? "Do" : "Does", "Is", "Are"], `Kalimat tanya simple present: Do/Does. Subjek ${s} → ${aux}.`); },
+      (K) => { const [s, p] = K.pick(subj); const v = K.pick(verbs); const ans = `${s} ${p === 3 ? "does not" : "do not"} ${v[0]} ${v[3]}.`; return K.mk(3, "Simple Present", `Bentuk negatif yang benar dari "${s} ${p === 3 ? v[1] : v[0]} ${v[3]}" adalah ...`, ans, [`${s} ${p === 3 ? "do not" : "does not"} ${v[0]} ${v[3]}.`, `${s} ${p === 3 ? "does not" : "do not"} ${v[1]} ${v[3]}.`, `${s} not ${p === 3 ? v[1] : v[0]} ${v[3]}.`], `Negatif simple present: ${p === 3 ? "does not" : "do not"} + verb 1 (tanpa s/es).`); },
+      (K) => { const a = K.pick(adj); const grp = K.pick(["in my class", "in the family", "of all", "in the zoo"]); return K.mk(3, "Comparison", `Toni is the ... student ${grp}.`, a[2], [a[1], a[0], "most " + a[1]], `Membandingkan lebih dari dua: the + adjective + est (${a[2]}).`); },
+      (K) => { const h = K.int(5, 9), m = K.pick([0, 15, 30, 45]); const act = K.pick(verbs); const nm = K.pick(["Dina", "Raka", "Lala", "Tomi"]); const clock = `${String(h).padStart(2, "0")}.${String(m).padStart(2, "0")}`; return K.mk(3, "Daily Activities", `${nm} ${act[1]} ${act[3].replace(/ (every|twice|on|at|in the|before|after).*/, "")} at ${time(h, m)} in the morning. Pukul berapa ${nm} melakukannya?`, clock, [`${String(h + 1).padStart(2, "0")}.${String(m).padStart(2, "0")}`, `${String(h).padStart(2, "0")}.${String((m + 15) % 60).padStart(2, "0")}`, `${String(h - 1).padStart(2, "0")}.${String((m + 45) % 60).padStart(2, "0")}`], `${time(h, m)} = pukul ${clock}.`); },
+      (K) => { const v = K.pick(verbs); const nm = K.pick(["Dina", "Raka", "My sister", "Our teacher"]); return K.mk(3, "Simple Past", `Yesterday, ${nm} ... ${v[3].replace(/ (every|twice|on|at|in the|before|after).*/, "")}.`, v[2], [v[0], v[1], ing(v[0])], `"Yesterday" → kejadian lampau → verb 2: ${v[2]}.`); },
+      (K) => { const n = K.int(1000, 9999); return K.mk(3, "Numbers", `${n.toLocaleString("en-US")} in English is ...`, words(n), [words(n + 100), words(n - n % 100 + (n % 10) * 10 + Math.floor((n % 100) / 10)) === words(n) ? words(n + 1) : words(n - n % 100 + (n % 10) * 10 + Math.floor((n % 100) / 10)), words(n + 1000)], `${n} = ${words(n)}.`); },
+      (K) => { const p = K.pick(preps); const o = K.pick([["cat", "table"], ["book", "bag"], ["shoes", "bed"], ["dog", "chair"], ["ball", "car"]]); return K.mk(3, "Prepositions", `Kalimat bahasa Inggris yang tepat untuk "${o[0]} berada ${prepId[p]} ${o[1]}" adalah ...`, `The ${o[0]} is ${p} the ${o[1]}.`, preps.filter((x) => x !== p).slice(0, 3).map((x) => `The ${o[0]} is ${x} the ${o[1]}.`), `${prepId[p]} = ${p}.`); },
+      (K) => { const [j, d] = K.pick(jobDesc); const nm = K.pick(["Mr. Hadi", "Mrs. Rina", "My uncle", "My aunt"]); return K.mk(3, "Reading", `Read the text.<blockquote>${nm} works every day. ${nm.startsWith("Mrs") || nm === "My aunt" ? "She" : "He"} ${d}. ${nm.startsWith("Mrs") || nm === "My aunt" ? "She" : "He"} loves the job very much.</blockquote>What is ${nm}'s job?`, `${/^[aeiou]/.test(j) ? "an" : "a"} ${j}`, K.sample(jobDesc.filter((x) => x[0] !== j), 3).map((x) => `${/^[aeiou]/.test(x[0]) ? "an" : "a"} ${x[0]}`), `Petunjuk: "${d}".`); },
+      (K) => { const [pl, d] = K.pick(placeDo); const nm = K.pick(["Sari", "Bimo", "Ayu", "Fikri"]); return K.mk(3, "Reading", `Read the text.<blockquote>Today is Sunday. ${nm} wants to ${d}. ${nm} goes there with father by car.</blockquote>Where does ${nm} go?`, `To the ${pl}.`, K.sample(placeDo.filter((x) => x[0] !== pl), 3).map((x) => `To the ${x[0]}.`), `Untuk ${d}, kita pergi ke ${pl}.`); },
+    ],
+  };
+  const gen = () => C.build("BING", 4409, T, C.quota);
+  if (typeof module !== "undefined") module.exports = gen; else (G.GEN = G.GEN || {}).BING = gen;
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+<script>// IPA (IPAS bagian sains) Kelas 5 — Kurikulum Merdeka Fase C
+(function (G) {
+  const C = typeof module !== "undefined" ? require("./core.js") : G.CORE;
+  const S = C.S;
+  const hewan = { herbivora: ["sapi", "kambing", "kerbau", "kuda", "kelinci", "rusa", "jerapah", "zebra", "domba", "gajah", "belalang", "ulat", "kupu-kupu", "unta", "marmut"], karnivora: ["harimau", "singa", "elang", "buaya", "serigala", "burung hantu", "ular", "hiu", "katak", "laba-laba", "cicak", "kucing", "anjing laut", "macan tutul", "komodo"], omnivora: ["ayam", "bebek", "tikus", "beruang", "monyet", "babi hutan", "musang", "burung pipit", "kecoak", "semut", "ikan mas", "rakun", "gagak", "orang utan", "landak"] };
+  const sifatHewan = { herbivora: "pemakan tumbuhan", karnivora: "pemakan daging", omnivora: "pemakan segala" };
+  const benda = {
+    magnetis: ["paku besi", "jarum jahit", "peniti", "gunting besi", "klip kertas", "mur baut", "sendok baja", "kunci besi", "kawat besi", "tutup botol kaleng", "uang logam nikel", "silet"],
+    "nonmagnetis": ["penghapus karet", "kertas", "kayu", "kaca", "plastik", "kain", "batu", "tembaga", "aluminium", "emas", "pensil kayu", "gelas"],
+  };
+  const listrik = { konduktor: ["kawat tembaga", "aluminium", "besi", "air garam", "baja", "perak", "seng", "grafit pensil", "paku", "emas", "kuningan", "timah"], isolator: ["karet", "plastik", "kayu kering", "kaca", "kain", "kertas", "styrofoam", "keramik", "porselen", "wol", "gabus", "mika"] };
+  const cahayaBenda = { "bening (transparan)": ["kaca jendela bening", "air jernih", "plastik bening", "gelas kaca", "kacamata", "botol kaca bening", "akuarium kaca", "mika bening"], "gelap (tidak tembus cahaya)": ["kayu", "batu", "tembok", "buku tebal", "papan tulis", "besi", "karton tebal", "pintu kayu"], "agak tembus cahaya (translusen)": ["kertas minyak", "kaca buram", "plastik susu", "kain tipis", "kertas HVS tipis", "tirai tipis", "botol plastik buram", "es batu"] };
+  const energi = [["setrika listrik", "panas"], ["kipas angin", "gerak"], ["lampu", "cahaya"], ["radio", "bunyi"], ["kompor listrik", "panas"], ["bel listrik", "bunyi"], ["blender", "gerak"], ["senter", "cahaya"], ["solder", "panas"], ["pengering rambut", "panas dan gerak"], ["mesin cuci", "gerak"], ["speaker", "bunyi"], ["televisi", "cahaya dan bunyi"], ["rice cooker", "panas"], ["dinamo mainan", "gerak"]];
+  const sumberEnergi = [["panel surya", "matahari", "listrik"], ["kincir angin", "angin", "listrik"], ["PLTA", "air", "listrik"], ["baterai", "kimia", "listrik"], ["generator sepeda (dinamo)", "gerak", "listrik"], ["PLTP", "panas bumi", "listrik"]];
+  const organ = [
+    ["hidung", "pernapasan", "menyaring dan menghangatkan udara yang masuk"], ["paru-paru", "pernapasan", "tempat pertukaran oksigen dan karbon dioksida"], ["alveolus", "pernapasan", "gelembung paru-paru tempat pertukaran gas"], ["trakea", "pernapasan", "saluran udara dari tenggorokan ke paru-paru"], ["diafragma", "pernapasan", "sekat rongga dada yang membantu menarik napas"],
+    ["lambung", "pencernaan", "mencerna makanan secara kimiawi dengan asam lambung"], ["usus halus", "pencernaan", "menyerap sari-sari makanan"], ["usus besar", "pencernaan", "menyerap air dari sisa makanan"], ["kerongkongan", "pencernaan", "menyalurkan makanan dari mulut ke lambung"], ["mulut", "pencernaan", "mengunyah makanan dibantu gigi dan air liur"], ["hati", "pencernaan", "menghasilkan empedu untuk mencerna lemak"],
+    ["jantung", "peredaran darah", "memompa darah ke seluruh tubuh"], ["arteri (nadi)", "peredaran darah", "membawa darah keluar dari jantung"], ["vena (balik)", "peredaran darah", "membawa darah kembali ke jantung"], ["sel darah merah", "peredaran darah", "mengangkut oksigen"], ["sel darah putih", "peredaran darah", "melawan kuman penyakit"], ["keping darah", "peredaran darah", "membantu pembekuan darah saat luka"],
+    ["kornea", "mata", "lapisan bening terdepan yang meneruskan cahaya"], ["pupil", "mata", "lubang tempat masuknya cahaya ke mata"], ["iris", "mata", "mengatur besar kecilnya pupil"], ["lensa mata", "mata", "memfokuskan cahaya ke retina"], ["retina", "mata", "tempat terbentuknya bayangan benda"], ["saraf mata", "mata", "meneruskan rangsang cahaya ke otak"],
+    ["daun telinga", "telinga", "menangkap dan mengumpulkan gelombang bunyi"], ["gendang telinga", "telinga", "bergetar saat menerima gelombang bunyi"], ["tulang pendengaran", "telinga", "meneruskan getaran ke telinga dalam"], ["koklea (rumah siput)", "telinga", "mengubah getaran menjadi rangsang saraf"],
+  ];
+  const fakta = [
+    // [level, topik, pertanyaan, benar, [salah...], penjelasan]
+    [1, "Cahaya", "Benda yang dapat memantulkan hampir seluruh cahaya sehingga bayangan terlihat jelas adalah ...", "cermin", ["kayu", "kain", "batu bata"], "Permukaan cermin licin dan mengilap."],
+    [1, "Cahaya", "Bagian mata yang berwarna (cokelat/hitam) disebut ...", "iris", ["pupil", "retina", "kornea"], "Iris memberi warna mata dan mengatur pupil."],
+    [2, "Cahaya", "Periskop pada kapal selam bekerja berdasarkan sifat cahaya ...", "dapat dipantulkan", ["dapat diuraikan", "merambat di ruang hampa", "dapat diserap"], "Periskop memakai dua cermin datar yang memantulkan cahaya."],
+    [2, "Cahaya", "Kita sulit melihat di ruang gelap karena ...", "tidak ada cahaya yang dipantulkan benda ke mata", ["mata sedang lelah", "benda menyerap bunyi", "udara terlalu dingin"], "Tanpa cahaya, benda tidak memantulkan apa pun ke mata."],
+    [3, "Cahaya", "Saat masuk ke ruangan gelap, pupil mata akan ...", "membesar agar lebih banyak cahaya masuk", ["mengecil agar cahaya berkurang", "tertutup", "tidak berubah"], "Iris membesarkan pupil saat cahaya redup."],
+    [3, "Cahaya", "Lup (kaca pembesar) menggunakan lensa ...", "cembung", ["cekung", "datar", "silinder"], "Lensa cembung memperbesar bayangan benda dekat."],
+    [1, "Bunyi", "Contoh sumber bunyi adalah ...", "gitar yang dipetik", ["batu yang diam", "buku tertutup", "meja kosong"], "Senar gitar yang dipetik bergetar."],
+    [1, "Bunyi", "Indra yang digunakan untuk mendengar bunyi adalah ...", "telinga", ["mata", "hidung", "kulit"], "Telinga menangkap gelombang bunyi."],
+    [2, "Bunyi", "Bunyi kentongan dapat terdengar dari jauh karena bunyi merambat melalui ...", "udara", ["ruang hampa", "cahaya", "magnet"], "Udara adalah medium perambatan bunyi."],
+    [2, "Bunyi", "Ikan di kolam lari saat kita bertepuk tangan di tepi kolam. Ini membuktikan bunyi dapat merambat melalui ...", "zat cair", ["zat padat saja", "ruang hampa", "cahaya"], "Bunyi tepuk merambat dari udara ke air."],
+    [3, "Bunyi", "Telepon kaleng dengan benang bisa menyampaikan suara karena bunyi merambat melalui ...", "benang (zat padat)", ["udara saja", "ruang hampa", "cahaya"], "Getaran suara diteruskan benang yang tegang."],
+    [3, "Bunyi", "Saat petir, kilat terlihat lebih dulu daripada suara guntur karena ...", "cepat rambat cahaya jauh lebih besar dari bunyi", ["guntur terjadi belakangan", "mata lebih peka dari telinga", "bunyi tertahan awan"], "Cahaya ±300.000 km/s, bunyi di udara ±340 m/s."],
+    [1, "Ekosistem", "Tempat hidup makhluk hidup disebut ...", "habitat", ["populasi", "komunitas", "rantai makanan"], "Contoh habitat ikan adalah air."],
+    [1, "Ekosistem", "Kumpulan makhluk hidup sejenis yang tinggal di suatu tempat disebut ...", "populasi", ["komunitas", "ekosistem", "individu"], "Contoh: populasi sapi di peternakan."],
+    [2, "Ekosistem", "Kumpulan berbagai populasi di suatu tempat disebut ...", "komunitas", ["individu", "populasi", "biosfer"], "Komunitas terdiri atas banyak jenis makhluk hidup."],
+    [2, "Ekosistem", "Contoh komponen abiotik dalam ekosistem adalah ...", "air, tanah, dan cahaya", ["rumput dan sapi", "jamur dan bakteri", "burung dan ikan"], "Abiotik = komponen tak hidup."],
+    [2, "Ekosistem", "Contoh komponen biotik dalam ekosistem adalah ...", "cacing tanah", ["batu", "udara", "suhu"], "Biotik = makhluk hidup."],
+    [3, "Ekosistem", "Bunga bangkai mengeluarkan bau busuk. Tujuannya adalah ...", "menarik serangga untuk penyerbukan", ["mengusir manusia", "mencari makanan", "menyerap air"], "Bau busuk mengundang lalat yang membantu penyerbukan."],
+    [3, "Ekosistem", "Usaha menjaga keseimbangan ekosistem sawah yang tepat adalah ...", "melindungi burung hantu dan ular sawah pemangsa tikus", ["menangkap semua katak", "membakar jerami di sawah", "memakai pestisida setiap hari"], "Pemangsa alami mengendalikan hama secara seimbang."],
+    [1, "Magnet", "Benda yang dapat menarik benda dari besi atau baja disebut ...", "magnet", ["konduktor", "isolator", "lensa"], "Magnet menarik bahan feromagnetik."],
+    [2, "Magnet", "Membuat magnet dengan cara mendekatkan besi ke magnet tanpa menyentuh disebut ...", "induksi", ["menggosok", "elektromagnetik", "pemanasan"], "Besi menjadi magnet sementara karena pengaruh medan magnet."],
+    [2, "Magnet", "Daerah di sekitar magnet yang masih dipengaruhi gaya magnet disebut ...", "medan magnet", ["kutub magnet", "garis khatulistiwa", "arus listrik"], "Medan magnet dapat dilihat dengan serbuk besi."],
+    [3, "Magnet", "Kereta Maglev dapat melayang di atas rel karena memanfaatkan ...", "gaya tolak-menolak magnet", ["gaya gesek roda", "tenaga angin", "uap air"], "Magnet sejenis saling menolak sehingga kereta terangkat."],
+    [3, "Magnet", "Alat berikut yang memanfaatkan elektromagnet adalah ...", "bel listrik", ["termometer", "gunting kertas", "lup"], "Bel listrik memakai kumparan yang menjadi magnet saat dialiri arus."],
+    [1, "Listrik", "Sumber listrik yang biasa dipakai pada jam dinding adalah ...", "baterai", ["aki mobil", "generator PLN", "panel surya besar"], "Baterai menyimpan energi kimia."],
+    [2, "Listrik", "Bagian kabel yang dibungkus plastik bertujuan agar ...", "tidak tersengat listrik", ["arus lebih cepat", "kabel lebih berat", "listrik lebih besar"], "Plastik adalah isolator."],
+    [3, "Listrik", "Tindakan yang BERBAHAYA terkait listrik adalah ...", "menyentuh stopkontak dengan tangan basah", ["mencabut steker dengan memegang kepalanya", "memakai sandal karet", "mematikan saklar saat mengganti lampu"], "Air menghantarkan listrik sehingga bisa tersetrum."],
+    [1, "Bumi", "Bagian bumi yang paling panas adalah ...", "inti bumi", ["kerak bumi", "permukaan laut", "atmosfer"], "Suhu inti bumi mencapai ribuan derajat Celsius."],
+    [1, "Bumi", "Lapisan udara yang menyelimuti bumi disebut ...", "atmosfer", ["litosfer", "hidrosfer", "mantel"], "Atmosfer melindungi bumi dari sinar berbahaya."],
+    [2, "Bumi", "Turunnya air dari awan ke permukaan bumi dalam bentuk hujan disebut ...", "presipitasi", ["kondensasi", "evaporasi", "infiltrasi"], "Presipitasi bisa berupa hujan, salju, atau es."],
+    [2, "Bumi", "Pergerakan lempeng bumi secara tiba-tiba dapat menimbulkan ...", "gempa bumi", ["pelangi", "angin darat", "kemarau"], "Gempa tektonik akibat pergeseran lempeng."],
+    [3, "Bumi", "Urutan siklus air yang benar adalah ...", "evaporasi → kondensasi → presipitasi → infiltrasi", ["kondensasi → evaporasi → infiltrasi → presipitasi", "presipitasi → evaporasi → infiltrasi → kondensasi", "infiltrasi → presipitasi → kondensasi → evaporasi"], "Air menguap, mengembun jadi awan, turun hujan, meresap ke tanah."],
+    [3, "Bumi", "Membuang sampah ke sungai dapat menyebabkan ...", "banjir", ["erosi pantai", "gempa bumi", "gunung meletus"], "Sampah menyumbat aliran sungai."],
+    [1, "Organ Tubuh", "Organ yang memompa darah ke seluruh tubuh adalah ...", "jantung", ["paru-paru", "hati", "ginjal"], "Jantung berdetak memompa darah."],
+    [1, "Organ Tubuh", "Proses pencernaan makanan dimulai di ...", "mulut", ["lambung", "usus halus", "kerongkongan"], "Di mulut makanan dikunyah dan dicampur air liur."],
+    [2, "Organ Tubuh", "Urutan saluran pencernaan yang benar adalah ...", "mulut → kerongkongan → lambung → usus halus → usus besar", ["mulut → lambung → kerongkongan → usus besar → usus halus", "kerongkongan → mulut → lambung → usus halus → usus besar", "mulut → usus halus → lambung → kerongkongan → usus besar"], "Makanan berjalan dari mulut hingga usus besar."],
+    [2, "Organ Tubuh", "Darah yang kaya oksigen dialirkan ke seluruh tubuh melalui pembuluh ...", "arteri", ["vena", "kapiler balik", "limfa"], "Arteri membawa darah dari jantung."],
+    [3, "Organ Tubuh", "Diare dapat dicegah dengan cara ...", "mencuci tangan sebelum makan", ["makan makanan terbuka", "minum air mentah", "jarang mandi"], "Kuman penyebab diare masuk lewat tangan dan makanan kotor."],
+    [3, "Organ Tubuh", "Saat berolahraga, denyut jantung bertambah cepat karena ...", "tubuh membutuhkan lebih banyak oksigen", ["jantung sedang sakit", "darah berkurang", "paru-paru berhenti"], "Otot yang bekerja butuh oksigen lebih banyak."],
+    [1, "Energi", "Sumber energi utama di bumi adalah ...", "matahari", ["bulan", "bintang laut", "batu bara"], "Hampir semua energi berasal dari matahari."],
+    [2, "Energi", "Contoh sumber energi yang dapat diperbarui adalah ...", "angin", ["minyak bumi", "batu bara", "gas alam"], "Angin, air, matahari tidak akan habis."],
+    [3, "Energi", "Penggunaan bahan bakar fosil berlebihan berdampak ...", "menambah polusi udara", ["membuat udara bersih", "menambah hutan", "menyuburkan tanah"], "Pembakaran fosil menghasilkan gas buang."],
+    [1, "Cahaya", "Kita dapat melihat benda karena ada ... yang dipantulkan benda ke mata.", "cahaya", ["bunyi", "udara", "panas"], "Benda terlihat karena memantulkan cahaya yang masuk ke mata."],
+    [1, "Cahaya", "Cahaya merambat menurut garis ...", "lurus", ["melingkar", "zig-zag", "bergelombang tak beraturan"], "Cahaya merambat lurus, terbukti dari berkas cahaya senter."],
+    [1, "Cahaya", "Benda yang dapat memancarkan cahaya sendiri disebut ...", "sumber cahaya", ["benda gelap", "benda bening", "cermin"], "Contoh sumber cahaya: matahari, lampu, lilin."],
+    [1, "Cahaya", "Berikut yang termasuk sumber cahaya alami adalah ...", "matahari", ["lampu senter", "lilin", "lampu neon"], "Matahari menghasilkan cahaya secara alami."],
+    [2, "Cahaya", "Pensil yang dicelupkan ke gelas berisi air tampak patah. Hal ini menunjukkan cahaya dapat ...", "dibiaskan", ["dipantulkan", "diserap", "merambat lurus"], "Pembiasan terjadi saat cahaya melewati dua medium berbeda kerapatan."],
+    [2, "Cahaya", "Pelangi terjadi karena cahaya matahari ...", "diuraikan oleh titik-titik air", ["dipantulkan oleh awan", "diserap oleh udara", "menembus benda gelap"], "Cahaya putih terurai (dispersi) menjadi warna-warni oleh titik air."],
+    [2, "Cahaya", "Bayangan pada cermin datar memiliki sifat ...", "sama besar dan tegak", ["diperbesar dan terbalik", "diperkecil dan terbalik", "lebih kecil dan tegak"], "Cermin datar: bayangan maya, tegak, sama besar, jarak sama."],
+    [2, "Cahaya", "Kaca spion kendaraan menggunakan cermin ...", "cembung", ["cekung", "datar", "bening"], "Cermin cembung memberi pandangan luas dan bayangan diperkecil."],
+    [2, "Cahaya", "Cermin yang dipakai pada lampu senter agar cahayanya mengumpul adalah cermin ...", "cekung", ["cembung", "datar", "bulat"], "Cermin cekung bersifat mengumpulkan cahaya."],
+    [3, "Cahaya", "Dasar kolam yang jernih tampak lebih dangkal dari aslinya. Penyebabnya adalah ...", "pembiasan cahaya dari air ke udara", ["pemantulan cahaya oleh dasar kolam", "cahaya diserap air", "cahaya merambat lurus"], "Cahaya dibiaskan saat keluar dari air sehingga dasar kolam tampak lebih dekat."],
+    [3, "Cahaya", "Saat bermain di siang hari, bayangan tubuh paling pendek terjadi pada pukul ...", "12.00", ["07.00", "09.00", "16.00"], "Matahari tepat di atas kepala sekitar pukul 12.00 sehingga bayangan paling pendek."],
+    [1, "Bunyi", "Bunyi dihasilkan oleh benda yang ...", "bergetar", ["diam", "dipanaskan", "bercahaya"], "Semua sumber bunyi bergetar."],
+    [1, "Bunyi", "Bunyi tidak dapat merambat di ...", "ruang hampa udara", ["air", "kayu", "udara"], "Bunyi butuh perantara (medium); di ruang hampa tidak ada medium."],
+    [2, "Bunyi", "Bunyi merambat paling cepat melalui ...", "benda padat", ["benda cair", "udara", "ruang hampa"], "Partikel benda padat paling rapat sehingga getaran diteruskan paling cepat."],
+    [2, "Bunyi", "Bunyi yang frekuensinya kurang dari 20 Hz disebut ...", "infrasonik", ["ultrasonik", "audiosonik", "gema"], "Infrasonik < 20 Hz, audiosonik 20–20.000 Hz, ultrasonik > 20.000 Hz."],
+    [2, "Bunyi", "Hewan yang dapat mendengar bunyi ultrasonik adalah ...", "kelelawar", ["jangkrik", "sapi", "ayam"], "Kelelawar dan lumba-lumba memakai ultrasonik."],
+    [2, "Bunyi", "Bunyi pantul yang terdengar setelah bunyi asli selesai diucapkan disebut ...", "gema", ["gaung", "nada", "desah"], "Gema terdengar jelas karena dinding pantul jauh."],
+    [3, "Bunyi", "Gedung bioskop dilapisi bahan peredam seperti karpet dan gabus agar ...", "tidak terjadi gaung", ["bunyi lebih keras", "terjadi gema", "suara film lebih tinggi"], "Bahan lunak menyerap bunyi sehingga tidak ada bunyi pantul yang mengganggu (gaung)."],
+    [3, "Bunyi", "Kapal laut memakai sonar (gelombang ultrasonik) untuk ...", "mengukur kedalaman laut", ["menangkap ikan", "menggerakkan kapal", "menerangi laut"], "Waktu pantul gelombang ultrasonik dipakai untuk menghitung kedalaman."],
+    [3, "Bunyi", "Senar gitar yang lebih tegang akan menghasilkan nada ...", "lebih tinggi", ["lebih rendah", "lebih pelan", "tidak berbunyi"], "Senar tegang bergetar lebih cepat sehingga frekuensi dan nada naik."],
+    [1, "Ekosistem", "Makhluk hidup yang dapat membuat makanannya sendiri disebut ...", "produsen", ["konsumen", "pengurai", "predator"], "Tumbuhan hijau adalah produsen karena berfotosintesis."],
+    [1, "Ekosistem", "Makhluk hidup yang menguraikan sisa makhluk mati disebut ...", "pengurai (dekomposer)", ["produsen", "konsumen I", "herbivora"], "Contoh pengurai: bakteri dan jamur."],
+    [1, "Ekosistem", "Contoh pengurai adalah ...", "jamur", ["rumput", "belalang", "elang"], "Jamur dan bakteri menguraikan sisa makhluk hidup."],
+    [2, "Ekosistem", "Proses tumbuhan membuat makanan dengan bantuan cahaya matahari disebut ...", "fotosintesis", ["respirasi", "evaporasi", "adaptasi"], "Fotosintesis membutuhkan air, karbon dioksida, dan cahaya."],
+    [2, "Ekosistem", "Kumpulan beberapa rantai makanan yang saling berhubungan disebut ...", "jaring-jaring makanan", ["piramida makanan", "ekosistem", "habitat"], "Jaring-jaring makanan = gabungan rantai makanan."],
+    [2, "Ekosistem", "Hubungan antara lebah dan bunga termasuk simbiosis ...", "mutualisme", ["parasitisme", "komensalisme", "netralisme"], "Keduanya untung: lebah dapat nektar, bunga terbantu penyerbukan."],
+    [2, "Ekosistem", "Hubungan tali putri dengan tanaman inangnya termasuk simbiosis ...", "parasitisme", ["mutualisme", "komensalisme", "kompetisi"], "Tali putri untung, inang dirugikan."],
+    [2, "Ekosistem", "Hubungan anggrek yang menempel di pohon mangga termasuk simbiosis ...", "komensalisme", ["mutualisme", "parasitisme", "predasi"], "Anggrek untung, pohon tidak untung dan tidak rugi."],
+    [3, "Ekosistem", "Perburuan elang secara besar-besaran menyebabkan populasi ular dan tikus ...", "meningkat", ["menurun", "punah", "tetap"], "Elang pemangsa ular dan tikus; jika elang berkurang, mangsanya bertambah."],
+    [3, "Ekosistem", "Penggunaan pestisida berlebihan di sawah dapat mengganggu keseimbangan ekosistem karena ...", "ikut membunuh hewan lain seperti katak dan burung", ["membuat padi tumbuh tinggi", "menambah jumlah ulat", "menyuburkan tanah"], "Pestisida juga membunuh pemangsa alami hama."],
+    [1, "Magnet", "Kutub magnet yang senama jika didekatkan akan ...", "tolak-menolak", ["tarik-menarik", "diam saja", "menempel"], "Kutub sejenis tolak-menolak, kutub berbeda tarik-menarik."],
+    [1, "Magnet", "Bagian magnet yang gaya tariknya paling kuat adalah ...", "kedua ujung (kutub)", ["bagian tengah", "seluruh bagian sama", "bagian samping"], "Gaya magnet paling kuat di kutub."],
+    [2, "Magnet", "Membuat magnet dengan menggosokkan magnet pada besi secara searah disebut cara ...", "menggosok", ["induksi", "elektromagnetik", "pemanasan"], "Gosok searah berulang membuat magnet elementer besi searah."],
+    [2, "Magnet", "Membuat magnet dengan mengalirkan arus listrik melalui kumparan kawat disebut cara ...", "elektromagnetik", ["menggosok", "induksi", "pemukulan"], "Arus listrik di kumparan menimbulkan medan magnet."],
+    [2, "Magnet", "Alat yang memanfaatkan magnet untuk menunjukkan arah mata angin adalah ...", "kompas", ["termometer", "barometer", "periskop"], "Jarum kompas selalu menunjuk utara-selatan."],
+    [3, "Magnet", "Sifat kemagnetan sebuah magnet dapat hilang jika magnet ...", "dipanaskan atau dipukul-pukul", ["disimpan berpasangan", "dibungkus kain", "dimasukkan ke air dingin"], "Panas dan pukulan mengacak susunan magnet elementer."],
+    [1, "Listrik", "Alat yang berfungsi memutus dan menyambung arus listrik adalah ...", "saklar", ["sekring", "baterai", "kabel"], "Saklar mengendalikan nyala-mati alat listrik."],
+    [2, "Listrik", "Pada rangkaian paralel, jika satu lampu putus maka lampu yang lain ...", "tetap menyala", ["ikut padam", "menjadi lebih redup", "meledak"], "Rangkaian paralel punya banyak jalur arus."],
+    [2, "Listrik", "Pada rangkaian seri, jika satu lampu dilepas maka lampu lain ...", "ikut padam", ["tetap menyala", "lebih terang", "berkedip"], "Rangkaian seri hanya punya satu jalur arus."],
+    [3, "Listrik", "Lampu di rumah umumnya dipasang dengan rangkaian paralel karena ...", "jika satu lampu mati, lampu lain tetap menyala", ["lebih hemat kabel", "lampu menjadi redup", "arus hanya satu jalur"], "Paralel membuat tiap lampu bekerja sendiri-sendiri."],
+    [3, "Listrik", "Cara menghemat energi listrik di rumah adalah ...", "mematikan lampu saat siang hari", ["menyalakan TV tanpa ditonton", "membuka kulkas lama", "mengisi baterai semalaman terus-menerus"], "Matikan alat listrik yang tidak dipakai."],
+    [1, "Bumi", "Lapisan bumi paling luar tempat kita tinggal disebut ...", "kerak bumi", ["inti bumi", "mantel bumi", "inti dalam"], "Lapisan bumi: kerak, mantel, inti luar, inti dalam."],
+    [1, "Bumi", "Perubahan air menjadi uap karena panas matahari disebut ...", "penguapan (evaporasi)", ["pengembunan", "presipitasi", "infiltrasi"], "Evaporasi adalah tahap awal siklus air."],
+    [2, "Bumi", "Uap air yang berubah menjadi titik-titik air membentuk awan disebut ...", "kondensasi", ["evaporasi", "transpirasi", "infiltrasi"], "Kondensasi = pengembunan."],
+    [2, "Bumi", "Penguapan air dari tumbuhan melalui daun disebut ...", "transpirasi", ["evaporasi", "kondensasi", "presipitasi"], "Transpirasi terjadi lewat stomata daun."],
+    [2, "Bumi", "Air hujan yang meresap ke dalam tanah disebut ...", "infiltrasi", ["presipitasi", "evaporasi", "kondensasi"], "Infiltrasi menambah cadangan air tanah."],
+    [2, "Bumi", "Pengikisan tanah oleh air hujan atau aliran sungai disebut ...", "erosi", ["abrasi", "sedimentasi", "reboisasi"], "Erosi dapat dicegah dengan menanam pohon dan terasering."],
+    [2, "Bumi", "Pengikisan pantai oleh gelombang air laut disebut ...", "abrasi", ["erosi", "intrusi", "deflasi"], "Abrasi dicegah dengan menanam mangrove."],
+    [3, "Bumi", "Penanaman pohon bakau di pantai bertujuan untuk mencegah ...", "abrasi", ["banjir bandang", "tanah longsor", "kekeringan"], "Akar bakau menahan tanah pantai dari gelombang."],
+    [3, "Bumi", "Membuat sawah bertingkat (terasering) di lereng gunung bertujuan untuk ...", "mengurangi erosi", ["menambah hama", "mempercepat aliran air", "memperluas laut"], "Terasering memperlambat aliran air sehingga tanah tidak terkikis."],
+    [3, "Bumi", "Penebangan hutan secara liar dapat menyebabkan ...", "banjir dan tanah longsor", ["udara makin segar", "air tanah bertambah", "erosi berkurang"], "Tanpa akar pohon, air tidak terserap dan tanah mudah longsor."],
+    [1, "Organ Tubuh", "Organ utama pernapasan manusia adalah ...", "paru-paru", ["jantung", "lambung", "ginjal"], "Paru-paru tempat pertukaran gas."],
+    [1, "Organ Tubuh", "Saat bernapas, kita menghirup ... dan mengeluarkan karbon dioksida.", "oksigen", ["nitrogen", "uap air", "karbon dioksida"], "Tubuh butuh oksigen untuk mengolah makanan menjadi energi."],
+    [2, "Organ Tubuh", "Penyakit pada paru-paru yang disebabkan bakteri dan ditandai batuk lama adalah ...", "TBC", ["maag", "diare", "anemia"], "TBC disebabkan Mycobacterium tuberculosis."],
+    [2, "Organ Tubuh", "Penyakit kekurangan sel darah merah disebut ...", "anemia", ["hipertensi", "asma", "maag"], "Anemia membuat tubuh lemas karena kurang oksigen."],
+    [2, "Organ Tubuh", "Penyakit akibat luka pada dinding lambung disebut ...", "maag", ["diare", "TBC", "rabun jauh"], "Maag sering karena makan tidak teratur."],
+    [3, "Organ Tubuh", "Penderita rabun jauh (miopi) dapat dibantu dengan kacamata berlensa ...", "cekung (minus)", ["cembung (plus)", "datar", "rangkap"], "Lensa cekung menyebarkan cahaya agar bayangan jatuh tepat di retina."],
+    [3, "Organ Tubuh", "Orang lanjut usia yang sulit membaca dekat (rabun dekat) memakai kacamata berlensa ...", "cembung (plus)", ["cekung (minus)", "datar", "silinder"], "Lensa cembung mengumpulkan cahaya."],
+    [3, "Organ Tubuh", "Kebiasaan yang menjaga kesehatan alat pernapasan adalah ...", "memakai masker saat udara berdebu", ["merokok", "membakar sampah", "tidur di ruang tertutup asap"], "Masker menyaring debu dan kuman."],
+  ];
+  const adaptasi = [["unta", "punuk berisi cadangan lemak", "hidup di gurun yang kering"], ["bebek", "kaki berselaput", "berenang di air"], ["bunglon", "mengubah warna kulit", "menghindari pemangsa"], ["cicak", "memutuskan ekor", "melarikan diri dari musuh"], ["kaktus", "daun berbentuk duri", "mengurangi penguapan"], ["teratai", "daun lebar", "mempercepat penguapan"], ["elang", "paruh tajam dan melengkung", "mengoyak mangsa"], ["kupu-kupu", "mulut berbentuk belalai", "mengisap nektar"], ["ikan", "insang", "bernapas di dalam air"], ["landak", "tubuh berduri", "melindungi diri"], ["beruang kutub", "bulu tebal", "bertahan di udara dingin"], ["putri malu", "menutup daun saat disentuh", "melindungi diri"], ["pohon jati", "menggugurkan daun saat kemarau", "mengurangi penguapan"], ["kerbau", "berkubang di lumpur", "menjaga suhu tubuh"], ["lumba-lumba", "lubang hidung di atas kepala", "bernapas di permukaan air"]];
+  const rantai = [["rumput", "belalang", "katak", "ular", "elang"], ["padi", "tikus", "ular", "elang"], ["daun", "ulat", "burung", "elang"], ["fitoplankton", "udang kecil", "ikan kecil", "ikan besar"], ["jagung", "ayam", "musang", "harimau"], ["rumput", "kelinci", "serigala", "singa"], ["padi", "burung pipit", "ular", "elang"], ["alga", "ikan kecil", "bangau", "buaya"], ["rumput", "rusa", "harimau"], ["tumbuhan air", "siput", "ikan", "berang-berang"], ["daun", "kutu daun", "kepik", "burung"], ["rumput", "kambing", "harimau"]];
+  const peran = ["produsen", "konsumen tingkat I", "konsumen tingkat II", "konsumen tingkat III", "konsumen tingkat IV"];
+  const tanya = (K, a, b) => (K.r() < 0.5 ? a : b);
+  const T = {
+    1: [
+      (K) => { const k = K.pick(Object.keys(hewan)); const h = K.pick(hewan[k]); return K.mk(1, "Ekosistem", tanya(K, `${h[0].toUpperCase() + h.slice(1)} termasuk hewan ...`, `Berdasarkan jenis makanannya, ${h} tergolong ...`), k, Object.keys(hewan).filter((x) => x !== k).concat(["produsen"]), `${h} adalah ${sifatHewan[k]}, jadi termasuk ${k}.`); },
+      (K) => { const k = K.pick(Object.keys(hewan)); const h = K.pick(hewan[k]); const lain = Object.keys(hewan).filter((x) => x !== k).flatMap((x) => hewan[x]); return K.mk(1, "Ekosistem", `Hewan berikut yang termasuk ${k} (${sifatHewan[k]}) adalah ...`, h, K.sample(lain, 3), `${h} termasuk ${k}.`); },
+      (K) => { const k = K.pick(Object.keys(benda)); const b = K.pick(benda[k]); return K.mk(1, "Magnet", `${b[0].toUpperCase() + b.slice(1)} jika didekatkan pada magnet ...`, k === "magnetis" ? "akan tertarik" : "tidak akan tertarik", ["akan tertarik", "tidak akan tertarik", "akan meleleh", "akan menyala", "menjadi panas"].filter((x) => x !== (k === "magnetis" ? "akan tertarik" : "tidak akan tertarik")), `${b} termasuk benda ${k}.`); },
+      (K) => { const b = K.pick(benda.magnetis); return K.mk(1, "Magnet", "Benda berikut yang dapat ditarik magnet adalah ...", b, K.sample(benda.nonmagnetis, 3), `${b} terbuat dari besi/baja/nikel sehingga magnetis.`); },
+      (K) => { const k = K.pick(Object.keys(listrik)); const b = K.pick(listrik[k]); return K.mk(1, "Listrik", tanya(K, `${b[0].toUpperCase() + b.slice(1)} termasuk ... listrik.`, `Dalam hal menghantarkan listrik, ${b} tergolong ...`), k, ["konduktor", "isolator", "semikonduktor", "resistor"].filter((x) => x !== k), k === "konduktor" ? `${b} dapat menghantarkan arus listrik.` : `${b} tidak dapat menghantarkan arus listrik.`); },
+      (K) => { const k = K.pick(Object.keys(cahayaBenda)); const b = K.pick(cahayaBenda[k]); return K.mk(1, "Cahaya", `${b[0].toUpperCase() + b.slice(1)} termasuk benda ...`, k, Object.keys(cahayaBenda).filter((x) => x !== k).concat(["sumber cahaya"]), k.startsWith("bening") ? "Cahaya dapat menembus seluruhnya." : k.startsWith("gelap") ? "Cahaya tidak dapat menembusnya." : "Hanya sebagian cahaya yang menembus."); },
+      (K) => { const [a, e] = K.pick(energi); return K.mk(1, "Energi", `${a[0].toUpperCase() + a.slice(1)} mengubah energi listrik menjadi energi ...`, e, ["panas", "gerak", "cahaya", "bunyi", "kimia"].filter((x) => x !== e && !e.includes(x)), `Saat dipakai, ${a} menghasilkan ${e}.`); },
+      (K) => { const o = K.pick(organ); const dist = organ.filter((x) => x[1] !== o[1]).map((x) => "sistem " + x[1]); return K.mk(1, "Organ Tubuh", `${o[0][0].toUpperCase() + o[0].slice(1)} merupakan bagian dari ...`, "sistem " + o[1] === "sistem mata" || o[1] === "mata" ? "alat indra penglihatan" : o[1] === "telinga" ? "alat indra pendengaran" : "sistem " + o[1], o[1] === "mata" || o[1] === "telinga" ? ["sistem pencernaan", "sistem pernapasan", "sistem peredaran darah"] : K.shuffle([...new Set(dist)]).concat(["alat indra"]), `${o[0]} berfungsi ${o[2]}.`); },
+      (K) => { const b = K.pick(benda.nonmagnetis); return K.mk(1, "Magnet", "Benda berikut yang TIDAK dapat ditarik magnet adalah ...", b, K.sample(benda.magnetis, 3), `${b} bukan besi/baja/nikel sehingga tidak magnetis.`); },
+      (K) => { const k = K.pick(Object.keys(listrik)); const b = K.pick(listrik[k]); const o = k === "konduktor" ? "isolator" : "konduktor"; return K.mk(1, "Listrik", `Benda berikut yang termasuk ${k} listrik adalah ...`, b, K.sample(listrik[o], 3), `${b} termasuk ${k}.`); },
+      (K) => { const k = K.pick(Object.keys(cahayaBenda)); const b = K.pick(cahayaBenda[k]); const lain = Object.keys(cahayaBenda).filter((x) => x !== k).flatMap((x) => cahayaBenda[x]); return K.mk(1, "Cahaya", `Benda berikut yang termasuk benda ${k} adalah ...`, b, K.sample(lain, 3), `${b} termasuk benda ${k}.`); },
+      (K) => { const f = K.pick(fakta.filter((x) => x[0] === 1)); return K.mk(1, f[1], f[2], f[3], f[4], f[5]); },
+    ],
+    2: [
+      (K) => { const o = K.pick(organ); const lain = organ.filter((x) => x[0] !== o[0]).map((x) => x[2]); return K.mk(2, "Organ Tubuh", `Fungsi ${o[0]} adalah ...`, o[2], K.sample(lain, 3), `${o[0]} (${o[1]}): ${o[2]}.`); },
+      (K) => { const o = K.pick(organ); const lain = organ.filter((x) => x[0] !== o[0]).map((x) => x[0]); return K.mk(2, "Organ Tubuh", `Bagian tubuh yang berfungsi ${o[2]} adalah ...`, o[0], K.sample(lain, 3), `${o[0]} berfungsi ${o[2]}.`); },
+      (K) => { const ch = K.pick(rantai); const i = K.int(0, ch.length - 1); return K.mk(2, "Ekosistem", `Perhatikan rantai makanan pada gambar. ${ch[i][0].toUpperCase() + ch[i].slice(1)} berperan sebagai ...`, peran[i], peran.slice(0, ch.length).filter((_, j) => j !== i).concat(["pengurai"]), `Urutan: ${ch.map((x, j) => x + " (" + peran[j] + ")").join(" → ")}.`, S.chain(ch)); },
+      (K) => { const ch = K.pick(rantai); const i = K.int(1, ch.length - 1); return K.mk(2, "Ekosistem", `Pada rantai makanan di gambar, yang berperan sebagai ${peran[i]} adalah ...`, ch[i], ch.filter((_, j) => j !== i).concat(["jamur"]), `${ch[i]} memakan ${ch[i - 1]}, jadi ${peran[i]}.`, S.chain(ch)); },
+      (K) => { const [a, s, e] = K.pick(sumberEnergi); return K.mk(2, "Energi", `${a[0].toUpperCase() + a.slice(1)} menghasilkan listrik dari energi ...`, s, sumberEnergi.map((x) => x[1]).filter((x) => x !== s), `${a} mengubah energi ${s} menjadi energi ${e}.`); },
+      (K) => { const k = K.pick(["datar", "cekung", "cembung"]); const ket = { datar: "sama besar, tegak, dan maya", cekung: "dapat diperbesar dan mengumpulkan cahaya", cembung: "diperkecil, tegak, dan menyebarkan cahaya" }; return K.mk(2, "Cahaya", `Gambar menunjukkan jenis cermin ... (garis biru = cermin, dilihat dari kanan)`, "cermin " + k, ["cermin datar", "cermin cekung", "cermin cembung", "lensa cembung"].filter((x) => x !== "cermin " + k), `Cermin ${k}: bayangan ${ket[k]}.`, S.mirror(k)); },
+      (K) => { const [h, c] = K.pick(adaptasi.map((x) => [x[0], x[1]])); return K.mk(2, "Ekosistem", `Bentuk penyesuaian diri (adaptasi) ${h} adalah ...`, c, K.sample(adaptasi.filter((x) => x[0] !== h).map((x) => x[1]), 3), `${h}: ${c}.`); },
+      (K) => { const a = K.pick(adaptasi); return K.mk(2, "Ekosistem", `${a[0][0].toUpperCase() + a[0].slice(1)} memiliki ${a[1]}. Gunanya adalah untuk ...`, a[2], K.sample(adaptasi.filter((x) => x[2] !== a[2]).map((x) => x[2]), 3), `Adaptasi ${a[0]}: ${a[1]} untuk ${a[2]}.`); },
+      (K) => { const f = K.int(1, 60000); const k = f < 20 ? "infrasonik" : f <= 20000 ? "audiosonik" : "ultrasonik"; return K.mk(2, "Bunyi", `Bunyi dengan frekuensi ${K.num(f)} Hz termasuk bunyi ...`, k, ["infrasonik", "audiosonik", "ultrasonik", "gaung"].filter((x) => x !== k), "Infrasonik < 20 Hz, audiosonik 20–20.000 Hz, ultrasonik > 20.000 Hz."); },
+      (K) => { const x = K.int(1, 12) / (K.r() < 0.5 ? 1 : 2); return K.mk(2, "Cahaya", `${K.pick(["Andi", "Sinta", "Raka", "Maya", "Doni"])} berdiri ${K.num(x)} m di depan cermin datar. Jarak dirinya dengan bayangannya adalah ...`, `${K.num(2 * x)} m`, [`${K.num(x)} m`, `${K.num(x / 2)} m`, `${K.num(2 * x + 1)} m`], `Jarak bayangan = jarak benda (${K.num(x)} m). Jarak orang ke bayangan = ${K.num(x)} + ${K.num(x)} = ${K.num(2 * x)} m.`); },
+      (K) => { const [a, e] = K.pick(energi); const lain = energi.filter((x) => x[1] !== e && !x[1].includes(e) && !e.includes(x[1])).map((x) => x[0]); return K.mk(2, "Energi", `Alat yang mengubah energi listrik terutama menjadi energi ${e} adalah ...`, a, K.sample(lain, 3), `${a}: listrik → ${e}.`); },
+      (K) => { const f = K.pick(fakta.filter((x) => x[0] === 2)); return K.mk(2, f[1], f[2], f[3], f[4], f[5]); },
+      (K) => { const f = K.pick(fakta.filter((x) => x[0] === 1)); return K.mk(2, f[1], `Pernyataan yang BENAR adalah ...`, f[2].replace("...", f[3]), f[4].map((w) => f[2].replace("...", w)), f[5]); },
+    ],
+    3: [
+      (K) => { const ch = K.pick(rantai.filter((c) => c.length >= 4)); const i = K.int(1, ch.length - 2); return K.mk(3, "Ekosistem", `Pada rantai makanan di gambar, jika populasi ${ch[i]} berkurang drastis, yang terjadi adalah ...`, `populasi ${ch[i - 1]} meningkat`, [`populasi ${ch[i - 1]} menurun`, `populasi ${ch[i + 1]} meningkat`, `populasi ${ch[ch.length - 1]} meningkat pesat`], `${ch[i]} pemangsa ${ch[i - 1]}. Jika ${ch[i]} berkurang, ${ch[i - 1]} jarang dimangsa sehingga bertambah, sedangkan ${ch[i + 1]} kekurangan makanan.`, S.chain(ch)); },
+      (K) => { const ch = K.pick(rantai.filter((c) => c.length >= 4)); const i = K.int(1, ch.length - 2); return K.mk(3, "Ekosistem", `Pada rantai makanan di gambar, jika ${ch[i]} punah, hewan yang paling cepat kekurangan makanan adalah ...`, ch[i + 1], ch.filter((_, j) => j !== i + 1 && j !== i).concat(["pengurai"]), `${ch[i + 1]} memakan ${ch[i]}.`, S.chain(ch)); },
+      (K) => { const t = K.pick(["seri", "paralel"]); const n = K.int(2, 3); const i = K.int(1, n); const ans = t === "seri" ? "semua lampu padam" : "lampu lainnya tetap menyala"; return K.mk(3, "Listrik", `Gambar menunjukkan rangkaian ${n} lampu. Jika lampu ke-${i} putus, yang terjadi adalah ...`, ans, ["semua lampu padam", "lampu lainnya tetap menyala", "lampu lain makin redup lalu padam", "baterai meledak"].filter((x) => x !== ans), t === "seri" ? "Rangkaian seri hanya satu jalur; satu putus, arus berhenti." : "Rangkaian paralel bercabang; lampu lain tetap mendapat arus.", S.circuit(t, n)); },
+      (K) => { const t = K.pick(["seri", "paralel"]); const n = K.int(2, 4); return K.mk(3, "Listrik", "Jenis rangkaian listrik pada gambar adalah rangkaian ...", t, ["seri", "paralel", "campuran", "terbuka"].filter((x) => x !== t), t === "seri" ? "Lampu tersusun berurutan dalam satu jalur." : "Lampu tersusun bercabang-cabang.", S.circuit(t, n)); },
+      (K) => { const k = K.pick(Object.keys(listrik)); const b = K.sample(listrik[k], 1)[0]; const sit = k === "isolator" ? `Pegangan obeng listrik dibuat dari ${b} karena ${b} bersifat ...` : `Kabel listrik bagian dalam dapat dibuat dari ${b} karena bersifat ...`; return K.mk(3, "Listrik", sit, k, ["konduktor", "isolator", "magnetis", "transparan"].filter((x) => x !== k), k === "isolator" ? "Isolator tidak menghantarkan listrik sehingga aman dipegang." : "Konduktor menghantarkan arus listrik dengan baik."); },
+      (K) => { const ab = K.pick(["U", "S"]); const cd = K.pick(["U", "S"]); const r = ab === cd ? "tolak-menolak" : "tarik-menarik"; return K.mk(3, "Magnet", `Kutub ${ab} magnet A didekatkan ke kutub ${cd} magnet B. Kedua magnet akan ...`, r, ["tolak-menolak", "tarik-menarik", "berputar", "kehilangan kemagnetan"].filter((x) => x !== r), "Kutub senama tolak-menolak, berbeda tarik-menarik."); },
+      (K) => { const h = K.pick(Object.keys(hewan)); const a = K.sample(hewan[h], 2); return K.mk(3, "Ekosistem", `${a[0][0].toUpperCase() + a[0].slice(1)} dan ${a[1]} bersaing memperebutkan makanan yang sama. Mereka sama-sama tergolong ...`, h, Object.keys(hewan).filter((x) => x !== h).concat(["produsen"]), `Keduanya ${sifatHewan[h]}.`); },
+      (K) => { const t = K.pick([1, 2, 3, 4, 5, 6, 8, 10]); return K.mk(3, "Bunyi", `Kapal mengirim gelombang sonar ke dasar laut dan pantulannya diterima ${t} detik kemudian. Jika cepat rambat bunyi di air 1.500 m/s, kedalaman laut adalah ...`, `${K.num(750 * t)} m`, [`${K.num(1500 * t)} m`, `${K.num(375 * t)} m`, `${K.num(750 * t + 500)} m`], `Kedalaman = (v × t) : 2 = (1.500 × ${t}) : 2 = ${K.num(750 * t)} m (dibagi 2 karena bunyi pergi-pulang).`); },
+      (K) => { const t = K.int(2, 12); return K.mk(3, "Bunyi", `Guntur terdengar ${t} detik setelah kilat terlihat. Jika cepat rambat bunyi di udara 340 m/s, jarak petir dari pengamat adalah ...`, `${K.num(340 * t)} m`, [`${K.num(170 * t)} m`, `${K.num(340 * t * 2)} m`, `${K.num(340 + t)} m`], `Jarak = v × t = 340 × ${t} = ${K.num(340 * t)} m.`); },
+      (K) => { const f = K.pick(fakta.filter((x) => x[0] === 3)); return K.mk(3, f[1], "Pernyataan yang BENAR adalah ...", f[2].replace("...", f[3]), f[4].map((w) => f[2].replace("...", w)), f[5]); },
+      (K) => { const f = K.pick(fakta.filter((x) => x[0] === 3)); return K.mk(3, f[1], f[2], f[3], f[4], f[5]); },
+      (K) => { const f = K.pick(fakta.filter((x) => x[0] === 2)); return K.mk(3, f[1], "Pernyataan yang BENAR adalah ...", f[2].replace("...", f[3]), f[4].map((w) => f[2].replace("...", w)), f[5]); },
+      (K) => { const f = K.pick(fakta.filter((x) => x[0] >= 2)); const w = K.pick(f[4]); return K.mk(3, f[1], `Pernyataan yang SALAH adalah ...`, f[2].replace("...", w), K.sample(fakta.filter((x) => x !== f && x[1] === f[1]), 3).map((g) => g[2].replace("...", g[3])), `Yang benar: ${f[2].replace("...", f[3])}`); },
+    ],
+  };
+  const gen = () => C.build("IPA", 2207, T, C.quota);
+  if (typeof module !== "undefined") module.exports = gen; else (G.GEN = G.GEN || {}).IPA = gen;
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+<script>// Aplikasi latihan harian: 100 hari x 10 soal x 4 mapel. Level naik di hari 36 dan 71.
+const MAPEL = { MTK: ["Matematika", "🔢"], BIND: ["Bahasa Indonesia", "📖"], BING: ["Bahasa Inggris", "🇬🇧"], IPA: ["IPA", "🔬"] };
+const PER_HARI = 10, HARI = 100;
+const LEVEL = [null, { nama: "Level 1 · Dasar", mulai: 1 }, { nama: "Level 2 · Menengah", mulai: 36 }, { nama: "Level 3 · Mahir (HOTS)", mulai: 71 }];
+const BANK = {}; for (const k in MAPEL) BANK[k] = GEN[k]();
+const $ = (s) => document.querySelector(s); const app = $("#app");
+const store = { get() { try { return JSON.parse(localStorage.getItem("sd5") || "{}"); } catch { return {}; } }, set(v) { try { localStorage.setItem("sd5", JSON.stringify(v)); } catch {} } };
+let ST = Object.assign({ nama: "", hasil: {}, salah: {}, streak: 0, last: "" }, store.get());
+const save = () => store.set(ST);
+const levelHari = (d) => (d >= 71 ? 3 : d >= 36 ? 2 : 1);
+// Soal hari ke-d: level 1 = 350 soal untuk hari 1-35, level 2 = 350 untuk hari 36-70, level 3 = 300 untuk hari 71-100
+function soalHari(m, d) { const lv = levelHari(d); const pool = BANK[m].filter((q) => q.level === lv); const i = (d - LEVEL[lv].mulai) * PER_HARI; return pool.slice(i, i + PER_HARI); }
+const hariSelesai = (d) => Object.keys(MAPEL).every((m) => ST.hasil[m + d]);
+const hariAktif = () => { for (let d = 1; d <= HARI; d++) if (!hariSelesai(d)) return d; return HARI; };
+let pilihHari = null;
+const today = () => new Date().toISOString().slice(0, 10);
+function home() {
+  $("#homeBtn").hidden = true;
+  if (!window.PREVIEW && !ST.kode && (window.KODE_HASH || (location.protocol.startsWith("http") && !/localhost|127\.0\.0\.1/.test(location.hostname)))) return aktivasi();
+  if (!ST.nama) return setup();
+  const d = pilihHari || hariAktif(); const lv = levelHari(d);
+  const selesai = Array.from({ length: HARI }, (_, i) => hariSelesai(i + 1)).filter(Boolean).length;
+  const salahN = Object.values(ST.salah).length;
+  app.innerHTML = `
+  <div class="card"><div class="row"><div><div class="mut">Halo, ${esc(ST.nama)} 👋</div><b style="font-size:22px">Hari ke-${d}</b> <span class="lvl l${lv}">${LEVEL[lv].nama}</span></div><div style="text-align:right"><div class="big">🔥${ST.streak}</div><div class="mut">hari beruntun</div></div></div>
+  <div class="mut" style="margin:10px 0 4px">Progres ${selesai}/${HARI} hari</div><div class="bar"><i style="width:${selesai}%"></i></div></div>
+  <div class="grid">${Object.entries(MAPEL).map(([k, [n, ic]]) => { const h = ST.hasil[k + d]; return `<button class="mapel ${h ? "done" : ""}" data-m="${k}"><span class="ic">${ic}</span><b>${n}</b><small>${h ? `✅ Nilai ${h.nilai} · ulangi` : `${PER_HARI} soal · ±10 menit`}</small></button>`; }).join("")}</div>
+  <div class="card" style="margin-top:14px"><b>Pilih hari</b> <span class="mut">(hijau = selesai)</span><div class="days" style="margin-top:8px">${Array.from({ length: HARI }, (_, i) => `<button class="${hariSelesai(i + 1) ? "d" : ""} ${i + 1 === d ? "c" : ""}" data-d="${i + 1}">${i + 1}</button>`).join("")}</div>
+  <div class="mut" style="margin-top:8px">Hari 1–35: Level 1 · Hari 36–70: Level 2 · Hari 71–100: Level 3</div></div>
+  <div class="grid"><button class="btn sec" id="review" ${salahN ? "" : "disabled"}>🔁 Ulang soal salah (${salahN})</button><button class="btn sec" id="rapor">📊 Rapor</button><button class="btn sec" id="cetak">🖨️ Cetak soal hari ini</button><button class="btn sec" id="ortu">👪 Panduan orang tua</button></div>`;
+  app.querySelectorAll("[data-m]").forEach((b) => (b.onclick = () => kuis(b.dataset.m, soalHari(b.dataset.m, d), d)));
+  app.querySelectorAll("[data-d]").forEach((b) => (b.onclick = () => { pilihHari = +b.dataset.d; home(); }));
+  $("#review").onclick = review; $("#rapor").onclick = rapor; $("#cetak").onclick = () => cetak(d); $("#ortu").onclick = ortu;
+}
+// ---- Kode akses ----
+async function sha(t) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join(""); }
+async function cekKode(kode) {
+  // Versi satu file (Scalev): hash kode tertanam di halaman. Versi Netlify: cek ke server.
+  if (window.KODE_HASH) { try { return window.KODE_HASH.includes(await sha(kode)); } catch { return false; } }
+  try { const r = await fetch("/api/verify", { method: "POST", body: JSON.stringify({ kode }) }); return (await r.json()).ok; } catch { return false; }
+}
+function aktivasi() {
+  $("#homeBtn").hidden = true;
+  app.innerHTML = `<div class="card"><h2>🔐 Masukkan Kode Akses</h2><p>Kode akses dikirim setelah pembelian. Cukup sekali aktivasi per perangkat.</p>
+  <input id="kd" placeholder="SD5-XXXX-XXXX" autocapitalize="characters"><br><br><button class="btn full" id="ak">Aktifkan</button><p id="msg" class="mut"></p></div>`;
+  $("#ak").onclick = async () => { const k = $("#kd").value.trim().toUpperCase(); $("#msg").textContent = "Memeriksa..."; if (await cekKode(k)) { ST.kode = k; save(); home(); } else $("#msg").textContent = "❌ Kode tidak valid. Periksa lagi atau hubungi penjual."; };
+}
+function setup() {
+  app.innerHTML = `<div class="card"><h2>Selamat datang! 🎉</h2><p>Latihan 10 soal per mapel setiap hari selama 100 hari: <b>4.000 soal</b> Matematika, Bahasa Indonesia, Bahasa Inggris, dan IPA sesuai Kurikulum Merdeka kelas 5. Tingkat kesulitan naik di hari ke-36 dan ke-71.</p>
+  <label>Nama anak<input id="nm" placeholder="contoh: Rafi"></label><br><br><button class="btn full" id="go">Mulai Belajar</button></div>`;
+  $("#go").onclick = () => { const v = $("#nm").value.trim(); if (v) { ST.nama = v; save(); home(); } };
+}
+function kuis(m, soal, d, isReview) {
+  $("#homeBtn").hidden = false; let i = 0, benar = 0; const log = [];
+  const show = () => {
+    const q = soal[i];
+    app.innerHTML = `<div class="card"><div class="row"><b>${MAPEL[q.mapel][1]} ${MAPEL[q.mapel][0]}</b><span class="mut">${i + 1}/${soal.length}</span></div><div class="bar" style="margin:8px 0"><i style="width:${(i / soal.length) * 100}%"></i></div>
+    <span class="lvl l${q.level}">${q.topik}</span><div class="q">${q.q}</div>${q.img ? `<div class="img">${q.img}</div>` : ""}
+    ${q.opsi.map((o, j) => `<button class="opt" data-j="${j}"><b>${"ABCD"[j]}.</b> ${o}</button>`).join("")}<div id="fb"></div></div>`;
+    app.querySelectorAll(".opt").forEach((b) => (b.onclick = () => jawab(+b.dataset.j)));
+  };
+  const jawab = (j) => {
+    const q = soal[i]; const ok = j === q.jawab; if (ok) benar++;
+    log.push({ id: q.id, ok, topik: q.topik, mapel: q.mapel });
+    if (ok) delete ST.salah[q.id]; else ST.salah[q.id] = 1;
+    app.querySelectorAll(".opt").forEach((b, k) => { b.disabled = true; if (k === q.jawab) b.classList.add("ok"); else if (k === j) b.classList.add("no"); });
+    $("#fb").innerHTML = `<div class="bahas"><b>${ok ? "✅ Benar! Hebat!" : "❌ Belum tepat."}</b><br>${q.bahas}</div><br><button class="btn full" id="nx">${i + 1 < soal.length ? "Lanjut ➜" : "Lihat hasil"}</button>`;
+    $("#nx").onclick = () => { i++; i < soal.length ? show() : selesai(); }; $("#nx").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    save();
+  };
+  const selesai = () => {
+    const nilai = Math.round((benar / soal.length) * 100);
+    if (!isReview) {
+      ST.hasil[m + d] = { nilai, log, tgl: today() };
+      if (ST.last !== today()) { const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10); ST.streak = ST.last === y ? ST.streak + 1 : 1; ST.last = today(); }
+    }
+    save();
+    const bintang = nilai >= 90 ? "⭐⭐⭐" : nilai >= 70 ? "⭐⭐" : nilai >= 50 ? "⭐" : "💪";
+    app.innerHTML = `<div class="card" style="text-align:center"><div class="big">${bintang}</div><h2>Nilai ${nilai}</h2><p>${benar} dari ${soal.length} soal benar.</p><p class="mut">${nilai >= 70 ? "Keren! Pertahankan ya." : "Tidak apa-apa, soal yang salah tersimpan di menu Ulang Soal Salah."}</p><button class="btn full" id="bk">Kembali ke beranda</button></div>`;
+    $("#bk").onclick = home;
+  };
+  show();
+}
+function review() {
+  const all = Object.values(BANK).flat(); const ids = new Set(Object.keys(ST.salah));
+  const s = all.filter((q) => ids.has(q.id)).slice(0, 10); if (s.length) kuis(null, s, 0, true);
+}
+function rapor() {
+  $("#homeBtn").hidden = false; const tp = {};
+  for (const h of Object.values(ST.hasil)) for (const l of h.log) { const k = MAPEL[l.mapel][0] + " — " + l.topik; tp[k] = tp[k] || [0, 0]; tp[k][1]++; if (l.ok) tp[k][0]++; }
+  const rata = (m) => { const v = Object.entries(ST.hasil).filter(([k]) => k.startsWith(m) && !isNaN(k.slice(m.length))).map(([, h]) => h.nilai); return v.length ? Math.round(v.reduce((a, b) => a + b) / v.length) : "-"; };
+  const lemah = Object.entries(tp).filter(([, v]) => v[1] >= 3).sort((a, b) => a[1][0] / a[1][1] - b[1][0] / b[1][1]).slice(0, 8);
+  app.innerHTML = `<div class="card"><h2>📊 Rapor ${esc(ST.nama)}</h2><table><tr><th>Mapel</th><th>Rata-rata</th></tr>${Object.entries(MAPEL).map(([k, [n]]) => `<tr><td>${n}</td><td><b>${rata(k)}</b></td></tr>`).join("")}</table></div>
+  <div class="card"><h3>Topik yang perlu dilatih lagi</h3>${lemah.length ? `<table>${lemah.map(([k, v]) => `<tr><td>${k}</td><td>${Math.round((v[0] / v[1]) * 100)}% benar</td></tr>`).join("")}</table>` : `<p class="mut">Kerjakan minimal beberapa hari dulu agar terlihat polanya.</p>`}</div>
+  <div class="card"><button class="btn sec" id="rst">Hapus semua progres</button></div>`;
+  $("#rst").onclick = () => { if (confirm("Hapus semua progres?")) { ST = { nama: "", hasil: {}, salah: {}, streak: 0, last: "", kode: ST.kode }; save(); home(); } };
+}
+function ortu() {
+  $("#homeBtn").hidden = false;
+  app.innerHTML = `<div class="card"><h2>👪 Panduan Orang Tua</h2><ol>
+  <li><b>Rutin 30–40 menit sehari.</b> 4 mapel × 10 soal. Lebih efektif daripada les 2× seminggu yang panjang.</li>
+  <li><b>Biarkan anak membaca pembahasan</b> setiap selesai menjawab — di situ belajarnya terjadi.</li>
+  <li><b>Akhir pekan:</b> buka “Ulang soal salah” dan “Rapor”, lalu fokuskan bantuan pada topik dengan persentase terendah.</li>
+  <li><b>Level naik bertahap:</b> hari 1–35 dasar, 36–70 menengah, 71–100 mahir/soal cerita (HOTS).</li>
+  <li><b>Cetak</b> jika anak lebih suka mengerjakan di kertas; kunci jawaban ada di halaman terakhir.</li></ol>
+  <h3>Cakupan materi</h3><p class="mut">Matematika: bilangan cacah, pecahan, desimal, persen, KPK–FPB, perbandingan & skala, kecepatan & debit, sudut, luas, volume kubus–balok, penyajian data.<br>Bahasa Indonesia: ide pokok, kalimat utama/penjelas, paragraf deduktif–induktif, informasi teks, fakta–opini, sinonim–antonim, kata baku, imbuhan, majas, huruf kapital, kata tanya.<br>Bahasa Inggris: vocabulary, numbers, days & months, telling time, prepositions, jobs, places, simple present/continuous/past, comparison, reading.<br>IPA: cahaya & mata, bunyi & telinga, ekosistem & rantai makanan, magnet, listrik, energi, bumi & siklus air, organ tubuh.</p></div>`;
+}
+function cetak(d) {
+  let h = "", kunci = "";
+  for (const [k, [n]] of Object.entries(MAPEL)) {
+    const s = soalHari(k, d);
+    h += `<h2>${n} — Hari ke-${d} (${LEVEL[levelHari(d)].nama})</h2><p>Nama: ______________ Tanggal: ________</p>` + s.map((q, i) => `<div class="pq"><b>${i + 1}.</b> ${q.q}${q.img ? `<div>${q.img}</div>` : ""}<div>${q.opsi.map((o, j) => `${"abcd"[j]}. ${o}`).join("&nbsp;&nbsp;&nbsp; ")}</div></div>`).join("");
+    kunci += `<p><b>${n}:</b> ${s.map((q, i) => `${i + 1}${"abcd"[q.jawab]}`).join(", ")}</p>`;
+  }
+  $("#print").innerHTML = h + `<h2>Kunci Jawaban Hari ke-${d}</h2>` + kunci; window.print();
+}
+const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+$("#homeBtn").onclick = () => { pilihHari = null; home(); };
+home();
+
+</script>
+</body>
+</html>
