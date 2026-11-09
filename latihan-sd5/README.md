@@ -1,4 +1,4 @@
-# Latihan Harian SD Kelas 5
+# Les di Rumah Kelas 5
 
 Web app (PWA) latihan soal harian pengganti les bulanan: **4.000 soal** (1.000 per mapel) Matematika, Bahasa Indonesia, Bahasa Inggris, IPA — Kurikulum Merdeka Fase C kelas 5.
 

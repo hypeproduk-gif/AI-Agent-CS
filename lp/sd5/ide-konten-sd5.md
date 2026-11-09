@@ -1,4 +1,4 @@
-# Ide Konten Meta Ads — Latihan Harian SD Kelas 5
+# Ide Konten Meta Ads — Les di Rumah Kelas 5
 
 Asumsi: harga Rp99.000 (coret Rp299.000), sekali bayar, target orang tua kelas 5 yang sudah/pernah membayar les atau bimbel (sinyal mampu beli). Kanvas 1080x1350, palet ungu jenuh + kuning + biru muda, CTA oranye (beda keluarga dari creative TKA teal-emas).
 

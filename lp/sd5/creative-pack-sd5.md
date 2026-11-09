@@ -1,4 +1,4 @@
-# Creative Pack — Latihan Harian SD Kelas 5
+# Creative Pack — Les di Rumah Kelas 5
 Produk: 4.000 soal 4 mapel kelas 5, program 100 hari, pembahasan, rapor, cetak. Rp99.000 sekali bayar. Target: orang tua mapan yang sudah membayar les/bimbel.
 
 # CREATIVE #1 — Biaya les sudah keluar, tapi topik lemah anak tidak terlihat
@@ -14,7 +14,7 @@ HEADLINE (y 200–330): line 1 44px: "Rapor Topik Lemah Anak" / line 2 26px: "Mu
 HERO (y 350–1020): Indonesian mother, 38, smart-casual blouse, in the driver's seat of a parked SUV at a school pick-up lane in Jakarta Selatan, looking at an iPhone showing a quiz-app report card with three topic rows highlighted red (KPK 40%, Debit 55%, Majas 60%); over-the-shoulder camera angle so the phone screen is legible; documentary 35mm photo, natural afternoon light through the windshield, violet backdrop panel occupying the left half.
 PRICE (y 1050–1130): 30px: "4.000 soal + rapor · Rp99.000 sekali bayar"
 CTA (y 1150–1240): solid rounded button in the warmest supporting color, 34px bold: "Lihat Rapor Anak Saya  ›"
-FOOTER (y 1260–1290): 16px: "Latihan Harian SD Kelas 5 · toolkitparenting.my.id"
+FOOTER (y 1260–1290): 16px: "Les di Rumah Kelas 5 · toolkitparenting.my.id"
 PROP RULE: objects the model holds or looks at face the model, never held flat toward the camera; camera over-the-shoulder or object tilted ~30–45° so text is legible in correct perspective, not mirrored.
 STYLE: real-camera look, candid framing, main color ~50% of frame, flat text panels hugging the text (24px padding, max width 900px), generous empty space. Native Meta feed ad, not a poster. No cozy-home clichés (wood table + plants + window light), no bokeh overload, no 3D icons, no sparkles, no brush strokes behind text, no extra elements.
 Render all Indonesian text exactly as written, correct spelling.
@@ -26,7 +26,7 @@ TASK: extend the input image to CANVAS LOCKED exactly 1080 × 1920 px (9:16).
 1. Place the 1080×1350 input INTACT, vertically centered (y 285–1635), 100% scale.
 2. DO NOT change anything inside it: text, spelling, fonts, colors, positions, faces, objects, screens, sizes.
 3. Top (y 0–285): seamless continuation showing the car roof lining and rear-view mirror. Bottom (y 1635–1920): seamless continuation showing the car dashboard and center console. Same lighting, invisible seams.
-4. TOP TEXT (y 110–250), centered: "TOOLKIT PARENTING" 24px bold + "Latihan Harian SD Kelas 5 · 4.000 Soal" 20px.
+4. TOP TEXT (y 110–250), centered: "TOOLKIT PARENTING" 24px bold + "Kerjakan · Dikoreksi · Dibahas" 20px.
 5. BOTTOM TEXT (y 1665–1820), centered: 3 chips 20px: "✓ 4 mapel kelas 5"  "✓ Pembahasan tiap soal"  "✓ Ulang soal salah" + line 18px: "Akses selamanya · 1 keluarga".
 6. Safe zone x 43–1037, y 77–1843. Supporting text smaller than center text, same design language. No new people, products, or decorations.
 ```
@@ -44,7 +44,7 @@ HEADLINE (y 200–330): line 1 44px: "Pecahan, Debit, Tenses, Listrik" / line 2 
 HERO (y 350–1020): Flat-lay studio shot from directly above on a solid teal surface: an iPad showing a materi chapter with a fraction pie chart, a printed A4 worksheet with a triangle problem, a mechanical pencil, a small calculator, and a school ID lanyard from a private school in Tangerang; crisp editorial lighting, no hands.
 PRICE (y 1050–1130): 30px: "41 bab materi + 4.000 soal · Rp99.000"
 CTA (y 1150–1240): solid rounded button in the warmest supporting color, 34px bold: "Cek Daftar Materinya  ›"
-FOOTER (y 1260–1290): 16px: "Latihan Harian SD Kelas 5 · toolkitparenting.my.id"
+FOOTER (y 1260–1290): 16px: "Les di Rumah Kelas 5 · toolkitparenting.my.id"
 PROP RULE: objects the model holds or looks at face the model, never held flat toward the camera; camera over-the-shoulder or object tilted ~30–45° so text is legible in correct perspective, not mirrored.
 STYLE: real-camera look, candid framing, main color ~50% of frame, flat text panels hugging the text (24px padding, max width 900px), generous empty space. Native Meta feed ad, not a poster. No cozy-home clichés (wood table + plants + window light), no bokeh overload, no 3D icons, no sparkles, no brush strokes behind text, no extra elements.
 Render all Indonesian text exactly as written, correct spelling.
@@ -56,7 +56,7 @@ TASK: extend the input image to CANVAS LOCKED exactly 1080 × 1920 px (9:16).
 1. Place the 1080×1350 input INTACT, vertically centered (y 285–1635), 100% scale.
 2. DO NOT change anything inside it: text, spelling, fonts, colors, positions, faces, objects, screens, sizes.
 3. Top (y 0–285): seamless continuation showing more of the teal surface with soft shadow. Bottom (y 1635–1920): seamless continuation showing more teal surface with the pencil's shadow. Same lighting, invisible seams.
-4. TOP TEXT (y 110–250), centered: "TOOLKIT PARENTING" 24px bold + "Latihan Harian SD Kelas 5 · 4.000 Soal" 20px.
+4. TOP TEXT (y 110–250), centered: "TOOLKIT PARENTING" 24px bold + "Kerjakan · Dikoreksi · Dibahas" 20px.
 5. BOTTOM TEXT (y 1665–1820), centered: 3 chips 20px: "✓ Kurikulum Merdeka Fase C"  "✓ Bisa dicetak"  "✓ Tanpa instal aplikasi" + line 18px: "Akses selamanya · 1 keluarga".
 6. Safe zone x 43–1037, y 77–1843. Supporting text smaller than center text, same design language. No new people, products, or decorations.
 ```
@@ -74,7 +74,7 @@ HEADLINE (y 200–330): line 1 44px: "Sudah Disiapkan 100 Hari" / line 2 26px: "
 HERO (y 350–1020): Indonesian father, 40, light-blue office shirt and lanyard, standing in a modern glass meeting room in an SCBD office tower, reading a WhatsApp message on his phone from his child while holding a laptop; editorial corporate photo, cool daylight, phone tilted ~35° toward camera so the chat is legible, cobalt wall graphic behind.
 PRICE (y 1050–1130): 30px: "Program 100 hari · Rp99.000 sekali bayar"
 CTA (y 1150–1240): solid rounded button in the warmest supporting color, 34px bold: "Siapkan Latihan Anak Sekarang  ›"
-FOOTER (y 1260–1290): 16px: "Latihan Harian SD Kelas 5 · toolkitparenting.my.id"
+FOOTER (y 1260–1290): 16px: "Les di Rumah Kelas 5 · toolkitparenting.my.id"
 PROP RULE: objects the model holds or looks at face the model, never held flat toward the camera; camera over-the-shoulder or object tilted ~30–45° so text is legible in correct perspective, not mirrored.
 STYLE: real-camera look, candid framing, main color ~50% of frame, flat text panels hugging the text (24px padding, max width 900px), generous empty space. Native Meta feed ad, not a poster. No cozy-home clichés (wood table + plants + window light), no bokeh overload, no 3D icons, no sparkles, no brush strokes behind text, no extra elements.
 Render all Indonesian text exactly as written, correct spelling.
@@ -86,7 +86,7 @@ TASK: extend the input image to CANVAS LOCKED exactly 1080 × 1920 px (9:16).
 1. Place the 1080×1350 input INTACT, vertically centered (y 285–1635), 100% scale.
 2. DO NOT change anything inside it: text, spelling, fonts, colors, positions, faces, objects, screens, sizes.
 3. Top (y 0–285): seamless continuation showing the glass ceiling panels and office lights. Bottom (y 1635–1920): seamless continuation showing the meeting table and carpet. Same lighting, invisible seams.
-4. TOP TEXT (y 110–250), centered: "TOOLKIT PARENTING" 24px bold + "Latihan Harian SD Kelas 5 · 4.000 Soal" 20px.
+4. TOP TEXT (y 110–250), centered: "TOOLKIT PARENTING" 24px bold + "Kerjakan · Dikoreksi · Dibahas" 20px.
 5. BOTTOM TEXT (y 1665–1820), centered: 3 chips 20px: "✓ ±40 menit sehari"  "✓ Koreksi otomatis"  "✓ Level naik bertahap" + line 18px: "Akses selamanya · 1 keluarga".
 6. Safe zone x 43–1037, y 77–1843. Supporting text smaller than center text, same design language. No new people, products, or decorations.
 ```
@@ -104,7 +104,7 @@ HEADLINE (y 200–330): line 1 44px: "Volume Balok 50×30×40 cm = … Liter?" /
 HERO (y 350–1020): Macro close-up of a 10-year-old Indonesian girl's hand holding a pencil over a printed worksheet showing an isometric box diagram labelled 50 cm, 30 cm, 40 cm, next to a phone showing the same question with answer options A–D; red desk mat; shallow depth of field but worksheet text sharp; macro product photography.
 PRICE (y 1050–1130): 30px: "4.000 soal bertingkat · Rp99.000"
 CTA (y 1150–1240): solid rounded button in the warmest supporting color, 34px bold: "Coba Soal Level 3  ›"
-FOOTER (y 1260–1290): 16px: "Latihan Harian SD Kelas 5 · toolkitparenting.my.id"
+FOOTER (y 1260–1290): 16px: "Les di Rumah Kelas 5 · toolkitparenting.my.id"
 PROP RULE: objects the model holds or looks at face the model, never held flat toward the camera; camera over-the-shoulder or object tilted ~30–45° so text is legible in correct perspective, not mirrored.
 STYLE: real-camera look, candid framing, main color ~50% of frame, flat text panels hugging the text (24px padding, max width 900px), generous empty space. Native Meta feed ad, not a poster. No cozy-home clichés (wood table + plants + window light), no bokeh overload, no 3D icons, no sparkles, no brush strokes behind text, no extra elements.
 Render all Indonesian text exactly as written, correct spelling.
@@ -116,7 +116,7 @@ TASK: extend the input image to CANVAS LOCKED exactly 1080 × 1920 px (9:16).
 1. Place the 1080×1350 input INTACT, vertically centered (y 285–1635), 100% scale.
 2. DO NOT change anything inside it: text, spelling, fonts, colors, positions, faces, objects, screens, sizes.
 3. Top (y 0–285): seamless continuation showing more red desk mat surface. Bottom (y 1635–1920): seamless continuation showing more red desk mat with an eraser. Same lighting, invisible seams.
-4. TOP TEXT (y 110–250), centered: "TOOLKIT PARENTING" 24px bold + "Latihan Harian SD Kelas 5 · 4.000 Soal" 20px.
+4. TOP TEXT (y 110–250), centered: "TOOLKIT PARENTING" 24px bold + "Kerjakan · Dikoreksi · Dibahas" 20px.
 5. BOTTOM TEXT (y 1665–1820), centered: 3 chips 20px: "✓ Ratusan soal bergambar"  "✓ Soal cerita HOTS"  "✓ Pembahasan langkah demi langkah" + line 18px: "Akses selamanya · 1 keluarga".
 6. Safe zone x 43–1037, y 77–1843. Supporting text smaller than center text, same design language. No new people, products, or decorations.
 ```
@@ -134,7 +134,7 @@ HEADLINE (y 200–330): line 1 44px: "Acak, Tanpa Kunci, Tanpa Urutan" / line 2 
 HERO (y 350–1020): Split collage: left half shows a cluttered laptop screen with many browser tabs of random worksheets and a stack of messy loose prints on a desk; right half on lime background shows one clean phone screen of the quiz app home with 4 subject cards and day grid; collage split style with clean vertical divider, editorial photo look.
 PRICE (y 1050–1130): 30px: "Satu program, 4 mapel · Rp99.000"
 CTA (y 1150–1240): solid rounded button in the warmest supporting color, 34px bold: "Ganti Dengan Program Tertata  ›"
-FOOTER (y 1260–1290): 16px: "Latihan Harian SD Kelas 5 · toolkitparenting.my.id"
+FOOTER (y 1260–1290): 16px: "Les di Rumah Kelas 5 · toolkitparenting.my.id"
 PROP RULE: objects the model holds or looks at face the model, never held flat toward the camera; camera over-the-shoulder or object tilted ~30–45° so text is legible in correct perspective, not mirrored.
 STYLE: real-camera look, candid framing, main color ~50% of frame, flat text panels hugging the text (24px padding, max width 900px), generous empty space. Native Meta feed ad, not a poster. No cozy-home clichés (wood table + plants + window light), no bokeh overload, no 3D icons, no sparkles, no brush strokes behind text, no extra elements.
 Render all Indonesian text exactly as written, correct spelling.
@@ -146,7 +146,7 @@ TASK: extend the input image to CANVAS LOCKED exactly 1080 × 1920 px (9:16).
 1. Place the 1080×1350 input INTACT, vertically centered (y 285–1635), 100% scale.
 2. DO NOT change anything inside it: text, spelling, fonts, colors, positions, faces, objects, screens, sizes.
 3. Top (y 0–285): seamless continuation showing continuation of both halves (desk on left, lime on right). Bottom (y 1635–1920): seamless continuation showing continuation of the desk and lime background. Same lighting, invisible seams.
-4. TOP TEXT (y 110–250), centered: "TOOLKIT PARENTING" 24px bold + "Latihan Harian SD Kelas 5 · 4.000 Soal" 20px.
+4. TOP TEXT (y 110–250), centered: "TOOLKIT PARENTING" 24px bold + "Kerjakan · Dikoreksi · Dibahas" 20px.
 5. BOTTOM TEXT (y 1665–1820), centered: 3 chips 20px: "✓ Urut 100 hari"  "✓ Kunci + pembahasan"  "✓ Rapor perkembangan" + line 18px: "Akses selamanya · 1 keluarga".
 6. Safe zone x 43–1037, y 77–1843. Supporting text smaller than center text, same design language. No new people, products, or decorations.
 ```
@@ -164,7 +164,7 @@ HEADLINE (y 200–330): line 1 44px: "40 Menit Latihan Dulu," / line 2 26px: "ba
 HERO (y 350–1020): Indonesian boy, 10, polo school uniform, sitting on a modern grey sofa in a minimalist apartment living room in BSD, holding a phone showing a quiz question with a clock diagram; his mother, 37, standing behind looking over his shoulder, smiling; cinematic low-light evening interior with pink accent wall; phone tilted ~40° so the screen is legible.
 PRICE (y 1050–1130): 30px: "Tanpa instal aplikasi · Rp99.000"
 CTA (y 1150–1240): solid rounded button in the warmest supporting color, 34px bold: "Atur Jam Belajar Anak  ›"
-FOOTER (y 1260–1290): 16px: "Latihan Harian SD Kelas 5 · toolkitparenting.my.id"
+FOOTER (y 1260–1290): 16px: "Les di Rumah Kelas 5 · toolkitparenting.my.id"
 PROP RULE: objects the model holds or looks at face the model, never held flat toward the camera; camera over-the-shoulder or object tilted ~30–45° so text is legible in correct perspective, not mirrored.
 STYLE: real-camera look, candid framing, main color ~50% of frame, flat text panels hugging the text (24px padding, max width 900px), generous empty space. Native Meta feed ad, not a poster. No cozy-home clichés (wood table + plants + window light), no bokeh overload, no 3D icons, no sparkles, no brush strokes behind text, no extra elements.
 Render all Indonesian text exactly as written, correct spelling.
@@ -176,7 +176,7 @@ TASK: extend the input image to CANVAS LOCKED exactly 1080 × 1920 px (9:16).
 1. Place the 1080×1350 input INTACT, vertically centered (y 285–1635), 100% scale.
 2. DO NOT change anything inside it: text, spelling, fonts, colors, positions, faces, objects, screens, sizes.
 3. Top (y 0–285): seamless continuation showing the pink accent wall and a pendant lamp. Bottom (y 1635–1920): seamless continuation showing the sofa base and a rug. Same lighting, invisible seams.
-4. TOP TEXT (y 110–250), centered: "TOOLKIT PARENTING" 24px bold + "Latihan Harian SD Kelas 5 · 4.000 Soal" 20px.
+4. TOP TEXT (y 110–250), centered: "TOOLKIT PARENTING" 24px bold + "Kerjakan · Dikoreksi · Dibahas" 20px.
 5. BOTTOM TEXT (y 1665–1820), centered: 3 chips 20px: "✓ Dibuka di browser HP"  "✓ Streak harian"  "✓ Watermark nama anak" + line 18px: "Akses selamanya · 1 keluarga".
 6. Safe zone x 43–1037, y 77–1843. Supporting text smaller than center text, same design language. No new people, products, or decorations.
 ```
@@ -188,7 +188,7 @@ TASK: extend the input image to CANVAS LOCKED exactly 1080 × 1920 px (9:16).
 **Versi A**
 Tiap bulan sudah keluar Rp500 ribu lebih untuk les. Tapi kalau ditanya topik mana yang anak masih lemah, sering kita sendiri tidak tahu.
 
-Latihan Harian SD Kelas 5 menunjukkan jawabannya:
+Les di Rumah Kelas 5 menunjukkan jawabannya:
 ✅ 4.000 soal Matematika, B. Indonesia, B. Inggris, IPA
 ✅ Rapor otomatis: topik dengan persentase benar terendah
 ✅ Pembahasan langsung di setiap soal
@@ -212,7 +212,7 @@ Les 4 kali sebulan bisa Rp500.000. Program 100 hari ini Rp99.000, dan Anda bisa 
 **Versi A**
 Banyak orang tua baru sadar materi kelas 5 itu padat: pecahan, KPK–FPB, debit, volume, ide pokok, simple present, rangkaian listrik, rantai makanan.
 
-Latihan Harian SD Kelas 5 merangkumnya dalam satu tempat:
+Les di Rumah Kelas 5 merangkumnya dalam satu tempat:
 ✅ 41 bab ringkasan materi 4 mapel
 ✅ 4.000 soal bertingkat, ratusan bergambar
 ✅ Pembahasan setiap soal
@@ -236,7 +236,7 @@ Satu buku latihan per mapel bisa Rp80–120 ribu, dikali 4 mapel. Di sini 4 mape
 **Versi A**
 Pulang kantor sudah malam, anak bertanya latihan apa hari ini. Menyiapkan soal sendiri jelas tidak sempat.
 
-Latihan Harian SD Kelas 5 sudah menyiapkannya:
+Les di Rumah Kelas 5 sudah menyiapkannya:
 ✅ Program 100 hari, 10 soal per mapel per hari
 ✅ Koreksi otomatis + pembahasan, anak belajar mandiri
 ✅ Level naik di hari ke-36 dan ke-71
@@ -260,7 +260,7 @@ Waktu Anda menyusun soal 4 mapel tiap malam jauh lebih mahal dari Rp99.000. Semu
 **Versi A**
 Coba tanyakan: akuarium 50 × 30 × 40 cm diisi penuh, berapa liter airnya? Banyak anak hafal rumus, tapi bingung mengubah cm³ ke liter.
 
-Latihan Harian SD Kelas 5 melatih ini bertahap:
+Les di Rumah Kelas 5 melatih ini bertahap:
 ✅ Level 1 dasar, Level 2 menengah, Level 3 soal cerita HOTS
 ✅ Ratusan soal bergambar: balok, sudut, diagram, jam
 ✅ Pembahasan langkah demi langkah
@@ -284,7 +284,7 @@ Satu sesi les privat matematika bisa Rp100–150 ribu. Ribuan soal bertingkat de
 **Versi A**
 Malam-malam mencari soal di internet, dapat yang levelnya acak, tidak ada kunci, dan tidak tahu urutannya.
 
-Latihan Harian SD Kelas 5 adalah versi tertatanya:
+Les di Rumah Kelas 5 adalah versi tertatanya:
 ✅ 4.000 soal dikurasi untuk kelas 5, 4 mapel
 ✅ Urutan 100 hari, level naik di hari 36 dan 71
 ✅ Kunci dan pembahasan di setiap soal
@@ -308,7 +308,7 @@ Berjam-jam tiap minggu mencari dan mencetak soal acak. Rp99.000 untuk 100 hari y
 **Versi A**
 Anak sudah pegang HP setiap hari. Masalahnya, isinya lebih banyak game daripada latihan.
 
-Latihan Harian SD Kelas 5 membuat 40 menit pertama jadi waktu belajar:
+Les di Rumah Kelas 5 membuat 40 menit pertama jadi waktu belajar:
 ✅ 10 soal per mapel per hari, langsung di browser HP
 ✅ Pembahasan dan nilai langsung muncul
 ✅ Hitungan hari beruntun agar anak termotivasi

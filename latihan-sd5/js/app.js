@@ -82,7 +82,7 @@ const LEGAL = `<div class="legal"><b>⚖️ Hak Cipta & Lisensi Penggunaan</b><b
 <li>Setiap kode akses tercatat atas nama pembeli dan tertera pada hasil cetak. Kode yang terbukti disebarkan dapat dinonaktifkan tanpa pengembalian dana.</li></ul></div>`;
 function tentang(first) {
   $("#homeBtn").hidden = !!first;
-  app.innerHTML = `<div class="card"><h2>📚 Tentang Produk Ini</h2><p><b>Latihan Harian SD Kelas 5</b> adalah program belajar mandiri di rumah sebagai alternatif les bulanan. Isinya <b>4.000 soal</b> (1.000 per mapel) Matematika, Bahasa Indonesia, Bahasa Inggris, dan IPA yang disusun mengikuti <b>Kurikulum Merdeka Fase C (kelas 5)</b>, lengkap dengan pembahasan dan ringkasan materi.</p>
+  app.innerHTML = `<div class="card"><h2>📚 Tentang Produk Ini</h2><p><i>Kerjakan, langsung dikoreksi, langsung dibahas. 4 mapel, 40 menit sehari.</i></p><p><b>Les di Rumah Kelas 5</b> adalah program belajar mandiri di rumah sebagai alternatif les bulanan. Isinya <b>4.000 soal</b> (1.000 per mapel) Matematika, Bahasa Indonesia, Bahasa Inggris, dan IPA yang disusun mengikuti <b>Kurikulum Merdeka Fase C (kelas 5)</b>, lengkap dengan pembahasan dan ringkasan materi.</p>
   <p>Anak cukup belajar <b>±40 menit sehari selama 100 hari</b>. Tingkat kesulitan naik bertahap: hari 1–35 dasar, 36–70 menengah, 71–100 mahir (HOTS).</p>
   <p><b>Dibuat oleh:</b> ${PEMBUAT}.</p>${LEGAL}
   ${first ? `<label style="display:flex;gap:8px;margin-top:12px"><input type="checkbox" id="agr" style="width:auto"> Saya memahami dan menyetujui ketentuan penggunaan pribadi di atas.</label><br><button class="btn full" id="ok" disabled>Lanjut</button>` : ""}</div>`;
