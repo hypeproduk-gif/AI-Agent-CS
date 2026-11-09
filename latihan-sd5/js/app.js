@@ -15,6 +15,7 @@ const hariAktif = () => { for (let d = 1; d <= HARI; d++) if (!hariSelesai(d)) r
 let pilihHari = null;
 const today = () => new Date().toISOString().slice(0, 10);
 function home() {
+  watermark();
   $("#homeBtn").hidden = true;
   if (!window.PREVIEW && !ST.kode && (window.KODE_HASH || (location.protocol.startsWith("http") && !/localhost|127\.0\.0\.1/.test(location.hostname)))) return aktivasi();
   if (!ST.setuju) return tentang(true);
@@ -40,11 +41,28 @@ async function cekKode(kode) {
   if (window.KODE_HASH) { try { return window.KODE_HASH.includes(await sha(kode)); } catch { return false; } }
   try { const r = await fetch("/api/verify", { method: "POST", body: JSON.stringify({ kode }) }); return (await r.json()).ok; } catch { return false; }
 }
+// ---- Kunci lisensi lintas perangkat (Google Apps Script, opsional) ----
+// Isi dengan URL Web App dari tools/lisensi-apps-script.gs. Kosong = hanya terkunci di perangkat ini.
+const LISENSI_URL = "";
+const devId = () => ST.dev || (ST.dev = Math.random().toString(36).slice(2, 10));
+async function server(aksi, data) {
+  if (!LISENSI_URL) return null;
+  try { const r = await fetch(LISENSI_URL, { method: "POST", body: JSON.stringify(Object.assign({ aksi, kode: await sha(ST.kode), dev: devId() }, data || {})) }); return await r.json(); } catch { return null; }
+}
+function watermark() {
+  let w = document.getElementById("wm"); if (!ST.nama) { if (w) w.remove(); return; }
+  if (!w) { w = document.createElement("div"); w.id = "wm"; document.body.appendChild(w); }
+  const t = `Lisensi: ${esc(ST.nama)}${ST.kode ? " · " + ST.kode : ""}`;
+  w.innerHTML = Array.from({ length: 40 }, () => `<span>${t}</span>`).join("");
+}
 function aktivasi() {
   $("#homeBtn").hidden = true;
   app.innerHTML = `<div class="card"><h2>🔐 Masukkan Kode Akses</h2><p>Kode akses dikirim setelah pembelian. Cukup sekali aktivasi per perangkat.</p>
   <input id="kd" placeholder="SD5-XXXX-XXXX" autocapitalize="characters"><br><br><button class="btn full" id="ak">Aktifkan</button><p id="msg" class="mut"></p></div>`;
-  $("#ak").onclick = async () => { const k = $("#kd").value.trim().toUpperCase(); $("#msg").textContent = "Memeriksa..."; if (await cekKode(k)) { ST.kode = k; save(); home(); } else $("#msg").textContent = "❌ Kode tidak valid. Periksa lagi atau hubungi penjual."; };
+  $("#ak").onclick = async () => { const k = $("#kd").value.trim().toUpperCase(); $("#msg").textContent = "Memeriksa..."; if (await cekKode(k)) {
+    ST.kode = k; const r = await server("cek");
+    if (r && r.ok === false) { ST.kode = ""; $("#msg").textContent = "❌ " + r.pesan; return; }
+    if (r && r.nama) { ST.nama = r.nama; ST.namaServer = 1; } save(); home(); } else $("#msg").textContent = "❌ Kode tidak valid. Periksa lagi atau hubungi penjual."; };
 }
 const PEMBUAT = "Toolkit Parenting (toolkitparenting.my.id)";
 const LEGAL = `<div class="legal"><b>⚖️ Hak Cipta & Lisensi Penggunaan</b><br>© ${new Date().getFullYear()} ${PEMBUAT}. Seluruh soal, materi, gambar, dan aplikasi ini dilindungi <b>Undang-Undang Republik Indonesia Nomor 28 Tahun 2014 tentang Hak Cipta</b>.
@@ -89,7 +107,7 @@ function cetakSoal(judul, s) {
 function setup() {
   app.innerHTML = `<div class="card"><h2>Selamat datang! 🎉</h2><p>Latihan 10 soal per mapel setiap hari selama 100 hari: <b>4.000 soal</b> Matematika, Bahasa Indonesia, Bahasa Inggris, dan IPA sesuai Kurikulum Merdeka kelas 5. Tingkat kesulitan naik di hari ke-36 dan ke-71.</p>
   <label>Nama anak<input id="nm" placeholder="contoh: Rafi"></label><p class="mut">⚠️ Nama dikunci sebagai pemilik lisensi dan tercetak di setiap lembar. Pastikan sudah benar.</p><br><br><button class="btn full" id="go">Mulai Belajar</button></div>`;
-  $("#go").onclick = () => { const v = $("#nm").value.trim(); if (v) { ST.nama = v; save(); home(); } };
+  $("#go").onclick = async () => { const v = $("#nm").value.trim(); if (!v) return; const r = await server("kunci", { nama: v }); ST.nama = (r && r.nama) || v; save(); home(); };
 }
 function kuis(m, soal, d, isReview) {
   $("#homeBtn").hidden = false; const pil = {}; const log = [];
