@@ -50,6 +50,8 @@ async function server(aksi, data) {
   try { const r = await fetch(LISENSI_URL, { method: "POST", body: JSON.stringify(Object.assign({ aksi, kode: await sha(ST.kode), dev: devId() }, data || {})) }); return await r.json(); } catch { return null; }
 }
 function watermark() {
+  // Watermark hanya di latar (di balik kartu putih) + label lisensi di header, tidak menutupi soal.
+  document.getElementById("lic").textContent = ST.nama ? `Lisensi: ${ST.nama}${ST.kode ? " · " + ST.kode : ""}` : "";
   let w = document.getElementById("wm"); if (!ST.nama) { if (w) w.remove(); return; }
   if (!w) { w = document.createElement("div"); w.id = "wm"; document.body.appendChild(w); }
   const t = `Lisensi: ${esc(ST.nama)}${ST.kode ? " · " + ST.kode : ""}`;

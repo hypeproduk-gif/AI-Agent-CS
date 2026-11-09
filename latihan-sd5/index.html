@@ -11,7 +11,7 @@
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 header{background:var(--pri);color:#fff;padding:14px 16px;position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px}
 header h1{font-size:18px;margin:0;flex:1}header button{background:#fff3;color:#fff;border:0;border-radius:8px;padding:6px 10px;font-size:14px}
-main{max-width:720px;margin:0 auto;padding:16px}
+main{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:16px}
 .card{background:var(--card);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 1px 3px #0001}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .mapel{border:2px solid var(--line);border-radius:14px;padding:14px;background:#fff;text-align:left;cursor:pointer;font:inherit;color:inherit}
@@ -33,12 +33,12 @@ table{width:100%;border-collapse:collapse}td,th{padding:6px;border-bottom:1px so
 input,select{font:inherit;padding:10px;border:1px solid var(--line);border-radius:10px;width:100%}
 .days{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}.days button{border:0;border-radius:6px;padding:6px 0;font-size:12px;background:#e5e7eb;cursor:pointer}
 .days .d{background:#86efac}.days .c{outline:2px solid var(--pri)}
-#print{display:none}#wm{position:fixed;inset:-50%;pointer-events:none;z-index:50;transform:rotate(-30deg);display:flex;flex-wrap:wrap;gap:60px 80px;align-content:center;justify-content:center;opacity:.07;font-size:18px;font-weight:700;color:#000;user-select:none}@media print{#wm{display:none}}.qi{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}.qi:first-of-type{border-top:0}.legal{font-size:14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:12px}.mat h3{margin:18px 0 6px;color:var(--pri)}.mat svg{max-width:100%;height:auto}.foot{text-align:center;font-size:12px;color:var(--mut);margin:20px 0}
+#print{display:none}#lic{display:block;font-size:12px;opacity:.85;font-weight:400}#wm{position:fixed;inset:-50%;pointer-events:none;z-index:0;transform:rotate(-30deg);display:flex;flex-wrap:wrap;gap:60px 80px;align-content:center;justify-content:center;opacity:.10;font-size:18px;font-weight:700;color:#000;user-select:none}@media print{#wm{display:none}}.qi{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}.qi:first-of-type{border-top:0}.legal{font-size:14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:12px}.mat h3{margin:18px 0 6px;color:var(--pri)}.mat svg{max-width:100%;height:auto}.foot{text-align:center;font-size:12px;color:var(--mut);margin:20px 0}
 @media print{header,main{display:none!important}#print{display:block;font-size:12px}#print .pq{break-inside:avoid;margin:8px 0}#print svg{max-height:140px;width:auto}#print h2{break-before:page}#print h2:first-child{break-before:auto}#print .wm{position:fixed;bottom:0;left:0;right:0;text-align:center;font-size:9px;color:#888}}
 </style>
 </head>
 <body>
-<header><h1 id="title">📚 Latihan Harian SD Kelas 5</h1><button id="homeBtn" hidden>🏠 Beranda</button></header>
+<header><h1 id="title">📚 Latihan Harian SD Kelas 5<span id="lic"></span></h1><button id="homeBtn" hidden>🏠 Beranda</button></header>
 <main id="app"></main>
 <div id="print"></div>
 <script src="js/core.js"></script>
