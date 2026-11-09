@@ -1,6 +1,6 @@
 # Ide Konten Meta Ads — Les di Rumah Kelas 5
 
-Asumsi: harga Rp99.000 (coret Rp299.000), sekali bayar, target orang tua kelas 5 yang sudah/pernah membayar les atau bimbel (sinyal mampu beli). Kanvas 1080x1350, palet ungu jenuh + kuning + biru muda, CTA oranye (beda keluarga dari creative TKA teal-emas).
+Asumsi: harga Rp149.000 (coret Rp399.000), sekali bayar, target orang tua kelas 5 yang sudah/pernah membayar les atau bimbel (sinyal mampu beli). Kanvas 1080x1350, palet ungu jenuh + kuning + biru muda, CTA oranye (beda keluarga dari creative TKA teal-emas).
 
 **1 · Asumsi dibalik**
 - Di kepala: "Kalau mau nilai naik, ya harus les."
@@ -53,10 +53,10 @@ Asumsi: harga Rp99.000 (coret Rp299.000), sekali bayar, target orang tua kelas 5
 **7 · Asumsi dibalik (biaya)**
 - Di kepala: "Bahan latihan yang lengkap pasti mahal."
 - Headline: Satu bulan les Rp300–800 ribu. Ini **SEKALI BAYAR** untuk 100 hari.
-- Subhead: 4 mapel, 4.000 soal, materi, rapor. Rp99.000.
+- Subhead: 4 mapel, 4.000 soal, materi, rapor. Rp149.000.
 - Visual: struk/nota perbandingan dengan harga les dicoret.
-- Bukti: harga coret Rp299.000 → Rp99.000.
-- CTA: Amankan Harga Rp99.000
+- Bukti: harga coret Rp399.000 → Rp149.000.
+- CTA: Amankan Harga Rp149.000
 
 **8 · Verifikasi (gambar)**
 - Di kepala: "Anak saya susah paham soal kalau cuma tulisan."

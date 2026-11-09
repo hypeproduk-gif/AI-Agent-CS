@@ -1,20 +1,22 @@
-# Kirim kode akses OTOMATIS + kunci nama anak (gratis, ±15 menit)
+# Kirim kode akses OTOMATIS — tanpa langganan WhatsApp (gratis)
 
-## A. Siapkan Google Sheets
-1. Buat spreadsheet baru "Les di Rumah 5".
-2. Tab pertama ganti nama **Kode**. Baris 1: `kode | status | email | nama | pesanan | waktu`. Tempel isi `kode-akses.csv` mulai A2.
-3. Tambah tab kedua bernama **Lisensi**. Baris 1: `kode | nama | perangkat | terakhir | blokir`.
+Pembeli menerima kode lewat **email** dari Gmail Anda, otomatis ±5 menit setelah bayar.
 
-## B. Pasang script
-1. Menu **Ekstensi → Apps Script**, hapus isinya, tempel seluruh `lisensi-apps-script.gs`, simpan.
-2. **Terapkan → Deployment baru → Aplikasi web**. Jalankan sebagai: *Saya*. Akses: *Siapa saja*. Izinkan akses (termasuk kirim email). Salin URL `/exec`.
+## A. Google Sheets
+1. Buat spreadsheet "Les di Rumah 5" **memakai akun Gmail yang menerima notifikasi pesanan dari Scalev**.
+2. Tab pertama beri nama **Kode**. Baris 1: `kode | status | email | nama | pesanan | waktu`. Tempel isi `kode-akses.csv` mulai sel A2.
+3. Tab kedua beri nama **Lisensi**. Baris 1: `kode | nama | perangkat | terakhir | blokir`.
 
-## C. Sambungkan ke Scalev
-1. Di Scalev: menu **Integrasi / Webhook** (atau pengaturan produk/toko → Webhook).
-2. Tambah webhook, URL = URL `/exec` tadi, event = **pesanan dibayar / order paid**.
-3. Tes dengan 1 pesanan percobaan. Cek sheet **Kode**: baris kode berubah jadi "terkirim" dan email masuk ke pembeli.
+## B. Script
+1. **Ekstensi → Apps Script**, hapus isinya, tempel `lisensi-apps-script.gs`, simpan.
+2. Pilih fungsi **pasangPemicu** di toolbar → **Jalankan** → izinkan akses (Gmail, Sheets, kirim email). Selesai: script mengecek Gmail tiap 5 menit.
+3. (Untuk kunci nama anak) **Terapkan → Deployment baru → Aplikasi web**, akses *Siapa saja*, salin URL `/exec`, kirim ke Claude.
 
-## D. Aktifkan kunci nama
-Kirim URL `/exec` ke Claude untuk dipasang di aplikasi (`LISENSI_URL`), lalu tempel ulang file aplikasi ke Scalev.
+## C. Scalev
+Pastikan notifikasi **pesanan lunas** dikirim ke email Anda (Pengaturan → Notifikasi). Tidak perlu webhook atau WhatsApp berbayar.
 
-Catatan: kuota kirim Gmail gratis ±100 email/hari. Kalau kode habis, script mengirim email peringatan ke Anda.
+## D. Tes
+Buat 1 pesanan percobaan sampai lunas, tunggu 5 menit. Sheet **Kode** berubah "terkirim" dan email kode masuk ke pembeli.
+Kalau tidak jalan: kirim screenshot/teks email notifikasi Scalev ke Claude untuk disesuaikan. Email yang gagal dibaca akan diberi **bintang** di Gmail untuk dicek manual.
+
+Batas Gmail gratis ±100 email/hari.
