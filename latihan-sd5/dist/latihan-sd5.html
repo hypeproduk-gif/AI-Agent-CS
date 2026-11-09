@@ -33,8 +33,8 @@ table{width:100%;border-collapse:collapse}td,th{padding:6px;border-bottom:1px so
 input,select{font:inherit;padding:10px;border:1px solid var(--line);border-radius:10px;width:100%}
 .days{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}.days button{border:0;border-radius:6px;padding:6px 0;font-size:12px;background:#e5e7eb;cursor:pointer}
 .days .d{background:#86efac}.days .c{outline:2px solid var(--pri)}
-#print{display:none}
-@media print{header,main{display:none!important}#print{display:block;font-size:12px}#print .pq{break-inside:avoid;margin:8px 0}#print svg{max-height:140px;width:auto}#print h2{break-before:page}#print h2:first-child{break-before:auto}}
+#print{display:none}.qi{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}.qi:first-of-type{border-top:0}.legal{font-size:14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:12px}.mat h3{margin:18px 0 6px;color:var(--pri)}.mat svg{max-width:100%;height:auto}.foot{text-align:center;font-size:12px;color:var(--mut);margin:20px 0}
+@media print{header,main{display:none!important}#print{display:block;font-size:12px}#print .pq{break-inside:avoid;margin:8px 0}#print svg{max-height:140px;width:auto}#print h2{break-before:page}#print h2:first-child{break-before:auto}#print .wm{position:fixed;bottom:0;left:0;right:0;text-align:center;font-size:9px;color:#888}}
 </style>
 </head>
 <body>
@@ -626,6 +626,62 @@ input,select{font:inherit;padding:10px;border:1px solid var(--line);border-radiu
   if (typeof module !== "undefined") module.exports = gen; else (G.GEN = G.GEN || {}).IPA = gen;
 })(typeof window !== "undefined" ? window : globalThis);
 </script>
+<script>// Ringkasan materi kelas 5 (Kurikulum Merdeka Fase C)
+(function (G) {
+  const S = G.CORE.S;
+  G.MATERI = {
+    MTK: [
+      ["Bilangan Cacah sampai 1.000.000", `<p>Setiap angka punya <b>nilai tempat</b>: ratus ribuan, puluh ribuan, ribuan, ratusan, puluhan, satuan.</p><p>Contoh <b>485.231</b>: 4 = 400.000, 8 = 80.000, 5 = 5.000, 2 = 200, 3 = 30, 1 = 1.</p><p><b>Pembulatan:</b> lihat angka di kanan tempat yang dibulatkan. ≥ 5 dibulatkan ke atas, &lt; 5 tetap. 48.<u>6</u>70 → ribuan terdekat = 49.000.</p>`],
+      ["Operasi Hitung", `<p>Urutan pengerjaan: <b>kurung → kali/bagi (kiri ke kanan) → tambah/kurang (kiri ke kanan)</b>.</p><p>Contoh: 20 + 5 × 4 = 20 + 20 = 40 (bukan 100).</p><p>Gunakan cara bersusun untuk bilangan besar dan periksa dengan taksiran (pembulatan).</p>`],
+      ["Pecahan", `<p>Pecahan a/b: <b>a = pembilang</b> (bagian diambil), <b>b = penyebut</b> (banyak bagian sama besar).</p>${S.fracCircle(3, 8)}<p>Gambar di atas = 3/8.</p><p><b>Menjumlah/mengurang:</b> samakan penyebut dengan KPK. 1/2 + 1/3 = 3/6 + 2/6 = 5/6.</p><p><b>Mengali:</b> pembilang × pembilang, penyebut × penyebut. 2/3 × 3/4 = 6/12 = 1/2.</p><p><b>Membagi:</b> kalikan dengan kebalikan. 1/2 : 1/4 = 1/2 × 4/1 = 2.</p><p><b>Menyederhanakan:</b> bagi pembilang & penyebut dengan FPB-nya. 12/18 = 2/3.</p>`],
+      ["Desimal dan Persen", `<p>Desimal: 0,5 = 5/10 = 1/2. 0,25 = 25/100 = 1/4.</p><p>Persen = per seratus. 40% = 40/100 = 2/5 = 0,4.</p><p><b>p% dari x</b> = p/100 × x. 25% dari 80 = 20.</p><p><b>Diskon:</b> harga bayar = harga − (diskon% × harga).</p>`],
+      ["KPK dan FPB", `<p><b>KPK</b> (Kelipatan Persekutuan Terkecil): ambil semua faktor prima, pangkat <b>terbesar</b>. Dipakai untuk soal “bersamaan lagi”, “setiap … hari”.</p><p><b>FPB</b> (Faktor Persekutuan Terbesar): ambil faktor prima yang <b>sama</b>, pangkat <b>terkecil</b>. Dipakai untuk soal “dibagi sama banyak”, “paling banyak kantong”.</p><p>12 = 2² × 3, 18 = 2 × 3² → KPK = 2² × 3² = 36, FPB = 2 × 3 = 6.</p>`],
+      ["Perbandingan dan Skala", `<p>Perbandingan a : b. Jika jumlah = J, bagian A = a/(a+b) × J.</p><p>Contoh: kelereng Ani : Budi = 2 : 3, jumlah 25 → Ani = 2/5 × 25 = 10.</p><p><b>Skala</b> = jarak peta : jarak sebenarnya. Jarak sebenarnya = jarak peta × penyebut skala. 4 cm, skala 1 : 500.000 → 2.000.000 cm = 20 km.</p>`],
+      ["Kecepatan dan Debit", `<p><b>Kecepatan = jarak : waktu</b>, Jarak = kecepatan × waktu, Waktu = jarak : kecepatan.</p><p><b>Debit = volume : waktu</b> (liter/menit, liter/detik). Volume = debit × waktu.</p><p>Ingat: 1 jam = 60 menit, 1 m³ = 1.000 liter, 1 dm³ = 1 liter.</p>`],
+      ["Pengukuran", `<p>Panjang: km–hm–dam–m–dm–cm–mm (turun 1 tangga ×10).</p><p>Berat: kg–hg (ons)–dag–g. 1 kg = 10 ons = 1.000 g.</p><p>Waktu: 1 jam = 60 menit = 3.600 detik.</p>`],
+      ["Sudut", `${S.angle(60)}<p><b>Lancip</b> &lt; 90°, <b>siku-siku</b> = 90°, <b>tumpul</b> 90°–180°, <b>lurus</b> = 180°.</p><p>Sudut berpelurus jumlahnya 180°, sudut berpenyiku jumlahnya 90°. Alat ukur sudut: busur derajat.</p>`],
+      ["Keliling dan Luas Bangun Datar", `<p>Persegi: K = 4 × s, L = s × s.</p><p>Persegi panjang: K = 2 × (p + l), L = p × l.</p>${S.triangle(8, 6, "cm")}<p>Segitiga: L = ½ × alas × tinggi = ½ × 8 × 6 = 24 cm².</p><p>Jajargenjang: L = a × t. Trapesium: L = ½ × (a + b) × t. Bangun gabungan: pecah jadi bangun sederhana lalu jumlahkan/kurangkan.</p>`],
+      ["Volume Kubus dan Balok", `${S.box(5, 3, 4, "cm")}<p>Balok: <b>V = p × l × t</b> = 5 × 3 × 4 = 60 cm³.</p><p>Kubus: <b>V = s × s × s</b>. Rusuk kubus = akar pangkat tiga dari volume.</p><p>1 dm³ = 1 liter, 1.000 cm³ = 1 liter.</p>`],
+      ["Penyajian Data", `${S.bars(["A", "B", "C", "D"], [6, 10, 4, 8], "Contoh diagram batang")}<p>Baca tinggi batang pada sumbu tegak. <b>Rata-rata</b> = jumlah data : banyak data. <b>Modus</b> = data paling sering muncul. <b>Selisih</b> = data besar − data kecil.</p>`],
+    ],
+    BIND: [
+      ["Ide Pokok dan Kalimat Utama", `<p><b>Ide pokok</b> = gagasan utama sebuah paragraf. Ide pokok ada di dalam <b>kalimat utama</b>.</p><p>Kalimat utama bersifat umum; kalimat lain (<b>kalimat penjelas</b>) menjelaskannya.</p><p><b>Deduktif</b>: kalimat utama di awal. <b>Induktif</b>: di akhir. <b>Campuran</b>: di awal dan akhir.</p>`],
+      ["Judul Bacaan", `<p>Judul harus mewakili isi/ide pokok, singkat, dan menarik. Kata pertama tiap kata penting ditulis kapital.</p>`],
+      ["Informasi dalam Teks (5W + 1H)", `<p>Apa, Siapa, Kapan, Di mana, Mengapa, Bagaimana. Cari jawabannya langsung di dalam teks; garis bawahi kata kuncinya.</p>`],
+      ["Fakta dan Opini", `<p><b>Fakta</b>: kejadian nyata yang bisa dibuktikan (ada data, angka, tempat, waktu).</p><p><b>Opini</b>: pendapat, sering memakai kata <i>menurut saya, sepertinya, paling, sangat, pasti, seharusnya</i>.</p>`],
+      ["Sinonim dan Antonim", `<p><b>Sinonim</b> = persamaan kata: pandai – pintar, sulit – sukar.</p><p><b>Antonim</b> = lawan kata: tinggi – rendah, rajin – malas.</p>`],
+      ["Kata Baku", `<p>Kata baku sesuai KBBI. Contoh: aktivitas (bukan aktifitas), apotek (apotik), praktik (praktek), nasihat (nasehat), silakan (silahkan), risiko (resiko), izin (ijin).</p>`],
+      ["Imbuhan", `<p><b>me-</b> berubah sesuai huruf awal: me + sapu → menyapu (s luluh), me + tulis → menulis (t luluh), me + pukul → memukul (p luluh), me + kirim → mengirim (k luluh).</p><p><b>ber-</b>: bersepeda, berlari. <b>di-</b> (pasif): dibaca, dipotong. <b>ter-</b>: tertidur.</p>`],
+      ["Majas", `<p><b>Personifikasi</b>: benda mati seperti manusia (angin berbisik). <b>Simile</b>: memakai seperti/bagai (cepat bagai kilat). <b>Metafora</b>: perbandingan langsung (dia bintang kelas). <b>Hiperbola</b>: berlebihan (tumpukan tugas setinggi gunung).</p>`],
+      ["Huruf Kapital dan Tanda Baca", `<p>Huruf kapital: awal kalimat, nama orang, nama kota/negara, nama hari/bulan, judul. Titik (.) di akhir kalimat berita, tanda tanya (?) di kalimat tanya, tanda seru (!) di kalimat perintah.</p>`],
+      ["Kata Tanya", `<p>Apa (benda/peristiwa), Siapa (orang), Kapan (waktu), Di mana (tempat), Mengapa (alasan), Bagaimana (cara/keadaan), Berapa (jumlah).</p>`],
+    ],
+    BING: [
+      ["Numbers", `<p>11 eleven, 12 twelve, 13 thirteen, 20 twenty, 21 twenty-one, 100 one hundred, 245 two hundred and forty-five, 1.000 one thousand.</p><p><b>Ordinal:</b> 1st first, 2nd second, 3rd third, 4th fourth, 5th fifth, 12th twelfth, 20th twentieth.</p>`],
+      ["Days and Months", `<p>Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday.</p><p>January, February, March, April, May, June, July, August, September, October, November, December.</p>`],
+      ["Telling Time", `${S.clock(3, 15)}<p>03.00 three o'clock · 03.15 a quarter past three · 03.30 half past three · 03.45 a quarter to four · 03.10 ten past three · 03.50 ten to four.</p><p>Menit ≤ 30 pakai <b>past</b>, menit &gt; 30 pakai <b>to</b> (menuju jam berikutnya).</p>`],
+      ["Prepositions of Place", `${S.prep("on")}<p>on (di atas, menempel), under (di bawah), in (di dalam), next to (di samping), behind (di belakang), in front of (di depan).</p>`],
+      ["Simple Present Tense", `<p>Kebiasaan/fakta. I/You/We/They + verb 1. He/She/It + verb 1 + s/es.</p><p>She <b>goes</b> to school. They <b>play</b> football. Negatif: does not/do not + verb 1. Tanya: Does she …? Do they …?</p>`],
+      ["Present Continuous Tense", `<p>Sedang terjadi sekarang: am/is/are + verb-ing. Look! The boy <b>is running</b>. Kata kunci: now, look!, listen!</p>`],
+      ["Simple Past Tense", `<p>Kejadian lampau: verb 2. Yesterday I <b>went</b> to the zoo. Kata kunci: yesterday, last week, ago.</p>`],
+      ["Comparison", `<p>Dua benda: adjective + er + than (taller than). Lebih dari dua: the + adjective + est (the tallest). Kata pendek berakhir konsonan-vokal-konsonan digandakan: big → bigger → biggest. -y → -ier: happy → happier.</p>`],
+      ["Jobs and Places", `<p>doctor – hospital, teacher – school, farmer – field, chef – restaurant, librarian – library, pilot – airport, postman – post office.</p>`],
+      ["Feelings and Weather", `<p>happy, sad, angry, sleepy, hungry, thirsty, sick, surprised.</p><p>sunny, rainy, cloudy, windy, stormy. How is the weather today? It is sunny.</p>`],
+    ],
+    IPA: [
+      ["Cahaya dan Penglihatan", `<p>Sifat cahaya: <b>merambat lurus</b>, <b>menembus benda bening</b>, <b>dapat dipantulkan</b>, <b>dapat dibiaskan</b> (pensil tampak patah di air), <b>dapat diuraikan</b> (pelangi).</p><p>Cermin datar: bayangan tegak, sama besar. Cermin cekung: mengumpulkan cahaya (lampu senter). Cermin cembung: memperluas pandangan (spion).</p><p>Bagian mata: kornea, pupil, iris, lensa, retina, saraf mata.</p>`],
+      ["Bunyi dan Pendengaran", `<p>Bunyi berasal dari benda bergetar dan butuh <b>medium</b> (padat paling cepat, lalu cair, lalu gas; tidak bisa di ruang hampa).</p><p>Infrasonik &lt; 20 Hz, audiosonik 20–20.000 Hz (didengar manusia), ultrasonik &gt; 20.000 Hz (kelelawar, lumba-lumba).</p><p>Gema: pantulan terdengar setelah bunyi asli. Gaung: terdengar bersamaan sehingga tidak jelas.</p><p>Kedalaman laut = (v × t) : 2.</p>`],
+      ["Ekosistem dan Rantai Makanan", `${S.chain(["rumput", "belalang", "katak", "ular"])}<p><b>Produsen</b> (tumbuhan hijau) → <b>konsumen I</b> (herbivora) → <b>konsumen II</b> → <b>konsumen III</b>. <b>Pengurai</b>: bakteri, jamur.</p><p>Jika satu makhluk punah, mangsanya bertambah dan pemangsanya berkurang.</p><p>Simbiosis: mutualisme (+,+), komensalisme (+,0), parasitisme (+,−).</p>`],
+      ["Adaptasi Makhluk Hidup", `<p>Contoh: unta (punuk cadangan lemak), bebek (kaki berselaput), bunglon (ubah warna kulit), cicak (memutus ekor), kaktus (daun duri), teratai (daun lebar), jati (gugur daun di kemarau).</p>`],
+      ["Magnet", `<p>Benda magnetis: besi, baja, nikel. Kutub senama tolak-menolak, berbeda tarik-menarik. Cara membuat magnet: menggosok, induksi, elektromagnetik. Kemagnetan hilang jika dipanaskan atau dipukul.</p>`],
+      ["Listrik", `${S.circuit("seri", 2)}<p><b>Seri</b>: satu jalur, satu lampu mati semua padam. <b>Paralel</b>: bercabang, lampu lain tetap menyala (dipakai di rumah).</p><p>Konduktor: logam, air garam. Isolator: karet, plastik, kayu kering.</p>`],
+      ["Energi dan Perubahannya", `<p>Setrika: listrik → panas. Kipas: listrik → gerak. Lampu: listrik → cahaya. Panel surya: cahaya matahari → listrik. Energi terbarukan: matahari, angin, air.</p>`],
+      ["Bumi dan Siklus Air", `<p>Lapisan bumi: kerak, mantel, inti luar, inti dalam.</p><p>Siklus air: <b>evaporasi → kondensasi → presipitasi → infiltrasi</b>. Transpirasi = penguapan dari daun.</p><p>Erosi (tanah terkikis air), abrasi (pantai terkikis ombak, dicegah mangrove), terasering mencegah erosi.</p>`],
+      ["Organ Tubuh Manusia", `<p><b>Pernapasan:</b> hidung → trakea → paru-paru (alveolus). <b>Pencernaan:</b> mulut → kerongkongan → lambung → usus halus (serap sari makanan) → usus besar (serap air). <b>Peredaran darah:</b> jantung memompa; arteri keluar dari jantung, vena kembali ke jantung.</p><p>Penyakit: TBC (paru), maag (lambung), anemia (kurang sel darah merah).</p>`],
+    ],
+  };
+})(window);
+</script>
 <script>// Aplikasi latihan harian: 100 hari x 10 soal x 4 mapel. Level naik di hari 36 dan 71.
 const MAPEL = { MTK: ["Matematika", "🔢"], BIND: ["Bahasa Indonesia", "📖"], BING: ["Bahasa Inggris", "🇬🇧"], IPA: ["IPA", "🔬"] };
 const PER_HARI = 10, HARI = 100;
@@ -645,6 +701,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 function home() {
   $("#homeBtn").hidden = true;
   if (!window.PREVIEW && !ST.kode && (window.KODE_HASH || (location.protocol.startsWith("http") && !/localhost|127\.0\.0\.1/.test(location.hostname)))) return aktivasi();
+  if (!ST.setuju) return tentang(true);
   if (!ST.nama) return setup();
   const d = pilihHari || hariAktif(); const lv = levelHari(d);
   const selesai = Array.from({ length: HARI }, (_, i) => hariSelesai(i + 1)).filter(Boolean).length;
@@ -655,10 +712,10 @@ function home() {
   <div class="grid">${Object.entries(MAPEL).map(([k, [n, ic]]) => { const h = ST.hasil[k + d]; return `<button class="mapel ${h ? "done" : ""}" data-m="${k}"><span class="ic">${ic}</span><b>${n}</b><small>${h ? `✅ Nilai ${h.nilai} · ulangi` : `${PER_HARI} soal · ±10 menit`}</small></button>`; }).join("")}</div>
   <div class="card" style="margin-top:14px"><b>Pilih hari</b> <span class="mut">(hijau = selesai)</span><div class="days" style="margin-top:8px">${Array.from({ length: HARI }, (_, i) => `<button class="${hariSelesai(i + 1) ? "d" : ""} ${i + 1 === d ? "c" : ""}" data-d="${i + 1}">${i + 1}</button>`).join("")}</div>
   <div class="mut" style="margin-top:8px">Hari 1–35: Level 1 · Hari 36–70: Level 2 · Hari 71–100: Level 3</div></div>
-  <div class="grid"><button class="btn sec" id="review" ${salahN ? "" : "disabled"}>🔁 Ulang soal salah (${salahN})</button><button class="btn sec" id="rapor">📊 Rapor</button><button class="btn sec" id="cetak">🖨️ Cetak soal hari ini</button><button class="btn sec" id="ortu">👪 Panduan orang tua</button></div>`;
+  <div class="grid"><button class="btn sec" id="review" ${salahN ? "" : "disabled"}>🔁 Ulang soal salah (${salahN})</button><button class="btn sec" id="rapor">📊 Rapor</button><button class="btn sec" id="materi">📘 Materi</button><button class="btn sec" id="cetak">🖨️ Cetak soal & materi</button><button class="btn sec" id="ortu">👪 Panduan orang tua</button><button class="btn sec" id="ttg">ℹ️ Tentang & hak cipta</button></div><div class="foot">© ${PEMBUAT}<br>Lisensi penggunaan pribadi · Dilarang menyebarluaskan</div>`;
   app.querySelectorAll("[data-m]").forEach((b) => (b.onclick = () => kuis(b.dataset.m, soalHari(b.dataset.m, d), d)));
   app.querySelectorAll("[data-d]").forEach((b) => (b.onclick = () => { pilihHari = +b.dataset.d; home(); }));
-  $("#review").onclick = review; $("#rapor").onclick = rapor; $("#cetak").onclick = () => cetak(d); $("#ortu").onclick = ortu;
+  $("#review").onclick = review; $("#rapor").onclick = rapor; $("#cetak").onclick = cetakMenu; $("#materi").onclick = () => materi(); $("#ttg").onclick = () => tentang(); $("#ortu").onclick = ortu;
 }
 // ---- Kode akses ----
 async function sha(t) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join(""); }
@@ -673,41 +730,71 @@ function aktivasi() {
   <input id="kd" placeholder="SD5-XXXX-XXXX" autocapitalize="characters"><br><br><button class="btn full" id="ak">Aktifkan</button><p id="msg" class="mut"></p></div>`;
   $("#ak").onclick = async () => { const k = $("#kd").value.trim().toUpperCase(); $("#msg").textContent = "Memeriksa..."; if (await cekKode(k)) { ST.kode = k; save(); home(); } else $("#msg").textContent = "❌ Kode tidak valid. Periksa lagi atau hubungi penjual."; };
 }
+const PEMBUAT = "Toolkit Parenting (toolkitparenting.my.id)";
+const LEGAL = `<div class="legal"><b>⚖️ Hak Cipta & Lisensi Penggunaan</b><br>© ${new Date().getFullYear()} ${PEMBUAT}. Seluruh soal, materi, gambar, dan aplikasi ini dilindungi <b>Undang-Undang Republik Indonesia Nomor 28 Tahun 2014 tentang Hak Cipta</b>.
+<ul><li>Lisensi ini <b>hanya untuk penggunaan pribadi</b> oleh satu keluarga pembeli. Mencetak untuk anak sendiri diperbolehkan.</li>
+<li><b>Dilarang</b> menyebarkan, membagikan kode akses, menggandakan, mengunggah ulang, menjual kembali, atau memakai untuk bimbel/les berbayar tanpa izin tertulis.</li>
+<li>Pasal 9 UU Hak Cipta: penggandaan, pendistribusian, dan pengumuman ciptaan hanya boleh dilakukan pencipta/pemegang hak cipta atau dengan izinnya.</li>
+<li>Pasal 113 ayat (3): pelanggaran hak ekonomi untuk penggunaan secara komersial diancam <b>pidana penjara paling lama 4 tahun dan/atau denda paling banyak Rp1.000.000.000</b>.</li>
+<li>Setiap kode akses tercatat atas nama pembeli dan tertera pada hasil cetak. Kode yang terbukti disebarkan dapat dinonaktifkan tanpa pengembalian dana.</li></ul></div>`;
+function tentang(first) {
+  $("#homeBtn").hidden = !!first;
+  app.innerHTML = `<div class="card"><h2>📚 Tentang Produk Ini</h2><p><b>Latihan Harian SD Kelas 5</b> adalah program belajar mandiri di rumah sebagai alternatif les bulanan. Isinya <b>4.000 soal</b> (1.000 per mapel) Matematika, Bahasa Indonesia, Bahasa Inggris, dan IPA yang disusun mengikuti <b>Kurikulum Merdeka Fase C (kelas 5)</b>, lengkap dengan pembahasan dan ringkasan materi.</p>
+  <p>Anak cukup belajar <b>±40 menit sehari selama 100 hari</b>. Tingkat kesulitan naik bertahap: hari 1–35 dasar, 36–70 menengah, 71–100 mahir (HOTS).</p>
+  <p><b>Dibuat oleh:</b> ${PEMBUAT}.</p>${LEGAL}
+  ${first ? `<label style="display:flex;gap:8px;margin-top:12px"><input type="checkbox" id="agr" style="width:auto"> Saya memahami dan menyetujui ketentuan penggunaan pribadi di atas.</label><br><button class="btn full" id="ok" disabled>Lanjut</button>` : ""}</div>`;
+  if (first) { $("#agr").onchange = (e) => ($("#ok").disabled = !e.target.checked); $("#ok").onclick = () => { ST.setuju = 1; save(); home(); }; }
+}
+function materi(m) {
+  $("#homeBtn").hidden = false;
+  if (!m) { app.innerHTML = `<div class="card"><h2>📘 Materi</h2><p class="mut">Ringkasan materi kelas 5. Baca dulu sebelum latihan.</p><div class="grid">${Object.entries(MAPEL).map(([k, [n, ic]]) => `<button class="mapel" data-mm="${k}"><span class="ic">${ic}</span><b>${n}</b><small>${MATERI[k].length} bab</small></button>`).join("")}</div></div>`;
+    app.querySelectorAll("[data-mm]").forEach((b) => (b.onclick = () => materi(b.dataset.mm))); return; }
+  app.innerHTML = `<div class="card mat"><div class="row"><h2>${MAPEL[m][1]} Materi ${MAPEL[m][0]}</h2></div><button class="btn sec" id="pm">🖨️ Cetak materi</button>${MATERI[m].map(([j, isi], i) => `<h3>${i + 1}. ${j}</h3>${isi}`).join("")}</div>`;
+  $("#pm").onclick = () => cetakHTML(`<h2>Materi ${MAPEL[m][0]} Kelas 5</h2>` + MATERI[m].map(([j, isi], i) => `<h3>${i + 1}. ${j}</h3>${isi}`).join(""));
+  scrollTo(0, 0);
+}
+function cetakMenu() {
+  $("#homeBtn").hidden = false; const d = pilihHari || hariAktif();
+  app.innerHTML = `<div class="card"><h2>🖨️ Cetak</h2><p><button class="btn full" id="c1">Soal hari ke-${d} (4 mapel + kunci)</button></p>
+  <label>Cetak semua soal satu mapel<select id="cm">${Object.entries(MAPEL).map(([k, [n]]) => `<option value="${k}">${n}</option>`).join("")}</select></label>
+  <label>Level<select id="cl"><option value="1">Level 1 (350 soal)</option><option value="2">Level 2 (350 soal)</option><option value="3">Level 3 (300 soal)</option></select></label><br><br>
+  <button class="btn full sec" id="c2">Cetak soal + kunci jawaban</button><br><br><button class="btn full sec" id="c3">Cetak semua materi 4 mapel</button>
+  <p class="mut">Tips: pilih “Simpan sebagai PDF” di jendela cetak untuk menyimpan file.</p></div>`;
+  $("#c1").onclick = () => cetak(d);
+  $("#c2").onclick = () => { const m = $("#cm").value, lv = +$("#cl").value; cetakSoal(`${MAPEL[m][0]} — Level ${lv}`, BANK[m].filter((q) => q.level === lv)); };
+  $("#c3").onclick = () => cetakHTML(Object.keys(MAPEL).map((m) => `<h2>Materi ${MAPEL[m][0]} Kelas 5</h2>` + MATERI[m].map(([j, isi], i) => `<h3>${i + 1}. ${j}</h3>${isi}`).join("")).join(""));
+}
+function cetakHTML(h) {
+  $("#print").innerHTML = h + `<div class="wm">© ${PEMBUAT} · Lisensi pribadi ${esc(ST.nama || "")} ${ST.kode ? "· " + ST.kode : ""} · Dilarang disebarluaskan (UU No. 28 Th. 2014)</div>`; window.print();
+}
+function cetakSoal(judul, s) {
+  cetakHTML(`<h2>${judul}</h2><p>Nama: ______________ Tanggal: ________</p>` + s.map((q, i) => `<div class="pq"><b>${i + 1}.</b> ${q.q}${q.img ? `<div>${q.img}</div>` : ""}<div>${q.opsi.map((o, j) => `${"abcd"[j]}. ${o}`).join("&nbsp;&nbsp;&nbsp; ")}</div></div>`).join("") + `<h2>Kunci Jawaban — ${judul}</h2><p>${s.map((q, i) => `${i + 1}${"abcd"[q.jawab]}`).join(", ")}</p>`);
+}
 function setup() {
   app.innerHTML = `<div class="card"><h2>Selamat datang! 🎉</h2><p>Latihan 10 soal per mapel setiap hari selama 100 hari: <b>4.000 soal</b> Matematika, Bahasa Indonesia, Bahasa Inggris, dan IPA sesuai Kurikulum Merdeka kelas 5. Tingkat kesulitan naik di hari ke-36 dan ke-71.</p>
   <label>Nama anak<input id="nm" placeholder="contoh: Rafi"></label><br><br><button class="btn full" id="go">Mulai Belajar</button></div>`;
   $("#go").onclick = () => { const v = $("#nm").value.trim(); if (v) { ST.nama = v; save(); home(); } };
 }
 function kuis(m, soal, d, isReview) {
-  $("#homeBtn").hidden = false; let i = 0, benar = 0; const log = [];
-  const show = () => {
-    const q = soal[i];
-    app.innerHTML = `<div class="card"><div class="row"><b>${MAPEL[q.mapel][1]} ${MAPEL[q.mapel][0]}</b><span class="mut">${i + 1}/${soal.length}</span></div><div class="bar" style="margin:8px 0"><i style="width:${(i / soal.length) * 100}%"></i></div>
-    <span class="lvl l${q.level}">${q.topik}</span><div class="q">${q.q}</div>${q.img ? `<div class="img">${q.img}</div>` : ""}
-    ${q.opsi.map((o, j) => `<button class="opt" data-j="${j}"><b>${"ABCD"[j]}.</b> ${o}</button>`).join("")}<div id="fb"></div></div>`;
-    app.querySelectorAll(".opt").forEach((b) => (b.onclick = () => jawab(+b.dataset.j)));
-  };
-  const jawab = (j) => {
-    const q = soal[i]; const ok = j === q.jawab; if (ok) benar++;
-    log.push({ id: q.id, ok, topik: q.topik, mapel: q.mapel });
-    if (ok) delete ST.salah[q.id]; else ST.salah[q.id] = 1;
-    app.querySelectorAll(".opt").forEach((b, k) => { b.disabled = true; if (k === q.jawab) b.classList.add("ok"); else if (k === j) b.classList.add("no"); });
-    $("#fb").innerHTML = `<div class="bahas"><b>${ok ? "✅ Benar! Hebat!" : "❌ Belum tepat."}</b><br>${q.bahas}</div><br><button class="btn full" id="nx">${i + 1 < soal.length ? "Lanjut ➜" : "Lihat hasil"}</button>`;
-    $("#nx").onclick = () => { i++; i < soal.length ? show() : selesai(); }; $("#nx").scrollIntoView({ behavior: "smooth", block: "nearest" });
-    save();
-  };
-  const selesai = () => {
-    const nilai = Math.round((benar / soal.length) * 100);
-    if (!isReview) {
-      ST.hasil[m + d] = { nilai, log, tgl: today() };
-      if (ST.last !== today()) { const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10); ST.streak = ST.last === y ? ST.streak + 1 : 1; ST.last = today(); }
-    }
-    save();
-    const bintang = nilai >= 90 ? "⭐⭐⭐" : nilai >= 70 ? "⭐⭐" : nilai >= 50 ? "⭐" : "💪";
+  $("#homeBtn").hidden = false; const pil = {}; const log = [];
+  app.innerHTML = `<div class="card"><div class="row"><b>${m ? MAPEL[m][1] + " " + MAPEL[m][0] + " · Hari ke-" + d : "🔁 Ulang soal salah"}</b><span class="mut" id="cnt">0/${soal.length} dijawab</span></div><div class="bar" style="margin-top:8px"><i id="pg" style="width:0"></i></div></div>
+  <div class="card">${soal.map((q, i) => `<div class="qi" id="q${i}"><span class="lvl l${q.level}">${i + 1}. ${q.topik}</span><div class="q">${q.q}</div>${q.img ? `<div class="img">${q.img}</div>` : ""}${q.opsi.map((o, j) => `<button class="opt" data-i="${i}" data-j="${j}"><b>${"ABCD"[j]}.</b> ${o}</button>`).join("")}<div class="fb"></div></div>`).join("")}
+  <br><button class="btn full" id="fin" disabled>Selesai & lihat nilai</button></div>`;
+  app.querySelectorAll(".opt").forEach((b) => (b.onclick = () => {
+    const i = +b.dataset.i, j = +b.dataset.j, q = soal[i]; if (i in pil) return; pil[i] = j; const ok = j === q.jawab;
+    log.push({ id: q.id, ok, topik: q.topik, mapel: q.mapel }); if (ok) delete ST.salah[q.id]; else ST.salah[q.id] = 1; save();
+    const box = $("#q" + i); box.querySelectorAll(".opt").forEach((x, k) => { x.disabled = true; if (k === q.jawab) x.classList.add("ok"); else if (k === j) x.classList.add("no"); });
+    box.querySelector(".fb").innerHTML = `<div class="bahas"><b>${ok ? "✅ Benar!" : "❌ Belum tepat."}</b> ${q.bahas}</div>`;
+    const n = Object.keys(pil).length; $("#cnt").textContent = `${n}/${soal.length} dijawab`; $("#pg").style.width = (n / soal.length) * 100 + "%"; $("#fin").disabled = n < soal.length;
+  }));
+  $("#fin").onclick = () => {
+    const benar = log.filter((l) => l.ok).length, nilai = Math.round((benar / soal.length) * 100);
+    if (!isReview) { ST.hasil[m + d] = { nilai, log, tgl: today() }; if (ST.last !== today()) { const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10); ST.streak = ST.last === y ? ST.streak + 1 : 1; ST.last = today(); } }
+    save(); const bintang = nilai >= 90 ? "⭐⭐⭐" : nilai >= 70 ? "⭐⭐" : nilai >= 50 ? "⭐" : "💪";
     app.innerHTML = `<div class="card" style="text-align:center"><div class="big">${bintang}</div><h2>Nilai ${nilai}</h2><p>${benar} dari ${soal.length} soal benar.</p><p class="mut">${nilai >= 70 ? "Keren! Pertahankan ya." : "Tidak apa-apa, soal yang salah tersimpan di menu Ulang Soal Salah."}</p><button class="btn full" id="bk">Kembali ke beranda</button></div>`;
-    $("#bk").onclick = home;
+    $("#bk").onclick = home; scrollTo(0, 0);
   };
-  show();
+  scrollTo(0, 0);
 }
 function review() {
   const all = Object.values(BANK).flat(); const ids = new Set(Object.keys(ST.salah));
@@ -721,7 +808,7 @@ function rapor() {
   app.innerHTML = `<div class="card"><h2>📊 Rapor ${esc(ST.nama)}</h2><table><tr><th>Mapel</th><th>Rata-rata</th></tr>${Object.entries(MAPEL).map(([k, [n]]) => `<tr><td>${n}</td><td><b>${rata(k)}</b></td></tr>`).join("")}</table></div>
   <div class="card"><h3>Topik yang perlu dilatih lagi</h3>${lemah.length ? `<table>${lemah.map(([k, v]) => `<tr><td>${k}</td><td>${Math.round((v[0] / v[1]) * 100)}% benar</td></tr>`).join("")}</table>` : `<p class="mut">Kerjakan minimal beberapa hari dulu agar terlihat polanya.</p>`}</div>
   <div class="card"><button class="btn sec" id="rst">Hapus semua progres</button></div>`;
-  $("#rst").onclick = () => { if (confirm("Hapus semua progres?")) { ST = { nama: "", hasil: {}, salah: {}, streak: 0, last: "", kode: ST.kode }; save(); home(); } };
+  $("#rst").onclick = () => { if (confirm("Hapus semua progres?")) { ST = { nama: "", hasil: {}, salah: {}, streak: 0, last: "", kode: ST.kode, setuju: ST.setuju }; save(); home(); } };
 }
 function ortu() {
   $("#homeBtn").hidden = false;
@@ -740,7 +827,7 @@ function cetak(d) {
     h += `<h2>${n} — Hari ke-${d} (${LEVEL[levelHari(d)].nama})</h2><p>Nama: ______________ Tanggal: ________</p>` + s.map((q, i) => `<div class="pq"><b>${i + 1}.</b> ${q.q}${q.img ? `<div>${q.img}</div>` : ""}<div>${q.opsi.map((o, j) => `${"abcd"[j]}. ${o}`).join("&nbsp;&nbsp;&nbsp; ")}</div></div>`).join("");
     kunci += `<p><b>${n}:</b> ${s.map((q, i) => `${i + 1}${"abcd"[q.jawab]}`).join(", ")}</p>`;
   }
-  $("#print").innerHTML = h + `<h2>Kunci Jawaban Hari ke-${d}</h2>` + kunci; window.print();
+  cetakHTML(h + `<h2>Kunci Jawaban Hari ke-${d}</h2>` + kunci);
 }
 const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 $("#homeBtn").onclick = () => { pilihHari = null; home(); };

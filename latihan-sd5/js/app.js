@@ -17,6 +17,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 function home() {
   $("#homeBtn").hidden = true;
   if (!window.PREVIEW && !ST.kode && (window.KODE_HASH || (location.protocol.startsWith("http") && !/localhost|127\.0\.0\.1/.test(location.hostname)))) return aktivasi();
+  if (!ST.setuju) return tentang(true);
   if (!ST.nama) return setup();
   const d = pilihHari || hariAktif(); const lv = levelHari(d);
   const selesai = Array.from({ length: HARI }, (_, i) => hariSelesai(i + 1)).filter(Boolean).length;
@@ -27,10 +28,10 @@ function home() {
   <div class="grid">${Object.entries(MAPEL).map(([k, [n, ic]]) => { const h = ST.hasil[k + d]; return `<button class="mapel ${h ? "done" : ""}" data-m="${k}"><span class="ic">${ic}</span><b>${n}</b><small>${h ? `✅ Nilai ${h.nilai} · ulangi` : `${PER_HARI} soal · ±10 menit`}</small></button>`; }).join("")}</div>
   <div class="card" style="margin-top:14px"><b>Pilih hari</b> <span class="mut">(hijau = selesai)</span><div class="days" style="margin-top:8px">${Array.from({ length: HARI }, (_, i) => `<button class="${hariSelesai(i + 1) ? "d" : ""} ${i + 1 === d ? "c" : ""}" data-d="${i + 1}">${i + 1}</button>`).join("")}</div>
   <div class="mut" style="margin-top:8px">Hari 1–35: Level 1 · Hari 36–70: Level 2 · Hari 71–100: Level 3</div></div>
-  <div class="grid"><button class="btn sec" id="review" ${salahN ? "" : "disabled"}>🔁 Ulang soal salah (${salahN})</button><button class="btn sec" id="rapor">📊 Rapor</button><button class="btn sec" id="cetak">🖨️ Cetak soal hari ini</button><button class="btn sec" id="ortu">👪 Panduan orang tua</button></div>`;
+  <div class="grid"><button class="btn sec" id="review" ${salahN ? "" : "disabled"}>🔁 Ulang soal salah (${salahN})</button><button class="btn sec" id="rapor">📊 Rapor</button><button class="btn sec" id="materi">📘 Materi</button><button class="btn sec" id="cetak">🖨️ Cetak soal & materi</button><button class="btn sec" id="ortu">👪 Panduan orang tua</button><button class="btn sec" id="ttg">ℹ️ Tentang & hak cipta</button></div><div class="foot">© ${PEMBUAT}<br>Lisensi penggunaan pribadi · Dilarang menyebarluaskan</div>`;
   app.querySelectorAll("[data-m]").forEach((b) => (b.onclick = () => kuis(b.dataset.m, soalHari(b.dataset.m, d), d)));
   app.querySelectorAll("[data-d]").forEach((b) => (b.onclick = () => { pilihHari = +b.dataset.d; home(); }));
-  $("#review").onclick = review; $("#rapor").onclick = rapor; $("#cetak").onclick = () => cetak(d); $("#ortu").onclick = ortu;
+  $("#review").onclick = review; $("#rapor").onclick = rapor; $("#cetak").onclick = cetakMenu; $("#materi").onclick = () => materi(); $("#ttg").onclick = () => tentang(); $("#ortu").onclick = ortu;
 }
 // ---- Kode akses ----
 async function sha(t) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join(""); }
@@ -45,41 +46,71 @@ function aktivasi() {
   <input id="kd" placeholder="SD5-XXXX-XXXX" autocapitalize="characters"><br><br><button class="btn full" id="ak">Aktifkan</button><p id="msg" class="mut"></p></div>`;
   $("#ak").onclick = async () => { const k = $("#kd").value.trim().toUpperCase(); $("#msg").textContent = "Memeriksa..."; if (await cekKode(k)) { ST.kode = k; save(); home(); } else $("#msg").textContent = "❌ Kode tidak valid. Periksa lagi atau hubungi penjual."; };
 }
+const PEMBUAT = "Toolkit Parenting (toolkitparenting.my.id)";
+const LEGAL = `<div class="legal"><b>⚖️ Hak Cipta & Lisensi Penggunaan</b><br>© ${new Date().getFullYear()} ${PEMBUAT}. Seluruh soal, materi, gambar, dan aplikasi ini dilindungi <b>Undang-Undang Republik Indonesia Nomor 28 Tahun 2014 tentang Hak Cipta</b>.
+<ul><li>Lisensi ini <b>hanya untuk penggunaan pribadi</b> oleh satu keluarga pembeli. Mencetak untuk anak sendiri diperbolehkan.</li>
+<li><b>Dilarang</b> menyebarkan, membagikan kode akses, menggandakan, mengunggah ulang, menjual kembali, atau memakai untuk bimbel/les berbayar tanpa izin tertulis.</li>
+<li>Pasal 9 UU Hak Cipta: penggandaan, pendistribusian, dan pengumuman ciptaan hanya boleh dilakukan pencipta/pemegang hak cipta atau dengan izinnya.</li>
+<li>Pasal 113 ayat (3): pelanggaran hak ekonomi untuk penggunaan secara komersial diancam <b>pidana penjara paling lama 4 tahun dan/atau denda paling banyak Rp1.000.000.000</b>.</li>
+<li>Setiap kode akses tercatat atas nama pembeli dan tertera pada hasil cetak. Kode yang terbukti disebarkan dapat dinonaktifkan tanpa pengembalian dana.</li></ul></div>`;
+function tentang(first) {
+  $("#homeBtn").hidden = !!first;
+  app.innerHTML = `<div class="card"><h2>📚 Tentang Produk Ini</h2><p><b>Latihan Harian SD Kelas 5</b> adalah program belajar mandiri di rumah sebagai alternatif les bulanan. Isinya <b>4.000 soal</b> (1.000 per mapel) Matematika, Bahasa Indonesia, Bahasa Inggris, dan IPA yang disusun mengikuti <b>Kurikulum Merdeka Fase C (kelas 5)</b>, lengkap dengan pembahasan dan ringkasan materi.</p>
+  <p>Anak cukup belajar <b>±40 menit sehari selama 100 hari</b>. Tingkat kesulitan naik bertahap: hari 1–35 dasar, 36–70 menengah, 71–100 mahir (HOTS).</p>
+  <p><b>Dibuat oleh:</b> ${PEMBUAT}.</p>${LEGAL}
+  ${first ? `<label style="display:flex;gap:8px;margin-top:12px"><input type="checkbox" id="agr" style="width:auto"> Saya memahami dan menyetujui ketentuan penggunaan pribadi di atas.</label><br><button class="btn full" id="ok" disabled>Lanjut</button>` : ""}</div>`;
+  if (first) { $("#agr").onchange = (e) => ($("#ok").disabled = !e.target.checked); $("#ok").onclick = () => { ST.setuju = 1; save(); home(); }; }
+}
+function materi(m) {
+  $("#homeBtn").hidden = false;
+  if (!m) { app.innerHTML = `<div class="card"><h2>📘 Materi</h2><p class="mut">Ringkasan materi kelas 5. Baca dulu sebelum latihan.</p><div class="grid">${Object.entries(MAPEL).map(([k, [n, ic]]) => `<button class="mapel" data-mm="${k}"><span class="ic">${ic}</span><b>${n}</b><small>${MATERI[k].length} bab</small></button>`).join("")}</div></div>`;
+    app.querySelectorAll("[data-mm]").forEach((b) => (b.onclick = () => materi(b.dataset.mm))); return; }
+  app.innerHTML = `<div class="card mat"><div class="row"><h2>${MAPEL[m][1]} Materi ${MAPEL[m][0]}</h2></div><button class="btn sec" id="pm">🖨️ Cetak materi</button>${MATERI[m].map(([j, isi], i) => `<h3>${i + 1}. ${j}</h3>${isi}`).join("")}</div>`;
+  $("#pm").onclick = () => cetakHTML(`<h2>Materi ${MAPEL[m][0]} Kelas 5</h2>` + MATERI[m].map(([j, isi], i) => `<h3>${i + 1}. ${j}</h3>${isi}`).join(""));
+  scrollTo(0, 0);
+}
+function cetakMenu() {
+  $("#homeBtn").hidden = false; const d = pilihHari || hariAktif();
+  app.innerHTML = `<div class="card"><h2>🖨️ Cetak</h2><p><button class="btn full" id="c1">Soal hari ke-${d} (4 mapel + kunci)</button></p>
+  <label>Cetak semua soal satu mapel<select id="cm">${Object.entries(MAPEL).map(([k, [n]]) => `<option value="${k}">${n}</option>`).join("")}</select></label>
+  <label>Level<select id="cl"><option value="1">Level 1 (350 soal)</option><option value="2">Level 2 (350 soal)</option><option value="3">Level 3 (300 soal)</option></select></label><br><br>
+  <button class="btn full sec" id="c2">Cetak soal + kunci jawaban</button><br><br><button class="btn full sec" id="c3">Cetak semua materi 4 mapel</button>
+  <p class="mut">Tips: pilih “Simpan sebagai PDF” di jendela cetak untuk menyimpan file.</p></div>`;
+  $("#c1").onclick = () => cetak(d);
+  $("#c2").onclick = () => { const m = $("#cm").value, lv = +$("#cl").value; cetakSoal(`${MAPEL[m][0]} — Level ${lv}`, BANK[m].filter((q) => q.level === lv)); };
+  $("#c3").onclick = () => cetakHTML(Object.keys(MAPEL).map((m) => `<h2>Materi ${MAPEL[m][0]} Kelas 5</h2>` + MATERI[m].map(([j, isi], i) => `<h3>${i + 1}. ${j}</h3>${isi}`).join("")).join(""));
+}
+function cetakHTML(h) {
+  $("#print").innerHTML = h + `<div class="wm">© ${PEMBUAT} · Lisensi pribadi ${esc(ST.nama || "")} ${ST.kode ? "· " + ST.kode : ""} · Dilarang disebarluaskan (UU No. 28 Th. 2014)</div>`; window.print();
+}
+function cetakSoal(judul, s) {
+  cetakHTML(`<h2>${judul}</h2><p>Nama: ______________ Tanggal: ________</p>` + s.map((q, i) => `<div class="pq"><b>${i + 1}.</b> ${q.q}${q.img ? `<div>${q.img}</div>` : ""}<div>${q.opsi.map((o, j) => `${"abcd"[j]}. ${o}`).join("&nbsp;&nbsp;&nbsp; ")}</div></div>`).join("") + `<h2>Kunci Jawaban — ${judul}</h2><p>${s.map((q, i) => `${i + 1}${"abcd"[q.jawab]}`).join(", ")}</p>`);
+}
 function setup() {
   app.innerHTML = `<div class="card"><h2>Selamat datang! 🎉</h2><p>Latihan 10 soal per mapel setiap hari selama 100 hari: <b>4.000 soal</b> Matematika, Bahasa Indonesia, Bahasa Inggris, dan IPA sesuai Kurikulum Merdeka kelas 5. Tingkat kesulitan naik di hari ke-36 dan ke-71.</p>
   <label>Nama anak<input id="nm" placeholder="contoh: Rafi"></label><br><br><button class="btn full" id="go">Mulai Belajar</button></div>`;
   $("#go").onclick = () => { const v = $("#nm").value.trim(); if (v) { ST.nama = v; save(); home(); } };
 }
 function kuis(m, soal, d, isReview) {
-  $("#homeBtn").hidden = false; let i = 0, benar = 0; const log = [];
-  const show = () => {
-    const q = soal[i];
-    app.innerHTML = `<div class="card"><div class="row"><b>${MAPEL[q.mapel][1]} ${MAPEL[q.mapel][0]}</b><span class="mut">${i + 1}/${soal.length}</span></div><div class="bar" style="margin:8px 0"><i style="width:${(i / soal.length) * 100}%"></i></div>
-    <span class="lvl l${q.level}">${q.topik}</span><div class="q">${q.q}</div>${q.img ? `<div class="img">${q.img}</div>` : ""}
-    ${q.opsi.map((o, j) => `<button class="opt" data-j="${j}"><b>${"ABCD"[j]}.</b> ${o}</button>`).join("")}<div id="fb"></div></div>`;
-    app.querySelectorAll(".opt").forEach((b) => (b.onclick = () => jawab(+b.dataset.j)));
-  };
-  const jawab = (j) => {
-    const q = soal[i]; const ok = j === q.jawab; if (ok) benar++;
-    log.push({ id: q.id, ok, topik: q.topik, mapel: q.mapel });
-    if (ok) delete ST.salah[q.id]; else ST.salah[q.id] = 1;
-    app.querySelectorAll(".opt").forEach((b, k) => { b.disabled = true; if (k === q.jawab) b.classList.add("ok"); else if (k === j) b.classList.add("no"); });
-    $("#fb").innerHTML = `<div class="bahas"><b>${ok ? "✅ Benar! Hebat!" : "❌ Belum tepat."}</b><br>${q.bahas}</div><br><button class="btn full" id="nx">${i + 1 < soal.length ? "Lanjut ➜" : "Lihat hasil"}</button>`;
-    $("#nx").onclick = () => { i++; i < soal.length ? show() : selesai(); }; $("#nx").scrollIntoView({ behavior: "smooth", block: "nearest" });
-    save();
-  };
-  const selesai = () => {
-    const nilai = Math.round((benar / soal.length) * 100);
-    if (!isReview) {
-      ST.hasil[m + d] = { nilai, log, tgl: today() };
-      if (ST.last !== today()) { const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10); ST.streak = ST.last === y ? ST.streak + 1 : 1; ST.last = today(); }
-    }
-    save();
-    const bintang = nilai >= 90 ? "⭐⭐⭐" : nilai >= 70 ? "⭐⭐" : nilai >= 50 ? "⭐" : "💪";
+  $("#homeBtn").hidden = false; const pil = {}; const log = [];
+  app.innerHTML = `<div class="card"><div class="row"><b>${m ? MAPEL[m][1] + " " + MAPEL[m][0] + " · Hari ke-" + d : "🔁 Ulang soal salah"}</b><span class="mut" id="cnt">0/${soal.length} dijawab</span></div><div class="bar" style="margin-top:8px"><i id="pg" style="width:0"></i></div></div>
+  <div class="card">${soal.map((q, i) => `<div class="qi" id="q${i}"><span class="lvl l${q.level}">${i + 1}. ${q.topik}</span><div class="q">${q.q}</div>${q.img ? `<div class="img">${q.img}</div>` : ""}${q.opsi.map((o, j) => `<button class="opt" data-i="${i}" data-j="${j}"><b>${"ABCD"[j]}.</b> ${o}</button>`).join("")}<div class="fb"></div></div>`).join("")}
+  <br><button class="btn full" id="fin" disabled>Selesai & lihat nilai</button></div>`;
+  app.querySelectorAll(".opt").forEach((b) => (b.onclick = () => {
+    const i = +b.dataset.i, j = +b.dataset.j, q = soal[i]; if (i in pil) return; pil[i] = j; const ok = j === q.jawab;
+    log.push({ id: q.id, ok, topik: q.topik, mapel: q.mapel }); if (ok) delete ST.salah[q.id]; else ST.salah[q.id] = 1; save();
+    const box = $("#q" + i); box.querySelectorAll(".opt").forEach((x, k) => { x.disabled = true; if (k === q.jawab) x.classList.add("ok"); else if (k === j) x.classList.add("no"); });
+    box.querySelector(".fb").innerHTML = `<div class="bahas"><b>${ok ? "✅ Benar!" : "❌ Belum tepat."}</b> ${q.bahas}</div>`;
+    const n = Object.keys(pil).length; $("#cnt").textContent = `${n}/${soal.length} dijawab`; $("#pg").style.width = (n / soal.length) * 100 + "%"; $("#fin").disabled = n < soal.length;
+  }));
+  $("#fin").onclick = () => {
+    const benar = log.filter((l) => l.ok).length, nilai = Math.round((benar / soal.length) * 100);
+    if (!isReview) { ST.hasil[m + d] = { nilai, log, tgl: today() }; if (ST.last !== today()) { const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10); ST.streak = ST.last === y ? ST.streak + 1 : 1; ST.last = today(); } }
+    save(); const bintang = nilai >= 90 ? "⭐⭐⭐" : nilai >= 70 ? "⭐⭐" : nilai >= 50 ? "⭐" : "💪";
     app.innerHTML = `<div class="card" style="text-align:center"><div class="big">${bintang}</div><h2>Nilai ${nilai}</h2><p>${benar} dari ${soal.length} soal benar.</p><p class="mut">${nilai >= 70 ? "Keren! Pertahankan ya." : "Tidak apa-apa, soal yang salah tersimpan di menu Ulang Soal Salah."}</p><button class="btn full" id="bk">Kembali ke beranda</button></div>`;
-    $("#bk").onclick = home;
+    $("#bk").onclick = home; scrollTo(0, 0);
   };
-  show();
+  scrollTo(0, 0);
 }
 function review() {
   const all = Object.values(BANK).flat(); const ids = new Set(Object.keys(ST.salah));
@@ -93,7 +124,7 @@ function rapor() {
   app.innerHTML = `<div class="card"><h2>📊 Rapor ${esc(ST.nama)}</h2><table><tr><th>Mapel</th><th>Rata-rata</th></tr>${Object.entries(MAPEL).map(([k, [n]]) => `<tr><td>${n}</td><td><b>${rata(k)}</b></td></tr>`).join("")}</table></div>
   <div class="card"><h3>Topik yang perlu dilatih lagi</h3>${lemah.length ? `<table>${lemah.map(([k, v]) => `<tr><td>${k}</td><td>${Math.round((v[0] / v[1]) * 100)}% benar</td></tr>`).join("")}</table>` : `<p class="mut">Kerjakan minimal beberapa hari dulu agar terlihat polanya.</p>`}</div>
   <div class="card"><button class="btn sec" id="rst">Hapus semua progres</button></div>`;
-  $("#rst").onclick = () => { if (confirm("Hapus semua progres?")) { ST = { nama: "", hasil: {}, salah: {}, streak: 0, last: "", kode: ST.kode }; save(); home(); } };
+  $("#rst").onclick = () => { if (confirm("Hapus semua progres?")) { ST = { nama: "", hasil: {}, salah: {}, streak: 0, last: "", kode: ST.kode, setuju: ST.setuju }; save(); home(); } };
 }
 function ortu() {
   $("#homeBtn").hidden = false;
@@ -112,7 +143,7 @@ function cetak(d) {
     h += `<h2>${n} — Hari ke-${d} (${LEVEL[levelHari(d)].nama})</h2><p>Nama: ______________ Tanggal: ________</p>` + s.map((q, i) => `<div class="pq"><b>${i + 1}.</b> ${q.q}${q.img ? `<div>${q.img}</div>` : ""}<div>${q.opsi.map((o, j) => `${"abcd"[j]}. ${o}`).join("&nbsp;&nbsp;&nbsp; ")}</div></div>`).join("");
     kunci += `<p><b>${n}:</b> ${s.map((q, i) => `${i + 1}${"abcd"[q.jawab]}`).join(", ")}</p>`;
   }
-  $("#print").innerHTML = h + `<h2>Kunci Jawaban Hari ke-${d}</h2>` + kunci; window.print();
+  cetakHTML(h + `<h2>Kunci Jawaban Hari ke-${d}</h2>` + kunci);
 }
 const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 $("#homeBtn").onclick = () => { pilihHari = null; home(); };
