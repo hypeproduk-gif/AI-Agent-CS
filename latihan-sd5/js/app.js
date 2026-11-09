@@ -88,7 +88,7 @@ function cetakSoal(judul, s) {
 }
 function setup() {
   app.innerHTML = `<div class="card"><h2>Selamat datang! 🎉</h2><p>Latihan 10 soal per mapel setiap hari selama 100 hari: <b>4.000 soal</b> Matematika, Bahasa Indonesia, Bahasa Inggris, dan IPA sesuai Kurikulum Merdeka kelas 5. Tingkat kesulitan naik di hari ke-36 dan ke-71.</p>
-  <label>Nama anak<input id="nm" placeholder="contoh: Rafi"></label><br><br><button class="btn full" id="go">Mulai Belajar</button></div>`;
+  <label>Nama anak<input id="nm" placeholder="contoh: Rafi"></label><p class="mut">⚠️ Nama dikunci sebagai pemilik lisensi dan tercetak di setiap lembar. Pastikan sudah benar.</p><br><br><button class="btn full" id="go">Mulai Belajar</button></div>`;
   $("#go").onclick = () => { const v = $("#nm").value.trim(); if (v) { ST.nama = v; save(); home(); } };
 }
 function kuis(m, soal, d, isReview) {
@@ -123,8 +123,8 @@ function rapor() {
   const lemah = Object.entries(tp).filter(([, v]) => v[1] >= 3).sort((a, b) => a[1][0] / a[1][1] - b[1][0] / b[1][1]).slice(0, 8);
   app.innerHTML = `<div class="card"><h2>📊 Rapor ${esc(ST.nama)}</h2><table><tr><th>Mapel</th><th>Rata-rata</th></tr>${Object.entries(MAPEL).map(([k, [n]]) => `<tr><td>${n}</td><td><b>${rata(k)}</b></td></tr>`).join("")}</table></div>
   <div class="card"><h3>Topik yang perlu dilatih lagi</h3>${lemah.length ? `<table>${lemah.map(([k, v]) => `<tr><td>${k}</td><td>${Math.round((v[0] / v[1]) * 100)}% benar</td></tr>`).join("")}</table>` : `<p class="mut">Kerjakan minimal beberapa hari dulu agar terlihat polanya.</p>`}</div>
-  <div class="card"><button class="btn sec" id="rst">Hapus semua progres</button></div>`;
-  $("#rst").onclick = () => { if (confirm("Hapus semua progres?")) { ST = { nama: "", hasil: {}, salah: {}, streak: 0, last: "", kode: ST.kode, setuju: ST.setuju }; save(); home(); } };
+  <div class="card"><button class="btn sec" id="rst">Hapus nilai & progres</button><p class="mut">Nama anak terkunci sebagai pemilik lisensi dan tidak ikut terhapus.</p></div>`;
+  $("#rst").onclick = () => { if (confirm("Hapus semua nilai dan progres? Nama tetap tersimpan.")) { ST = { nama: ST.nama, hasil: {}, salah: {}, streak: 0, last: "", kode: ST.kode, setuju: ST.setuju }; save(); home(); } };
 }
 function ortu() {
   $("#homeBtn").hidden = false;
