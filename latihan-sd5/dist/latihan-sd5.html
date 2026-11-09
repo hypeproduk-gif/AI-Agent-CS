@@ -710,6 +710,13 @@ function home() {
   app.innerHTML = `
   <div class="card"><div class="row"><div><div class="mut">Halo, ${esc(ST.nama)} 👋</div><b style="font-size:22px">Hari ke-${d}</b> <span class="lvl l${lv}">${LEVEL[lv].nama}</span></div><div style="text-align:right"><div class="big">🔥${ST.streak}</div><div class="mut">hari beruntun</div></div></div>
   <div class="mut" style="margin:10px 0 4px">Progres ${selesai}/${HARI} hari</div><div class="bar"><i style="width:${selesai}%"></i></div></div>
+  <details class="card" ${selesai < 3 ? "open" : ""}><summary><b>📌 Cara pakai (1 menit)</b></summary><ol style="margin:8px 0 0;padding-left:20px">
+  <li>Kerjakan <b>4 mapel</b> di bawah setiap hari. Satu mapel = 10 soal, ±10 menit.</li>
+  <li>Klik mapel → <b>scroll</b> dan pilih jawaban. Benar/salah dan pembahasan langsung muncul. <b>Baca pembahasannya.</b></li>
+  <li>Setelah 10 soal terjawab, klik <b>Selesai & lihat nilai</b>. Kartu mapel jadi hijau ✅.</li>
+  <li>Jika 4 mapel sudah hijau, aplikasi otomatis pindah ke <b>hari berikutnya</b> (kerjakan besok, 1 hari 1 sesi). Level naik di hari 36 dan 71.</li>
+  <li>Bingung materinya? Buka <b>📘 Materi</b> dulu. Akhir pekan, buka <b>🔁 Ulang soal salah</b> dan <b>📊 Rapor</b>.</li>
+  <li>Ingin di kertas? Pakai <b>🖨️ Cetak</b>.</li></ol></details>
   <div class="grid">${Object.entries(MAPEL).map(([k, [n, ic]]) => { const h = ST.hasil[k + d]; return `<button class="mapel ${h ? "done" : ""}" data-m="${k}"><span class="ic">${ic}</span><b>${n}</b><small>${h ? `✅ Nilai ${h.nilai} · ulangi` : `${PER_HARI} soal · ±10 menit`}</small></button>`; }).join("")}</div>
   <div class="card" style="margin-top:14px"><b>Pilih hari</b> <span class="mut">(hijau = selesai)</span><div class="days" style="margin-top:8px">${Array.from({ length: HARI }, (_, i) => `<button class="${hariSelesai(i + 1) ? "d" : ""} ${i + 1 === d ? "c" : ""}" data-d="${i + 1}">${i + 1}</button>`).join("")}</div>
   <div class="mut" style="margin-top:8px">Hari 1–35: Level 1 · Hari 36–70: Level 2 · Hari 71–100: Level 3</div></div>
