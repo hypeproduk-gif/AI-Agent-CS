@@ -10,7 +10,7 @@
 :root{--bg:#f4f7fb;--card:#fff;--ink:#1f2937;--mut:#6b7280;--pri:#2563eb;--ok:#16a34a;--no:#dc2626;--line:#e5e7eb}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 header{background:var(--pri);color:#fff;padding:14px 16px;position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px}
-header h1{font-size:18px;margin:0;flex:1}header button{background:#fff3;color:#fff;border:0;border-radius:8px;padding:6px 10px;font-size:14px}
+header h1{font-size:18px!important;margin:0!important;flex:1;color:#fff!important;display:block!important;line-height:1.3!important}header button{background:#fff3;color:#fff;border:0;border-radius:8px;padding:6px 10px;font-size:14px}
 main{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:16px}
 .card{background:var(--card);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 1px 3px #0001}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -750,7 +750,7 @@ function watermark() {
 }
 function aktivasi() {
   $("#homeBtn").hidden = true;
-  app.innerHTML = `<div class="card"><h2>🔐 Masukkan Kode Akses</h2><p>Kode akses dikirim setelah pembelian. Cukup sekali aktivasi per perangkat.</p>
+  app.innerHTML = `<div class="card"><h2>🔐 Masukkan Kode Akses</h2><p>Kode akses dikirim ke <b>email/WhatsApp</b> Anda setelah pembayaran terkonfirmasi. Formatnya seperti <b>SD5-AB12-CD34</b>. Cukup sekali aktivasi per perangkat.</p><p class="mut">Belum menerima kode? Cek folder spam/promosi email, atau hubungi admin Toolkit Parenting dengan menyertakan nomor pesanan.</p>
   <input id="kd" placeholder="SD5-XXXX-XXXX" autocapitalize="characters"><br><br><button class="btn full" id="ak">Aktifkan</button><p id="msg" class="mut"></p></div>`;
   $("#ak").onclick = async () => { const k = $("#kd").value.trim().toUpperCase(); $("#msg").textContent = "Memeriksa..."; if (await cekKode(k)) {
     ST.kode = k; const r = await server("cek");
