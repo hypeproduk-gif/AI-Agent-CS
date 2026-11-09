@@ -16,6 +16,7 @@ let pilihHari = null;
 const today = () => new Date().toISOString().slice(0, 10);
 function home() {
   $("#homeBtn").hidden = true;
+  if (!window.PREVIEW && !ST.kode && location.protocol.startsWith("http") && !/localhost|127\.0\.0\.1/.test(location.hostname)) return aktivasi();
   if (!ST.nama) return setup();
   const d = pilihHari || hariAktif(); const lv = levelHari(d);
   const selesai = Array.from({ length: HARI }, (_, i) => hariSelesai(i + 1)).filter(Boolean).length;
@@ -30,6 +31,16 @@ function home() {
   app.querySelectorAll("[data-m]").forEach((b) => (b.onclick = () => kuis(b.dataset.m, soalHari(b.dataset.m, d), d)));
   app.querySelectorAll("[data-d]").forEach((b) => (b.onclick = () => { pilihHari = +b.dataset.d; home(); }));
   $("#review").onclick = review; $("#rapor").onclick = rapor; $("#cetak").onclick = () => cetak(d); $("#ortu").onclick = ortu;
+}
+// ---- Kode akses ----
+async function cekKode(kode) {
+  try { const r = await fetch("/api/verify", { method: "POST", body: JSON.stringify({ kode }) }); return (await r.json()).ok; } catch { return false; }
+}
+function aktivasi() {
+  $("#homeBtn").hidden = true;
+  app.innerHTML = `<div class="card"><h2>🔐 Masukkan Kode Akses</h2><p>Kode akses dikirim setelah pembelian. Cukup sekali aktivasi per perangkat.</p>
+  <input id="kd" placeholder="SD5-XXXX-XXXX" autocapitalize="characters"><br><br><button class="btn full" id="ak">Aktifkan</button><p id="msg" class="mut"></p></div>`;
+  $("#ak").onclick = async () => { const k = $("#kd").value.trim().toUpperCase(); $("#msg").textContent = "Memeriksa..."; if (await cekKode(k)) { ST.kode = k; save(); home(); } else $("#msg").textContent = "❌ Kode tidak valid. Periksa lagi atau hubungi penjual."; };
 }
 function setup() {
   app.innerHTML = `<div class="card"><h2>Selamat datang! 🎉</h2><p>Latihan 10 soal per mapel setiap hari selama 100 hari: <b>4.000 soal</b> Matematika, Bahasa Indonesia, Bahasa Inggris, dan IPA sesuai Kurikulum Merdeka kelas 5. Tingkat kesulitan naik di hari ke-36 dan ke-71.</p>
@@ -79,7 +90,7 @@ function rapor() {
   app.innerHTML = `<div class="card"><h2>📊 Rapor ${esc(ST.nama)}</h2><table><tr><th>Mapel</th><th>Rata-rata</th></tr>${Object.entries(MAPEL).map(([k, [n]]) => `<tr><td>${n}</td><td><b>${rata(k)}</b></td></tr>`).join("")}</table></div>
   <div class="card"><h3>Topik yang perlu dilatih lagi</h3>${lemah.length ? `<table>${lemah.map(([k, v]) => `<tr><td>${k}</td><td>${Math.round((v[0] / v[1]) * 100)}% benar</td></tr>`).join("")}</table>` : `<p class="mut">Kerjakan minimal beberapa hari dulu agar terlihat polanya.</p>`}</div>
   <div class="card"><button class="btn sec" id="rst">Hapus semua progres</button></div>`;
-  $("#rst").onclick = () => { if (confirm("Hapus semua progres?")) { ST = { nama: "", hasil: {}, salah: {}, streak: 0, last: "" }; save(); home(); } };
+  $("#rst").onclick = () => { if (confirm("Hapus semua progres?")) { ST = { nama: "", hasil: {}, salah: {}, streak: 0, last: "", kode: ST.kode }; save(); home(); } };
 }
 function ortu() {
   $("#homeBtn").hidden = false;
