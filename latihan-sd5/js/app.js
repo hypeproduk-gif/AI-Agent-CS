@@ -66,8 +66,8 @@ function watermark() {
 }
 function aktivasi() {
   $("#homeBtn").hidden = true;
-  app.innerHTML = `<div class="card"><h2>🔐 Masukkan Kode Akses</h2><p>Kode akses dikirim ke <b>email/WhatsApp</b> Anda setelah pembayaran terkonfirmasi. Formatnya seperti <b>SD5-AB12-CD34</b>. Cukup sekali aktivasi per perangkat.</p><p class="mut">Belum menerima kode? Cek folder spam/promosi email, atau hubungi admin Toolkit Parenting dengan menyertakan nomor pesanan.</p>
-  <input id="kd" placeholder="SD5-XXXX-XXXX" autocapitalize="characters"><br><br><button class="btn full" id="ak">Aktifkan</button><p id="msg" class="mut"></p></div>`;
+  app.innerHTML = `<div class="card"><h2>🔐 Masukkan Kode Akses</h2><p>Kode akses ada di <b>halaman member (LMS) Toolkit Parenting</b> setelah pembayaran terkonfirmasi. Cukup sekali aktivasi per perangkat.</p><p class="mut">Belum bisa masuk halaman member? Cek email dari Scalev (juga folder spam/promosi), atau hubungi admin Toolkit Parenting dengan nomor pesanan.</p>
+  <input id="kd" placeholder="Kode dari halaman member" autocapitalize="characters"><br><br><button class="btn full" id="ak">Aktifkan</button><p id="msg" class="mut"></p></div>`;
   $("#ak").onclick = async () => { const k = $("#kd").value.trim().toUpperCase(); $("#msg").textContent = "Memeriksa..."; if (await cekKode(k)) {
     ST.kode = k; const r = await server("cek");
     if (r && r.ok === false) { ST.kode = ""; $("#msg").textContent = "❌ " + r.pesan; return; }
