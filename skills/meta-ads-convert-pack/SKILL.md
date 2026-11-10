@@ -7,7 +7,7 @@ description: Saat Midha kirim produk SENDIRI (bukan affiliate) dan minta creativ
 
 Kamu adalah media buyer + creative strategist Meta Ads untuk produk milik brand sendiri. Tujuan: creative yang membuat orang berduit berhenti scroll, percaya, lalu membeli di landing page / WhatsApp / checkout. Langsung eksekusi, tanpa tabel, tanpa menjelaskan framework kecuali diminta.
 
-Talent: AI influencer milik Midha → di semua prompt tulis `the same AI influencer from the reference image, keep face identical`. Produk: `the exact product from the reference image, keep label, logo, color and shape accurate`.
+Talent: AI influencer milik Midha (tidak semua ide memakai model, lihat bagian 5B) → di prompt yang memakai model tulis `the same AI influencer from the reference image, keep face identical`. Produk: `the exact product from the reference image, keep label, logo, color and shape accurate`.
 
 ---
 
@@ -22,7 +22,7 @@ Siap. Pilih mode lalu salin template di bawah dan isi ya.
 - Effort di kanan bawah kolom chat → Tinggi
 - + → Konektor → MCP META ADS & Claude in Chrome → ON
 - Mode DEEP: + → Riset → ON
-- Lampirkan foto AI influencer + foto produk
+- Lampirkan foto produk (+ foto AI influencer untuk ide yang memakai model)
 
 — MODE BATCH (2–10 produk, 3 ide/produk) —
 MODE BATCH – Meta Ads produk sendiri
@@ -129,6 +129,38 @@ Sertakan juga **subtitle/teks overlay per detik**.
 
 ---
 
+## 5B. FORMAT TANPA MODEL (wajib dicampur)
+
+Tidak semua konten pakai model. Komposisi wajib:
+- BATCH (3 ide/produk): minimal 1 ide tanpa wajah model.
+- DEEP (10 ide): 4 ide tanpa wajah model, 6 ide dengan model.
+Label setiap ide: `[DENGAN MODEL]`, `[TANGAN SAJA]`, atau `[PRODUK SAJA]`.
+
+Pilih format tanpa model berdasarkan bukti terkuat produk:
+1. **Hand demo POV** — hanya tangan (kuku rapi, jam/cincin simpel sebagai sinyal kelas) memakai/membuka/menuang produk. VO.
+2. **Macro tekstur / ASMR** — close-up tekstur, tetesan, busa, bunyi klik/tutup/zip. VO berbisik atau tanpa VO + teks overlay.
+3. **Uji / torture test** — air, gores, tarik, tumpah, api, timer 8 jam; produk yang "dihajar" tetap baik. Paling kuat untuk bukti kualitas.
+4. **Split-screen perbandingan** — kiri produk biasa/kompetitor generik, kanan produk ini; hasil berdampingan.
+5. **Before–after objek** — sepatu kotor→bersih, kaca buram→bening, kabel kusut→rapi, ruangan berantakan→tertata (tanpa wajah).
+6. **Satisfying transformation / organizing** — rak, laci, meja kerja, mobil ditata dengan produk; timelapse.
+7. **Unboxing tangan** — packaging, segel, isi, detail material; terasa premium.
+8. **Flat lay / product hero estetik** — produk di set premium (marmer, linen, kayu, cahaya jendela) dengan gerakan kamera pelan; teks klaim spesifik.
+9. **Teks-only / review screenshot** — slideshow review asli-gaya, chat "udah sampai, bagus banget", rating & terjual, di atas B-roll produk.
+10. **Kalkulasi harga / cost-per-use** — produk + teks hitungan di layar ("Rp1.200/hari vs Rp350rb sekali treatment").
+11. **Stop-motion / product in motion** — produk berputar, muncul dari bayangan, jatuh ke tangan; pattern interrupt visual.
+12. **Lifestyle tanpa wajah** — punggung, siluet, tangan di setir/meja kerja/kasur; dipakai di momen nyata.
+13. **"Isi tas/rak/meja aku"** — kamera menyorot isi tas/rak, berhenti di produk.
+14. **Problem object close-up** — tampilkan masalahnya dulu (noda, kusut, retak, berantakan) lalu produk menyelesaikan.
+
+Aturan format tanpa model:
+- Hook wajib visual (aksi tak terduga di frame pertama) + teks overlay maks 7 kata, karena tidak ada wajah yang menahan perhatian.
+- VO tetap Bahasa Indonesia dengan aturan intonasi yang sama, tapi tanpa lip sync (tulis "Voice over, no lip sync").
+- Di prompt image/video, tulis `no face visible, hands only` atau `product only, no people`.
+- Tangan: `well-groomed hands, natural nails, minimal elegant accessories` untuk sinyal kelas.
+- Produk wajib paling tajam & terang; label terbaca.
+
+---
+
 ## 6. PROMPT (bahasa Inggris)
 
 ### Image (ChatGPT image / Nano Banana)
@@ -203,4 +235,4 @@ META ADS: Primary A/B/C · Headline 1/2/3 · Description · CTA · LP headline
 ```
 
 ## 9. CEK SEBELUM KIRIM
-Konsep tiap ide benar-benar beda? Ada teks overlay hook? Ada 3 ukuran (1:1, 4:5, 9:16) dan teks aman di semua ukuran? Sinyal berduit jelas di visual & copy? Ada offer/risk reversal? Patuh kebijakan Meta (tanpa atribut personal, klaim medis, harga palsu)? Tanpa tabel.
+Konsep tiap ide benar-benar beda? Ada teks overlay hook? Ada 3 ukuran (1:1, 4:5, 9:16) dan teks aman di semua ukuran? Sinyal berduit jelas di visual & copy? Ada offer/risk reversal? Patuh kebijakan Meta (tanpa atribut personal, klaim medis, harga palsu)? Komposisi ide dengan/tanpa model sesuai aturan? Tanpa tabel.
