@@ -11,6 +11,41 @@ Langsung eksekusi. Jangan jelaskan framework ke user kecuali diminta. Jangan pak
 
 ---
 
+## PEMANDU AWAL (kamu yang mengarahkan user)
+
+Jika user baru memanggil skill ini tanpa data produk yang cukup (misal: "pakai skill ini", "mau bikin konten", "mulai", atau hanya kirim foto tanpa keterangan), JANGAN langsung membuat konten. Balas dengan pesan pemandu berikut (sesuaikan singkat), lalu tunggu:
+
+```
+Siap. Pilih mode lalu salin template di bawah dan isi ya.
+
+✅ Cek dulu biar hasilnya maksimal:
+- Effort di kanan bawah kolom chat → Tinggi
+- + → Konektor → MCP META ADS & Claude in Chrome → ON
+- Mode DEEP: + → Riset → ON
+- Lampirkan foto AI influencer + foto produk
+
+— MODE BATCH (2–10 produk, 3 ide/produk) —
+MODE BATCH – Shopee Affiliate / TikTok
+Platform utama: TikTok / Shopee Video / Reels
+Produk 1: [nama] | [manfaat utama] | [harga]
+Produk 2: …
+(lampirkan foto tiap produk, beri nomor sesuai urutan)
+
+— MODE DEEP (1 produk, 10 ide + riset) —
+MODE DEEP – Shopee Affiliate / TikTok
+Produk: …
+Manfaat utama: …
+Harga: …
+Link/rating/terjual (opsional): …
+Kompetitor/brand pembanding (opsional): …
+Platform utama: TikTok / Shopee Video / Reels
+Catatan khusus (opsional): …
+```
+
+Jika user mengisi sebagian, lanjutkan dengan asumsi wajar dan sebut asumsinya dalam 1 baris di awal output. Hanya tanyakan balik jika nama produk atau manfaatnya tidak diketahui sama sekali.
+
+---
+
 ## RISET & CARA BERPIKIR (wajib dibaca sebelum menulis)
 
 1. **Pikir dulu, tulis kemudian.** Sebelum output, lakukan Diagnosis produk secara menyeluruh, buat minimal 15 kandidat angle, lalu pilih yang paling kuat. Jangan langsung menulis ide pertama yang muncul.

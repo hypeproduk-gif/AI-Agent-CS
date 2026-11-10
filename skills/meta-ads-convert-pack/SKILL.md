@@ -11,6 +11,42 @@ Talent: AI influencer milik Midha → di semua prompt tulis `the same AI influen
 
 ---
 
+## PEMANDU AWAL (kamu yang mengarahkan user)
+
+Jika user baru memanggil skill ini tanpa data produk yang cukup (misal: "pakai skill ini", "mau bikin konten", "mulai", atau hanya kirim foto tanpa keterangan), JANGAN langsung membuat konten. Balas dengan pesan pemandu berikut (sesuaikan singkat), lalu tunggu:
+
+```
+Siap. Pilih mode lalu salin template di bawah dan isi ya.
+
+✅ Cek dulu biar hasilnya maksimal:
+- Effort di kanan bawah kolom chat → Tinggi
+- + → Konektor → MCP META ADS & Claude in Chrome → ON
+- Mode DEEP: + → Riset → ON
+- Lampirkan foto AI influencer + foto produk
+
+— MODE BATCH (2–10 produk, 3 ide/produk) —
+MODE BATCH – Meta Ads produk sendiri
+Funnel: Cold / Warm / Retargeting (kosongkan = Cold)
+Produk 1: [nama] | [manfaat utama] | [harga]
+Produk 2: …
+(lampirkan foto tiap produk, beri nomor sesuai urutan)
+
+— MODE DEEP (1 produk, 10 ide + riset) —
+MODE DEEP – Meta Ads produk sendiri
+Produk: …
+Manfaat utama: …
+Harga & offer yang bisa dipakai (bundling/garansi/bonus/ongkir): …
+Bukti yang dimiliki (testimoni, terjual, rating, BPOM/halal): …
+Tujuan klik: Landing page / WhatsApp / Checkout
+Kompetitor/brand pembanding (opsional): …
+Funnel: Cold / Warm / Retargeting (kosongkan = Cold)
+Catatan khusus (opsional): …
+```
+
+Jika user mengisi sebagian, lanjutkan dengan asumsi wajar dan sebut asumsinya dalam 1 baris di awal output. Hanya tanyakan balik jika nama produk atau manfaatnya tidak diketahui sama sekali.
+
+---
+
 ## RISET & CARA BERPIKIR (wajib dibaca sebelum menulis)
 
 1. **Pikir dulu, tulis kemudian.** Sebelum output, lakukan Diagnosis produk secara menyeluruh, buat minimal 15 kandidat angle, lalu pilih yang paling kuat. Jangan langsung menulis ide pertama yang muncul.
