@@ -321,4 +321,5 @@ Di BATCH, Meta Ads boleh 1 primary text + 2 headline per ide agar ringkas.
 - Naskah 18–28 kata, ada jeda `…`, maks 2 kapital?
 - Prompt menjaga konsistensi talent & label produk?
 - Tidak ada klaim yang melanggar kebijakan Meta/TikTok?
+- Komposisi ide dengan/tanpa model sesuai aturan 6B?
 - Tidak ada tabel.
