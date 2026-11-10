@@ -33,7 +33,7 @@ table{width:100%;border-collapse:collapse}td,th{padding:6px;border-bottom:1px so
 input,select{font:inherit;padding:10px;border:1px solid var(--line);border-radius:10px;width:100%}
 .days{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}.days button{border:0;border-radius:6px;padding:6px 0;font-size:12px;background:#e5e7eb;cursor:pointer}
 .days .d{background:#86efac}.days .c{outline:2px solid var(--pri)}
-#print{display:none}#lic{display:block;font-size:12px;opacity:.85;font-weight:400}#wm{position:fixed;inset:-50%;pointer-events:none;z-index:0;transform:rotate(-30deg);display:flex;flex-wrap:wrap;gap:60px 80px;align-content:center;justify-content:center;opacity:.10;font-size:18px;font-weight:700;color:#000;user-select:none}@media print{#wm{display:none}}.qi{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}.qi:first-of-type{border-top:0}.legal{font-size:14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:12px}.mat h3{margin:18px 0 6px;color:var(--pri)}.mat svg{max-width:100%;height:auto}.foot{text-align:center;font-size:12px;color:var(--mut);margin:20px 0}
+#print{display:none}#lic{display:block;font-size:12px;opacity:.85;font-weight:400}#wm{position:fixed;inset:-50%;pointer-events:none;z-index:0;transform:rotate(-30deg);display:flex;flex-wrap:wrap;gap:220px 260px;align-content:center;justify-content:center;opacity:.10;font-size:18px;font-weight:700;color:#000;user-select:none}@media print{#wm{display:none}}.qi{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}.qi:first-of-type{border-top:0}.legal{font-size:14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:12px}.mat h3{margin:18px 0 6px;color:var(--pri)}.mat svg{max-width:100%;height:auto}.foot{text-align:center;font-size:12px;color:var(--mut);margin:20px 0}
 @media print{header,main{display:none!important}#print{display:block;font-size:12px}#print .pq{break-inside:avoid;margin:8px 0}#print svg{max-height:140px;width:auto}#print h2{break-before:page}#print h2:first-child{break-before:auto}#print .wm{position:fixed;bottom:0;left:0;right:0;text-align:center;font-size:9px;color:#888}}
 </style>
 </head>
@@ -710,7 +710,7 @@ function home() {
   app.innerHTML = `
   <div class="card"><div class="row"><div><div class="mut">Halo, ${esc(ST.nama)} 👋</div><b style="font-size:22px">Hari ke-${d}</b> <span class="lvl l${lv}">${LEVEL[lv].nama}</span></div><div style="text-align:right"><div class="big">🔥${ST.streak}</div><div class="mut">hari beruntun</div></div></div>
   <div class="mut" style="margin:10px 0 4px">Progres ${selesai}/${HARI} hari</div><div class="bar"><i style="width:${selesai}%"></i></div></div>
-  <details class="card" ${selesai < 3 ? "open" : ""}><summary><b>📌 Cara pakai (1 menit)</b></summary><ol style="margin:8px 0 0;padding-left:20px">
+  <details class="card"><summary><b>📌 Cara pakai (1 menit)</b></summary><ol style="margin:8px 0 0;padding-left:20px">
   <li>Kerjakan <b>4 mapel</b> di bawah setiap hari. Satu mapel = 10 soal, ±10 menit.</li>
   <li>Klik mapel → <b>scroll</b> dan pilih jawaban. Benar/salah dan pembahasan langsung muncul. <b>Baca pembahasannya.</b></li>
   <li>Setelah 10 soal terjawab, klik <b>Selesai & lihat nilai</b>. Kartu mapel jadi hijau ✅.</li>
@@ -746,7 +746,7 @@ function watermark() {
   let w = document.getElementById("wm"); if (!ST.nama) { if (w) w.remove(); return; }
   if (!w) { w = document.createElement("div"); w.id = "wm"; document.body.appendChild(w); }
   const t = `Lisensi: ${esc(ST.nama)}${ST.kode ? " · " + ST.kode : ""}`;
-  w.innerHTML = Array.from({ length: 40 }, () => `<span>${t}</span>`).join("");
+  w.innerHTML = Array.from({ length: 14 }, () => `<span>${t}</span>`).join("");
 }
 function aktivasi() {
   $("#homeBtn").hidden = true;

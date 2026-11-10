@@ -26,7 +26,7 @@ function home() {
   app.innerHTML = `
   <div class="card"><div class="row"><div><div class="mut">Halo, ${esc(ST.nama)} 👋</div><b style="font-size:22px">Hari ke-${d}</b> <span class="lvl l${lv}">${LEVEL[lv].nama}</span></div><div style="text-align:right"><div class="big">🔥${ST.streak}</div><div class="mut">hari beruntun</div></div></div>
   <div class="mut" style="margin:10px 0 4px">Progres ${selesai}/${HARI} hari</div><div class="bar"><i style="width:${selesai}%"></i></div></div>
-  <details class="card" ${selesai < 3 ? "open" : ""}><summary><b>📌 Cara pakai (1 menit)</b></summary><ol style="margin:8px 0 0;padding-left:20px">
+  <details class="card"><summary><b>📌 Cara pakai (1 menit)</b></summary><ol style="margin:8px 0 0;padding-left:20px">
   <li>Kerjakan <b>4 mapel</b> di bawah setiap hari. Satu mapel = 10 soal, ±10 menit.</li>
   <li>Klik mapel → <b>scroll</b> dan pilih jawaban. Benar/salah dan pembahasan langsung muncul. <b>Baca pembahasannya.</b></li>
   <li>Setelah 10 soal terjawab, klik <b>Selesai & lihat nilai</b>. Kartu mapel jadi hijau ✅.</li>
@@ -62,7 +62,7 @@ function watermark() {
   let w = document.getElementById("wm"); if (!ST.nama) { if (w) w.remove(); return; }
   if (!w) { w = document.createElement("div"); w.id = "wm"; document.body.appendChild(w); }
   const t = `Lisensi: ${esc(ST.nama)}${ST.kode ? " · " + ST.kode : ""}`;
-  w.innerHTML = Array.from({ length: 40 }, () => `<span>${t}</span>`).join("");
+  w.innerHTML = Array.from({ length: 14 }, () => `<span>${t}</span>`).join("");
 }
 function aktivasi() {
   $("#homeBtn").hidden = true;
