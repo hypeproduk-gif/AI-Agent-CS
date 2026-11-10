@@ -1,6 +1,6 @@
 ---
 name: meta-ads-convert-pack
-description: Saat Midha kirim produk SENDIRI (bukan affiliate) dan minta creative Meta Ads yang convert ke audiens berduit. Mode BATCH (hingga 10 produk × 3 ide) atau DEEP (1 produk × 10 ide). Hasilkan prompt image 4:5 & 9:16 (ChatGPT/Nano Banana), prompt video Google Flow + naskah VO Indonesia + teks overlay, ad copy, headline, description, CTA button, dan arah landing page/offer.
+description: Saat Midha kirim produk SENDIRI (bukan affiliate) dan minta creative Meta Ads yang convert ke audiens berduit. Mode BATCH (hingga 10 produk × 3 ide) atau DEEP (1 produk × 10 ide). Hasilkan prompt image 1:1, 4:5 & 9:16 (ChatGPT/Nano Banana), prompt video Google Flow + naskah VO Indonesia + teks overlay, ad copy, headline, description, CTA button, dan arah landing page/offer.
 ---
 
 # Meta Ads Convert Pack (Produk Sendiri)
@@ -16,7 +16,7 @@ Talent: AI influencer milik Midha → di semua prompt tulis `the same AI influen
 1. **Creative = targeting.** Di Advantage+/ASC, algoritma Meta mencari audiens dari isi creative. Siapa yang tampil, setting, bahasa, dan harga di creative menentukan siapa yang ditarget. Sinyal berduit harus eksplisit di visual dan copy.
 2. **Diversity > volume.** Ide harus beda secara konsep (persona, angle, format, motivasi), bukan sekadar ganti warna/hook. Meta menganggap creative mirip sebagai satu iklan.
 3. **Silent-first.** Mayoritas ditonton tanpa suara → wajib **teks overlay hook** di 0–2 detik dan subtitle burned-in.
-4. **Placement ganda.** Feed 4:5 (format utama) + Reels/Stories 9:16 (safe zone: kosongkan 14% atas & 20% bawah dari teks penting).
+4. **Tiga ukuran.** Master 1:1 (feed, carousel, right column) → perluas ke 4:5 (feed utama) dan 9:16 (Reels/Stories). Komposisi master: subjek & produk di tengah, semua teks di area tengah agar aman saat diperluas. Safe zone 9:16: kosongkan 14% atas & 20% bawah dari teks penting.
 5. **Kamu pegang offer.** Bisa main bundling, garansi, bonus, gratis ongkir, harga coret jujur, scarcity nyata. Affiliate tidak bisa.
 6. **Klik ke tempat yang kamu kontrol** (LP/WA/checkout) → creative harus pre-sell: orang yang klik sudah setengah yakin. Pesan creative harus sama dengan headline LP (message match).
 7. **Static image jauh lebih penting** dibanding TikTok. Minimal 40% ide berupa static/carousel.
@@ -81,9 +81,12 @@ Sertakan juga **subtitle/teks overlay per detik**.
 ## 6. PROMPT (bahasa Inggris)
 
 ### Image (ChatGPT image / Nano Banana)
-Satu paragraf: format & ratio (`4:5 feed`) + talent ref + aksi dengan produk + lokasi & props + outfit + ekspresi + angle/framing + lighting + realism cues + product fidelity + **text in image** (tulis persis dalam tanda kutip, sebut posisi, font style, warna; maks 3 elemen teks).
+Satu paragraf master: format & ratio (`square 1:1`, subject and product centered, all text in the central area) + talent ref + aksi dengan produk + lokasi & props + outfit + ekspresi + angle/framing + lighting + realism cues + product fidelity + **text in image** (tulis persis dalam tanda kutip, sebut posisi, font style, warna; maks 3 elemen teks).
 Realism cues: `shot on iPhone, candid, natural skin texture, real environment, not AI-looking`.
-Lalu baris: **EXPAND TO 9:16:** `Extend the canvas to vertical 9:16, keep subject and product unchanged, continue the background naturally above and below, keep all text inside the central safe zone.`
+Lalu dua baris perluas (pakai gambar 1:1 sebagai input):
+**EXPAND TO 4:5:** `Extend the canvas to vertical 4:5, keep subject, product and text unchanged, continue the background naturally above and below, no new objects.`
+**EXPAND TO 9:16:** `Extend the canvas to vertical 9:16, keep subject, product and text unchanged, continue the background naturally above and below, keep all text inside the central safe zone (empty top 14% and bottom 20%).`
+Jika teks bertabrakan setelah diperluas, regenerasi versi 9:16 dari 4:5, bukan dari 1:1.
 
 ### Video (Google Flow, image-to-video)
 Per klip:
@@ -126,7 +129,8 @@ Pembeli target … | Keraguan … | Mekanisme … | Offer …
 ### Ide [1–3] — [Format] × [Hook] × [Funnel]
 Angle: …
 Kenapa convert: …
-IMAGE PROMPT 4:5: …
+IMAGE PROMPT 1:1 (master): …
+EXPAND TO 4:5: …
 EXPAND TO 9:16: …
 (VIDEO) KLIP & PROMPT FLOW: …
 NASKAH + TEKS OVERLAY: …
@@ -148,4 +152,4 @@ META ADS: Primary A/B/C · Headline 1/2/3 · Description · CTA · LP headline
 ```
 
 ## 9. CEK SEBELUM KIRIM
-Konsep tiap ide benar-benar beda? Ada teks overlay hook? Teks di safe zone 9:16? Sinyal berduit jelas di visual & copy? Ada offer/risk reversal? Patuh kebijakan Meta (tanpa atribut personal, klaim medis, harga palsu)? Tanpa tabel.
+Konsep tiap ide benar-benar beda? Ada teks overlay hook? Ada 3 ukuran (1:1, 4:5, 9:16) dan teks aman di semua ukuran? Sinyal berduit jelas di visual & copy? Ada offer/risk reversal? Patuh kebijakan Meta (tanpa atribut personal, klaim medis, harga palsu)? Tanpa tabel.
