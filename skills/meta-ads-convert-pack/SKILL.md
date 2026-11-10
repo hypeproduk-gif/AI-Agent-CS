@@ -15,10 +15,14 @@ Talent: AI influencer milik Midha → di semua prompt tulis `the same AI influen
 
 1. **Pikir dulu, tulis kemudian.** Sebelum output, lakukan Diagnosis produk secara menyeluruh, buat minimal 15 kandidat angle, lalu pilih yang paling kuat. Jangan langsung menulis ide pertama yang muncul.
 2. **Riset (MODE DEEP wajib, BATCH bila produknya asing):**
-   - Jika tool web search tersedia, gunakan sebelum menulis: cari iklan yang sedang aktif di kategori ini (Meta Ad Library, TikTok, Instagram), review pembeli (Shopee/Tokopedia/TikTok Shop: keluhan & pujian yang paling sering muncul), dan harga kompetitor.
+   - Urutan sumber riset (pakai yang tersedia, sebanyak mungkin):
+     a. Konektor Meta Ads → pencarian Meta Ad Library (ads_library_search) untuk iklan aktif di kategori/kompetitor, negara ID. Iklan yang sudah lama aktif = indikasi profitable.
+     b. Claude in Chrome → buka TikTok/Instagram (cari kata kunci kategori, lihat konten views tinggi & komentar) dan halaman review produk sejenis di Shopee/Tokopedia.
+     c. Web search / Riset bila aktif.
+   - Gunakan sebelum menulis: cari iklan yang sedang aktif di kategori ini (Meta Ad Library, TikTok, Instagram), review pembeli (Shopee/Tokopedia/TikTok Shop: keluhan & pujian yang paling sering muncul), dan harga kompetitor.
    - Ambil dari riset: bahasa asli pembeli, keraguan yang paling sering muncul, angle yang dipakai kompetitor (lalu cari celah yang belum dipakai).
    - Tulis "Temuan Riset" maks 8 poin di awal output MODE DEEP, beserta sumbernya.
-   - Jika web search tidak tersedia, tulis satu baris di awal: "Web search belum aktif. Aktifkan di ikon tools pada kolom chat untuk hasil riset yang lebih tajam." Lalu tetap lanjutkan memakai pengetahuanmu.
+   - Jika web search tidak tersedia, tulis satu baris di awal: "Tool riset (Meta Ad Library, Chrome, web search) belum aktif. Aktifkan di + → Konektor atau + → Riset untuk hasil lebih tajam." Lalu tetap lanjutkan memakai pengetahuanmu.
 
 ---
 
