@@ -20,7 +20,7 @@ SAFE ZONE 4% ON ALL SIDES: x 43–1037, y 54–1296. All text and key objects in
 MAIN COLOR: deep teal #0E5E6F (~50% of frame: car interior trim tones, text panels). Supporting: warm sand #E9D8B4, white #FFFFFF.
 FONT: hook/headline "Manrope ExtraBold"; sub/price "Manrope Medium".
 HOOK (y 80–180): sharp-edged rectangle panel, deep teal #0E5E6F, left-aligned, white text 34px: "Laser sudah, kolagen jutaan sudah…"
-HEADLINE (y 200–330): line 1 44px white on teal rectangle: "Fleknya kok balik lagi?" ; line 2 26px sand #E9D8B4 on teal: "Coba rawat dari dalam pabrik warnanya."
+HEADLINE (y 200–330): line 1 44px white on teal rectangle: "Fleknya kok balik lagi?" ; line 2 26px sand #E9D8B4 on teal: "Rawat penyebabnya, bukan cuma ditutupi."
 HERO (y 350–1020): Indonesian woman, 52 years old, neat beige hijab, cream blazer, small gold watch, subtle visible brown spots on upper cheeks, thoughtful expression. Seated in the driver's seat of a parked premium SUV in a clean mall basement parking (Jakarta), door open, daylight from the side. She holds a small white jar with pink-white label "Salep Glowing" tilted ~35° toward herself, looking at it; a clinic invoice envelope and car key on the passenger seat. Camera over-the-shoulder from passenger side, 35mm documentary photo, natural light.
 PRICE (y 1050–1130): 30px white on teal pill: "Rp139.000 isi 2 pot · Rp219.000 isi 4 pot"
 CTA (y 1150–1240): solid sand #E9D8B4 button, teal text 34px bold: "Cek Kulitmu Dulu  ›"
@@ -46,7 +46,7 @@ CANVAS LOCKED: exactly 1080 × 1080 px (1:1). Do not render any other aspect rat
 SAFE ZONE 4% ON ALL SIDES: x 43–1037, y 43–1037. All text and key objects inside it.
 MAIN COLOR: deep teal #0E5E6F (~50%). Supporting: warm sand #E9D8B4, white. FONT: Manrope ExtraBold / Manrope Medium.
 HOOK (y 60–140): teal sharp rectangle, white 34px: "Laser sudah, kolagen jutaan sudah…"
-HEADLINE (y 155–270): line 1 44px white on teal: "Fleknya kok balik lagi?" ; line 2 26px sand: "Coba rawat dari dalam pabrik warnanya."
+HEADLINE (y 155–270): line 1 44px white on teal: "Fleknya kok balik lagi?" ; line 2 26px sand: "Rawat penyebabnya, bukan cuma ditutupi."
 HERO (y 285–860): same scene (52-year-old woman, beige hijab, cream blazer, driver's seat of premium SUV in mall basement), placed on the RIGHT half, holding the "Salep Glowing" jar tilted toward herself. LEFT half: teal panel benefit stack.
 BENEFIT STACK (left, x 60–500, y 320–760, 22px white on teal panel):
 "✓ Bantu memudarkan flek bertahap"
