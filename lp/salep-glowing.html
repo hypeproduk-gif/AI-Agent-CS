@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tes Kulit Glowing FILO</title>
+<!-- Meta Pixel: ganti PIXEL_ID -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','PIXEL_ID');fbq('track','PageView');
+</script>
+<style>
+:root{--ink:#1d2340;--muted:#5b6385;--paper:#fffdf6;--line:#e4e0cf;--blue:#2747c9;--red:#d93838;--gold:#f4b400;--green:#1f9d55;--wa:#25d366}
+*{box-sizing:border-box}
+body{margin:0;background:#eef1f8;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55}
+.wrap{max-width:480px;margin:0 auto;background:var(--paper);min-height:100vh;box-shadow:0 0 24px rgba(0,0,0,.08)}
+section{padding:28px 18px;border-bottom:2px dashed var(--line)}
+.kop{background:var(--blue);color:#fff;text-align:center;padding:14px 18px;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.kop b{display:block;font-size:15px;letter-spacing:.04em}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:13px;border:1.5px solid var(--ink);padding:10px 12px;margin:14px 0;font-family:ui-monospace,Menlo,monospace}
+h1{font-size:26px;line-height:1.2;margin:8px 0 10px}
+h1 mark{background:var(--gold);padding:0 4px}
+h2{font-size:21px;line-height:1.25;margin:0 0 12px}
+.stamp{display:inline-block;border:2.5px solid var(--red);color:var(--red);font-weight:800;padding:2px 10px;transform:rotate(-4deg);font-size:13px;letter-spacing:.06em}
+.soal{border:1.5px solid var(--ink);border-radius:6px;padding:14px;margin:14px 0;background:#fff}
+.soal .no{font-weight:800;color:var(--blue);font-size:13px}
+.soal p{margin:6px 0 10px;font-weight:600}
+.opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:6px;padding:10px;margin:6px 0;font:inherit;color:inherit;cursor:pointer}
+.opt .l{flex:none;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--ink);display:grid;place-items:center;font-weight:700;font-size:13px}
+.opt.on{border-color:var(--blue);background:#eef2ff}.opt.on .l{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn{display:block;width:100%;text-align:center;border:0;border-radius:10px;padding:16px;font:700 16px system-ui,sans-serif;text-decoration:none;cursor:pointer}
+.btn-blue{background:var(--blue);color:#fff}.btn-wa{background:var(--wa);color:#fff;box-shadow:0 4px 0 #1a9e4b}
+.hasil{display:none;border:2px solid var(--red);border-radius:8px;padding:16px;background:#fff;margin-top:16px}
+.skor{font-size:44px;font-weight:900;color:var(--red);line-height:1}
+.kunci li{margin:8px 0}
+.kunci b{color:var(--blue)}
+.tabel{width:100%;border-collapse:collapse;font-size:14px;background:#fff}
+.tabel th,.tabel td{border:1.5px solid var(--ink);padding:8px;text-align:left;vertical-align:top}
+.tabel th{background:#e9edff}
+.paket{border:2px solid var(--ink);border-radius:10px;padding:16px;margin:14px 0;background:#fff;position:relative}
+.paket.best{border-color:var(--red);box-shadow:4px 4px 0 var(--red)}
+.paket .tag{position:absolute;top:-12px;right:12px;background:var(--red);color:#fff;font-size:12px;font-weight:800;padding:3px 10px;border-radius:20px}
+.harga{font-size:30px;font-weight:900;margin:4px 0}
+.coret{text-decoration:line-through;color:var(--muted);font-size:14px}
+.testi{background:#fff;border-left:4px solid var(--gold);padding:10px 12px;margin:10px 0;font-size:14px}
+details{background:#fff;border:1.5px solid var(--line);border-radius:6px;padding:10px 12px;margin:8px 0}
+summary{font-weight:700;cursor:pointer}
+.small{font-size:12px;color:var(--muted)}
+.timer{font-family:ui-monospace,Menlo,monospace;font-weight:800;color:var(--red)}
+.sticky{position:sticky;bottom:0;background:var(--paper);padding:10px 18px;border-top:2px solid var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="kop"><b>Tes Kemampuan Kulit (TKK)</b>Lembar Soal · Paket A · Khusus Kulit Kusam & Berflek</div>
+
+<!-- HERO -->
+<section>
+  <span class="stamp">RAHASIA · JANGAN DICONTEK</span>
+  <h1>Kulit Kamu <mark>Lulus</mark> atau Harus <mark>Remedial?</mark></h1>
+  <p>Jawab 5 soal di bawah ini dengan jujur. Waktunya cuma 1 menit, dan hasilnya langsung keluar beserta kunci jawabannya.</p>
+  <div class="meta">
+    <span>Mata uji</span><span>: Flek, Kusam, Bekas Jerawat</span>
+    <span>Jumlah soal</span><span>: 5 butir pilihan ganda</span>
+    <span>Waktu</span><span>: ± 60 detik</span>
+    <span>KKM</span><span>: Kulit cerah & glowing</span>
+  </div>
+  <a href="#ujian" class="btn btn-blue">✏️ MULAI KERJAKAN SOAL</a>
+</section>
+
+<!-- UJIAN -->
+<section id="ujian">
+  <h2>Bagian A — Pilihan Ganda</h2>
+  <p class="small">Pilih satu jawaban yang paling sesuai dengan kondisi kulitmu.</p>
+  <div id="soal"></div>
+  <button class="btn btn-blue" id="kumpul">KUMPULKAN JAWABAN</button>
+  <div class="hasil" id="hasil">
+    <div class="small">NILAI KULIT KAMU</div>
+    <div class="skor" id="skor">0</div>
+    <p id="vonis"></p>
+    <a href="#pembahasan" class="btn btn-blue">Lihat Pembahasan & Kunci Jawaban ↓</a>
+  </div>
+</section>
+
+<!-- PEMBAHASAN -->
+<section id="pembahasan">
+  <h2>Pembahasan: Kenapa Kulitmu Belum "Lulus"?</h2>
+  <p>Flek, kusam, dan bekas jerawat itu bukan soal kurang cuci muka. Biasanya ada 3 penyebab:</p>
+  <ol class="kunci">
+    <li><b>Melanin numpuk</b> — akibat paparan matahari dan bekas jerawat, jadi muncul flek.</li>
+    <li><b>Regenerasi sel lambat</b> — sel kulit mati menumpuk, wajah terlihat kusam dan teksturnya kasar.</li>
+    <li><b>Skin barrier lemah</b> — kulit gampang kering, berminyak, dan mudah muncul noda baru.</li>
+  </ol>
+  <p>Jadi butuh "rumus" yang mengatasi ketiganya sekaligus.</p>
+</section>
+
+<!-- KUNCI JAWABAN / PRODUK -->
+<section>
+  <span class="stamp">KUNCI JAWABAN</span>
+  <h2 style="margin-top:12px">Salep Glowing FILO</h2>
+  <p>Salep malam 5 gram dengan 3 kandungan utama yang bekerja bareng saat kamu tidur:</p>
+  <table class="tabel">
+    <tr><th>Kandungan</th><th>Menjawab soal</th></tr>
+    <tr><td><b>Niacinamide</b></td><td>Meratakan warna kulit, menyamarkan noda & bekas jerawat, menguatkan skin barrier, mengontrol minyak</td></tr>
+    <tr><td><b>Alpha Arbutin</b></td><td>Memudarkan flek & noda gelap secara bertahap dengan menghambat pembentukan melanin</td></tr>
+    <tr><td><b>Turunan Vitamin A</b></td><td>Membantu regenerasi sel, meratakan tekstur, menyamarkan garis halus, kulit tampak glowing</td></tr>
+  </table>
+  <h2 style="margin-top:22px">Rumus Pengerjaan</h2>
+  <ol class="kunci">
+    <li><b>Malam:</b> cuci muka, oles tipis salep ke seluruh wajah.</li>
+    <li><b>Pagi:</b> wajib pakai sunscreen (kami kasih gratis 😉).</li>
+    <li><b>Ulangi rutin:</b> progres mulai terlihat sekitar 7 hari, hasil lebih signifikan di 2–3 minggu.</li>
+  </ol>
+  <p class="small">Hasil tiap kulit bisa berbeda. Di awal pemakaian kulit bisa sedikit kemerahan atau mengelupas halus, itu proses adaptasi. Kulit sensitif sebaiknya tes tempel di belakang telinga 24 jam dulu. Ibu hamil/menyusui konsultasikan dulu ke admin.</p>
+</section>
+
+<!-- TESTIMONI -->
+<section>
+  <h2>Nilai Rapor Mereka yang Sudah "Remedial"</h2>
+  <!-- GANTI dengan testimoni asli (screenshot/teks) dari pembeli -->
+  <div class="testi">"[Testimoni pembeli 1 — tempel di sini]"<br><span class="small">— Nama, Kota</span></div>
+  <div class="testi">"[Testimoni pembeli 2 — tempel di sini]"<br><span class="small">— Nama, Kota</span></div>
+  <div class="testi">"[Testimoni pembeli 3 — tempel di sini]"<br><span class="small">— Nama, Kota</span></div>
+</section>
+
+<!-- PAKET -->
+<section id="paket">
+  <h2>Pilih Paket Belajarmu</h2>
+  <p>Promo berakhir dalam <span class="timer" id="timer">--:--:--</span></p>
+  <div class="paket">
+    <b>Paket Coba — Beli 1 Gratis 1</b>
+    <div class="coret">Rp278.000</div>
+    <div class="harga">Rp139.000</div>
+    <div class="small">Dapat 2 pcs · cocok untuk mulai</div>
+  </div>
+  <div class="paket best">
+    <span class="tag">NILAI 100 · PALING HEMAT</span>
+    <b>Paket Juara — Beli 2 Gratis 2</b>
+    <div class="coret">Rp556.000</div>
+    <div class="harga">Rp219.000</div>
+    <div class="small">Dapat 4 pcs · ±Rp54.750/pcs · cukup untuk pemakaian rutin sampai hasil maksimal</div>
+  </div>
+  <p><b>🎁 Bonus hari ini:</b> gratis sunscreen + eyeliner.<br>🚚 Dikirim J&amp;T dari Surabaya · bisa COD atau transfer.</p>
+  <a class="btn btn-wa" href="https://wa.me/6285180108370?text=Halo%20kak%2C%20mau%20tanya%20salep%20glowing%20filo">💬 PESAN VIA WHATSAPP</a>
+</section>
+
+<!-- FAQ -->
+<section>
+  <h2>Soal Esai yang Sering Ditanyakan</h2>
+  <details><summary>Kapan hasilnya kelihatan?</summary>Progres mulai terlihat sekitar 7 hari, hasil lebih signifikan 2–3 minggu dengan pemakaian rutin + sunscreen.</details>
+  <details><summary>Kulitku sensitif, aman?</summary>Teksturnya lembut dan menurut pemakainya tidak perih/panas. Tetap disarankan tes tempel di belakang telinga 24 jam dulu.</details>
+  <details><summary>Kok kulitku sedikit mengelupas?</summary>Wajar di awal karena ada turunan Vitamin A, itu tanda kulit sedang adaptasi dan regenerasi.</details>
+  <details><summary>Boleh dipakai pagi?</summary>Pakai malam hari saja, dan paginya wajib sunscreen.</details>
+  <details><summary>Bisa COD?</summary>Bisa. Pengiriman J&amp;T dari Surabaya, bayar di tempat atau transfer.</details>
+</section>
+
+<div class="sticky">
+  <a class="btn btn-wa" href="https://wa.me/6285180108370?text=Halo%20kak%2C%20mau%20tanya%20salep%20glowing%20filo">💬 Ambil Promo Sekarang</a>
+</div>
+
+</div>
+
+<script>
+var SOAL=[
+ ["Saat bercermin di pagi hari, wajahmu terlihat…",["Cerah merata","Agak kusam","Kusam & belang","Kusam, berflek, ada bekas jerawat"]],
+ ["Ada flek atau noda hitam di pipi/dahi?",["Tidak ada","Sedikit, samar","Lumayan terlihat","Banyak & makin gelap"]],
+ ["Bekas jerawatmu biasanya…",["Tidak berbekas","Hilang sendiri cepat","Lama hilangnya","Menetap berbulan-bulan"]],
+ ["Tekstur kulitmu kalau diraba…",["Halus","Sedikit kasar","Kasar & kering","Kasar, kering, mulai ada garis halus"]],
+ ["Setiap pagi kamu pakai sunscreen?",["Selalu","Kadang-kadang","Jarang","Tidak pernah"]]
+];
+var jaw={},L="ABCD",box=document.getElementById('soal');
+SOAL.forEach(function(s,i){
+ var d=document.createElement('div');d.className='soal';
+ d.innerHTML='<div class="no">SOAL '+(i+1)+'</div><p>'+s[0]+'</p>'+s[1].map(function(o,j){
+  return '<button type="button" class="opt" data-i="'+i+'" data-j="'+j+'"><span class="l">'+L[j]+'</span><span>'+o+'</span></button>'}).join('');
+ box.appendChild(d);
+});
+box.addEventListener('click',function(e){
+ var b=e.target.closest('.opt');if(!b)return;
+ var i=b.dataset.i;box.querySelectorAll('.opt[data-i="'+i+'"]').forEach(function(x){x.classList.remove('on')});
+ b.classList.add('on');jaw[i]=+b.dataset.j;
+});
+document.getElementById('kumpul').onclick=function(){
+ var n=Object.keys(jaw).length;
+ if(n<SOAL.length){alert('Masih ada '+(SOAL.length-n)+' soal yang belum dijawab 😉');return;}
+ var bad=0;for(var k in jaw)bad+=jaw[k];
+ var skor=Math.max(20,100-bad*6);
+ document.getElementById('skor').textContent=skor;
+ document.getElementById('vonis').innerHTML=skor>=85
+  ?'<b>Hampir lulus!</b> Kulitmu sudah bagus, tinggal dirawat supaya makin glowing dan nggak muncul flek baru.'
+  :skor>=60?'<b>Remedial ringan.</b> Ada tanda kusam dan noda yang mulai menumpuk. Masih mudah dikejar kalau ditangani sekarang.'
+  :'<b>Wajib remedial!</b> Flek, kusam, dan bekas jerawat sudah menumpuk. Kulitmu butuh perawatan malam yang tepat.';
+ var h=document.getElementById('hasil');h.style.display='block';h.scrollIntoView({behavior:'smooth',block:'center'});
+ if(window.fbq)fbq('trackCustom','QuizComplete',{score:skor});
+};
+(function(){var t=document.getElementById('timer');function tick(){var n=new Date(),e=new Date(n);e.setHours(23,59,59,999);
+ var s=Math.floor((e-n)/1000),p=function(x){return String(x).padStart(2,'0')};
+ t.textContent=p(Math.floor(s/3600))+':'+p(Math.floor(s%3600/60))+':'+p(s%60);}tick();setInterval(tick,1000);})();
+</script>
+<script>window.AICS={product:'SG'};</script>
+<script src="wa-redirect.js"></script>
+</body>
+</html>
