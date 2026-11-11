@@ -119,6 +119,16 @@
 .bs-footer-brand{font-size:14px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:4px}
 .bs-footer-brand span{color:#FFD25A}
 .bs-footer-note{font-size:10.5px;color:rgba(255,255,255,.38);line-height:1.6}
+.bs ul,.bs ol{list-style:none!important;padding-left:0!important;margin-left:0!important}
+.bs li{margin-left:0!important;padding-left:0!important}
+.bs-pain-ic,.bs-paket-ic{width:22px;text-align:left}
+.bs-opt.diag .mk{border-radius:99px}
+.bs-testi{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 0 8px;margin-top:10px;-webkit-overflow-scrolling:touch}
+.bs-testi figure{flex:0 0 78%;max-width:300px;scroll-snap-align:start;background:#fff;border:1px solid #EDE3DA;border-radius:12px;overflow:hidden;margin:0}
+.bs-testi img{display:block;width:100%;height:340px;object-fit:cover;object-position:top;background:#F4E9EF}
+.bs-testi figcaption{font-size:12.5px;color:#4E4248;line-height:1.45;padding:8px 9px}
+.bs-testi figcaption b{display:block;color:#3E1C36;font-size:11px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px}
+.bs-swipe{font-size:11.5px;color:#6A5A60;text-align:right}
 @media (prefers-reduced-motion:reduce){.bs *{transition:none!important}}
 .bs :focus-visible{outline:2.5px solid #FFD25A;outline-offset:2px;border-radius:4px}
 </style>
@@ -154,7 +164,7 @@
 <!-- ══ MASALAHNYA ══ -->
 <div class="bs-sec bs-white">
   <span class="bs-kick bs-kick-navy">Masalahnya</span>
-  <h2 class="bs-h2">Sudah coba macam-macam produk.<br><em>Tapi fleknya tetap di situ.</em></h2>
+  <h2 class="bs-h2">Sudah coba berbagai produk <em>tapi fleknya ga ilang?</em></h2>
   <p class="bs-lead">Yang dirasakan kebanyakan perempuan dengan kulit kusam &amp; berflek — jujur saja.</p>
 
   <ul class="bs-pain-list">
@@ -214,24 +224,41 @@
 
 <div class="bs-divider"></div>
 
-<!-- ══ BUKTIKAN SENDIRI — CEK KULIT 4 SOAL ══ -->
+<!-- ══ CEK KULIT 3 PERTANYAAN ══ -->
 <div class="bs-sec bs-paper">
-  <span class="bs-kick bs-kick-navy">Uji pengetahuanmu</span>
-  <h2 class="bs-h2">Kamu sudah rawat kulit <em>dengan benar?</em></h2>
-  <p class="bs-lead">Coba 2 soal di bawah — pilih jawaban, lalu lihat sendiri pembahasannya. Banyak yang ternyata salah di soal nomor 2.</p>
+  <span class="bs-kick bs-kick-navy">Cek kulitmu</span>
+  <h2 class="bs-h2">Jawab 3 pertanyaan, <em>lihat perawatan yang pas.</em></h2>
+  <p class="bs-lead">Pilih yang paling sesuai kondisimu. Tidak ada jawaban salah.</p>
 
   <div class="bs-sample" id="demo">
     <div class="bs-sample-bar">
       <div class="bs-sample-steps" id="dsteps"></div>
-      <div class="bs-sample-count" id="dcount">Soal 1 dari 2</div>
+      <div class="bs-sample-count" id="dcount">Pertanyaan 1 dari 3</div>
     </div>
     <div id="demoStage"></div>
     <div class="bs-done" id="demoDone">
-      <div class="big">Nah — sekarang kamu tahu kuncinya.</div>
+      <div class="big">Kulitmu cocok dirawat dengan Salep Glowing FILO.</div>
       <div class="sc" id="doneScore"></div>
-      <a href="#sg-order" class="bs-btn" style="font-size:14px!important">Ambil Salep Glowing FILO →</a>
+      <a href="#sg-order" class="bs-btn" style="font-size:14px!important">Lihat Promo Hari Ini →</a>
     </div>
   </div>
+</div>
+
+<div class="bs-divider"></div>
+
+<!-- ══ TESTIMONI (gambar lazy-load, hanya dimuat saat di-scroll) ══ -->
+<div class="bs-sec bs-white">
+  <span class="bs-kick bs-kick-navy">Kata mereka</span>
+  <h2 class="bs-h2">Chat asli pembeli, <em>tanpa diedit.</em></h2>
+  <div class="bs-testi">
+    <figure><img src="https://i.imgur.com/zMF8qSr.jpeg" loading="lazy" decoding="async" alt="Komentar pembeli usia 58 tahun"><figcaption><b>Usia 58 th</b>Flek puluhan tahun, sudah ke dokter &amp; laser. Pakai salep ini flek memudar dan menipis.</figcaption></figure>
+    <figure><img src="https://i.imgur.com/vOdaTLV.jpeg" loading="lazy" decoding="async" alt="Foto sebelum dan sesudah pembeli"><figcaption><b>Sebelum → sesudah</b>"Bekas luka hilang kak. Bersih kan."</figcaption></figure>
+    <figure><img src="https://i.imgur.com/H5YmA0w.jpeg" loading="lazy" decoding="async" alt="Komentar pembeli usia 60 tahun"><figcaption><b>Usia 60 th</b>"Flek hitam membandel, 5 hari sudah kelihatan. Sekarang jadi PD."</figcaption></figure>
+    <figure><img src="https://i.imgur.com/xBsHtsu.jpeg" loading="lazy" decoding="async" alt="Chat pembeli kulit sensitif"><figcaption><b>Kulit sensitif</b>"Awal pakai khawatir, ternyata aman. Wajah jadi kenyal."</figcaption></figure>
+    <figure><img src="https://i.imgur.com/Dd7RITn.jpeg" loading="lazy" decoding="async" alt="Chat pembeli repeat order"><figcaption><b>Repeat order</b>"Flek di wajah sudah menipis. Ini order untuk stok lagi."</figcaption></figure>
+    <figure><img src="https://i.imgur.com/JCBVQX0.jpeg" loading="lazy" decoding="async" alt="Chat pembeli usia 53 tahun"><figcaption><b>Usia 53 th</b>"Bening banget, warna kulit merata. Foto asli, tidak diedit."</figcaption></figure>
+  </div>
+  <div class="bs-swipe">Geser untuk lihat lainnya →</div>
 </div>
 
 <div class="bs-divider"></div>
@@ -298,62 +325,43 @@
 
 <script>
 (function(){
-const DEMO = [
- {tag:"Pilihan Ganda · Kandungan", tipe:"pg",
-  soal:"Kandungan yang bekerja <em>menghambat pembentukan melanin</em> sehingga flek memudar bertahap adalah…",
-  opsi:["Alkohol","Alpha Arbutin","Pewangi","Minyak mineral"], jawaban:1,
-  pembahasan:"<b>Alpha Arbutin</b> membantu menghambat pembentukan melanin — pigmen penyebab flek. Karena bekerja di 'pabrik' warnanya, hasilnya bertahap tapi menyasar penyebab. Jawaban: <b>B</b>."},
- {tag:"Pilih Lebih dari Satu · Cara Pakai", tipe:"pgk",
-  soal:"Saat memakai perawatan dengan <em>turunan Vitamin A</em>, mana yang benar? <em>(Bisa lebih dari satu)</em>",
-  opsi:["Dipakai malam hari","Pagi harinya wajib sunscreen","Dipakai siang hari tanpa sunscreen","Kemerahan/mengelupas halus di awal bisa jadi tanda adaptasi"], jawaban:[0,1,3],
-  pembahasan:"A ✓, B ✓, D ✓. Turunan Vitamin A dipakai malam karena kulit jadi lebih sensitif terhadap matahari — jadi pagi <b>wajib sunscreen</b>. Mengelupas halus di awal wajar (adaptasi). Banyak yang salah di sini karena hanya pilih satu jawaban."}
+var Q=[
+ {tag:"Pertanyaan 1 · Kondisi kulit",soal:"Masalah apa yang paling bikin kamu nggak pede?",
+  opsi:[["Flek hitam di pipi/dahi","Alpha Arbutin di Salep Glowing FILO bantu memudarkan flek bertahap dengan menghambat pembentukan melanin."],
+        ["Bekas jerawat yang nggak hilang-hilang","Niacinamide bantu menyamarkan noda &amp; bekas jerawat, turunan Vitamin A bantu regenerasi kulit baru."],
+        ["Wajah kusam &amp; nggak merata","Niacinamide bantu meratakan warna kulit, Vitamin A bantu mengangkat lapisan kusam. Hasilnya tampak lebih cerah."],
+        ["Mulai muncul garis halus","Turunan Vitamin A dikenal bantu menyamarkan garis halus dan membuat tekstur kulit lebih halus."]]},
+ {tag:"Pertanyaan 2 · Riwayat",soal:"Sudah berapa lama kamu coba atasi masalah itu?",
+  opsi:[["Baru mulai cari solusi","Bagus, mulai dari kandungan yang tepat. Lebih hemat daripada coba-coba banyak produk."],
+        ["Sudah coba beberapa produk, belum ngefek","Seringnya karena kandungannya tidak menyasar penyebab. FILO menggabungkan 3 bahan aktif untuk flek, kusam &amp; tekstur sekaligus."],
+        ["Bertahun-tahun, sampai pernah ke klinik","Banyak pembeli kami usia 50–60 th dengan flek puluhan tahun yang akhirnya melihat flek memudar. Kuncinya rutin + sunscreen."]]},
+ {tag:"Pertanyaan 3 · Rutinitas",soal:"Perawatan seperti apa yang paling cocok dengan kesibukanmu?",
+  opsi:[["Yang simpel, sekali oles sebelum tidur","Pas. Salep Glowing FILO cukup dioles tipis malam hari, paginya sunscreen. Tanpa step panjang."],
+        ["Nggak masalah beberapa step","Tetap bisa. FILO dipakai di step terakhir malam hari, setelah skincare lain."],
+        ["Kulitku sensitif, takut perih","Menurut pemakainya teksturnya lembut, tidak perih/panas. Tetap tes tempel di belakang telinga 24 jam dulu."]]}
 ];
-let idx=0, correctCount=0;
-const $=id=>document.getElementById(id);
-const stepsWrap=$('dsteps');
-DEMO.forEach((_,i)=>{const d=document.createElement('div');d.className='bs-dstep'+(i===0?' on':'');d.id='ds'+i;stepsWrap.appendChild(d);});
-function grade(q,sel){return q.tipe==='pgk'?[...sel].sort().join(',')===[...q.jawaban].sort().join(','):sel===q.jawaban;}
-function renderQ(){
-  const q=DEMO[idx];
-  $('dcount').textContent='Soal '+(idx+1)+' dari '+DEMO.length;
-  const hint=q.tipe==='pgk'?'<span class="bs-sample-hint">· pilih semua yang benar</span>':'';
-  const cls=q.tipe==='pgk'?'bs-opt pgk':'bs-opt';
-  $('demoStage').innerHTML='<div><span class="bs-sample-tag">'+q.tag+'</span>'+hint+'</div>'+
-    '<div class="bs-sample-q">'+q.soal+'</div>'+
-    '<div class="bs-sample-opts">'+q.opsi.map((o,oi)=>'<button type="button" class="'+cls+'" data-oi="'+oi+'"><span class="mk">'+'ABCD'[oi]+'</span><span>'+o+'</span></button>').join('')+'</div>'+
-    '<div class="bs-qfoot"><button type="button" class="bs-check" id="btnCheck" disabled>Periksa jawaban</button>'+
-    '<button type="button" class="bs-next" id="btnNext" style="display:none">'+(idx<DEMO.length-1?'Soal berikutnya →':'Selesai →')+'</button></div>'+
-    '<div class="bs-expl" id="expl"><div class="bs-expl-lbl">Pembahasan</div>'+q.pembahasan+'</div>';
-  wire(q);
-}
-function wire(q){
-  const check=$('btnCheck'); let sel=q.tipe==='pgk'?[]:null;
-  const opts=document.querySelectorAll('#demoStage .bs-opt');
-  opts.forEach(b=>{b.onclick=()=>{if(b.classList.contains('lock'))return;const oi=+b.dataset.oi;
-    if(q.tipe==='pgk'){if(sel.includes(oi)){sel=sel.filter(x=>x!==oi);b.classList.remove('pick');}else{sel.push(oi);b.classList.add('pick');}}
-    else{opts.forEach(x=>x.classList.remove('pick'));b.classList.add('pick');sel=oi;}
-    check.disabled=q.tipe==='pgk'?!sel.length:sel===null;};});
-  check.onclick=()=>{
-    if(grade(q,sel))correctCount++;
-    opts.forEach(b=>{b.classList.add('lock');const oi=+b.dataset.oi;
-      const ok=q.tipe==='pgk'?q.jawaban.includes(oi):oi===q.jawaban;
-      const picked=q.tipe==='pgk'?sel.includes(oi):oi===sel;
-      if(ok)b.classList.add('correct');else if(picked)b.classList.add('wrong');});
-    $('expl').classList.add('show'); check.style.display='none';
-    const nx=$('btnNext'); nx.style.display=''; nx.onclick=next;
-    $('ds'+idx).classList.remove('on'); $('ds'+idx).classList.add('done');
-  };
+var idx=0,$=function(i){return document.getElementById(i)},st=$('dsteps');
+Q.forEach(function(_,i){var d=document.createElement('div');d.className='bs-dstep'+(i?'':' on');d.id='ds'+i;st.appendChild(d)});
+function render(){
+ var q=Q[idx];$('dcount').textContent='Pertanyaan '+(idx+1)+' dari '+Q.length;
+ $('demoStage').innerHTML='<div><span class="bs-sample-tag">'+q.tag+'</span></div><div class="bs-sample-q">'+q.soal+'</div><div class="bs-sample-opts">'+
+  q.opsi.map(function(o,i){return '<button type="button" class="bs-opt diag" data-i="'+i+'"><span class="mk">'+'ABCD'[i]+'</span><span>'+o[0]+'</span></button>'}).join('')+
+  '</div><div class="bs-expl" id="expl"><div class="bs-expl-lbl">Untuk kamu</div><span id="explT"></span></div><div class="bs-qfoot"><button type="button" class="bs-next" id="btnNext" style="display:none">'+(idx<Q.length-1?'Lanjut →':'Lihat hasil →')+'</button></div>';
+ var opts=document.querySelectorAll('#demoStage .bs-opt');
+ opts.forEach(function(b){b.onclick=function(){
+  opts.forEach(function(x){x.classList.remove('pick')});b.classList.add('pick');
+  $('explT').innerHTML=q.opsi[+b.dataset.i][1];$('expl').classList.add('show');
+  var n=$('btnNext');n.style.display='';n.onclick=next;}});
 }
 function next(){
-  if(idx<DEMO.length-1){idx++;$('ds'+idx).classList.add('on');renderQ();$('demo').scrollIntoView({behavior:'smooth',block:'start'});}
-  else{
-    $('demoStage').style.display='none'; document.querySelector('.bs-sample-bar').style.display='none';
-    $('doneScore').textContent='Kamu benar '+correctCount+' dari '+DEMO.length+' soal. Salep Glowing FILO sudah merangkum kandungan tadi dalam satu perawatan malam.';
-    $('demoDone').classList.add('show'); $('demo').scrollIntoView({behavior:'smooth',block:'start'});
-    if(window.fbq)fbq('trackCustom','QuizComplete',{score:correctCount});
-  }
+ $('ds'+idx).classList.remove('on');$('ds'+idx).classList.add('done');
+ if(idx<Q.length-1){idx++;$('ds'+idx).classList.add('on');render();$('demo').scrollIntoView({behavior:'smooth',block:'start'});}
+ else{$('demoStage').style.display='none';document.querySelector('.bs-sample-bar').style.display='none';
+  $('doneScore').textContent='Satu salep malam dengan Niacinamide, Alpha Arbutin & turunan Vitamin A. Progres mulai terlihat ±7 hari, lebih signifikan 2–3 minggu pemakaian rutin.';
+  $('demoDone').classList.add('show');$('demo').scrollIntoView({behavior:'smooth',block:'start'});
+  if(window.fbq)fbq('trackCustom','QuizComplete');}
 }
-renderQ();
+render();
 })();
 </script>
 <!-- END LP ATAS -->
