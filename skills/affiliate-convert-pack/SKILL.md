@@ -260,12 +260,10 @@ Motion type:
 
 ## 8. COPY
 
-### Caption Shopee Affiliate
-- Baris 1: hook (beda dengan hook video, tapi satu angle).
-- 2–3 baris: bukti/benefit spesifik + untuk siapa.
-- 1 baris: soft CTA ke keranjang kuning / link.
-- 3–5 hashtag relevan (kategori + benefit + #shopeehaul / #racuninshopee bila cocok).
-- Maks 300 karakter sebelum hashtag.
+### Caption Shopee Video
+- **1 baris saja** (maks ±100 karakter): hook + benefit/bukti spesifik, boleh ditutup soft CTA singkat. Sinyal audiens berduit tetap terasa (standar, kualitas, hasil spesifik).
+- Lalu **3–4 hashtag** di baris yang sama atau tepat setelahnya: kategori + benefit + 1 hashtag Shopee (#racunshopee / #shopeehaul / #shopeefinds).
+- Contoh: `7 jam di ruangan AC, kulit tetap lembap & nggak kusam. Cek keranjang kuning ✨ #skincareroutine #kulitlembap #racunshopee`
 
 ### Meta Ads
 - **Primary text** (3 varian): (a) problem-aware pendek ≤125 karakter, (b) story/UGC 3–5 baris, (c) proof/cost-math. Semua memberi sinyal audiens mampu beli: kualitas, efisiensi, standar, hasil spesifik. Tanpa emoji berlebihan (maks 2).
