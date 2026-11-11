@@ -1,0 +1,383 @@
+<!-- LP ATAS — Salep Glowing FILO — paste ke Scalev HTML block (SEBELUM form native) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* PALETTE (pola TKA SMP, versi skincare)
+   Plum: #5B2A4E | Plum-d: #3E1C36 | Mark: #FFD25A | Paper: #FBF6F1
+   Ink: #2A1E26 | Muted: #6A5A60 | Green: #1F8A54 | Line: #EDE3DA */
+.bs *{box-sizing:border-box;margin:0;padding:0}
+.bs{font-family:'Plus Jakarta Sans',sans-serif;max-width:680px;margin:0 auto;color:#2A1E26;font-size:15px;line-height:1.6;background:#fff}
+.bs-nav{position:sticky;top:0;z-index:50;background:#5B2A4E;padding:7px 11px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #3E1C36}
+.bs-nav-brand{font-size:13px;font-weight:700;color:#fff}
+.bs-nav-cta{background:#FFD25A;color:#3E1C36!important;font-size:12px;font-weight:700;padding:5px 10px;border-radius:8px;text-decoration:none!important;white-space:nowrap}
+.bs-sec{padding:16px 11px}
+.bs-dark{background:#5B2A4E;color:#fff}.bs-white{background:#fff}.bs-paper{background:#FBF6F1}
+.bs-divider{height:3px;background:linear-gradient(90deg,transparent,#FFD25A,transparent)}
+.bs-kick{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:2px 7px;border-radius:5px;margin-bottom:9px}
+.bs-kick-mark{background:#FFD25A;color:#3E1C36}
+.bs-kick-navy{background:#F4E9EF;color:#5B2A4E;border:1px solid rgba(91,42,78,.15)}
+.bs-kick-dark{background:rgba(255,255,255,.09);color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.14)}
+.bs-h1{font-family:'Fraunces',Georgia,serif;font-size:clamp(28px,7.4vw,38px);font-weight:600;line-height:1.1;letter-spacing:-.015em;color:#fff;margin-bottom:10px}
+.bs-h1 em{font-style:italic;color:#FFD25A}
+.bs-h2{font-family:'Fraunces',Georgia,serif;font-size:clamp(22px,5.6vw,28px);font-weight:600;line-height:1.18;letter-spacing:-.015em;color:#3E1C36;margin-bottom:6px}
+.bs-h2 em{font-style:italic;color:#5B2A4E}
+.bs-h2.white{color:#fff}.bs-h2.white em{color:#FFD25A}
+.bs-lead{font-size:14.5px;color:#4E4248;line-height:1.65;margin-bottom:9px}
+.bs-lead b{color:#3E1C36;font-weight:600}
+.bs-lead.dim{color:rgba(255,255,255,.72)}.bs-lead.dim b{color:#fff}
+.bs-btn{display:block!important;font-family:'Plus Jakarta Sans',sans-serif;background:#FFD25A!important;color:#3E1C36!important;font-size:16px!important;font-weight:800!important;text-align:center!important;padding:11px 15px!important;border-radius:10px!important;text-decoration:none!important;line-height:1.3!important;box-shadow:0 5px 0 #C4922C!important;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.bs-btn:hover{transform:translateY(-1px)}
+.bs-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #C4922C!important}
+.bs-btn small{display:block!important;font-size:11px!important;font-weight:500!important;opacity:.7!important;margin-top:3px!important}
+.bs-hero{background:#5B2A4E;padding:26px 11px 22px;position:relative;overflow:hidden}
+.bs-hero::before{content:'';position:absolute;top:-80px;right:-60px;width:280px;height:280px;background:radial-gradient(circle,rgba(255,210,90,.16),transparent 65%);pointer-events:none}
+.bs-trustline{font-size:12px;color:rgba(255,255,255,.55);margin-bottom:10px;line-height:1.5}
+.bs-stat-row{display:flex;gap:6px;margin-top:14px}
+.bs-stat{flex:1;text-align:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:7px 4px}
+.bs-stat .num{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:#FFD25A;line-height:1}
+.bs-stat .lbl{font-size:10.5px;color:rgba(255,255,255,.7);margin-top:2px;line-height:1.3}
+.bs-stat-row.light .bs-stat{background:#FBF6F1;border:1px solid #EDE3DA}
+.bs-stat-row.light .num{color:#5B2A4E}.bs-stat-row.light .lbl{color:#6A5A60}
+.bs-cta-price{display:block;font-size:13px;font-weight:600;margin-top:2px;opacity:.85}
+.bs-cta-price s{opacity:.65;margin-right:6px}
+.bs-pain-list{list-style:none}
+.bs-pain-list li{display:flex;gap:6px;align-items:flex-start;padding:7px 0;border-bottom:1px solid #F3ECE6}
+.bs-pain-list li:last-child{border-bottom:none}
+.bs-pain-ic{font-size:20px;flex-shrink:0;margin-top:2px}
+.bs-pain-body{flex:1}
+.bs-pain-body span{font-size:13px;color:#6A5A60;line-height:1.55}
+.bs-pain-body span b{color:#3E1C36}
+.bs-level-note{font-size:12.5px;color:#6A5A60;line-height:1.55;background:#fff;border-radius:8px;padding:7px 9px;margin-top:9px;border:1px solid #EDE3DA}
+.bs-level-note b{color:#3E1C36}
+.bs-paket-list{list-style:none;margin:10px 0 0}
+.bs-paket-item{display:flex;gap:6px;align-items:flex-start;padding:7px 0;border-bottom:1px solid #F3ECE6}
+.bs-paket-item:last-child{border-bottom:none}
+.bs-paket-ic{font-size:18px;flex-shrink:0;margin-top:2px}
+.bs-paket-body{flex:1}
+.bs-paket-body b{display:block;font-size:13.5px;font-weight:700;color:#3E1C36;line-height:1.35}
+.bs-paket-body span{font-size:12.5px;color:#6A5A60;line-height:1.45}
+.bs-paket-tag{font-size:10px;font-weight:700;border-radius:4px;padding:2px 5px;flex-shrink:0;margin-top:2px;white-space:nowrap}
+.tag-utama{background:#FFF3D6;color:#9a6b00}.tag-termasuk{background:#F4E9EF;color:#5B2A4E}
+.bs-sample{background:#fff;border:1px solid #EDE3DA;border-radius:12px;padding:10px 10px 11px;margin:11px 0 0}
+.bs-sample-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;gap:7px}
+.bs-sample-steps{display:flex;gap:3px}
+.bs-dstep{width:26px;height:5px;border-radius:99px;background:#EDE3DA;transition:.2s}
+.bs-dstep.on{background:#FFD25A}.bs-dstep.done{background:#1F8A54}
+.bs-sample-count{font-size:11px;color:#6A5A60;font-weight:700;font-family:'Fraunces',serif}
+.bs-sample-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5B2A4E;background:#F4E9EF;padding:2px 6px;border-radius:99px;margin-bottom:6px}
+.bs-sample-hint{font-size:10.5px;color:#6A5A60;font-weight:600;margin-left:3px}
+.bs-sample-q{font-size:14.5px;font-weight:600;color:#3E1C36;margin-bottom:7px;line-height:1.5}
+.bs-sample-q em{color:#5B2A4E}
+.bs-sample-opts{display:flex;flex-direction:column;gap:4px}
+.bs-opt{display:flex;align-items:flex-start;gap:6px;padding:7px 8px;border:1.5px solid #EDE3DA;border-radius:9px;cursor:pointer;font-size:13.5px;background:#fff;transition:.13s;text-align:left;font-family:inherit;color:#2A1E26;line-height:1.4;width:100%}
+.bs-opt:hover:not(.lock){border-color:#5B2A4E;background:#FDFAFC}
+.bs-opt .mk{width:22px;height:22px;border-radius:99px;border:1.5px solid #CFC2C8;flex:none;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:10.5px;color:#6A5A60;margin-top:2px}
+.bs-opt.pgk .mk{border-radius:5px}
+.bs-opt.pick{border-color:#5B2A4E}.bs-opt.pick .mk{background:#5B2A4E;border-color:#5B2A4E;color:#fff}
+.bs-opt.lock{cursor:default}
+.bs-opt.correct{border-color:#1F8A54;background:#E6F3EC}.bs-opt.correct .mk{background:#1F8A54;border-color:#1F8A54;color:#fff}
+.bs-opt.wrong{border-color:#C0392B;background:#FAECEB}.bs-opt.wrong .mk{background:#C0392B;border-color:#C0392B;color:#fff}
+.bs-qfoot{margin-top:9px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.bs-check{background:#5B2A4E;color:#fff;border:none;border-radius:8px;padding:6px 11px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit}
+.bs-check:disabled{opacity:.4;cursor:not-allowed}
+.bs-next{background:#FFD25A;color:#3E1C36;border:none;border-radius:8px;padding:6px 11px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit}
+.bs-expl{margin-top:7px;background:#FBF3E1;border:1px solid #F0DDA8;border-radius:8px;padding:7px 8px;font-size:13px;line-height:1.55;display:none}
+.bs-expl.show{display:block}
+.bs-expl-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8A6D1E;margin-bottom:2px}
+.bs-done{text-align:center;padding:9px 2px 2px;display:none}.bs-done.show{display:block}
+.bs-done .big{font-family:'Fraunces',serif;font-size:20px;color:#3E1C36;margin-bottom:4px}
+.bs-done .sc{font-size:13px;color:#6A5A60;margin-bottom:9px}
+.bs-price-card{background:#fff;border:2px solid #5B2A4E;border-radius:14px;overflow:hidden;margin-top:12px;position:relative}
+.bs-price-card.best{border-color:#C0392B;box-shadow:0 0 0 3px rgba(255,210,90,.6)}
+.bs-price-head{background:#5B2A4E;padding:9px 11px;text-align:center}
+.bs-price-card.best .bs-price-head{background:#3E1C36}
+.bs-price-head-lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#FFD25A}
+.bs-price-amount{padding:12px 11px 10px;text-align:center;border-bottom:1px solid #EDE3DA}
+.bs-price-old{font-size:13px;color:#aaa;text-decoration:line-through;margin-bottom:2px}
+.bs-price-now .rp{font-size:16px;font-weight:700;vertical-align:top;line-height:2;color:#3E1C36}
+.bs-price-now .amt{font-size:48px;font-weight:800;color:#3E1C36;line-height:1;font-family:'Fraunces',serif}
+.bs-price-note{font-size:12px;color:#6A5A60;margin-top:3px}
+.bs-hemat{display:inline-block;background:#E6F3EC;color:#1F8A54;font-weight:800;font-size:12px;padding:2px 6px;border-radius:99px;margin-top:4px}
+.bs-price-bullets{padding:8px 11px}
+.bs-price-bullets ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+.bs-price-bullets li{font-size:12.5px;color:#6A5A60;display:flex;gap:5px;align-items:flex-start;line-height:1.4}
+.bs-price-bullets li .chk{color:#1F8A54;font-weight:800;flex-shrink:0}
+.bs-ribbon{position:absolute;top:8px;right:-30px;transform:rotate(35deg);background:#FFD25A;color:#3E1C36;font-size:10px;font-weight:800;padding:2px 34px}
+.bs-faq-item{background:#fff;border-radius:8px;border:1px solid #EDE3DA;margin-bottom:5px;overflow:hidden}
+.bs-faq-q{width:100%;background:none;border:none;padding:9px 10px;text-align:left;font-size:14px;font-weight:700;color:#3E1C36;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:5px;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.35}
+.bs-faq-q::after{content:'+';font-size:20px;color:#E0A800;flex-shrink:0;transition:transform .2s;font-weight:700}
+.bs-faq-item.open .bs-faq-q::after{transform:rotate(45deg)}
+.bs-faq-a{display:none;padding:0 10px 9px;font-size:13px;color:#4E4248;line-height:1.7;border-top:1px solid #F3ECE6}
+.bs-faq-item.open .bs-faq-a{display:block}
+.bs-faq-a b{color:#2A1E26}
+.bs-honest{background:#fff;border:1px solid #EDE3DA;border-radius:8px;padding:9px 10px;font-size:12px;color:#6A5A60;line-height:1.65}
+.bs-honest strong{color:#3E1C36;display:block;margin-bottom:2px}
+.bs-footer-cta{text-align:center}
+.bs-footer-cta p{font-size:15px;color:rgba(255,255,255,.75);margin-bottom:12px;line-height:1.6}
+.bs-footer-bar{background:#241020;padding:12px;text-align:center}
+.bs-footer-brand{font-size:14px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:4px}
+.bs-footer-brand span{color:#FFD25A}
+.bs-footer-note{font-size:10.5px;color:rgba(255,255,255,.38);line-height:1.6}
+@media (prefers-reduced-motion:reduce){.bs *{transition:none!important}}
+.bs :focus-visible{outline:2.5px solid #FFD25A;outline-offset:2px;border-radius:4px}
+</style>
+<div class="bs">
+
+<!-- ══ NAV ══ -->
+<div class="bs-nav">
+  <div class="bs-nav-brand">Salep Glowing FILO</div>
+  <a href="#sg-order" class="bs-nav-cta">Ambil Promo — Rp139rb</a>
+</div>
+
+<!-- ══ HERO ══ -->
+<div class="bs-hero">
+  <span class="bs-kick bs-kick-mark">Perawatan Malam · Flek &amp; Kusam</span>
+  <h1 class="bs-h1">Flek &amp; bekas jerawat makin nempel.<br>Kulit kamu <em>dirawat</em> — atau cuma ditutup makeup?</h1>
+  <p class="bs-lead dim">Salep malam dengan <b>Niacinamide, Alpha Arbutin &amp; turunan Vitamin A</b>. Oles tipis sebelum tidur, biarkan bekerja semalaman — paginya cukup sunscreen.</p>
+  <p class="bs-trustline">Progres mulai terlihat ±7 hari · lebih signifikan di 2–3 minggu pemakaian rutin*</p>
+
+  <div class="bs-stat-row">
+    <div class="bs-stat"><div class="num">3</div><div class="lbl">Bahan aktif utama</div></div>
+    <div class="bs-stat"><div class="num">±7 hr</div><div class="lbl">Progres awal</div></div>
+    <div class="bs-stat"><div class="num">COD</div><div class="lbl">Bayar di tempat</div></div>
+  </div>
+
+  <a href="#sg-order" class="bs-btn" style="margin-top:12px">
+    Mulai Rawat Kulit Malam Ini
+    <span class="bs-cta-price"><s>Rp278.000</s> Rp139.000 · dapat 2 pcs</span>
+  </a>
+</div>
+
+<div class="bs-divider"></div>
+
+<!-- ══ MASALAHNYA ══ -->
+<div class="bs-sec bs-white">
+  <span class="bs-kick bs-kick-navy">Masalahnya</span>
+  <h2 class="bs-h2">Sudah coba macam-macam produk.<br><em>Tapi fleknya tetap di situ.</em></h2>
+  <p class="bs-lead">Yang dirasakan kebanyakan perempuan dengan kulit kusam &amp; berflek — jujur saja.</p>
+
+  <ul class="bs-pain-list">
+    <li><span class="bs-pain-ic">😞</span><div class="bs-pain-body"><span>Bercermin pagi-pagi, wajah <b>kelihatan capek dan kusam</b> padahal tidur cukup</span></div></li>
+    <li><span class="bs-pain-ic">🫥</span><div class="bs-pain-body"><span>Flek di pipi &amp; dahi <b>makin gelap</b> — harus ditimpa concealer tebal tiap keluar rumah</span></div></li>
+    <li><span class="bs-pain-ic">😔</span><div class="bs-pain-body"><span>Jerawatnya sudah sembuh, tapi <b>bekasnya menetap berbulan-bulan</b></span></div></li>
+    <li><span class="bs-pain-ic">🤔</span><div class="bs-pain-body"><span>Bingung pilih produk — <b>takut salah kandungan</b>, takut perih, takut buang uang lagi</span></div></li>
+  </ul>
+</div>
+
+<!-- ══ KALAU DIBIARKAN ══ -->
+<div class="bs-sec bs-paper">
+  <span class="bs-kick bs-kick-navy">Kalau dibiarkan</span>
+  <ul class="bs-pain-list">
+    <li><span class="bs-pain-ic">→</span><div class="bs-pain-body"><span>Paparan matahari tiap hari bikin melanin terus menumpuk — flek baru ikut muncul</span></div></li>
+    <li><span class="bs-pain-ic">→</span><div class="bs-pain-body"><span>Sel kulit mati menumpuk, tekstur makin kasar dan garis halus mulai kelihatan</span></div></li>
+    <li><span class="bs-pain-ic">→</span><div class="bs-pain-body"><span>Makin bergantung pada makeup tebal, makin nggak pede tampil polos</span></div></li>
+    <li><span class="bs-pain-ic">→</span><div class="bs-pain-body"><span>Kamu menyesal: <em>"harusnya dari dulu dirawat dengan benar."</em></span></div></li>
+  </ul>
+  <div class="bs-level-note" style="margin-top:10px">Masalahnya sering bukan karena kulitmu "susah" — tapi karena <b>belum dapat kandungan yang tepat</b>.</div>
+</div>
+
+<div class="bs-divider"></div>
+
+<!-- ══ SOLUSINYA ══ -->
+<div class="bs-sec bs-white">
+  <span class="bs-kick bs-kick-mark">Solusinya</span>
+  <h2 class="bs-h2">Satu salep malam yang kerja<br><em>di 3 akar masalah sekaligus.</em></h2>
+  <p class="bs-lead">Bukan sekadar mencerahkan sesaat. Flek, kusam, dan tekstur kasar butuh kandungan yang menyentuh penyebabnya — dan bekerja saat kulit beregenerasi di malam hari.</p>
+
+  <ul class="bs-paket-list">
+    <li class="bs-paket-item"><span class="bs-paket-ic">✨</span><div class="bs-paket-body"><b>Niacinamide</b><span>Meratakan warna kulit, menyamarkan noda &amp; bekas jerawat, menguatkan skin barrier, mengontrol minyak</span></div></li>
+    <li class="bs-paket-item"><span class="bs-paket-ic">🌗</span><div class="bs-paket-body"><b>Alpha Arbutin</b><span>Memudarkan flek &amp; noda gelap secara bertahap dengan menghambat pembentukan melanin</span></div></li>
+    <li class="bs-paket-item"><span class="bs-paket-ic">🔄</span><div class="bs-paket-body"><b>Turunan Vitamin A</b><span>Membantu regenerasi sel, meratakan tekstur, menyamarkan garis halus — kulit tampak lebih halus &amp; glowing</span></div></li>
+    <li class="bs-paket-item"><span class="bs-paket-ic">🌙</span><div class="bs-paket-body"><b>Praktis, cukup malam hari</b><span>Oles tipis sebelum tidur, tanpa ribet step panjang</span></div></li>
+  </ul>
+</div>
+
+<div class="bs-divider"></div>
+
+<!-- ══ TRUST ══ -->
+<div class="bs-sec bs-dark">
+  <h2 class="bs-h2 white">Ini bukan krim <em>"putih instan".</em></h2>
+  <ul class="bs-pain-list" style="margin-top:9px">
+    <li><div class="bs-pain-body"><span style="color:rgba(255,255,255,.78)">Kandungannya jelas dan umum dipakai di skincare — bukan bahan misterius</span></div></li>
+    <li><div class="bs-pain-body"><span style="color:rgba(255,255,255,.78)">Tidak menjanjikan putih dalam semalam — hasil bertahap, sesuai cara kerja kulit</span></div></li>
+    <li><div class="bs-pain-body"><span style="color:rgba(255,255,255,.78)">Terbuka soal efek adaptasi di awal, dan siapa yang sebaiknya konsultasi dulu</span></div></li>
+  </ul>
+</div>
+
+<div class="bs-divider"></div>
+
+<!-- ══ ISI PAKET ══ -->
+<div class="bs-sec bs-white">
+  <span class="bs-kick bs-kick-navy">Yang kamu dapat</span>
+  <h2 class="bs-h2">Semua yang dibutuhkan kulit <em>untuk mulai berubah.</em></h2>
+  <p class="bs-lead">Promo Beli 1 Gratis 1, plus bonus untuk pembelian hari ini.</p>
+
+  <ul class="bs-paket-list">
+    <li class="bs-paket-item"><span class="bs-paket-ic">🧴</span><div class="bs-paket-body"><b>2 pcs Salep Glowing FILO (5 g)</b><span>Beli 1 Gratis 1 — cukup untuk mulai rutin</span></div><span class="bs-paket-tag tag-utama">Utama</span></li>
+    <li class="bs-paket-item"><span class="bs-paket-ic">☀️</span><div class="bs-paket-body"><b>Gratis Sunscreen</b><span>Pasangan wajib pemakaian pagi — supaya hasil malamnya nggak sia-sia</span></div><span class="bs-paket-tag tag-termasuk">Bonus</span></li>
+    <li class="bs-paket-item"><span class="bs-paket-ic">🖊️</span><div class="bs-paket-body"><b>Gratis Eyeliner</b><span>Bonus khusus pembelian hari ini</span></div><span class="bs-paket-tag tag-termasuk">Bonus</span></li>
+    <li class="bs-paket-item"><span class="bs-paket-ic">💬</span><div class="bs-paket-body"><b>Pendampingan via WhatsApp</b><span>Tanya cara pakai atau kondisi kulit kapan saja ke CS</span></div><span class="bs-paket-tag tag-termasuk">Termasuk</span></li>
+    <li class="bs-paket-item"><span class="bs-paket-ic">🚚</span><div class="bs-paket-body"><b>Kirim J&amp;T dari Surabaya</b><span>Bisa COD (bayar di tempat) atau transfer</span></div><span class="bs-paket-tag tag-termasuk">COD</span></li>
+  </ul>
+
+  <div class="bs-stat-row light" style="margin-top:11px">
+    <div class="bs-stat"><div class="num">2+2</div><div class="lbl">Bonus pcs (B2G2)</div></div>
+    <div class="bs-stat"><div class="num">2</div><div class="lbl">Bonus hari ini</div></div>
+    <div class="bs-stat"><div class="num">COD</div><div class="lbl">Seluruh Indonesia</div></div>
+  </div>
+</div>
+
+<div class="bs-divider"></div>
+
+<!-- ══ BUKTIKAN SENDIRI — CEK KULIT 4 SOAL ══ -->
+<div class="bs-sec bs-paper">
+  <span class="bs-kick bs-kick-navy">Uji pengetahuanmu</span>
+  <h2 class="bs-h2">Kamu sudah rawat kulit <em>dengan benar?</em></h2>
+  <p class="bs-lead">Coba 4 soal di bawah — pilih jawaban, lalu lihat sendiri pembahasannya. Banyak yang ternyata salah di soal nomor 2.</p>
+
+  <div class="bs-sample" id="demo">
+    <div class="bs-sample-bar">
+      <div class="bs-sample-steps" id="dsteps"></div>
+      <div class="bs-sample-count" id="dcount">Soal 1 dari 4</div>
+    </div>
+    <div id="demoStage"></div>
+    <div class="bs-done" id="demoDone">
+      <div class="big">Nah — sekarang kamu tahu kuncinya.</div>
+      <div class="sc" id="doneScore"></div>
+      <a href="#sg-order" class="bs-btn" style="font-size:14px!important">Ambil Salep Glowing FILO →</a>
+    </div>
+  </div>
+</div>
+
+<div class="bs-divider"></div>
+
+<!-- ══ CARA PAKAI ══ -->
+<div class="bs-sec bs-white">
+  <span class="bs-kick bs-kick-navy">Cara pakai</span>
+  <h2 class="bs-h2">Tiga langkah. <em>Tanpa skincare 10 step.</em></h2>
+  <p class="bs-lead">Cukup diselipkan ke rutinitas sebelum tidur.</p>
+
+  <ul class="bs-paket-list">
+    <li class="bs-paket-item"><span class="bs-paket-ic">1️⃣</span><div class="bs-paket-body"><b>Malam: bersihkan wajah</b><span>Cuci muka, keringkan dengan lembut.</span></div></li>
+    <li class="bs-paket-item"><span class="bs-paket-ic">2️⃣</span><div class="bs-paket-body"><b>Oles tipis ke seluruh wajah</b><span>Fokuskan di area flek &amp; bekas jerawat, biarkan semalaman.</span></div></li>
+    <li class="bs-paket-item"><span class="bs-paket-ic">3️⃣</span><div class="bs-paket-body"><b>Pagi: wajib sunscreen</b><span>Lindungi hasil perawatan malam dari sinar matahari (sunscreen-nya sudah kami kasih gratis).</span></div></li>
+  </ul>
+  <div class="bs-level-note">Kulit sensitif? <b>Tes tempel di belakang telinga 24 jam</b> dulu sebelum dipakai ke wajah.</div>
+</div>
+
+<div class="bs-divider"></div>
+
+<!-- ══ HARGA ══ -->
+<div class="bs-sec bs-paper" id="sg-order">
+  <span class="bs-kick bs-kick-mark">Promo hari ini</span>
+  <h2 class="bs-h2">Pilih paket, <em>bonus tetap dapat.</em></h2>
+  <p class="bs-lead">Harga promo + bonus sunscreen &amp; eyeliner berlaku untuk pembelian hari ini.</p>
+
+  <div class="bs-price-card">
+    <div class="bs-price-head"><div class="bs-price-head-lbl">✦ Paket Coba · Beli 1 Gratis 1</div></div>
+    <div class="bs-price-amount">
+      <div class="bs-price-old">Rp278.000</div>
+      <div class="bs-price-now"><span class="rp">Rp</span><span class="amt">139.000</span></div>
+      <div class="bs-price-note">Dapat 2 pcs · Rp69.500/pcs</div>
+    </div>
+    <div class="bs-price-bullets"><ul>
+      <li><span class="chk">✓</span>2 pcs Salep Glowing FILO 5 g</li>
+      <li><span class="chk">✓</span>Gratis sunscreen + eyeliner</li>
+      <li><span class="chk">✓</span>Cocok untuk mulai &amp; lihat progres awal</li>
+    </ul></div>
+  </div>
+
+  <div class="bs-price-card best">
+    <div class="bs-ribbon">TERLARIS</div>
+    <div class="bs-price-head"><div class="bs-price-head-lbl">✦ Paket Rutin · Beli 2 Gratis 2</div></div>
+    <div class="bs-price-amount">
+      <div class="bs-price-old">Rp556.000</div>
+      <div class="bs-price-now"><span class="rp">Rp</span><span class="amt">219.000</span></div>
+      <div class="bs-hemat">Cuma ±Rp54.750/pcs</div>
+    </div>
+    <div class="bs-price-bullets"><ul>
+      <li><span class="chk">✓</span>4 pcs Salep Glowing FILO 5 g</li>
+      <li><span class="chk">✓</span>Gratis sunscreen + eyeliner</li>
+      <li><span class="chk">✓</span>Cukup untuk pemakaian rutin sampai hasil maksimal</li>
+      <li><span class="chk">✓</span>Lebih hemat dibanding beli paket coba 2 kali</li>
+    </ul></div>
+  </div>
+
+  <div style="text-align:center;padding:14px 10px 4px">
+    <div style="font-size:16px;font-weight:700;color:#3E1C36;margin-bottom:4px">👇 Isi data di bawah untuk pesan</div>
+    <div style="font-size:14px;color:#6A5A60;line-height:1.5">Lengkapi nama, nomor WA, dan alamat — bisa COD, bayar saat paket sampai.</div>
+  </div>
+</div>
+
+</div>
+
+<script>
+(function(){
+const DEMO = [
+ {tag:"Pilihan Ganda · Kandungan", tipe:"pg",
+  soal:"Kandungan yang bekerja <em>menghambat pembentukan melanin</em> sehingga flek memudar bertahap adalah…",
+  opsi:["Alkohol","Alpha Arbutin","Pewangi","Minyak mineral"], jawaban:1,
+  pembahasan:"<b>Alpha Arbutin</b> membantu menghambat pembentukan melanin — pigmen penyebab flek. Karena bekerja di 'pabrik' warnanya, hasilnya bertahap tapi menyasar penyebab. Jawaban: <b>B</b>."},
+ {tag:"Pilih Lebih dari Satu · Cara Pakai", tipe:"pgk",
+  soal:"Saat memakai perawatan dengan <em>turunan Vitamin A</em>, mana yang benar? <em>(Bisa lebih dari satu)</em>",
+  opsi:["Dipakai malam hari","Pagi harinya wajib sunscreen","Dipakai siang hari tanpa sunscreen","Kemerahan/mengelupas halus di awal bisa jadi tanda adaptasi"], jawaban:[0,1,3],
+  pembahasan:"A ✓, B ✓, D ✓. Turunan Vitamin A dipakai malam karena kulit jadi lebih sensitif terhadap matahari — jadi pagi <b>wajib sunscreen</b>. Mengelupas halus di awal wajar (adaptasi). Banyak yang salah di sini karena hanya pilih satu jawaban."},
+ {tag:"Pilihan Ganda · Kandungan", tipe:"pg",
+  soal:"Kulit berminyak, gampang muncul noda, dan skin barrier lemah. Kandungan yang membantu ketiganya sekaligus adalah…",
+  opsi:["Niacinamide","Garam","Soda kue","Air jeruk nipis"], jawaban:0,
+  pembahasan:"<b>Niacinamide</b> membantu meratakan warna kulit, menyamarkan noda, menguatkan skin barrier, dan mengontrol minyak. Bahan dapur seperti jeruk nipis atau soda kue justru bisa mengiritasi. Jawaban: <b>A</b>."},
+ {tag:"Pilih Lebih dari Satu · Ekspektasi", tipe:"pgk",
+  soal:"Pernyataan yang <em>realistis</em> soal perawatan flek &amp; kusam: <em>(Pilih semua yang tepat)</em>",
+  opsi:["Flek hilang total dalam semalam","Progres awal bisa terlihat sekitar 7 hari","Hasil lebih signifikan dengan pemakaian rutin 2–3 minggu","Sunscreen tidak penting kalau sudah pakai salep malam"], jawaban:[1,2],
+  pembahasan:"B ✓ dan C ✓. Kulit butuh waktu beregenerasi, jadi produk yang menjanjikan hasil semalam patut dicurigai (A salah). Tanpa sunscreen, flek bisa muncul lagi karena matahari (D salah). Hasil tiap kulit bisa berbeda."}
+];
+let idx=0, correctCount=0;
+const $=id=>document.getElementById(id);
+const stepsWrap=$('dsteps');
+DEMO.forEach((_,i)=>{const d=document.createElement('div');d.className='bs-dstep'+(i===0?' on':'');d.id='ds'+i;stepsWrap.appendChild(d);});
+function grade(q,sel){return q.tipe==='pgk'?[...sel].sort().join(',')===[...q.jawaban].sort().join(','):sel===q.jawaban;}
+function renderQ(){
+  const q=DEMO[idx];
+  $('dcount').textContent='Soal '+(idx+1)+' dari '+DEMO.length;
+  const hint=q.tipe==='pgk'?'<span class="bs-sample-hint">· pilih semua yang benar</span>':'';
+  const cls=q.tipe==='pgk'?'bs-opt pgk':'bs-opt';
+  $('demoStage').innerHTML='<div><span class="bs-sample-tag">'+q.tag+'</span>'+hint+'</div>'+
+    '<div class="bs-sample-q">'+q.soal+'</div>'+
+    '<div class="bs-sample-opts">'+q.opsi.map((o,oi)=>'<button type="button" class="'+cls+'" data-oi="'+oi+'"><span class="mk">'+'ABCD'[oi]+'</span><span>'+o+'</span></button>').join('')+'</div>'+
+    '<div class="bs-qfoot"><button type="button" class="bs-check" id="btnCheck" disabled>Periksa jawaban</button>'+
+    '<button type="button" class="bs-next" id="btnNext" style="display:none">'+(idx<DEMO.length-1?'Soal berikutnya →':'Selesai →')+'</button></div>'+
+    '<div class="bs-expl" id="expl"><div class="bs-expl-lbl">Pembahasan</div>'+q.pembahasan+'</div>';
+  wire(q);
+}
+function wire(q){
+  const check=$('btnCheck'); let sel=q.tipe==='pgk'?[]:null;
+  const opts=document.querySelectorAll('#demoStage .bs-opt');
+  opts.forEach(b=>{b.onclick=()=>{if(b.classList.contains('lock'))return;const oi=+b.dataset.oi;
+    if(q.tipe==='pgk'){if(sel.includes(oi)){sel=sel.filter(x=>x!==oi);b.classList.remove('pick');}else{sel.push(oi);b.classList.add('pick');}}
+    else{opts.forEach(x=>x.classList.remove('pick'));b.classList.add('pick');sel=oi;}
+    check.disabled=q.tipe==='pgk'?!sel.length:sel===null;};});
+  check.onclick=()=>{
+    if(grade(q,sel))correctCount++;
+    opts.forEach(b=>{b.classList.add('lock');const oi=+b.dataset.oi;
+      const ok=q.tipe==='pgk'?q.jawaban.includes(oi):oi===q.jawaban;
+      const picked=q.tipe==='pgk'?sel.includes(oi):oi===sel;
+      if(ok)b.classList.add('correct');else if(picked)b.classList.add('wrong');});
+    $('expl').classList.add('show'); check.style.display='none';
+    const nx=$('btnNext'); nx.style.display=''; nx.onclick=next;
+    $('ds'+idx).classList.remove('on'); $('ds'+idx).classList.add('done');
+  };
+}
+function next(){
+  if(idx<DEMO.length-1){idx++;$('ds'+idx).classList.add('on');renderQ();$('demo').scrollIntoView({behavior:'smooth',block:'start'});}
+  else{
+    $('demoStage').style.display='none'; document.querySelector('.bs-sample-bar').style.display='none';
+    $('doneScore').textContent='Kamu benar '+correctCount+' dari '+DEMO.length+' soal. Salep Glowing FILO sudah merangkum ketiga kandungan tadi dalam satu perawatan malam.';
+    $('demoDone').classList.add('show'); $('demo').scrollIntoView({behavior:'smooth',block:'start'});
+    if(window.fbq)fbq('trackCustom','QuizComplete',{score:correctCount});
+  }
+}
+renderQ();
+})();
+</script>
+<!-- END LP ATAS -->
