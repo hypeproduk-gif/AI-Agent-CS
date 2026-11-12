@@ -822,7 +822,7 @@ function kuis(m, soal, d, isReview, ulang) {
     $("#skor").innerHTML = n ? `${done ? "Skor" : "Skor sementara"}: <b>${benar} benar</b> dari ${n} soal${n < soal.length ? " · jawaban tersimpan otomatis, bisa dilanjutkan nanti" : ""}` : "";
     $("#fin").disabled = n < soal.length || !!done; if (done) $("#fin").textContent = `✅ Sudah selesai · Nilai ${done.nilai}`; };
   Object.keys(pil).forEach((i) => tampil(+i)); update();
-  const first = soal.findIndex((_, i) => !(i in pil)); if (Object.keys(pil).length && first > 0 && !done) setTimeout(() => $("#q" + first).scrollIntoView({ block: "start" }), 50); else scrollTo(0, 0);
+  const first = soal.findIndex((_, i) => !(i in pil)); if (Object.keys(pil).length && first > 0 && !done) setTimeout(() => { $("#q" + first).scrollIntoView({ block: "start" }); scrollBy(0, -80); }, 50); else scrollTo(0, 0);
   if (done) $("#ulang").onclick = () => kuis(m, soal, d, false, true);
   app.querySelectorAll(".opt").forEach((b) => (b.onclick = () => {
     const i = +b.dataset.i, j = +b.dataset.j, q = soal[i]; if (i in pil) return; pil[i] = j; const ok = j === q.jawab;
