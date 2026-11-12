@@ -1,0 +1,110 @@
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet"><style>
+*{box-sizing:border-box}body{margin:0;background:#FAF5EC;color:#2F2A26;font:500 14.5px/1.6 'Plus Jakarta Sans',sans-serif}
+.wrap{max-width:560px;margin:0 auto;padding-inline:20px}section{padding-block:22px}
+h1{font-size:29px;line-height:1.15;margin:8px 0 10px;font-weight:800;letter-spacing:-.01em}h2{font-size:23px;line-height:1.2;margin:0 0 12px;font-weight:800}h3{font-size:16px;margin:0 0 4px}
+p{margin:0 0 10px}b{font-weight:800}.hl{background:linear-gradient(transparent 60%,#F3D58A 60%)}
+.kick{font-size:11.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#C9772F}
+.hero{background:#1F4E4A;color:#F4EEDF;padding-top:26px}.hero h1{color:#fff}.hero .kick{color:#E6B75A}
+.hero img,section img,.price-card img{width:100%;height:auto!important;max-height:none!important;object-fit:contain!important;aspect-ratio:auto!important;display:block;border-radius:14px}
+.hero img.cover{box-shadow:0 18px 40px rgba(0,0,0,.35);margin:14px auto 16px;max-width:300px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 16px}.chips span{border:1.4px solid rgba(255,255,255,.4);border-radius:30px;padding:4px 11px;font-size:12.5px;font-weight:700}
+.btn,.btn:link,.btn:visited,.btn:hover,.btn:active,.btn:focus{display:block;text-align:center;background:#C9772F;color:#fff!important;-webkit-text-fill-color:#fff!important;text-decoration:none!important;font-weight:800;font-size:16.5px;padding:15px 18px;border-radius:14px;box-shadow:0 6px 0 #9C5A20}
+.btn small{display:block;font-weight:600;font-size:12px;opacity:.9}
+.log{list-style:none;padding:0;margin:0 0 12px}.log li{display:flex;gap:12px;padding:9px 0;border-bottom:1px dashed #DCCFB8}
+.log li span{flex:none;font-weight:800;color:#C9772F;width:48px}.log li.hot{font-weight:800}
+.punch{background:#C9772F;color:#fff;border-radius:14px;padding:14px 16px;font-weight:800;font-size:16px}
+.dark{background:#2F2A26;color:#F1E9DA}.dark h2{color:#fff}
+.x li{margin-bottom:8px}.ticks{list-style:none;padding:0;margin:0}.ticks li{padding:8px 0 8px 30px;position:relative;border-bottom:1px solid #EBE0CC}
+.ticks li::before{content:"\2713";position:absolute;left:0;top:7px;width:21px;height:21px;border-radius:50%;background:#3E5B4A;color:#fff;font-size:12px;text-align:center;line-height:21px;font-weight:800}
+.flow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.flow div{background:#fff;border:1px solid #E6DCCB;border-radius:12px;padding:10px 12px;font-size:13px}
+.flow b{display:block;color:#1F4E4A;font-size:14px}.flow .m{color:#8A8378;font-size:12px}
+.card{background:#fff;border:1px solid #E6DCCB;border-radius:16px;padding:16px;margin-bottom:10px}
+.pair{display:flex;align-items:center;gap:8px;background:#fff;border-radius:12px;padding:10px 12px;margin-bottom:7px;border:1px solid #E6DCCB;font-size:13.5px}
+.pair .a{flex:1;color:#7A746A}.pair .ar{color:#C9772F;font-weight:800}.pair .b{flex:1.2;font-weight:800;color:#1F4E4A}
+.peek{display:grid;grid-template-columns:1fr 1fr;gap:10px}.peek img{box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.sage{background:#3E5B4A;color:#F3EEE2}.sage h2{color:#fff}
+.price-card{background:#fff;border:2.5px solid #1F4E4A;border-radius:20px;padding:18px;text-align:left}
+.stack{list-style:none;padding:0;margin:0 0 12px}.stack li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed #E0D4BE;font-size:14px}
+.price{font-size:40px;font-weight:800;color:#1F4E4A;text-align:center;line-height:1;margin:14px 0 4px}.price small{font-size:14px;color:#7A746A;font-weight:600}
+.note{background:#FFF6E3;border-left:4px solid #C9772F;border-radius:10px;padding:12px 14px;font-size:13.5px}
+.faq details{background:#fff;border:1px solid #E6DCCB;border-radius:12px;padding:12px 14px;margin-bottom:8px}.faq summary{font-weight:800;cursor:pointer}
+.faq details p{margin:8px 0 0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;color:#1F4E4A}
+footer{text-align:center;font-size:12px;color:#8A8378;padding:20px 20px 90px}
+#sticky{position:fixed;left:0;right:0;bottom:0;padding:10px 14px;background:rgba(250,245,236,.96);box-shadow:0 -4px 16px rgba(0,0,0,.1);transform:translateY(110%);transition:.25s;z-index:99}
+#sticky.show{transform:none}#sticky .btn{max-width:530px;margin:0 auto;padding:12px}
+
+.hero2{background:#1F4E4A;color:#F4EEDF;padding-top:24px}.hero2 h1{color:#fff;font-size:30px}
+.hero2 .kick{color:#E6B75A}.hero2 img.ph{border-radius:18px;box-shadow:0 16px 36px rgba(0,0,0,.35);margin:14px 0}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.grid4 img{border-radius:8px!important}
+.bene{list-style:none;padding:0;margin:0}.bene li{background:#fff;border:1px solid #E6DCCB;border-radius:14px;padding:12px 14px 12px 52px;margin-bottom:8px;position:relative}
+.bene li i{position:absolute;left:12px;top:12px;width:30px;height:30px;border-radius:50%;background:#F3E3BE;font-style:normal;text-align:center;line-height:30px;font-size:16px}
+.bene li b{display:block;color:#1F4E4A;font-size:15px}
+.ba{width:100%;border-collapse:separate;border-spacing:0;border-radius:14px;overflow:hidden;border:1px solid #E6DCCB;background:#fff;font-size:13.5px}
+.ba th{padding:10px;font-size:13px;color:#fff}.ba th:first-child{background:#9A9286}.ba th:last-child{background:#3E5B4A}
+.ba td{padding:9px 10px;border-top:1px solid #EFE6D6;vertical-align:top;width:50%}.ba td:first-child{color:#8A8378}.ba td:last-child{font-weight:700;color:#1F4E4A}
+.math{background:#fff;border:2px dashed #C9772F;border-radius:16px;padding:16px;text-align:center}
+.math .big{font-size:30px;font-weight:800;color:#C9772F;line-height:1.1}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:8px}.who div{background:#fff;border-radius:12px;padding:10px 12px;border:1px solid #E6DCCB;font-size:13px}
+.who div::before{content:"\2714  ";color:#3E5B4A;font-weight:800}
+</style>
+<section class="hero2 hero"><div class="wrap">
+<div class="kick">Untuk Mami kerja yang anaknya bawa bekal</div>
+<h1>Mulai minggu depan, Mami nggak perlu mikir &ldquo;besok masak apa&rdquo; lagi.</h1>
+<p>Masak sekali malam ini. Besok pagi bekal anak <b style="color:#F3C96B">tinggal pindah 10 menit</b> &mdash; dan isinya bikin anak penasaran buka kotak bekalnya.</p>
+<img class="ph" src="GANTI-URL-hero" alt="Katsu sando bekal">
+<div class="chips"><span>20 menu bekal 4 minggu</span><span>Belanja 1&times; seminggu</span><span>Pagi cuma 15 menit</span></div>
+<a class="btn" href="#harga">Aku Mau Dapur Autopilot &rarr;<small>Rp79rb &middot; langsung download</small></a></div></section>
+
+<section><div class="wrap"><div class="kick">Ini isi kotak bekal anak Mami 4 minggu ke depan</div>
+<h2>20 hari sekolah. 20 bekal beda. Nol mikir.</h2><div class="grid4"><img src="GANTI-URL-bekal-01" alt="Onigiri Ayam Kecap"><img src="GANTI-URL-bekal-02" alt="Sandwich Fuyunghai"><img src="GANTI-URL-bekal-03" alt="Rice Bowl Dori Mayo"><img src="GANTI-URL-bekal-04" alt="Mie Goreng Bakso"><img src="GANTI-URL-bekal-05" alt="Sate Bento Tempe & Telur Puyuh"><img src="GANTI-URL-bekal-06" alt="Nasi Goreng Ayam Jagung"><img src="GANTI-URL-bekal-07" alt="Kentang Telur Panggang"><img src="GANTI-URL-bekal-08" alt="Roti / Onigiri Tuna Mayo"><img src="GANTI-URL-bekal-09" alt="Makaroni Schotel Teflon"><img src="GANTI-URL-bekal-10" alt="Nugget Tahu Bentuk Lucu"><img src="GANTI-URL-bekal-11" alt="Wrap Ayam Madu"><img src="GANTI-URL-bekal-12" alt="Telur Gulung Brokoli Keju"><img src="GANTI-URL-bekal-13" alt="Nasi Goreng Udang Buncis"><img src="GANTI-URL-bekal-14" alt="Burger Mini Perkedel"><img src="GANTI-URL-bekal-15" alt="Sushi Roll Tempe"><img src="GANTI-URL-bekal-16" alt="Katsu Sando"></div>
+<p style="font-size:13px;color:#7A746A;margin-top:8px">Onigiri, katsu sando, sushi roll tempe, pizza roll, nugget bintang&hellip; semuanya dari masakan makan malam keluarga.</p></div></section>
+
+<section style="background:#F1E8D6"><div class="wrap"><div class="kick">Minggu pertama</div><h2>Yang langsung Mami rasakan</h2>
+<ul class="bene"><li><i>&#127769;</i><b>Malam lebih tenang.</b>Nggak ada lagi 5 menit berdiri bengong di depan kulkas. Kalender sudah jawab: malam ini masak apa.</li><li><i>&#9200;</i><b>Pagi cuma 15 menit.</b>Ambil rak &ldquo;Bekal Besok&rdquo;, ubah bentuk, masuk kotak. Sambil minum teh, bukan sambil teriak.</li><li><i>&#128564;</i><b>Bangun lebih santai.</b>Bekal sudah setengah jadi dari semalam. Alarm nggak perlu diset subuh-subuh lagi.</li><li><i>&#128722;</i><b>Belanja cukup sekali seminggu.</b>Daftar belanja 4 minggu sudah jadi per kategori. Tinggal centang, nggak ada bolak-balik warung.</li><li><i>&#128176;</i><b>Dompet lebih aman.</b>Stop pesan lauk online dadakan, stop jajan karena &ldquo;nggak sempat masak&rdquo;.</li><li><i>&#129388;</i><b>Kulkas rapi, bahan nggak busuk.</b>Semua dibeli sesuai rencana, semua punya tempat dan hari.</li><li><i>&#128588;</i><b>Rasa bersalah hilang.</b>Anak berangkat bawa bekal rumahan yang dibuat dengan rencana, bukan dengan panik.</li></ul>
+</div></section>
+
+<section><div class="wrap"><div class="kick">Buat si kecil</div><h2>Yang dirasakan anak</h2>
+<ul class="bene"><li><i>&#127793;</i><b>Bekal beda setiap hari.</b>20 menu dalam 4 minggu. Nggak ada lagi &ldquo;telur ceplok lagi, Mi?&rdquo;</li><li><i>&#11088;</i><b>Bentuknya bikin semangat makan.</b>Nugget bintang, onigiri, sushi roll, pizza roll &mdash; bekal yang pengen dipamerin ke teman.</li><li><i>&#127881;</i><b>Punya hari favorit.</b>Jumat Seru: anak ikut pilih bentuk atau topping. Mereka yang nagih bekalnya.</li><li><i>&#127822;</i><b>Ada buah &amp; sayur tiap hari.</b>Formula kotak bekal yang seimbang, tanpa harus perang soal sayur.</li><li><i>&#128140;</i><b>Ngerasa diperhatikan.</b>Tiap buka kotak, ada &ldquo;Mami&rdquo; di dalamnya &mdash; meski Mami lagi meeting.</li></ul>
+</div></section>
+
+<section class="dark"><div class="wrap"><h2>Dan setelah sebulan&hellip;</h2>
+<ul class="x"><li><b>Mami punya 20 menu andalan</b> yang sudah teruji di keluarga sendiri.</li>
+<li><b>Sistemnya jalan sendiri.</b> Suami atau ART bisa ikut masak tanpa nanya &ldquo;ini dimasak apa?&rdquo;.</li>
+<li><b>Tinggal ulang dari Minggu 1</b> &mdash; dipakai terus selama anak masih bawa bekal.</li>
+<li><b>Dapur nggak lagi jadi sumber stres</b> nomor satu di rumah.</li></ul></div></section>
+
+<section><div class="wrap"><h2>Sebelum vs sesudah</h2>
+<table class="ba"><tr><th>Sebelum</th><th>Dengan Dapur Autopilot</th></tr>
+<tr><td>Mikir menu tiap malam</td><td>Lihat kalender, selesai</td></tr>
+<tr><td>Masak 2&times; (malam &amp; pagi)</td><td>Masak 1&times;, pagi tinggal rakit</td></tr>
+<tr><td>Belanja dadakan 3&ndash;4&times; seminggu</td><td>Belanja 1&times; pakai daftar jadi</td></tr>
+<tr><td>Bekal itu-itu saja</td><td>20 bekal beda dalam 4 minggu</td></tr>
+<tr><td>Hari lembur = panik</td><td>Ada 10 menu Rencana B, &le;10 menit</td></tr>
+<tr><td>Berangkat kerja bawa rasa bersalah</td><td>Berangkat kerja dengan tenang</td></tr></table></div></section>
+
+<section style="background:#F1E8D6"><div class="wrap"><h2>Hitungan simpelnya</h2>
+<div class="math"><p>Sekali pesan lauk online karena panik pagi:</p><div class="big">&plusmn; Rp30.000</div>
+<p style="margin-top:8px">Dapur Autopilot <b>Rp79.000</b>, dipakai berbulan-bulan.<br><b>Cukup 3&times; nggak panik pesan lauk &mdash; sudah balik modal.</b></p></div>
+<a class="btn" href="#harga">Aku Mau Dapur Autopilot &rarr;<small>Rp79rb &middot; langsung download</small></a></div></section>
+
+<section><div class="wrap"><h2>Cocok banget kalau Mami&hellip;</h2>
+<div class="who"><div>Kerja kantoran / WFH</div><div>Anak TK&ndash;SD bawa bekal</div><div>Pulang sore / malam</div><div>Nggak punya ART</div><div>Punya ART tapi capek ngarahin</div><div>Sering bingung menu</div><div>Pengen bekal anak variatif</div><div>Pengen hemat belanja</div></div></div></section>
+
+<section style="background:#F1E8D6"><div class="wrap"><h2>Isi paketnya</h2>
+<ul class="ticks">
+<li><b>Ebook 41 halaman</b> &mdash; 8 bab sistem + lembar &ldquo;Aksi Hari Ini&rdquo;</li>
+<li><b>20 kartu menu bergambar</b> &mdash; bahan, langkah malam, yang disisihkan, langkah pagi</li>
+<li><b>Prep Minggu 60 menit</b> &mdash; urutan kerja menit per menit</li>
+<li><b>10 menu Rencana B</b> &mdash; untuk hari lembur &amp; kacau</li>
+<li><b>BONUS:</b> Kalender 4 minggu, daftar belanja Minggu 1&ndash;4, label kulkas, Tracker Bintang anak</li></ul></div></section>
+
+<section><div class="wrap"><div class="kick">Intip halaman asli</div><h2>Bukan PDF asal-asalan</h2>
+<div class="peek"><img src="GANTI-URL-p31-31" alt="Galeri bekal"><img src="GANTI-URL-p14-14" alt="Kartu menu"></div></div></section>
+
+<section id="harga"><div class="wrap"><div class="price-card"><div class="kick" style="text-align:center">Semua yang Mami dapat</div>
+<ul class="stack"><li><span>Ebook Dapur Autopilot (8 bab)</span><b>&#10003;</b></li><li><span>20 kartu menu bergambar</span><b>&#10003;</b></li><li><span>10 menu Rencana B</span><b>&#10003;</b></li><li><span>Kalender 4 minggu + versi kosong</span><b>&#10003;</b></li><li><span>Daftar belanja Minggu 1&ndash;4</span><b>&#10003;</b></li><li><span>Label kulkas + Tracker Bintang</span><b>&#10003;</b></li></ul>
+<!-- CEK: tambahkan harga coret HANYA jika memang ada harga normal yang berlaku -->
+<div class="price">Rp79.000 <small>sekali bayar</small></div>
+<p style="text-align:center;font-size:13px;color:#7A746A">Akses selamanya. Cetak sepuasnya untuk keluarga sendiri.</p></div>
+<div class="note" style="margin-top:12px">&#128071; <b>Isi form di bawah</b> &mdash; link download dikirim otomatis setelah pembayaran.</div></div></section>
