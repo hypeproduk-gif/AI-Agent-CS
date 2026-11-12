@@ -2,6 +2,7 @@
 """Build PDF Dapur Autopilot via Chromium (Playwright).  python3 build.py"""
 import os, html, collections, subprocess
 from content import R, DAYS, STOK, RENCANA_B
+from illus import bento
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "..", "output")
@@ -186,6 +187,13 @@ bab4 = chapter(4, "Investasi 1 Jam", "Prep Minggu 60 Menit",
 {tip("Bumbu dasar tumis tahan ±5–7 hari di kulkas dalam toples bersih tertutup. Selalu ambil dengan sendok kering.")}
 {aksi("Jadwalkan Prep Minggu pertama Mami. Tentukan jam dan siapa yang membantu.", ["Hari & jam prep", "Yang membantu", "Tugas mereka"], 2)}''')
 
+def pic(x):
+    f = os.path.join(HERE, "img", f"menu-{x['no']:02d}.jpg")
+    if os.path.exists(f):
+        import base64
+        return f'<img src="data:image/jpeg;base64,{base64.b64encode(open(f,"rb").read()).decode()}">'
+    return bento(x["no"], DAYS[x["hari"]]["warna"])
+
 def card(x):
     d = DAYS[x["hari"]]
     bahan = "".join(f"<li>{box()} <span>{e(n)}</span><em>{e(q)}</em></li>" for n, q, _ in x["bahan"])
@@ -193,7 +201,7 @@ def card(x):
     ps = "".join(f"<li>{e(s)}</li>" for s in x["pagi_steps"])
     return f'''<div class="rcard">
 <div class="rc-top" style="--c:{d['warna']}"><span class="rc-no">#{x['no']:02d}</span><span class="rc-day">Minggu {x['minggu']} · {x['hari']} · {d['tema']}</span><span class="rc-min">{ic("clock","ic s")} pagi {x['menit']} mnt</span></div>
-<div class="rc-title"><div class="rc-m">{ic("moon","ic s")}<b>{e(x['malam'])}</b></div><div class="rc-arrow">→</div><div class="rc-b">{ic("sun","ic s")}<b>{e(x['bekal'])}</b></div></div>
+<div class="rc-hero"><div class="rc-names"><div class="rc-m">{ic("moon","ic s")}<span>Malam ini</span><b>{e(x['malam'])}</b></div><div class="rc-arrow">↓ jadi bekal besok</div><div class="rc-b">{ic("sun","ic s")}<b>{e(x['bekal'])}</b></div></div><div class="rc-img">{pic(x)}</div></div>
 <div class="rc-body">
  <div class="rc-col"><h4>Bahan <small>(3–4 orang + 1 bekal)</small></h4><ul class="bahan">{bahan}</ul></div>
  <div class="rc-col"><h4>{ic("moon","ic xs")} Malam</h4><ol>{ms}</ol>
@@ -206,11 +214,13 @@ cards = ""
 for w in range(1, 5):
     items = [x for x in R if x["minggu"] == w]
     cards += f'<div class="week-sep"><span>Minggu {w}</span></div>' + "".join(card(x) for x in items)
+gallery = '<h2>Isi kotak bekal anak 4 minggu ke depan</h2><div class="gal">' + "".join(
+    f'<div><div class="gi">{pic(x)}</div><b>#{x["no"]:02d}</b> {e(x["bekal"])}</div>' for x in R) + '</div>'
 bab5 = chapter(5, "Inti Sistem", "20 Pasangan Menu Malam → Bekal",
  "Setiap kartu = satu masakan malam yang sudah dirancang untuk jadi bekal besok pagi dalam ≤10 menit.", f'''
 <p>Cara membaca kartu: <b>bulan</b> = makan malam keluarga, <b>matahari</b> = bekal besok. Kotak “Sisihkan” memberi tahu persis apa yang masuk Rak Bekal sebelum makanan dihidangkan. Porsi untuk 2 dewasa + 2 anak; sesuaikan jika perlu.</p>
 {tip("Bumbu standar (garam, merica, gula, minyak, bawang) tidak ditulis ulang di setiap kartu karena sudah ada di Stok Wajib (Bab 3).")}
-{cards}''')
+{gallery}{cards}''')
 
 bab6 = chapter(6, "Pagi Tenang", "Pagi 15 Menit: Urutan Kerja Bekal",
  "Pagi bukan untuk masak. Pagi untuk merakit. Ini urutan supaya 15 menit cukup, termasuk buah dan minum.", f'''
