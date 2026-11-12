@@ -717,7 +717,7 @@ function home() {
   <li>Jika 4 mapel sudah hijau, aplikasi otomatis pindah ke <b>hari berikutnya</b> (kerjakan besok, 1 hari 1 sesi). Level naik di hari 36 dan 71.</li>
   <li>Bingung materinya? Buka <b>📘 Materi</b> dulu. Akhir pekan, buka <b>🔁 Ulang soal salah</b> dan <b>📊 Rapor</b>.</li>
   <li>Ingin di kertas? Pakai <b>🖨️ Cetak</b>.</li></ol></details>
-  <div class="grid">${Object.entries(MAPEL).map(([k, [n, ic]]) => { const h = ST.hasil[k + d]; return `<button class="mapel ${h ? "done" : ""}" data-m="${k}"><span class="ic">${ic}</span><b>${n}</b><small>${h ? `✅ Nilai ${h.nilai} · ulangi` : `${PER_HARI} soal · ±10 menit`}</small></button>`; }).join("")}</div>
+  <div class="grid">${Object.entries(MAPEL).map(([k, [n, ic]]) => { const h = ST.hasil[k + d], dr = (ST.draft || {})[k + d]; const nb = dr ? dr.log.filter((l) => l.ok).length : 0; return `<button class="mapel ${h ? "done" : ""}" data-m="${k}"><span class="ic">${ic}</span><b>${n}</b><small>${h ? `✅ Nilai ${h.nilai} · lihat jawaban` : dr ? `⏳ ${Object.keys(dr.pil).length}/${PER_HARI} dijawab · ${nb} benar · lanjutkan` : `${PER_HARI} soal · ±10 menit`}</small></button>`; }).join("")}</div>
   <div class="card" style="margin-top:14px"><b>Pilih hari</b> <span class="mut">(hijau = selesai)</span><div class="days" style="margin-top:8px">${Array.from({ length: HARI }, (_, i) => `<button class="${hariSelesai(i + 1) ? "d" : ""} ${i + 1 === d ? "c" : ""}" data-d="${i + 1}">${i + 1}</button>`).join("")}</div>
   <div class="mut" style="margin-top:8px">Hari 1–35: Level 1 · Hari 36–70: Level 2 · Hari 71–100: Level 3</div></div>
   <div class="grid"><button class="btn sec" id="review" ${salahN ? "" : "disabled"}>🔁 Ulang soal salah (${salahN})</button><button class="btn sec" id="rapor">📊 Rapor</button><button class="btn sec" id="materi">📘 Materi</button><button class="btn sec" id="cetak">🖨️ Cetak soal & materi</button><button class="btn sec" id="ortu">👪 Panduan orang tua</button><button class="btn sec" id="ttg">ℹ️ Tentang & hak cipta</button></div><div class="foot">© ${PEMBUAT}<br>Lisensi penggunaan pribadi · Dilarang menyebarluaskan</div>`;
@@ -802,26 +802,41 @@ function setup() {
   <label><b>Nama ANAK yang akan belajar</b> (bukan nama ayah/ibu)<input id="nm" placeholder="contoh: Rafi Pratama"></label><p class="mut">👧🧒 Isi dengan nama siswa kelas 5 yang akan mengerjakan soal. Nama ini tampil di rapor dan sertifikat belajar anak.</p><p class="mut">⚠️ Nama dikunci sebagai pemilik lisensi dan tercetak di setiap lembar. Pastikan sudah benar.</p><br><br><button class="btn full" id="go">Mulai Belajar</button></div>`;
   $("#go").onclick = async () => { const v = $("#nm").value.trim(); if (!v) return; if (!confirm(`Nama anak: "${v}"\n\nPastikan ini nama ANAK, bukan nama orang tua. Nama tidak bisa diubah. Lanjutkan?`)) return; const r = await server("kunci", { nama: v }); ST.nama = (r && r.nama) || v; save(); home(); };
 }
-function kuis(m, soal, d, isReview) {
-  $("#homeBtn").hidden = false; const pil = {}; const log = [];
-  app.innerHTML = `<div class="card"><div class="row"><b>${m ? MAPEL[m][1] + " " + MAPEL[m][0] + " · Hari ke-" + d : "🔁 Ulang soal salah"}</b><span class="mut" id="cnt">0/${soal.length} dijawab</span></div><div class="bar" style="margin-top:8px"><i id="pg" style="width:0"></i></div></div>
+function bumpStreak() { if (ST.last !== today()) { const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10); ST.streak = ST.last === y ? ST.streak + 1 : 1; ST.last = today(); } }
+function kuis(m, soal, d, isReview, ulang) {
+  $("#homeBtn").hidden = false; ST.draft = ST.draft || {};
+  const key = isReview ? null : m + d, done = key && !ulang ? ST.hasil[key] : null;
+  // Pulihkan jawaban: dari hasil (sudah selesai) atau draft (dikerjakan sebagian)
+  const src = done && done.pil ? done : key && !ulang && ST.draft[key] ? ST.draft[key] : null;
+  const pil = src ? Object.assign({}, src.pil) : {}; const log = src ? src.log.slice() : [];
+  if (key && ulang) delete ST.draft[key];
+  app.innerHTML = `<div class="card"><div class="row"><b>${m ? MAPEL[m][1] + " " + MAPEL[m][0] + " · Hari ke-" + d : "🔁 Ulang soal salah"}</b><span class="mut" id="cnt">0/${soal.length} dijawab</span></div><div class="bar" style="margin-top:8px"><i id="pg" style="width:0"></i></div>
+  <div id="skor" class="mut" style="margin-top:8px"></div>${done ? `<button class="btn sec" id="ulang" style="margin-top:10px">🔄 Ulangi dari awal</button>` : ""}</div>
   <div class="card">${soal.map((q, i) => `<div class="qi" id="q${i}"><span class="lvl l${q.level}">${i + 1}. ${q.topik}</span><div class="q">${q.q}</div>${q.img ? `<div class="img">${q.img}</div>` : ""}${q.opsi.map((o, j) => `<button class="opt" data-i="${i}" data-j="${j}"><b>${"ABCD"[j]}.</b> ${o}</button>`).join("")}<div class="fb"></div></div>`).join("")}
   <br><button class="btn full" id="fin" disabled>Selesai & lihat nilai</button></div>`;
+  const tampil = (i) => { const q = soal[i], j = pil[i], ok = j === q.jawab, box = $("#q" + i);
+    box.querySelectorAll(".opt").forEach((x, k) => { x.disabled = true; if (k === q.jawab) x.classList.add("ok"); else if (k === j) x.classList.add("no"); });
+    box.querySelector(".fb").innerHTML = `<div class="bahas"><b>${ok ? "✅ Benar!" : "❌ Belum tepat."}</b> ${q.bahas}</div>`; };
+  const update = () => { const n = Object.keys(pil).length, benar = Object.entries(pil).filter(([i, j]) => soal[i].jawab === j).length;
+    $("#cnt").textContent = `${n}/${soal.length} dijawab`; $("#pg").style.width = (n / soal.length) * 100 + "%";
+    $("#skor").innerHTML = n ? `${done ? "Skor" : "Skor sementara"}: <b>${benar} benar</b> dari ${n} soal${n < soal.length ? " · jawaban tersimpan otomatis, bisa dilanjutkan nanti" : ""}` : "";
+    $("#fin").disabled = n < soal.length || !!done; if (done) $("#fin").textContent = `✅ Sudah selesai · Nilai ${done.nilai}`; };
+  Object.keys(pil).forEach((i) => tampil(+i)); update();
+  const first = soal.findIndex((_, i) => !(i in pil)); if (Object.keys(pil).length && first > 0 && !done) setTimeout(() => $("#q" + first).scrollIntoView({ block: "start" }), 50); else scrollTo(0, 0);
+  if (done) $("#ulang").onclick = () => kuis(m, soal, d, false, true);
   app.querySelectorAll(".opt").forEach((b) => (b.onclick = () => {
     const i = +b.dataset.i, j = +b.dataset.j, q = soal[i]; if (i in pil) return; pil[i] = j; const ok = j === q.jawab;
-    log.push({ id: q.id, ok, topik: q.topik, mapel: q.mapel }); if (ok) delete ST.salah[q.id]; else ST.salah[q.id] = 1; save();
-    const box = $("#q" + i); box.querySelectorAll(".opt").forEach((x, k) => { x.disabled = true; if (k === q.jawab) x.classList.add("ok"); else if (k === j) x.classList.add("no"); });
-    box.querySelector(".fb").innerHTML = `<div class="bahas"><b>${ok ? "✅ Benar!" : "❌ Belum tepat."}</b> ${q.bahas}</div>`;
-    const n = Object.keys(pil).length; $("#cnt").textContent = `${n}/${soal.length} dijawab`; $("#pg").style.width = (n / soal.length) * 100 + "%"; $("#fin").disabled = n < soal.length;
+    log.push({ id: q.id, ok, topik: q.topik, mapel: q.mapel }); if (ok) delete ST.salah[q.id]; else ST.salah[q.id] = 1;
+    if (key) { ST.draft[key] = { pil, log, tgl: today() }; bumpStreak(); }
+    save(); tampil(i); update();
   }));
   $("#fin").onclick = () => {
     const benar = log.filter((l) => l.ok).length, nilai = Math.round((benar / soal.length) * 100);
-    if (!isReview) { ST.hasil[m + d] = { nilai, log, tgl: today() }; if (ST.last !== today()) { const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10); ST.streak = ST.last === y ? ST.streak + 1 : 1; ST.last = today(); } }
+    if (key) { ST.hasil[key] = { nilai, log, pil, tgl: today() }; delete ST.draft[key]; bumpStreak(); }
     save(); const bintang = nilai >= 90 ? "⭐⭐⭐" : nilai >= 70 ? "⭐⭐" : nilai >= 50 ? "⭐" : "💪";
     app.innerHTML = `<div class="card" style="text-align:center"><div class="big">${bintang}</div><h2>Nilai ${nilai}</h2><p>${benar} dari ${soal.length} soal benar.</p><p class="mut">${nilai >= 70 ? "Keren! Pertahankan ya." : "Tidak apa-apa, soal yang salah tersimpan di menu Ulang Soal Salah."}</p><button class="btn full" id="bk">Kembali ke beranda</button></div>`;
     $("#bk").onclick = home; scrollTo(0, 0);
   };
-  scrollTo(0, 0);
 }
 function review() {
   const all = Object.values(BANK).flat(); const ids = new Set(Object.keys(ST.salah));
@@ -829,13 +844,13 @@ function review() {
 }
 function rapor() {
   $("#homeBtn").hidden = false; const tp = {};
-  for (const h of Object.values(ST.hasil)) for (const l of h.log) { const k = MAPEL[l.mapel][0] + " — " + l.topik; tp[k] = tp[k] || [0, 0]; tp[k][1]++; if (l.ok) tp[k][0]++; }
-  const rata = (m) => { const v = Object.entries(ST.hasil).filter(([k]) => k.startsWith(m) && !isNaN(k.slice(m.length))).map(([, h]) => h.nilai); return v.length ? Math.round(v.reduce((a, b) => a + b) / v.length) : "-"; };
+  for (const h of [...Object.values(ST.hasil), ...Object.values(ST.draft || {})]) for (const l of h.log) { const k = MAPEL[l.mapel][0] + " — " + l.topik; tp[k] = tp[k] || [0, 0]; tp[k][1]++; if (l.ok) tp[k][0]++; }
+  const rata = (m) => { const v = [...Object.entries(ST.hasil), ...Object.entries(ST.draft || {})].filter(([k]) => k.startsWith(m) && !isNaN(k.slice(m.length))).map(([, h]) => h.nilai != null ? h.nilai : Math.round((h.log.filter((l) => l.ok).length / h.log.length) * 100)); return v.length ? Math.round(v.reduce((a, b) => a + b) / v.length) : "-"; };
   const lemah = Object.entries(tp).filter(([, v]) => v[1] >= 3).sort((a, b) => a[1][0] / a[1][1] - b[1][0] / b[1][1]).slice(0, 8);
   app.innerHTML = `<div class="card"><h2>📊 Rapor ${esc(ST.nama)}</h2><table><tr><th>Mapel</th><th>Rata-rata</th></tr>${Object.entries(MAPEL).map(([k, [n]]) => `<tr><td>${n}</td><td><b>${rata(k)}</b></td></tr>`).join("")}</table></div>
   <div class="card"><h3>Topik yang perlu dilatih lagi</h3>${lemah.length ? `<table>${lemah.map(([k, v]) => `<tr><td>${k}</td><td>${Math.round((v[0] / v[1]) * 100)}% benar</td></tr>`).join("")}</table>` : `<p class="mut">Kerjakan minimal beberapa hari dulu agar terlihat polanya.</p>`}</div>
   <div class="card"><button class="btn sec" id="rst">Hapus nilai & progres</button><p class="mut">Nama anak terkunci sebagai pemilik lisensi dan tidak ikut terhapus.</p></div>`;
-  $("#rst").onclick = () => { if (confirm("Hapus semua nilai dan progres? Nama tetap tersimpan.")) { ST = { nama: ST.nama, hasil: {}, salah: {}, streak: 0, last: "", kode: ST.kode, setuju: ST.setuju }; save(); home(); } };
+  $("#rst").onclick = () => { if (confirm("Hapus semua nilai dan progres? Nama tetap tersimpan.")) { ST = { nama: ST.nama, hasil: {}, salah: {}, draft: {}, streak: 0, last: "", kode: ST.kode, setuju: ST.setuju }; save(); home(); } };
 }
 function ortu() {
   $("#homeBtn").hidden = false;
