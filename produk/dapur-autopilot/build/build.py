@@ -188,7 +188,7 @@ bab4 = chapter(4, "Investasi 1 Jam", "Prep Minggu 60 Menit",
 {aksi("Jadwalkan Prep Minggu pertama Mami. Tentukan jam dan siapa yang membantu.", ["Hari & jam prep", "Yang membantu", "Tugas mereka"], 2)}''')
 
 def pic(x):
-    f = os.path.join(HERE, "img", f"menu-{x['no']:02d}.jpg")
+    f = next((p for p in [os.path.join(HERE, "img", f"menu-{x['no']:02d}.{ext}") for ext in ("jpg","jpeg","png","webp")] if os.path.exists(p)), "")
     if os.path.exists(f):
         import base64
         return f'<img src="data:image/jpeg;base64,{base64.b64encode(open(f,"rb").read()).decode()}">'
