@@ -69,6 +69,21 @@ lisensi = f'''<section class="page-license">
  <p class="small">© 2026 ToolkitParenting. Seluruh hak dilindungi.</p>
 </section>'''
 
+
+mulai = f'''<section class="chapter start">
+<div class="kicker">Mulai di Sini</div><h1 class="big">Terima kasih sudah bergabung, Mami 🙏</h1>
+<p class="lead">Ikuti 5 langkah ini supaya Dapur Autopilot langsung jalan minggu ini.</p>
+<div class="steps5">
+ <div><span>1</span><div><b>Simpan file ini di HP</b><p>Buka file → ⋮ → Simpan / Tambahkan ke Google Drive, supaya bisa dibuka kapan saja, termasuk saat belanja.</p></div></div>
+ <div><span>2</span><div><b>Malam ini: baca Bab 1 (±10 menit)</b><p>Kerjakan “Aksi Hari Ini”: masak seperti biasa, tambah 1 porsi, sisihkan untuk bekal besok.</p></div></div>
+ <div><span>3</span><div><b>Cetak 2 halaman</b><p>Kalender Minggu 1 (Bonus 1) + Daftar Belanja Minggu 1 (Bonus 2). Tempel kalender di pintu kulkas.</p></div></div>
+ <div><span>4</span><div><b>Hari Minggu: belanja + Prep 60 menit</b><p>Belanja sesuai daftar, lalu ikuti urutan kerja di Bab 4.</p></div></div>
+ <div><span>5</span><div><b>Senin: mulai Menu #01</b><p>Ayam Kecap Mentega malam ini → Onigiri Ayam Kecap untuk bekal besok.</p></div></div>
+</div>
+{tip("<b>Tips:</b> kosongkan rak paling atas kulkas dan beri label “BEKAL BESOK” (label siap gunting ada di Bonus 3). Rak ini kunci supaya pagi Mami cuma 15 menit.")}
+<div class="warn">⚠️ File ini berisi watermark nama pembeli dan khusus untuk keluarga Mami. Membagikan file melanggar UU No. 28 Tahun 2014 tentang Hak Cipta.</div>
+</section>'''
+
 pembuka = f'''<section class="chapter">
 <div class="kicker">Pembuka</div><h1 class="big">Halo, Mami.</h1>
 <p class="lead">Buku ini bukan kumpulan resep. Resep di internet sudah jutaan, dan masalahnya tidak pernah di situ.</p>
@@ -357,7 +372,7 @@ penutup = f'''<section class="chapter closing">
 <p class="muted center">Dengan sayang, Tim ToolkitParenting · Alat bantu praktis untuk orang tua Indonesia</p>
 </section>'''
 
-body = "".join([cover, lisensi, pembuka, bab1, bab2, bab3, bab4, bab5, bab6, bab7, bab8, bonus1, bonus2, bonus3, bonus4, penutup])
+body = "".join([cover, lisensi, mulai, pembuka, bab1, bab2, bab3, bab4, bab5, bab6, bab7, bab8, bonus1, bonus2, bonus3, bonus4, penutup])
 css = open(os.path.join(HERE, "style.css"), encoding="utf-8").read()
 fonts = open(os.path.join(HERE, "fonts", "fonts.css"), encoding="utf-8").read()
 doc = f'<!doctype html><html lang="id"><head><meta charset="utf-8"><title>{TITLE}</title><style>{fonts}\n{css}</style></head><body>{body}</body></html>'
