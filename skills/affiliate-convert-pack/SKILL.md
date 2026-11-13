@@ -268,6 +268,8 @@ Wajib untuk setiap ide video. Thumbnail menentukan klik dari grid/feed, jadi dib
 
 Setiap ide wajib diberi **label variabel** agar hasil iklan bisa dibaca: variabel mana yang membuat klik naik.
 
+**Angle nendang (prioritas utama):** sebelum memakai bank umum, baca `references/angle-nendang.md` dan jalankan langkah wajibnya (10 frustrasi insider, 5 mitos, 5 tes visual, 15 kandidat, cek 4/5). Angle generik seperti "aku picky", "hemat waktu", "worth it" hanya boleh jadi pelengkap, bukan angle utama. Hook, thumbnail, dan detik pertama video harus memakai bahasa insider niche atau tes visual.
+
 **Bank pilihan:** sebelum memilih hook, visual, angle, penawaran, CTA, thumbnail, dan struktur video, baca `references/playbook-berduit.md` dan pilih dari bank di sana terlebih dahulu (boleh dikembangkan, jangan diulang dalam satu batch). Tulis kode bank di baris VARIABEL, misal `Hook=A6 | Visual=B6 | Angle=C3 | Offer=D3 | CTA=E2 | Thumb=F2 | Struktur=G1`.
 
 Variabel utama (prioritas uji berurutan):
