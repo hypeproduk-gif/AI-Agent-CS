@@ -539,7 +539,7 @@ Ronde 1 adalah uji hook: pakai Teks A vs Teks B di thumbnail dengan visual yang 
 
 ---
 
-# 5 Produk Berikutnya (kompetisi tinggi)
+# Produk Berikutnya (kompetisi tinggi)
 
 Strategi untuk produk dengan kompetisi tinggi: brand dan affiliate lain sudah membanjiri iklan "1+1", "cuma 99K", dan diskon. Jadi di sini **jangan ikut perang harga**. Bedakan diri dengan tes, edukasi insider, dan cara pakai yang jarang dibahas, karena di situ belum ramai. Harga dan klaim bahan perlu dicek ulang di listing sebelum tayang.
 
@@ -1061,7 +1061,7 @@ META ADS: Primary: "Dari banyak skincare impor di rak, serum brand lokal ini yan
 
 ---
 
-## Catatan untuk 5 produk ini
+## Catatan untuk produk kompetisi tinggi
 - Harapan konversinya lebih rendah daripada 5 produk teratas karena kompetisinya tinggi. Uji sebagai pembanding.
 - Yang paling berpeluang menembus keramaian: SKIN1004 (trik kulkas), Skintific (perih kena air), Avoskin (decision helper).
 - Jangan menyebut diskon/1+1 kecuali sedang aktif di listing.
