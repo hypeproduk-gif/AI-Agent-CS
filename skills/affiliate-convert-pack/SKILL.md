@@ -264,6 +264,35 @@ Wajib untuk setiap ide video. Thumbnail menentukan klik dari grid/feed, jadi dib
 - **Prompt thumbnail** (EN): `vertical 9:16 video cover, [talent ref ATAU hands only / product only], [momen paling menarik], [ekspresi], exact product from reference with accurate label, bold Indonesian text "[TEKS]" in [posisi], [font: heavy rounded sans, white with soft black shadow / brand color], high contrast, sharp product, shot on iPhone look, not AI-looking`.
 - Buat 2 varian teks thumbnail untuk A/B test.
 
+## 7B. SISTEM UJI VARIABEL (setiap ide = hipotesis yang bisa diuji)
+
+Setiap ide wajib diberi **label variabel** agar hasil iklan bisa dibaca: variabel mana yang membuat klik naik.
+
+Variabel utama (prioritas uji berurutan):
+1. **Hook** — tipe: penasaran / masalah / manfaat / kejutan / pengalaman pribadi / perbandingan / standar.
+2. **Visual utama** — produk dipakai / fitur unik close-up / situasi relatable / hasil realistis / tangan saja / model UGC / adegan masalah.
+3. **Angle** — hemat uang / mempermudah kerja / atasi masalah / praktis harian / barang unik jarang diketahui / upgrade kualitas / hemat waktu.
+4. **Penawaran** — penekanan harga / penghematan / jumlah isi-paket / nilai produk / voucher Shopee / gratis ongkir. Hanya sebut promo yang benar-benar ada di listing Shopee; jika tidak diketahui, pakai "nilai produk" dan jangan karang diskon.
+5. **CTA** — "Cek detail produknya" / "Lihat pilihan warnanya" / "Cek harga di Shopee" / "Lihat cara pakainya" / "Cek ulasannya". Jelas, tidak memaksa.
+
+Variabel pendukung: jenis produk, audiens/persona, format (foto tunggal / carousel / video UGC), teks thumbnail (ada/tanpa), durasi (7–10 dtk / 15–20 dtk / 30 dtk), komposisi (close-up / pemakaian / situasi nyata), penempatan (TikTok, Shopee Video, Reels, Meta Feed/Stories), level harga, bukti manfaat (demonstrasi / detail fitur / ulasan autentik).
+
+Aturan:
+- Dalam satu batch ide untuk 1 produk, **variasikan hook, visual, dan angle** sebanyak mungkin; variabel lain boleh sama.
+- Contoh hook massal ("Ibu-ibu…", "Lho ada barang begini!") boleh dipakai bila persona memang ibu rumah tangga/produk murah, tapi tetap ubah frame-nya ke sinyal berduit (kualitas, hemat waktu, hasil spesifik) sesuai bagian Audiens Berduit.
+- Di bawah setiap ide, tulis 1 baris:
+  `VARIABEL: Hook=… | Visual=… | Angle=… | Offer=… | CTA=… | Format=… | Durasi=… | Persona=… | Bukti=…`
+
+Di MODE DEEP, tambahkan **Rencana Uji Bertahap** (ubah 1 variabel per ronde, sisanya dikunci):
+- Ronde 1 — Hook: 3–5 hook berbeda pada visual & angle yang sama.
+- Ronde 2 — Visual: hook pemenang × 3 visual (demo / tangan / model UGC / adegan masalah).
+- Ronde 3 — Angle: 3 angle dengan hook & visual pemenang.
+- Ronde 4 — Offer & CTA: 2–3 kombinasi.
+- Ronde 5 — Format, durasi, thumbnail, penempatan.
+Metrik penentu: hook rate (3 dtk view), CTR klik link, lalu pesanan & komisi per konten. Pemenang tiap ronde jadi "kunci" ronde berikutnya. Tulis ide mana (nomor) yang dipakai di tiap ronde.
+
+---
+
 ---
 
 ## 8. COPY
@@ -292,6 +321,7 @@ Pembeli target: … | Keraguan utama: … | Mekanisme: …
 ### Ide [1–3] — [Nama format] × [Tipe hook]
 Angle: (1 kalimat)
 Kenapa convert: (1 kalimat)
+VARIABEL: Hook=… | Visual=… | Angle=… | Offer=… | CTA=… | Format=… | Durasi=… | Persona=… | Bukti=…
 IMAGE PROMPT:
 …
 VIDEO PROMPT (Google Flow):
@@ -332,4 +362,5 @@ Di BATCH, Meta Ads boleh 1 primary text + 2 headline per ide agar ringkas.
 - Tidak ada klaim yang melanggar kebijakan Meta/TikTok?
 - Komposisi ide dengan/tanpa model sesuai aturan 6B?
 - Setiap ide video punya thumbnail + 2 varian teks?
+- Setiap ide punya baris VARIABEL dan hook/visual/angle bervariasi?
 - Tidak ada tabel.
