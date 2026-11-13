@@ -284,3 +284,6 @@ META ADS: Primary A/B/C · Headline 1/2/3 · Description · CTA · LP headline
 
 ## 9. CEK SEBELUM KIRIM
 Konsep tiap ide benar-benar beda? Ada teks overlay hook? Ada 3 ukuran (1:1, 4:5, 9:16) dan teks aman di semua ukuran? Sinyal berduit jelas di visual & copy? Ada offer/risk reversal? Patuh kebijakan Meta (tanpa atribut personal, klaim medis, harga palsu)? Komposisi ide dengan/tanpa model sesuai aturan? Setiap ide video punya thumbnail + 2 varian teks? Setiap ide punya baris VARIABEL dan hook/visual/angle bervariasi? Tanpa tabel.
+
+## OUTPUT FILE
+Kirim hasil sebagai **file .md** (bukan teks panjang di chat), lalu beri ringkasan 3–5 baris di chat. Di dalam file **jangan pakai penomoran**: tanpa nomor di judul produk/ide, tanpa "Ide 1/2/3", tanpa list bernomor (pakai bullet "-"), dan prompt video menulis "Start frame: image prompt di atas" (bukan "image #N"). Pisahkan antar ide dengan garis `---`.

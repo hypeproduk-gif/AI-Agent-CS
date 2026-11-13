@@ -373,3 +373,6 @@ Di BATCH, Meta Ads boleh 1 primary text + 2 headline per ide agar ringkas.
 - Setiap ide video punya thumbnail + 2 varian teks?
 - Setiap ide punya baris VARIABEL dan hook/visual/angle bervariasi?
 - Tidak ada tabel.
+
+## OUTPUT FILE
+Kirim hasil sebagai **file .md** (bukan teks panjang di chat), lalu beri ringkasan 3–5 baris di chat. Di dalam file **jangan pakai penomoran**: tanpa nomor di judul produk/ide, tanpa "Ide 1/2/3", tanpa list bernomor (pakai bullet "-"), dan prompt video menulis "Start frame: image prompt di atas" (bukan "image #N"). Pisahkan antar ide dengan garis `---`.
