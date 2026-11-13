@@ -531,6 +531,6 @@ META ADS: Primary: "Banyak yang pakai sunscreen terlalu sedikit. Takaran yang di
 
 ## Prioritas uji (hook rate & CTR)
 - d'Alba (tes makeup jam 2 siang): celah paling besar.
-- Beauty of Joseon (tes flash) (tes flash): tesnya paling mudah dipahami.
-- COSRX (tekstur molor) (tekstur molor): memuaskan ditonton, tanpa model.
+- Beauty of Joseon (tes flash): tesnya paling mudah dipahami.
+- COSRX (tekstur molor): memuaskan ditonton, tanpa model.
 Ronde 1 adalah uji hook: pakai Teks A vs Teks B di thumbnail dengan visual yang sama.
