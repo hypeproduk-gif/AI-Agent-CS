@@ -198,6 +198,8 @@ Wajib untuk setiap ide video. Thumbnail menentukan klik dari grid/feed, jadi dib
 
 Setiap ide wajib diberi **label variabel** agar hasil iklan bisa dibaca: variabel mana yang membuat klik naik.
 
+**Bank pilihan:** sebelum memilih hook, visual, angle, penawaran, CTA, thumbnail, dan struktur video, baca `references/playbook-berduit.md` dan pilih dari bank di sana terlebih dahulu (boleh dikembangkan, jangan diulang dalam satu batch). Tulis kode bank di baris VARIABEL, misal `Hook=A6 | Visual=B6 | Angle=C3 | Offer=D3 | CTA=E2 | Thumb=F2 | Struktur=G1`.
+
 Variabel utama (prioritas uji berurutan):
 1. **Hook** — tipe: penasaran / masalah / manfaat / kejutan / pengalaman pribadi / perbandingan / standar.
 2. **Visual utama** — produk dipakai / fitur unik close-up / situasi relatable / hasil realistis / tangan saja / model UGC / adegan masalah.
