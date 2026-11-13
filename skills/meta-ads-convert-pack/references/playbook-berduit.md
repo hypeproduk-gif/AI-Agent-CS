@@ -89,18 +89,18 @@ Aturan: hanya sebut promo yang ada di listing/landing page.
 
 ---
 
-## F. BANK THUMBNAIL (2–5 kata, kontras tinggi)
+## F. BANK THUMBNAIL (headline kepo 4–9 kata + subline opsional)
 
 Teks:
-- "Akhirnya nemu yang worth it"
-- "8 jam, masih rapi"
-- "Botol ketiga aku"
-- "Bukan buat semua orang"
-- "Dupe [kategori] mahal?"
-- "Rp1.200 per hari"
-- "Berhenti salah beli"
-- "Yang ini beda"
-- "Dites 30 hari"
+- "Aku tes 5 sunscreen pakai flash, cuma 1 yang lolos" / sub: "hasilnya bikin kaget"
+- "Kenapa makeup aku nggak crack lagi jam 2 siang" / sub: "ternyata bukan foundation-nya"
+- "Botol ketiga. Ini alasan aku nggak ganti" 
+- "Kesalahan yang bikin skincare mahal kamu nggak ngefek"
+- "14 hari tanpa filter, beda di pori-pori" / sub: "lihat sampai akhir"
+- "Ini yang aku pakai sebelum meeting penting"
+- "Satu-satunya yang lolos dari rak aku"
+- "Rp1.200 per hari, hasilnya kayak treatment"
+- "Jangan beli [kategori] sebelum lihat tes ini"
 
 Visual thumbnail yang cocok:
 - Wajah tenang-yakin + produk dekat lensa (bukan muka kaget heboh).

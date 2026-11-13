@@ -258,10 +258,15 @@ Motion type:
 
 ### Thumbnail / cover video (9:16)
 Wajib untuk setiap ide video. Thumbnail menentukan klik dari grid/feed, jadi dibuat terpisah dari start frame video.
-- **Teks thumbnail**: 2–5 kata, bahasa Indonesia, memancing rasa penasaran + sinyal buying intent (hasil spesifik, perbandingan, angka, "akhirnya nemu"). Hindari "murah", "diskon".
+- **Teks thumbnail boleh agak panjang dan harus bikin kepo** (gambar sudah menunjukkan produk/model, jadi teks bertugas memancing rasa penasaran). Struktur 2 tingkat:
+  - **Headline** (4–9 kata, besar): pertanyaan/pernyataan yang membuka loop, bahasa insider niche. Contoh: "Vitamin C kamu udah oranye? Jangan dipakai dulu", "Aku tes foto flash pakai 5 sunscreen, cuma 1 yang lolos", "Kenapa makeup aku nggak crack lagi di jam 2 siang".
+  - **Subline** (opsional, 3–8 kata, lebih kecil): menahan jawaban/menambah bukti. Contoh: "hasil hari ke-14, tanpa filter", "yang terakhir bikin kaget".
+  - Total maks ±16 kata, maks 3 baris di headline. Jangan bocorkan jawabannya di thumbnail.
+  - Pola kepo yang dipakai: pertanyaan langsung, "cuma 1 yang lolos", angka + hasil, kesalahan yang mungkin kamu lakukan, "ternyata…", rahasia/insider, ranking/perbandingan.
+  - Hindari "murah", "diskon", clickbait yang tidak dibayar oleh isi video.
 - **Visual**: satu fokus yang terbaca di ukuran kecil — wajah ekspresif (kaget/yakin) + produk dekat kamera, ATAU momen bukti paling dramatis (hasil uji, before–after, tekstur) untuk ide tanpa model.
-- Komposisi: produk dan wajah/aksi di 2/3 atas-tengah; teks besar di area tengah (aman dari UI TikTok/Shopee Video (hindari 20% bawah & sisi kanan)); kontras tinggi; maks 1 elemen teks + 1 aksen (panah/lingkaran/stiker kecil).
-- **Prompt thumbnail** (EN): `vertical 9:16 video cover, [talent ref ATAU hands only / product only], [momen paling menarik], [ekspresi], exact product from reference with accurate label, bold Indonesian text "[TEKS]" in [posisi], [font: heavy rounded sans, white with soft black shadow / brand color], high contrast, sharp product, shot on iPhone look, not AI-looking`.
+- Komposisi: produk dan wajah/aksi di 2/3 atas-tengah; teks besar di area tengah (aman dari UI TikTok/Shopee Video (hindari 20% bawah & sisi kanan)); kontras tinggi; teks maks 2 tingkat (headline + subline) + 1 aksen (panah/lingkaran/stiker kecil); teks di blok kontras (bar/kotak semi-transparan) agar terbaca, tidak menutupi wajah & produk.
+- **Prompt thumbnail** (EN): `vertical 9:16 video cover, [talent ref ATAU hands only / product only], [momen paling menarik], [ekspresi], exact product from reference with accurate label, bold Indonesian headline "[HEADLINE]" and smaller subline "[SUBLINE]" in [posisi], on a semi-transparent contrast box, [font: heavy rounded sans, white with soft black shadow / brand color], high contrast, sharp product, shot on iPhone look, not AI-looking`.
 - Buat 2 varian teks thumbnail untuk A/B test.
 
 ## 7B. SISTEM UJI VARIABEL (setiap ide = hipotesis yang bisa diuji)
@@ -331,7 +336,7 @@ IMAGE PROMPT:
 VIDEO PROMPT (Google Flow):
 …
 THUMBNAIL:
-Teks A / Teks B: …
+Teks A (headline + subline) / Teks B: …
 Prompt: …
 NASKAH:
 …
