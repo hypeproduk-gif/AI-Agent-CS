@@ -47,7 +47,7 @@ def chapter(no, kicker, title, lead, body):
 cover = f'''<section class="cover">
  <div class="cv-night"><div class="cv-moon">{ic("moon","bigic")}</div><div class="cv-lbl">21.00 · masak sekali</div></div>
  <div class="cv-day"><div class="cv-sun">{ic("sun","bigic")}</div><div class="cv-lbl r">06.00 · bekal tinggal pindah</div></div>
- <div class="cv-bento"><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="b4"></i></div>
+ <img class="cv-ph p2" src="img/menu-01.jpg"><img class="cv-ph p3" src="img/menu-20.jpg"><img class="cv-ph p1" src="img/menu-16.jpg">
  <div class="cv-text">
    <div class="cv-kick">Sistem dapur 4 minggu untuk Mami yang kerja</div>
    <div class="cv-title">Dapur<br><em>Autopilot</em></div>
@@ -72,16 +72,16 @@ lisensi = f'''<section class="page-license">
 
 mulai = f'''<section class="chapter start">
 <div class="kicker">Mulai di Sini</div><h1 class="big">Terima kasih sudah bergabung, Mami 🙏</h1>
-<p class="lead">Ikuti 5 langkah ini supaya Dapur Autopilot langsung jalan minggu ini.</p>
+<p class="lead">Ebook ini sudah atas nama Mami. Ikuti 5 langkah ini supaya Dapur Autopilot langsung jalan minggu ini.</p>
 <div class="steps5">
- <div><span>1</span><div><b>Simpan file ini di HP</b><p>Buka file → ⋮ → Simpan / Tambahkan ke Google Drive, supaya bisa dibuka kapan saja, termasuk saat belanja.</p></div></div>
+ <div><span>1</span><div><b>Simpan PDF dari email ke HP</b><p>Buka email dari kami → ketuk lampiran PDF → Download / Simpan ke Drive. Tidak ketemu? Cek folder <i>Promosi</i> atau <i>Spam</i>, cari “Dapur Autopilot”.</p></div></div>
  <div><span>2</span><div><b>Malam ini: baca Bab 1 (±10 menit)</b><p>Kerjakan “Aksi Hari Ini”: masak seperti biasa, tambah 1 porsi, sisihkan untuk bekal besok.</p></div></div>
  <div><span>3</span><div><b>Cetak 2 halaman</b><p>Kalender Minggu 1 (Bonus 1) + Daftar Belanja Minggu 1 (Bonus 2). Tempel kalender di pintu kulkas.</p></div></div>
  <div><span>4</span><div><b>Hari Minggu: belanja + Prep 60 menit</b><p>Belanja sesuai daftar, lalu ikuti urutan kerja di Bab 4.</p></div></div>
  <div><span>5</span><div><b>Senin: mulai Menu #01</b><p>Ayam Kecap Mentega malam ini → Onigiri Ayam Kecap untuk bekal besok.</p></div></div>
 </div>
 {tip("<b>Tips:</b> kosongkan rak paling atas kulkas dan beri label “BEKAL BESOK” (label siap gunting ada di Bonus 3). Rak ini kunci supaya pagi Mami cuma 15 menit.")}
-<div class="warn">⚠️ File ini berisi watermark nama pembeli dan khusus untuk keluarga Mami. Membagikan file melanggar UU No. 28 Tahun 2014 tentang Hak Cipta.</div>
+<div class="warn"><b>Lisensi pribadi.</b> Nama pembeli tercetak di setiap halaman file ini. Ebook ini khusus untuk keluarga Mami; membagikan atau menjual ulang file melanggar UU No. 28 Tahun 2014 tentang Hak Cipta. Terima kasih sudah menghargai karya kami 💛</div>
 </section>'''
 
 pembuka = f'''<section class="chapter">

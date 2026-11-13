@@ -190,3 +190,9 @@ td.c{text-align:center;width:12mm}
 .steps5 span{font-family:"Fraunces";font-size:24pt;font-weight:800;font-style:italic;color:var(--gold);line-height:1;width:9mm;flex:none}
 .steps5 b{color:var(--teal);font-size:10.5pt}.steps5 p{margin:1mm 0 0;font-size:9pt;color:#4E5A57}
 .warn{background:#FCE9E2;border-left:3px solid var(--tomato);border-radius:3mm;padding:3mm 4mm;font-size:8.6pt;margin-top:4mm}
+
+.cv-ph{position:absolute;object-fit:cover;border-radius:7mm;border:2mm solid #fff;box-shadow:0 16px 36px rgba(30,43,42,.28)}
+.cv-ph.p1{width:96mm;height:72mm;left:57mm;top:58mm;z-index:3}
+.cv-ph.p2{width:58mm;height:44mm;left:14mm;top:52mm;transform:rotate(-7deg);z-index:2}
+.cv-ph.p3{width:58mm;height:44mm;right:14mm;top:90mm;transform:rotate(6deg);z-index:2}
+.cv-text{top:150mm!important}
