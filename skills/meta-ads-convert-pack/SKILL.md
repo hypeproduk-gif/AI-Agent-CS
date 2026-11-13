@@ -186,6 +186,14 @@ Avoid: morphing product, warped label, extra fingers, music, auto subtitles
 ```
 (Teks overlay & subtitle ditambahkan saat editing — tuliskan terpisah.)
 
+### Thumbnail / cover video (9:16 + 1:1/4:5 crop)
+Wajib untuk setiap ide video. Thumbnail menentukan klik dari grid/feed, jadi dibuat terpisah dari start frame video.
+- **Teks thumbnail**: 2–5 kata, bahasa Indonesia, memancing rasa penasaran + sinyal buying intent (hasil spesifik, perbandingan, angka, "akhirnya nemu"). Hindari "murah", "diskon".
+- **Visual**: satu fokus yang terbaca di ukuran kecil — wajah ekspresif (kaget/yakin) + produk dekat kamera, ATAU momen bukti paling dramatis (hasil uji, before–after, tekstur) untuk ide tanpa model.
+- Komposisi: produk dan wajah/aksi di 2/3 atas-tengah; teks besar di area tengah (aman dari UI Reels/Stories (kosongkan 14% atas & 20% bawah)); kontras tinggi; maks 1 elemen teks + 1 aksen (panah/lingkaran/stiker kecil).
+- **Prompt thumbnail** (EN): `vertical 9:16 (also center-safe for 4:5 and 1:1 crop) video cover, [talent ref ATAU hands only / product only], [momen paling menarik], [ekspresi], exact product from reference with accurate label, bold Indonesian text "[TEKS]" in [posisi], [font: heavy rounded sans, white with soft black shadow / brand color], high contrast, sharp product, shot on iPhone look, not AI-looking`.
+- Buat 2 varian teks thumbnail untuk A/B test.
+
 ---
 
 ## 7. COPY META ADS
@@ -216,6 +224,7 @@ IMAGE PROMPT 1:1 (master): …
 EXPAND TO 4:5: …
 EXPAND TO 9:16: …
 (VIDEO) KLIP & PROMPT FLOW: …
+THUMBNAIL: Teks A / Teks B · Prompt …
 NASKAH + TEKS OVERLAY: …
 META ADS: Primary A/B/C · Headline 1/2/3 · Description · CTA · LP headline
 ```
@@ -235,4 +244,4 @@ META ADS: Primary A/B/C · Headline 1/2/3 · Description · CTA · LP headline
 ```
 
 ## 9. CEK SEBELUM KIRIM
-Konsep tiap ide benar-benar beda? Ada teks overlay hook? Ada 3 ukuran (1:1, 4:5, 9:16) dan teks aman di semua ukuran? Sinyal berduit jelas di visual & copy? Ada offer/risk reversal? Patuh kebijakan Meta (tanpa atribut personal, klaim medis, harga palsu)? Komposisi ide dengan/tanpa model sesuai aturan? Tanpa tabel.
+Konsep tiap ide benar-benar beda? Ada teks overlay hook? Ada 3 ukuran (1:1, 4:5, 9:16) dan teks aman di semua ukuran? Sinyal berduit jelas di visual & copy? Ada offer/risk reversal? Patuh kebijakan Meta (tanpa atribut personal, klaim medis, harga palsu)? Komposisi ide dengan/tanpa model sesuai aturan? Setiap ide video punya thumbnail + 2 varian teks? Tanpa tabel.
