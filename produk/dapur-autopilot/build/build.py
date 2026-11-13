@@ -72,7 +72,7 @@ lisensi = f'''<section class="page-license">
 
 mulai = f'''<section class="chapter start">
 <div class="kicker">Mulai di Sini</div><h1 class="big">Terima kasih sudah bergabung, Mami 🙏</h1>
-<p class="lead">Ebook ini sudah atas nama Mami. Ikuti 5 langkah ini supaya Dapur Autopilot langsung jalan minggu ini.</p>
+<p class="lead">Ebook ini terdaftar atas nama Mami. Ikuti 5 langkah ini supaya Dapur Autopilot langsung jalan minggu ini.</p>
 <div class="steps5">
  <div><span>1</span><div><b>Simpan PDF dari email ke HP</b><p>Buka email dari kami → ketuk lampiran PDF → Download / Simpan ke Drive. Tidak ketemu? Cek folder <i>Promosi</i> atau <i>Spam</i>, cari “Dapur Autopilot”.</p></div></div>
  <div><span>2</span><div><b>Malam ini: baca Bab 1 (±10 menit)</b><p>Kerjakan “Aksi Hari Ini”: masak seperti biasa, tambah 1 porsi, sisihkan untuk bekal besok.</p></div></div>
@@ -81,7 +81,7 @@ mulai = f'''<section class="chapter start">
  <div><span>5</span><div><b>Senin: mulai Menu #01</b><p>Ayam Kecap Mentega malam ini → Onigiri Ayam Kecap untuk bekal besok.</p></div></div>
 </div>
 {tip("<b>Tips:</b> kosongkan rak paling atas kulkas dan beri label “BEKAL BESOK” (label siap gunting ada di Bonus 3). Rak ini kunci supaya pagi Mami cuma 15 menit.")}
-<div class="warn"><b>Lisensi pribadi.</b> Nama pembeli tercetak di setiap halaman file ini. Ebook ini khusus untuk keluarga Mami; membagikan atau menjual ulang file melanggar UU No. 28 Tahun 2014 tentang Hak Cipta. Terima kasih sudah menghargai karya kami 💛</div>
+<div class="warn"><b>Lisensi pribadi.</b> File ini diberi watermark identitas pembeli. Ebook ini khusus untuk keluarga Mami; membagikan atau menjual ulang file melanggar UU No. 28 Tahun 2014 tentang Hak Cipta. Terima kasih sudah menghargai karya kami 💛</div>
 </section>'''
 
 pembuka = f'''<section class="chapter">
