@@ -83,6 +83,7 @@ function homeDrill() {
   <li>Isi <b>tanggal ujian</b> di atas. Aplikasi menghitung target paket per hari.</li>
   <li><b>📦 Paket Drill</b>: 40 paket per mapel, 25 soal per paket, langsung dibahas. Paket 1–14 dasar, 15–28 menengah, 29–40 HOTS.</li>
   <li><b>⏱️ Simulasi Ujian</b>: 40 soal, ${SIM_MENIT} menit, tanpa pembahasan sampai selesai (seperti ujian sungguhan).</li>
+  <li><b>📚 Drill per Topik</b>: pilih topik yang keluar di UAS/PAS sekolah, 15 soal per latihan.</li>
   <li><b>🎯 Drill Topik Lemah</b>: 10 soal otomatis dari topik dengan nilai terendah.</li>
   <li>Jawaban tersimpan otomatis. Akhir pekan, cek <b>📊 Rapor</b>.</li></ol></details>
   <div class="card"><b>📦 Paket Drill</b> <span class="mut">(warna = nilai)</span>
@@ -91,12 +92,12 @@ function homeDrill() {
   <div class="mut" style="margin-top:8px">1–14 Dasar · 15–28 Menengah · 29–40 HOTS · <span style="color:#16a34a">hijau ≥80</span> · <span style="color:#a16207">kuning 60–79</span> · <span style="color:#dc2626">merah &lt;60</span> · <span style="color:#1d4ed8">biru = belum selesai</span></div></div>
   <div class="card"><b>⏱️ Simulasi Ujian</b> <span class="mut">(40 soal · ${SIM_MENIT} menit)</span>
   <div class="grid" style="grid-template-columns:repeat(5,1fr);margin-top:10px">${["MIX", ...Object.keys(MAPEL)].map((m) => `<button class="btn sec" data-sm="${m}" style="padding:8px 2px;font-size:12px">${m === "MIX" ? "🧩 Campuran" : MAPEL[m][1] + " " + MAPEL[m][0].split(" ").pop()}</button>`).join("")}</div></div>
-  ${menuBawah(`<button class="btn" id="lemah" style="grid-column:1/-1">🎯 Drill Topik Lemah (10 soal)</button>`)}`;
+  ${menuBawah(`<button class="btn" id="topik" style="grid-column:1/-1">📚 Drill per Topik (pilih sesuai materi UAS/PAS)</button><button class="btn" id="lemah" style="grid-column:1/-1">🎯 Drill Topik Lemah (10 soal)</button>`)}`;
   $("#sv").onclick = () => { ST.ujian = $("#tgl").value || null; save(); home(); };
   app.querySelectorAll("[data-tab]").forEach((b) => (b.onclick = () => { tabM = b.dataset.tab; home(); }));
   app.querySelectorAll("[data-p]").forEach((b) => (b.onclick = () => { const k = +b.dataset.p; kuis(soalPaket(tabM, k), { key: `P-${tabM}-${k}`, title: `${MAPEL[tabM][1]} ${MAPEL[tabM][0]} · Paket ${k} · ${["", "Dasar", "Menengah", "HOTS"][paketLevel(k)]}` }); }));
   app.querySelectorAll("[data-sm]").forEach((b) => (b.onclick = () => pilihSim(b.dataset.sm)));
-  $("#lemah").onclick = drillLemah;
+  $("#lemah").onclick = drillLemah; $("#topik").onclick = () => pilihTopik(tabM);
   pasangMenu();
 }
 function pilihSim(m) {
@@ -132,6 +133,18 @@ function reviewUjian(soal, h, judul, ulang) {
   app.innerHTML = `<div class="card" style="text-align:center"><div class="mut">${judul}</div><div class="big">${h.nilai}</div><p>${benar} dari ${soal.length} benar · ${h.menit || "-"} menit</p>${lemah.length ? `<p class="mut">Perlu dilatih: ${lemah.map(([k]) => k).join(", ")}</p>` : ""}<button class="btn sec" id="ul">🔄 Ulangi simulasi ini</button></div>
   <div class="card"><b>Pembahasan</b>${soal.map((q, i) => { const j = h.pil[i], ok = j === q.jawab; return `<div class="qi"><span class="lvl l${q.level}">${i + 1}. ${q.topik}</span><div class="q">${q.q}</div>${q.img ? `<div class="img">${q.img}</div>` : ""}${q.opsi.map((o, k) => `<div class="opt ${k === q.jawab ? "ok" : k === j ? "no" : ""}"><b>${"ABCD"[k]}.</b> ${o}</div>`).join("")}<div class="bahas"><b>${j == null ? "⚪ Tidak dijawab." : ok ? "✅ Benar!" : "❌ Belum tepat."}</b> ${q.bahas}</div></div>`; }).join("")}</div>`;
   $("#ul").onclick = () => { if (confirm("Ulangi simulasi? Nilai lama akan diganti.")) ulang(); }; scrollTo(0, 0);
+}
+function pilihTopik(m) {
+  $("#homeBtn").hidden = false; const tp = [...new Set(BANK[m].map((q) => q.topik))];
+  const skor = (t) => { const ls = [...Object.values(ST.hasil), ...Object.values(ST.sim)].flatMap((h) => (h.log || []).filter((l) => l.mapel === m && l.topik === t)); return ls.length ? Math.round((ls.filter((l) => l.ok).length / ls.length) * 100) + "%" : "–"; };
+  app.innerHTML = `<div class="card"><h2>📚 Drill per Topik</h2><p class="mut">Pilih topik yang sedang dipelajari di sekolah atau yang keluar di UAS/PAS. Tiap klik memberi 15 soal acak dari topik itu, campuran dasar sampai HOTS.</p>
+  <div class="grid" style="grid-template-columns:repeat(4,1fr);margin:10px 0">${Object.entries(MAPEL).map(([k, [n, ic]]) => `<button class="btn ${k === m ? "" : "sec"}" data-tm="${k}" style="padding:8px 4px;font-size:13px">${ic} ${n.split(" ").pop()}</button>`).join("")}</div>
+  ${tp.map((t) => `<button class="opt" data-t="${esc(t)}"><b>${esc(t)}</b> <span class="mut">· ${BANK[m].filter((q) => q.topik === t).length} soal · nilai ${skor(t)}</span></button>`).join("")}</div>`;
+  app.querySelectorAll("[data-tm]").forEach((b) => (b.onclick = () => pilihTopik(b.dataset.tm)));
+  app.querySelectorAll("[data-t]").forEach((b) => (b.onclick = () => { const t = b.dataset.t; const sudah = new Set(Object.values(ST.hasil).flatMap((h) => (h.log || []).filter((l) => l.ok).map((l) => l.id)));
+    const pool = BANK[m].filter((q) => q.topik === t), belum = pool.filter((q) => !sudah.has(q.id)); const soal = rngPick(belum.length >= 15 ? belum : pool, 15, Date.now() % 100000).sort((a, b) => a.level - b.level);
+    kuis(soal, { key: null, title: `📚 ${MAPEL[m][0]} · ${t}` }); }));
+  scrollTo(0, 0);
 }
 function drillLemah() {
   const tp = {}; for (const h of [...Object.values(ST.hasil), ...Object.values(ST.draft), ...Object.values(ST.sim)]) for (const l of h.log || []) { const k = l.mapel + "|" + l.topik; tp[k] = tp[k] || [0, 0]; tp[k][1]++; if (l.ok) tp[k][0]++; }
