@@ -50,6 +50,12 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .scene .prod .brt{margin:0;font-size:14.5px}
 .scene .prod .cp{border:0;background:none;color:var(--accent);font-weight:600;font-size:12px;letter-spacing:0;text-transform:none;padding:0}
 @media (max-width:480px){.scene{grid-template-columns:1fr}.scene .t{grid-row:auto}}
+.custom{display:flex;flex-direction:column;gap:4px;margin-top:12px;background:var(--soft);border-radius:10px;padding:14px}
+.custom label{font-size:13px;font-weight:600;margin-top:8px}
+.custom input{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%}
+.custom input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.hint{margin:0;font-size:13px;color:var(--muted)}
+.opt.mine b{color:var(--accent)}
 details{border:1px solid var(--line);border-radius:10px;padding:10px 14px}
 summary{cursor:pointer;font-weight:600}
 .start{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
@@ -68,7 +74,14 @@ summary{cursor:pointer;font-weight:600}
 <div class="chips" id="cats" role="group" aria-label="Jenis barang"></div>
 <div class="opts" id="pats"></div></section>
 
-<section class="step"><h2><span>2</span>Pilih contoh video</h2><div class="opts" id="scripts"></div></section>
+<section class="step"><h2><span>2</span>Pilih contoh video</h2><div class="opts" id="scripts"></div>
+<div class="custom" id="custom" hidden>
+<p class="hint">Isi singkat saja, pakai bahasa sehari-hari. Contoh video langsung jadi di bawah.</p>
+<label for="f-b">Nama barang</label><input id="f-b" placeholder="contoh: pemanggang roti">
+<label for="f-m">Masalah yang sering dialami tanpa barang ini</label><input id="f-m" placeholder="contoh: roti gosong sebelah">
+<label for="f-k">Kelebihan utama barang ini</label><input id="f-k" placeholder="contoh: matang rata cuma 2 menit">
+<label for="f-h">Harga (opsional)</label><input id="f-h" inputmode="numeric" placeholder="contoh: 120000">
+</div></section>
 
 <section class="step"><h2><span>3</span>Mau bikin pakai apa?</h2>
 <div class="seg" role="group" aria-label="Cara bikin video"><button type="button" id="m-broll" data-m="broll">Rekam sendiri pakai HP</button><button type="button" id="m-ai" data-m="ai">Pakai AI, tanpa rekam</button></div></section>
@@ -86,16 +99,79 @@ function save(){try{localStorage.setItem("gen-dapur",JSON.stringify(S))}catch(e)
 function toast(t){const el=$("toast");el.textContent=t;el.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>el.hidden=true,1600)}
 function copy(text){const ok=()=>toast("Tersalin");if(navigator.clipboard){navigator.clipboard.writeText(text).then(ok,()=>fallback(text))}else fallback(text)}
 function fallback(text){const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("Tersalin")}catch(e){toast("Salin manual: teks sudah dipilih")}ta.remove()}
+
+const TPL={
+"01":[["0–3","Siapa yang sering ngalamin ini: {m}?","SERING {M}? 😩","Dari dekat: tunjukkan masalahnya ({m}).","Close-up of a frustrated home cook in an Indonesian kitchen experiencing this problem: {m}"],
+["3–7","Aku dulu juga gitu. Capek, buang waktu.","CAPEK BANGET 😮‍💨","Tangan berhenti dan menyerah dengan cara lama.","A tired hand stops and gives up on doing a kitchen task the old way"],
+["7–14","Sekarang aku pakai {b}. {k}.","{K} ✅","Dari dekat: {b} dipakai sampai hasilnya terlihat.","Hands using a {b} on a clean kitchen counter, the task finished quickly and easily"],
+["14–18","Lihat hasilnya. Jauh lebih gampang kan?","BEDA BANGET","Hasil akhir yang rapi atau enak ditunjukkan ke HP.","Close-up of the neat final result after using the {b}"],
+["18–21","Link {b}-nya di keranjang kuning ya.","CEK KERANJANG 👇","{b} di meja bersih, tangan menunjuk ke bawah.","A {b} standing on a clean kitchen counter, a hand points down"]],
+"02":[["0–3","(tanpa ngomong, biarkan suaranya terdengar)","{K} 🤯","Gerakan lambat: hasil paling menggiurkan dari {b}, dekatkan HP.","Slow motion close-up of the most appetizing result made with a {b}"],
+["3–7","Ini cuma pakai {b}.","CUMA PAKAI INI","{b} dibuka atau diangkat, hasil terlihat.","A {b} opened to reveal the result inside, steam or shine visible"],
+["7–13","Caranya gampang banget: siapkan, masukin, tunggu.","GAMPANG BANGET","Potongan cepat: cara pakai {b} dari awal sampai selesai.","Quick sequence of hands preparing ingredients and using a {b} step by step"],
+["13–17","Hasilnya: {k}.","{K} ✅","Bukti kecil yang terlihat (tes tisu, dipotong, dibalik).","Close-up proof shot showing the quality of the result from the {b}"],
+["17–20","Mau hasil kayak gini? Cek keranjang kuning.","KERANJANG KUNING 👇","Hasil di depan, {b} di belakang agak buram.","Finished result in foreground, a {b} softly blurred behind it on a kitchen counter"]],
+"03":[["0–3","Cara biasa vs {b}. Siapa yang menang?","CARA BIASA vs ALAT ⏱️","Layar dibagi dua: kiri cara lama, kanan {b}. HP ditaruh di penyangga.","Split screen, left side hands doing a kitchen task the old manual way, right side hands with a {b}, both ready"],
+["3–10","Tiga… dua… eh, yang kanan udah selesai.","KANAN: SELESAI DULUAN","Dua sisi mulai bersamaan, kanan selesai lebih dulu.","Split screen, the right side with the {b} finishes much faster than the manual left side"],
+["10–14","Yang kiri? Masih belum beres, udah capek.","KIRI: BELUM BERES 😩","Dari dekat: sisi kiri masih kesulitan.","Close-up of hands still struggling with the manual method"],
+["14–17","Pakai {b}: {k}.","{K} ✅","Hasil dari {b} ditunjukkan dari dekat.","Close-up of the clean result made with the {b}"],
+["17–20","Kamu tim yang mana? Link di keranjang kuning.","TIM KANAN? 👇","{b} diangkat ke HP.","A hand holds up a {b} toward the camera"]],
+"04":[["0–3","POV: ibu yang tiap hari ngalamin {m}.","POV: AKU BANGET 🙋‍♀️","Suasana dapur rumah yang sibuk, tunjukkan masalahnya.","Busy Indonesian home kitchen, a mother's hands dealing with this problem: {m}"],
+["3–8","Akhirnya aku coba beli {b}.","AKHIRNYA BELI INI","{b} dikeluarkan dari kardus.","Hands unbox a {b} on a kitchen counter"],
+["8–15","Ternyata {k}. Nyesel nggak dari dulu.","{K} ✅","Potongan cepat: {b} dipakai sehari-hari.","Quick everyday sequence of using a {b} at home"],
+["15–19","Sekarang punya waktu lebih buat anak-anak.","WAKTU LEBIH BUAT KELUARGA","Meja makan dengan hasil masakan, tangan anak mengambil.","A family dining table with home-cooked food, a child's hand reaches for it"],
+["19–22","{hargaCTA}","CEK KERANJANG 👇","{b} dari dekat di dapur.","Close-up of a {b} in a warm home kitchen"]],
+"05":[["0–3","Jangan beli {b} sebelum nonton ini.","JANGAN BELI DULU ✋","Barang lama yang jelek atau rusak dari dekat.","Close-up of an old worn-out low quality kitchen item"],
+["3–9","Banyak yang salah pilih, ujungnya {m}.","SALAH PILIH = {M}","Tunjukkan masalah dari barang yang salah pilih.","Close-up showing this kitchen problem: {m}"],
+["9–16","Pilih yang {k}. Yang aku pakai ini salah satunya.","PILIH YANG {K}","Tangan menunjukkan kelebihan {b} satu per satu.","Hands demonstrate the quality features of a {b} one by one"],
+["16–21","Lihat, hasilnya beda kan?","HASILNYA BEDA ✅","{b} dipakai, hasil bagus terlihat.","A {b} in use with a clearly good result"],
+["21–24","Link {b} yang aku pakai di keranjang kuning.","CEK KERANJANG 👇","{b} diangkat ke HP.","A hand holds up a {b} toward the camera"]],
+"06":[["0–3","{b} murah, mahal, sama yang ini. Bedanya apa?","MURAH vs MAHAL vs INI","Tiga barang sejenis berjejer, harga ditutup kertas.","Three similar kitchen items lined up on a counter, each with a folded paper card in front"],
+["3–8","Yang murah: {m}.","MURAH: {M}","Barang murah dipakai, hasilnya jelek.","A cheap kitchen item gives a poor result: {m}"],
+["8–13","Yang mahal: bagus, tapi harganya bikin mikir.","MAHAL: BAGUS, TAPI…","Barang mahal dipakai, hasil bagus.","A premium kitchen item gives a perfect result"],
+["13–18","Yang ini {hargaPendek}: {k}.","INI: {K} ✅","{b} dipakai, hasil hampir sama dengan yang mahal.","A mid-range {b} gives a result almost as good as the premium one"],
+["18–22","Menurut aku ini paling worth it. Keranjang kuning ya.","PALING WORTH IT 👇","Tiga hasil disandingkan.","Three results side by side, the first poor, the other two good"]],
+"07":[["0–3","(tanpa ngomong)","DAPUR AKU SEBELUMNYA… 😵","Dapur atau lemari berantakan.","Messy cluttered kitchen cabinet or counter"],
+["3–14","(tanpa ngomong, dekatkan HP supaya suaranya terdengar)","(tanpa tulisan)","Potongan cepat: beres-beres pakai {b}.","Satisfying sequence of hands organizing a kitchen using a {b}, clicking and placing items neatly"],
+["14–19","(tanpa ngomong)","SESUDAHNYA ✨","Hasil rapi, HP mundur pelan-pelan.","Perfectly organized kitchen with a {b}, camera slowly pulls back"],
+["19–23","{k}.","{K} ✅","Bukti kecil kelebihan {b}.","Close-up proof of the {b} quality"],
+["23–25","Link di keranjang kuning.","CEK KERANJANG 👇","Tangan menunjuk ke bawah.","A hand points down toward the bottom of the frame in a tidy kitchen"]],
+"08":[["0–3","Udah lama pakai {b}. Aku jujur ya, ada kurangnya.","REVIEW JUJUR","{b} di meja, tangan menunjuk.","A {b} on a kitchen counter, a hand points at it"],
+["3–9","Kurangnya: (sebutkan 1–2 kekurangan kecil yang jujur).","❌ (KEKURANGAN)","Tunjukkan kekurangan kecilnya.","Close-up showing a small honest drawback of a {b}"],
+["9–18","Tapi kelebihannya: {k}. Buat aku itu yang paling penting.","✅ {K}","Potongan cepat: {b} dipakai sehari-hari.","Quick everyday sequence of using a {b} with good results"],
+["18–24","Nggak ada lagi cerita {m}.","NGGAK LAGI {M}","Hasil akhir yang bagus.","Close-up of a satisfying final result from the {b}"],
+["24–28","Kalau kamu butuh yang begini, worth it. Keranjang kuning.","COCOK BUAT KAMU? 👇","{b} di dapur yang rapi.","A {b} in a tidy bright kitchen"]],
+"09":[["0–3","Kamu pasti cuma pakai {b} buat satu hal. Padahal…","BANYAK YANG NGGAK TAHU","{b} di tangan, diputar ke HP.","A hand holds a {b} and turns it toward the camera"],
+["3–8","Satu: (kegunaan utama).","CARA #1","Kegunaan pertama.","Using a {b} for its main purpose"],
+["8–13","Dua: (kegunaan lain yang jarang orang tahu).","CARA #2","Kegunaan kedua.","Using a {b} for a surprising second purpose"],
+["13–18","Tiga: (kegunaan lain lagi).","CARA #3","Kegunaan ketiga.","Using a {b} for a clever third purpose"],
+["18–22","{k}. Simpan videonya, link di keranjang.","SIMPAN + CEK KERANJANG 👇","{b} dibersihkan atau disimpan.","A {b} being rinsed and put away neatly"]],
+"10":[["0–3","{b} ini {hargaPendek}, tapi bikin hemat. Aku hitungin.","BIKIN HEMAT? 🧮","Kalkulator di HP, {b} di belakang.","A smartphone calculator in the foreground, a {b} blurred in the background"],
+["3–10","Dulu aku sering ngalamin {m}. Uangnya lumayan kebuang.","UANG KEBUANG 🗑️","Tunjukkan pemborosan dari cara lama.","Showing wasted food or money from this problem: {m}"],
+["10–17","Sekarang pakai {b}: {k}.","{K} ✅","{b} dipakai.","A {b} in use in a home kitchen"],
+["17–23","Kalau dihitung sebulan, hematnya bisa nutup harganya. (Sebutkan hitunganmu sendiri, pakai angka yang wajar.)","BALIK MODAL","Tangan mengetik di kalkulator.","Hand typing numbers into a smartphone calculator on a kitchen counter"],
+["23–27","Bulan berikutnya, itu untung. Link di keranjang kuning.","SISANYA UNTUNG 💰 👇","Dapur rapi dengan {b}.","A tidy kitchen with a {b} on the counter"]]
+};
+function rupiah(v){const n=parseInt(String(v).replace(/\D/g,""),10);return n?("Rp"+n.toLocaleString("id-ID")):""}
+function customScript(P){
+ const v=id=>($(id).value||"").trim();
+ const b=v("f-b")||"barang ini", m=v("f-m")||"repot di dapur", k=v("f-k")||"jauh lebih praktis", hp=rupiah(v("f-h"));
+ const fill=s=>s.replace(/\{b\}/g,b).replace(/\{m\}/g,m).replace(/\{k\}/g,k).replace(/\{M\}/g,m.toUpperCase()).replace(/\{K\}/g,k.toUpperCase())
+  .replace(/\{hargaCTA\}/g,hp?`Harganya cuma ${hp}. Cek keranjang kuning.`:"Cek keranjang kuning ya.").replace(/\{hargaPendek\}/g,hp?`harganya ${hp}`:"harganya terjangkau");
+ const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+ return {produk:b,durasi:"±20 detik",mine:true,scenes:TPL[P.id].map(r=>({t:r[0],vo:cap(fill(r[1])),ov:fill(r[2]),br:fill(r[3]),ai:fill(r[4])}))};
+}
 function render(){
  $("start").innerHTML=D.start.map(r=>`<tr><td>${esc(r[0])}</td><td><b>${esc(r[1])}</b><br>${esc(r[2])}</td></tr>`).join("");
  $("cats").innerHTML=CATS.map((c,i)=>`<button type="button" class="chip" data-cat="${i}" aria-pressed="${i===S.cat}">${esc(c[0])}</button>`).join("");
  const allow=CATS[S.cat][1], list=D.patterns.filter(p=>!allow||allow.includes(p.id));
  if(!list.find(p=>p.id===S.p)){S.p=list[0].id;S.s=0}
  $("pats").innerHTML=list.map(p=>`<button type="button" class="opt" data-p="${p.id}" aria-pressed="${p.id===S.p}"><span class="n">Gaya ${p.id}</span><b>${esc(p.name)}</b><small>${esc(p.sub)}. Cocok untuk: ${esc(p.cocok)}</small></button>`).join("");
- const P=pat(); if(S.s>=P.scripts.length)S.s=0;
- $("scripts").innerHTML=P.scripts.map((s,i)=>`<button type="button" class="opt" data-s="${i}" aria-pressed="${i===S.s}"><span class="n">Contoh ${i+1}</span><b>${esc(s.produk)}</b><small>${esc(s.durasi)} · ${s.scenes.length} bagian</small></button>`).join("");
+ const P=pat(); if(S.s>=P.scripts.length||S.s<-1)S.s=0;
+ $("scripts").innerHTML=P.scripts.map((s,i)=>`<button type="button" class="opt" data-s="${i}" aria-pressed="${i===S.s}"><span class="n">Contoh ${i+1}</span><b>${esc(s.produk)}</b><small>${esc(s.durasi)} · ${s.scenes.length} bagian</small></button>`).join("")+`<button type="button" class="opt mine" data-s="-1" aria-pressed="${S.s===-1}"><span class="n">Barang lain</span><b>Barangku tidak ada di daftar</b><small>Isi nama dan kelebihannya, contoh video langsung jadi</small></button>`;
+ $("custom").hidden=S.s!==-1;
  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===S.m));
- const sc=P.scripts[S.s], ai=S.m==="ai";
+ const sc=S.s===-1?customScript(P):P.scripts[S.s], ai=S.m==="ai";
  const scenes=sc.scenes.map((x,i)=>{const prod=ai?x.ai+D.suffix:x.br;
   return `<div class="scene"><div class="t">Bagian ${i+1}<br>detik ${esc(x.t)}</div><div class="vo"><span class="k">Ucapkan</span>${esc(x.vo)}</div><div class="ov">${esc(x.ov)}</div>
   <div class="prod"><div class="lbl"><span>${ai?"Perintah untuk AI":"Yang direkam"}</span>${ai?`<button type="button" class="cp" data-copy="${esc(prod)}">Salin</button>`:""}</div>${ai?`<code>${esc(prod)}</code>`:`<p class="brt">${esc(prod)}</p>`}</div></div>`}).join("");
@@ -103,7 +179,7 @@ function render(){
  const tips=ai?"Tempel perintah AI satu per satu di Google Flow. Satu perintah jadi satu potongan video pendek. Upload juga foto barang aslinya supaya bentuknya sama. Lalu gabungkan semua potongan di CapCut, rekam suaramu, dan tambahkan tulisan di layar.":"Rekam pakai HP posisi berdiri (tegak), dekat jendela biar terang. Nggak perlu tampil wajah, cukup tangan. Dekatkan HP ke barang supaya suaranya terdengar. Setelah semua bagian direkam, gabungkan di CapCut, rekam suaramu, lalu tambahkan tulisan di layar.";
  $("result").innerHTML=`<div class="rhead"><div><h3>${esc(sc.produk)}</h3><p>Gaya ${P.id} · ${esc(P.name)} · ${esc(sc.durasi)}</p></div>
  <div class="actions"><button type="button" class="btn" data-copy="${esc(allVO)}">Salin semua ucapan</button>${ai?`<button type="button" class="btn primary" data-copy="${esc(allPr)}">Salin semua perintah AI</button>`:""}</div></div>
- <div class="why"><b>Cara bikinnya</b>${esc(tips)}</div>
+ ${sc.mine?`<div class="why"><b>Catatan</b>Bagian dalam kurung (...) silakan diganti dengan kata-katamu sendiri. Kalau pakai AI, upload foto barang aslinya di Flow supaya bentuknya sama.</div>`:""}<div class="why"><b>Cara bikinnya</b>${esc(tips)}</div>
  ${scenes}
  <div class="why"><b>Mau ganti kalimat pembuka? Pilih salah satu</b><ol class="hooks">${P.hooks.map(h=>`<li>${esc(h)}</li>`).join("")}</ol></div>
  <div class="why"><b>Kenapa video ini bikin orang beli</b>${esc(P.psi)}</div>`;
@@ -112,9 +188,11 @@ function render(){
 document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
  if(b.dataset.copy!==undefined)return copy(b.dataset.copy);
  if(b.dataset.cat!==undefined){S.cat=+b.dataset.cat}
- else if(b.dataset.p){S.p=b.dataset.p;S.s=0}
+ else if(b.dataset.p){S.p=b.dataset.p;if(S.s!==-1)S.s=0}
  else if(b.dataset.s!==undefined){S.s=+b.dataset.s}
  else if(b.dataset.m){S.m=b.dataset.m}
  else return; render();});
+["f-b","f-m","f-k","f-h"].forEach(id=>{const el=$(id);try{el.value=localStorage.getItem("gen-dapur-"+id)||""}catch(e){}
+ el.addEventListener("input",()=>{try{localStorage.setItem("gen-dapur-"+id,el.value)}catch(e){}render()})});
 render();
 </script>
