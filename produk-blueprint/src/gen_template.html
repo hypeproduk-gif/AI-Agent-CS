@@ -42,10 +42,12 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .scene .t{font:13px var(--mono);color:var(--accent);font-variant-numeric:tabular-nums;grid-row:span 3}
 .scene .vo{font-size:16px;min-width:0}
 .scene .ov{font-weight:700;font-size:13px;letter-spacing:.02em;min-width:0}
-.scene .ov::before{content:"Overlay  ";font-weight:600;color:var(--muted);font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+.scene .vo .k{display:block;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.scene .ov::before{content:"Tulisan di layar:  ";font-weight:600;color:var(--muted);font-size:11px;letter-spacing:.07em;text-transform:uppercase}
 .scene .prod{background:var(--soft);border-radius:8px;padding:10px 12px;margin-top:6px;min-width:0}
 .scene .prod .lbl{display:flex;justify-content:space-between;gap:8px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:4px}
 .scene .prod code{font:12.5px/1.55 var(--mono);white-space:pre-wrap;word-break:break-word;display:block}
+.scene .prod .brt{margin:0;font-size:14.5px}
 .scene .prod .cp{border:0;background:none;color:var(--accent);font-weight:600;font-size:12px;letter-spacing:0;text-transform:none;padding:0}
 @media (max-width:480px){.scene{grid-template-columns:1fr}.scene .t{grid-row:auto}}
 details{border:1px solid var(--line);border-radius:10px;padding:10px 14px}
@@ -58,18 +60,18 @@ summary{cursor:pointer;font-weight:600}
 @keyframes in{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
 </style>
 <main>
-<header><h1>Generator Konten Dapur</h1><p class="lede">Pilih jenis produk, pola, dan naskah. Naskah lengkap per scene langsung muncul, siap direkam atau dibuat dengan AI.</p></header>
+<header><h1>Generator Konten Dapur</h1><p class="lede">Pilih barangnya, pilih gaya videonya. Contoh lengkap langsung muncul: apa yang diucapkan, tulisan di layar, dan apa yang direkam.</p></header>
 
-<details><summary>Baru mulai? Ikuti jadwal 7 hari pertama</summary><table class="start" id="start"></table></details>
+<details><summary>Baru mulai? Ikuti panduan 7 hari pertama</summary><table class="start" id="start"></table></details>
 
-<section class="step"><h2><span>1</span>Pilih pola video</h2>
-<div class="chips" id="cats" role="group" aria-label="Jenis produk"></div>
+<section class="step"><h2><span>1</span>Pilih gaya video</h2>
+<div class="chips" id="cats" role="group" aria-label="Jenis barang"></div>
 <div class="opts" id="pats"></div></section>
 
-<section class="step"><h2><span>2</span>Pilih naskah</h2><div class="opts" id="scripts"></div></section>
+<section class="step"><h2><span>2</span>Pilih contoh video</h2><div class="opts" id="scripts"></div></section>
 
-<section class="step"><h2><span>3</span>Pilih cara produksi</h2>
-<div class="seg" role="group" aria-label="Cara produksi"><button type="button" id="m-broll" data-m="broll">Rekam B-roll sendiri</button><button type="button" id="m-ai" data-m="ai">Full video AI</button></div></section>
+<section class="step"><h2><span>3</span>Mau bikin pakai apa?</h2>
+<div class="seg" role="group" aria-label="Cara bikin video"><button type="button" id="m-broll" data-m="broll">Rekam sendiri pakai HP</button><button type="button" id="m-ai" data-m="ai">Pakai AI, tanpa rekam</button></div></section>
 
 <section class="result" id="result" aria-live="polite"></section>
 </main>
@@ -89,22 +91,22 @@ function render(){
  $("cats").innerHTML=CATS.map((c,i)=>`<button type="button" class="chip" data-cat="${i}" aria-pressed="${i===S.cat}">${esc(c[0])}</button>`).join("");
  const allow=CATS[S.cat][1], list=D.patterns.filter(p=>!allow||allow.includes(p.id));
  if(!list.find(p=>p.id===S.p)){S.p=list[0].id;S.s=0}
- $("pats").innerHTML=list.map(p=>`<button type="button" class="opt" data-p="${p.id}" aria-pressed="${p.id===S.p}"><span class="n">Pola ${p.id}</span><b>${esc(p.name)}</b><small>${esc(p.cocok)}</small></button>`).join("");
+ $("pats").innerHTML=list.map(p=>`<button type="button" class="opt" data-p="${p.id}" aria-pressed="${p.id===S.p}"><span class="n">Gaya ${p.id}</span><b>${esc(p.name)}</b><small>${esc(p.sub)}. Cocok untuk: ${esc(p.cocok)}</small></button>`).join("");
  const P=pat(); if(S.s>=P.scripts.length)S.s=0;
- $("scripts").innerHTML=P.scripts.map((s,i)=>`<button type="button" class="opt" data-s="${i}" aria-pressed="${i===S.s}"><span class="n">Naskah ${P.id}.${i+1}</span><b>${esc(s.produk)}</b><small>${esc(s.durasi)} · ${s.scenes.length} scene</small></button>`).join("");
+ $("scripts").innerHTML=P.scripts.map((s,i)=>`<button type="button" class="opt" data-s="${i}" aria-pressed="${i===S.s}"><span class="n">Contoh ${i+1}</span><b>${esc(s.produk)}</b><small>${esc(s.durasi)} · ${s.scenes.length} bagian</small></button>`).join("");
  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===S.m));
  const sc=P.scripts[S.s], ai=S.m==="ai";
  const scenes=sc.scenes.map((x,i)=>{const prod=ai?x.ai+D.suffix:x.br;
-  return `<div class="scene"><div class="t">Scene ${i+1}<br>${esc(x.t)} dtk</div><div class="vo">${esc(x.vo)}</div><div class="ov">${esc(x.ov)}</div>
-  <div class="prod"><div class="lbl"><span>${ai?"Prompt video AI":"Shot yang direkam"}</span>${ai?`<button type="button" class="cp" data-copy="${esc(prod)}">Salin prompt</button>`:""}</div><code>${esc(prod)}</code></div></div>`}).join("");
- const allVO=sc.scenes.map(x=>x.vo).join("\n"), allPr=sc.scenes.map((x,i)=>`Scene ${i+1}: ${x.ai+D.suffix}`).join("\n\n");
- const tips=ai?"Satu prompt = satu clip (maks. 8 detik). Upload foto produk asli sebagai referensi di Flow agar bentuknya tidak berubah. Gabungkan clip, VO, dan overlay di CapCut.":"Rekam pakai HP 9:16, cahaya dari jendela samping, cukup tangan. Rekam suara produk dari dekat. VO direkam setelah video dipotong, overlay ditambahkan di CapCut.";
- $("result").innerHTML=`<div class="rhead"><div><h3>${esc(sc.produk)}</h3><p>Pola ${P.id} · ${esc(P.name)} · ${esc(sc.durasi)}</p></div>
- <div class="actions"><button type="button" class="btn" data-copy="${esc(allVO)}">Salin semua VO</button>${ai?`<button type="button" class="btn primary" data-copy="${esc(allPr)}">Salin semua prompt</button>`:""}</div></div>
- <div class="why"><b>Cara produksi</b>${esc(tips)}</div>
+  return `<div class="scene"><div class="t">Bagian ${i+1}<br>detik ${esc(x.t)}</div><div class="vo"><span class="k">Ucapkan</span>${esc(x.vo)}</div><div class="ov">${esc(x.ov)}</div>
+  <div class="prod"><div class="lbl"><span>${ai?"Perintah untuk AI":"Yang direkam"}</span>${ai?`<button type="button" class="cp" data-copy="${esc(prod)}">Salin</button>`:""}</div>${ai?`<code>${esc(prod)}</code>`:`<p class="brt">${esc(prod)}</p>`}</div></div>`}).join("");
+ const allVO=sc.scenes.map(x=>x.vo).join("\n"), allPr=sc.scenes.map((x,i)=>`Bagian ${i+1}: ${x.ai+D.suffix}`).join("\n\n");
+ const tips=ai?"Tempel perintah AI satu per satu di Google Flow. Satu perintah jadi satu potongan video pendek. Upload juga foto barang aslinya supaya bentuknya sama. Lalu gabungkan semua potongan di CapCut, rekam suaramu, dan tambahkan tulisan di layar.":"Rekam pakai HP posisi berdiri (tegak), dekat jendela biar terang. Nggak perlu tampil wajah, cukup tangan. Dekatkan HP ke barang supaya suaranya terdengar. Setelah semua bagian direkam, gabungkan di CapCut, rekam suaramu, lalu tambahkan tulisan di layar.";
+ $("result").innerHTML=`<div class="rhead"><div><h3>${esc(sc.produk)}</h3><p>Gaya ${P.id} · ${esc(P.name)} · ${esc(sc.durasi)}</p></div>
+ <div class="actions"><button type="button" class="btn" data-copy="${esc(allVO)}">Salin semua ucapan</button>${ai?`<button type="button" class="btn primary" data-copy="${esc(allPr)}">Salin semua perintah AI</button>`:""}</div></div>
+ <div class="why"><b>Cara bikinnya</b>${esc(tips)}</div>
  ${scenes}
- <div class="why"><b>Ganti hook kalau mau variasi</b><ol class="hooks">${P.hooks.map(h=>`<li>${esc(h)}</li>`).join("")}</ol></div>
- <div class="why"><b>Kenapa pola ini convert</b>${esc(P.psi)}</div>`;
+ <div class="why"><b>Mau ganti kalimat pembuka? Pilih salah satu</b><ol class="hooks">${P.hooks.map(h=>`<li>${esc(h)}</li>`).join("")}</ol></div>
+ <div class="why"><b>Kenapa video ini bikin orang beli</b>${esc(P.psi)}</div>`;
  save();
 }
 document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
