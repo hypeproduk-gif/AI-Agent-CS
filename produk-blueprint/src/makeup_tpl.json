@@ -1,0 +1,302 @@
+{
+ "01": [
+  [
+   "0–3",
+   "Siapa yang sering ngalamin ini: {m}?",
+   "{M}? 😩",
+   "Dari dekat: tunjukkan masalahnya ({m}). Bagian kulit saja.",
+   "Close-up showing this beauty problem: {m}, only skin visible"
+  ],
+  [
+   "3–8",
+   "Aku dulu juga gitu, sampai nggak pede.",
+   "SAMPAI NGGAK PEDE",
+   "Tangan menutup bagian kulit yang bermasalah.",
+   "A hand covering a patch of skin, hesitant gesture"
+  ],
+  [
+   "8–15",
+   "Sekarang aku rutin pakai {b}. Buat aku, {k}.",
+   "{K} ✅",
+   "Dari dekat: {b} dioles di kulit.",
+   "Close-up of hands applying {b} onto skin"
+  ],
+  [
+   "15–20",
+   "Hasil tiap orang beda ya. Link {b} di keranjang kuning.",
+   "CEK KERANJANG 👇",
+   "{b} di meja rias, tangan menunjuk ke bawah.",
+   "A {b} on a clean vanity table, a hand points down"
+  ]
+ ],
+ "02": [
+  [
+   "0–3",
+   "(tanpa ngomong)",
+   "{K} ✨",
+   "Gerakan lambat: kulit yang terlihat bagus di cahaya jendela.",
+   "Slow motion close-up of smooth healthy glowing skin in window light"
+  ],
+  [
+   "3–8",
+   "Dulu aku sering ngalamin {m}.",
+   "DULU: {M}",
+   "Kulit sebelum (bisa pakai video lama).",
+   "Extreme close-up of skin with this concern: {m}"
+  ],
+  [
+   "8–15",
+   "Sekarang pakai {b}: {k}.",
+   "SEKARANG PAKAI INI ✅",
+   "{b} dipakai di kulit.",
+   "Hands applying {b} onto skin, absorbing nicely"
+  ],
+  [
+   "15–18",
+   "Cek keranjang kuning.",
+   "CEK KERANJANG 👇",
+   "{b} dari dekat.",
+   "Close-up of a {b} on a vanity table"
+  ]
+ ],
+ "03": [
+  [
+   "0–4",
+   "Dandan harian aku, cuma 5 menit.",
+   "CUMA 5 MENIT ⏱️",
+   "Produk berjejer di meja rias pagi hari.",
+   "Makeup products lined up on a vanity in morning light"
+  ],
+  [
+   "4–9",
+   "Yang paling penting: {b}.",
+   "LANGKAH UTAMA: {B}",
+   "Tangan membasuh, lalu mengambil {b}.",
+   "Hands pick up a {b} from a vanity"
+  ],
+  [
+   "9–16",
+   "Aku pilih ini karena {k}.",
+   "{K} ✅",
+   "{b} dioles pelan.",
+   "Fingers gently applying {b} onto skin"
+  ],
+  [
+   "16–20",
+   "Link {b} di keranjang kuning.",
+   "CEK KERANJANG 👇",
+   "{b} di meja rias.",
+   "A {b} on a vanity table in soft evening light"
+  ]
+ ],
+ "04": [
+  [
+   "0–4",
+   "POV: kamu yang tiap hari ngalamin {m}.",
+   "POV: AKU BANGET 🙋‍♀️",
+   "Suasana sehari-hari yang menunjukkan masalahnya.",
+   "Everyday Indonesian scene showing this skin concern: {m}"
+  ],
+  [
+   "4–9",
+   "Akhirnya aku coba {b}.",
+   "AKHIRNYA COBA INI",
+   "{b} dikeluarkan dari kemasan.",
+   "Hands unbox a {b}"
+  ],
+  [
+   "9–16",
+   "Ternyata {k}. Nyesel nggak dari dulu.",
+   "{K} ✅",
+   "{b} dipakai sehari-hari.",
+   "Everyday sequence of applying a {b}"
+  ],
+  [
+   "16–20",
+   "{hargaCTA}",
+   "CEK KERANJANG 👇",
+   "{b} di tas atau meja.",
+   "A {b} in a handbag or on a vanity"
+  ]
+ ],
+ "05": [
+  [
+   "0–4",
+   "Jangan beli {b} sebelum cek ini.",
+   "CEK DULU ✋",
+   "Beberapa produk sejenis di tangan.",
+   "Hands holding several similar makeup products"
+  ],
+  [
+   "4–10",
+   "Cek BPOM dan tanggal kedaluwarsanya. Salah pilih bisa bikin {m}.",
+   "CEK BPOM + KANDUNGAN",
+   "Jari menunjuk nomor BPOM dan daftar kandungan.",
+   "A finger points to a registration number and ingredient list on a box"
+  ],
+  [
+   "10–16",
+   "Yang aku pakai ini lolos, dan {k}.",
+   "LOLOS ✅",
+   "{b} dipakai di kulit.",
+   "Hands applying {b} onto skin"
+  ],
+  [
+   "16–20",
+   "Link-nya di keranjang kuning.",
+   "CEK KERANJANG 👇",
+   "{b} diangkat ke HP.",
+   "A hand holds up a {b} toward the camera"
+  ]
+ ],
+ "06": [
+  [
+   "0–4",
+   "{b} mahal vs yang ini. Bedanya apa?",
+   "MAHAL vs INI 🤔",
+   "Dua produk berjejer, harga ditutup kertas.",
+   "Two similar makeup products side by side, each with a folded paper card in front"
+  ],
+  [
+   "4–10",
+   "Aku tes dua-duanya di tangan.",
+   "TES DI TANGAN",
+   "Swatch dua produk di punggung tangan.",
+   "Two swatches of makeup on the back of a hand"
+  ],
+  [
+   "10–16",
+   "Yang ini {hargaPendek}, dan {k}.",
+   "HASIL MIRIP ✅",
+   "Swatch diratakan, hasilnya mirip.",
+   "Both swatches blended in, looking almost identical"
+  ],
+  [
+   "16–20",
+   "Paling worth it menurutku. Keranjang kuning.",
+   "PALING WORTH IT 👇",
+   "{b} diangkat.",
+   "A hand holds up a {b}"
+  ]
+ ],
+ "07": [
+  [
+   "0–3",
+   "(tanpa ngomong)",
+   "TEKSTURNYA… 🤤",
+   "Kemasan {b} dibuka pelan.",
+   "Slow reveal of a {b} being opened, smooth texture visible"
+  ],
+  [
+   "3–9",
+   "(tanpa ngomong, dekatkan HP)",
+   "(tanpa tulisan)",
+   "Dari dekat: {b} dipompa atau diambil, lalu dioles.",
+   "Extreme close-up of {b} texture being dispensed and spread on skin"
+  ],
+  [
+   "9–13",
+   "{k}.",
+   "{K} ✅",
+   "Kulit setelah dioles.",
+   "Skin after applying, looking smooth"
+  ],
+  [
+   "13–16",
+   "Cek keranjang kuning.",
+   "CEK KERANJANG 👇",
+   "{b} di meja.",
+   "A {b} on a vanity table"
+  ]
+ ],
+ "08": [
+  [
+   "0–4",
+   "Udah beberapa minggu pakai {b}. Aku jujur ya.",
+   "REVIEW JUJUR",
+   "{b} di meja.",
+   "A {b} on a vanity table"
+  ],
+  [
+   "4–10",
+   "Kurangnya: (sebutkan 1 kekurangan kecil yang jujur).",
+   "❌ (KEKURANGAN)",
+   "Tunjukkan kekurangan kecilnya.",
+   "Close-up showing a small honest drawback of a {b}"
+  ],
+  [
+   "10–17",
+   "Tapi kelebihannya: {k}. Nggak ada lagi cerita {m}.",
+   "✅ {K}",
+   "{b} dipakai, hasil terlihat.",
+   "Hands applying {b}, skin looks better"
+  ],
+  [
+   "17–22",
+   "Cocok buat kamu? Cek keranjang kuning.",
+   "COCOK BUAT KAMU? 👇",
+   "{b} di meja rias.",
+   "A {b} on a tidy vanity"
+  ]
+ ],
+ "09": [
+  [
+   "0–3",
+   "Kamu cuma pakai {b} buat satu hal? Sayang banget.",
+   "BANYAK YANG NGGAK TAHU",
+   "{b} di tangan.",
+   "A hand holds a {b}"
+  ],
+  [
+   "3–8",
+   "Satu: (kegunaan utama).",
+   "CARA #1",
+   "Kegunaan pertama.",
+   "Using a {b} for its main purpose"
+  ],
+  [
+   "8–13",
+   "Dua: (kegunaan lain).",
+   "CARA #2",
+   "Kegunaan kedua.",
+   "Using a {b} for a surprising second purpose"
+  ],
+  [
+   "13–20",
+   "Tiga: (kegunaan lain lagi). Simpan videonya, link di keranjang.",
+   "CARA #3 + SIMPAN 👇",
+   "Kegunaan ketiga.",
+   "Using a {b} for a clever third purpose"
+  ]
+ ],
+ "10": [
+  [
+   "0–4",
+   "{b} ini {hargaPendek}. Mahal? Aku hitungin.",
+   "MAHAL? 🧮",
+   "Kalkulator HP dan {b}.",
+   "A smartphone calculator next to a {b}"
+  ],
+  [
+   "4–10",
+   "Satu kemasan bisa dipakai berminggu-minggu. Per harinya jadi murah banget. (Sebutkan hitunganmu sendiri.)",
+   "PER HARI MURAH",
+   "Mengetik di kalkulator.",
+   "Fingers typing on a smartphone calculator"
+  ],
+  [
+   "10–16",
+   "Dan {k}.",
+   "{K} ✅",
+   "{b} dipakai.",
+   "Hands applying {b} onto skin"
+  ],
+  [
+   "16–20",
+   "Cek keranjang kuning.",
+   "CEK KERANJANG 👇",
+   "{b} di meja.",
+   "A {b} on a vanity table"
+  ]
+ ]
+}

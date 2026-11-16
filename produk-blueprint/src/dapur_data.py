@@ -155,8 +155,8 @@ dict(id="06", name="Murah vs Mahal", sub="Bandingkan 3 harga",
    ("20–25","Buat di rumah, ini udah lebih dari cukup. Cek keranjang kuning.","PALING WORTH IT 👇","Es serut dengan sirup di gelas.","A glass of shaved ice with colorful syrup next to a mid-range blender"),
   ]),
   dict(produk="Set panci stainless 5 pcs", durasi="22 detik", scenes=[
-   ("0–3","Set panci 300 ribu vs 5 juta. Kamu pilih yang mana?","300RB vs 5 JUTA","Dua set panci berjejer di meja.","Two sets of cooking pots displayed side by side on a kitchen counter"),
-   ("3–10","Tes rebus air: yang 5 juta 4 menit, yang 300 ribu 4 menit 20.","SELISIH 20 DETIK ⏱️","Dua panci di dua kompor, stopwatch, air mendidih.","Two pots of water on two stove burners side by side, both coming to a rolling boil"),
+   ("0–3","Panci 300 ribu vs 5 juta?","300RB vs 5 JUTA","Dua set panci berjejer di meja.","Two sets of cooking pots displayed side by side on a kitchen counter"),
+   ("3–10","Rebus air: 4 menit vs 4 menit 20.","SELISIH 20 DETIK ⏱️","Dua panci di dua kompor, stopwatch, air mendidih.","Two pots of water on two stove burners side by side, both coming to a rolling boil"),
    ("10–16","Tebal dasar sama-sama tiga lapis. Gagangnya sama-sama nggak panas.","SAMA-SAMA 3 LAPIS ✅","Dari dekat: dasar panci, tangan memegang gagang saat mendidih.","Dari dekat: of a thick tri-ply pot base, then a hand holding the handle while water boils"),
    ("16–22","Selisih 20 detik, beda harga 4 juta. Link di keranjang kuning.","HEMAT 4 JUTA 👇","Set panci tertata rapi.","A neat stainless steel cookware set arranged on an open kitchen shelf"),
   ]),
@@ -194,8 +194,8 @@ dict(id="08", name="Review Jujur: Minusnya Dulu", sub="Sebut kurangnya dulu biar
  hooks=["Udah 3 bulan pakai. Aku jujur ya, ada minusnya.","Jangan beli ini kalau kamu tipe orang yang…","3 bulan pakai, ini plus-minusnya.","Ini bukan endorse. Aku beli sendiri.","Yang nggak dibilang di video lain tentang alat ini."],
  scripts=[
   dict(produk="Blender portable USB", durasi="28 detik", scenes=[
-   ("0–3","Udah 3 bulan pakai blender ini. Aku jujur ya, ada minusnya.","REVIEW JUJUR 3 BULAN","Blender portable di meja, tangan menunjuk.","A portable USB blender bottle on a desk, a hand points at it"),
-   ("3–9","Minusnya: cuma muat satu gelas, dan es batu besar nggak kuat.","❌ KECIL ❌ ES BESAR","Tunjuk garis kapasitas, es besar macet.","Dari dekat: of the capacity line on a portable blender, then a large ice cube stuck on the blades"),
+   ("0–3","3 bulan pakai, jujur ada minusnya.","REVIEW JUJUR 3 BULAN","Blender portable di meja, tangan menunjuk.","A portable USB blender bottle on a desk, a hand points at it"),
+   ("3–9","Cuma muat segelas, es besar nggak kuat.","❌ KECIL ❌ ES BESAR","Tunjuk garis kapasitas, es besar macet.","Dari dekat: of the capacity line on a portable blender, then a large ice cube stuck on the blades"),
    ("9–18","Tapi buat smoothie di kantor, juara. Charge USB, cuci tinggal bilas.","✅ PORTABLE ✅ USB ✅ GAMPANG CUCI","Blend buah di meja kantor, dicolok USB, dibilas di wastafel.","Portable blender blending strawberries on an office desk, then charging via USB cable, then rinsed quickly at a sink"),
    ("18–24","Blend langsung di botolnya, nggak perlu gelas lagi.","BLEND = BOTOL MINUM","Minum langsung dari botol.","A person drinks a pink smoothie directly from a portable blender bottle, only lower face and hands visible"),
    ("24–28","Kalau butuh yang praktis, ini worth it. Keranjang kuning.","COCOK BUAT KAMU? 👇","Botol di samping laptop.","Portable blender bottle with smoothie next to a laptop on a bright office desk"),
@@ -247,8 +247,8 @@ dict(id="10", name="Hitung-hitungan Hemat", sub="Hitung berapa yang dihemat",
  hooks=["Alat ini 300 ribu, tapi balik modal 2 bulan. Aku hitungin.","Aku beli alat 300 ribu biar hemat 1,9 juta setahun.","Ibu-ibu, ini hitungan kenapa alat ini bikin hemat.","Jangan bilang mahal sebelum lihat hitungan ini.","Uang yang tiap minggu kamu buang ke tempat sampah."],
  scripts=[
   dict(produk="Vacuum sealer", durasi="28 detik", scenes=[
-   ("0–3","Alat ini 300 ribu, tapi balik modal dalam 2 bulan. Aku hitungin.","BALIK MODAL 2 BULAN? 🧮","Kalkulator HP di depan, vacuum sealer di belakang.","A smartphone calculator app in the foreground, a vacuum sealer machine blurred in the background"),
-   ("3–10","Dulu tiap minggu aku buang sayur sama daging busuk, kira-kira 40 ribu.","BUANG ±40RB/MINGGU 🗑️","Sayur layu dan daging dibuang ke tempat sampah.","Wilted vegetables and spoiled meat dropped into a kitchen trash bin"),
+   ("0–3","300 ribu, balik modal 2 bulan.","BALIK MODAL 2 BULAN? 🧮","Kalkulator HP di depan, vacuum sealer di belakang.","A smartphone calculator app in the foreground, a vacuum sealer machine blurred in the background"),
+   ("3–10","Dulu tiap minggu buang makanan busuk 40 ribu.","BUANG ±40RB/MINGGU 🗑️","Sayur layu dan daging dibuang ke tempat sampah.","Wilted vegetables and spoiled meat dropped into a kitchen trash bin"),
    ("10–17","Sekarang aku vakum. Daging tahan berminggu-minggu di freezer.","AWET BERMINGGU-MINGGU ❄️","Plastik mengempis menempel daging.","Vacuum sealer sucks air out of a bag containing raw meat, the bag shrinks tightly around it"),
    ("17–23","Sebulan hemat 160 ribu. Dua bulan lunas.","160RB/BULAN → LUNAS","Teks hitungan muncul bertahap (ditambahkan di CapCut) di atas shot kalkulator.","Hand typing numbers into a smartphone calculator on a kitchen counter"),
    ("23–28","Bulan ketiga dan seterusnya, itu untung. Link di keranjang kuning.","SISANYA UNTUNG 💰 👇","Freezer rapi berisi paket vakum.","Hands place neat vacuum-sealed packs into an organized freezer drawer"),

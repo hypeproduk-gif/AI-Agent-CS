@@ -1,0 +1,302 @@
+{
+ "01": [
+  [
+   "0–3",
+   "Siapa yang sering ngalamin ini: {m}?",
+   "{M}? 😩",
+   "Dari dekat: tunjukkan masalahnya ({m}). Leher ke bawah.",
+   "Close-up showing this clothing problem: {m}, framed from the neck down"
+  ],
+  [
+   "3–8",
+   "Aku dulu juga gitu, bikin nggak nyaman seharian.",
+   "NGGAK NYAMAN 😮‍💨",
+   "Gerakan risih membetulkan baju.",
+   "Hands fidgeting to fix an uncomfortable outfit, neck down"
+  ],
+  [
+   "8–14",
+   "Sekarang aku pakai {b}. {k}.",
+   "{K} ✅",
+   "{b} dipakai, detailnya ditunjukkan.",
+   "Wearing a {b}, hands showing its details, neck down"
+  ],
+  [
+   "14–18",
+   "Link {b}-nya di keranjang kuning ya.",
+   "CEK KERANJANG 👇",
+   "{b} di gantungan, tangan menunjuk ke bawah.",
+   "A {b} on a hanger, a hand points down"
+  ]
+ ],
+ "02": [
+  [
+   "0–3",
+   "(tanpa ngomong, berputar pelan)",
+   "{K} ✨",
+   "Gerakan lambat: berputar memakai {b} (leher ke bawah).",
+   "Slow motion twirl wearing a {b}, framed from the neck down"
+  ],
+  [
+   "3–8",
+   "Ini {b}. Bahannya enak banget.",
+   "BAHANNYA ENAK",
+   "Kain dari dekat.",
+   "Close-up of the fabric of a {b} being stroked"
+  ],
+  [
+   "8–14",
+   "Yang aku suka: {k}.",
+   "{K} ✅",
+   "Detail {b} ditunjukkan.",
+   "Hands show the details of a {b}"
+  ],
+  [
+   "14–18",
+   "Cek keranjang kuning.",
+   "CEK KERANJANG 👇",
+   "{b} di gantungan.",
+   "A {b} on a hanger"
+  ]
+ ],
+ "03": [
+  [
+   "0–4",
+   "Cara pakai {b} buat pemula, gampang banget.",
+   "GAMPANG BANGET",
+   "{b} di tangan.",
+   "A {b} held in hands"
+  ],
+  [
+   "4–10",
+   "(jelaskan langkah 1 dan 2 dengan singkat)",
+   "LANGKAH 1 & 2",
+   "Langkah memakai (dagu ke bawah).",
+   "Hands showing how to wear a {b}, step by step, chin down"
+  ],
+  [
+   "10–16",
+   "Selesai. {k}.",
+   "{K} ✅",
+   "Hasil akhir.",
+   "Finished look wearing a {b}, neck down"
+  ],
+  [
+   "16–20",
+   "Cek keranjang kuning.",
+   "CEK KERANJANG 👇",
+   "{b} terlipat.",
+   "A folded {b}"
+  ]
+ ],
+ "04": [
+  [
+   "0–4",
+   "POV: kamu yang selalu ngalamin {m}.",
+   "POV: AKU BANGET 🙋‍♀️",
+   "Suasana sehari-hari yang menunjukkan masalahnya.",
+   "Everyday Indonesian scene showing this problem: {m}, neck down"
+  ],
+  [
+   "4–10",
+   "Akhirnya aku coba {b}.",
+   "AKHIRNYA COBA INI",
+   "{b} dikeluarkan dari plastik.",
+   "Hands unpack a {b} from its plastic bag"
+  ],
+  [
+   "10–16",
+   "Ternyata {k}. Nyesel nggak dari dulu.",
+   "{K} ✅",
+   "Memakai {b} sehari-hari.",
+   "Wearing a {b} during everyday activities, neck down"
+  ],
+  [
+   "16–20",
+   "{hargaCTA}",
+   "CEK KERANJANG 👇",
+   "{b} di gantungan.",
+   "A {b} on a hanger"
+  ]
+ ],
+ "05": [
+  [
+   "0–4",
+   "Jangan beli {b} online sebelum cek ini.",
+   "CEK DULU ✋",
+   "Meteran baju di tangan.",
+   "A tailor's measuring tape in hands"
+  ],
+  [
+   "4–10",
+   "Cek ukuran dan bahannya. Salah pilih bisa bikin {m}.",
+   "CEK UKURAN + BAHAN",
+   "Kain diterawang ke jendela, meteran di baju.",
+   "Fabric held up to a window, then a measuring tape on a garment"
+  ],
+  [
+   "10–16",
+   "Yang aku beli ini lolos, dan {k}.",
+   "LOLOS ✅",
+   "{b} dipakai.",
+   "Wearing a {b}, neck down"
+  ],
+  [
+   "16–20",
+   "Cek keranjang kuning.",
+   "CEK KERANJANG 👇",
+   "{b} diangkat ke HP.",
+   "A hand holds up a {b} toward the camera"
+  ]
+ ],
+ "06": [
+  [
+   "0–4",
+   "{b} mahal vs yang ini. Bedanya apa?",
+   "MAHAL vs INI 🤔",
+   "Dua barang sejenis berdampingan.",
+   "Two similar fashion items side by side"
+  ],
+  [
+   "4–10",
+   "Jahitan dan bahannya aku bandingin.",
+   "CEK JAHITAN + BAHAN",
+   "Jahitan dua barang dari dekat.",
+   "Close-up comparison of stitching on two items"
+  ],
+  [
+   "10–16",
+   "Yang ini {hargaPendek}, dan {k}.",
+   "HAMPIR SAMA ✅",
+   "{b} dipakai.",
+   "Wearing a {b}, neck down"
+  ],
+  [
+   "16–20",
+   "Paling worth it. Keranjang kuning.",
+   "PALING WORTH IT 👇",
+   "{b} diangkat.",
+   "A hand holds up a {b}"
+  ]
+ ],
+ "07": [
+  [
+   "0–3",
+   "Tes bahan {b}, jujur.",
+   "TES BAHAN 🔍",
+   "Kain dari dekat.",
+   "Close-up of the fabric of a {b}"
+  ],
+  [
+   "3–8",
+   "(tanpa ngomong)",
+   "(tanpa tulisan)",
+   "Kain diremas, ditarik, diterawang.",
+   "Hands crumple, stretch and hold the fabric of a {b} up to the light"
+  ],
+  [
+   "8–12",
+   "{k}.",
+   "{K} ✅",
+   "Kain kembali rapi.",
+   "The fabric of a {b} smoothing back out"
+  ],
+  [
+   "12–16",
+   "Cek keranjang kuning.",
+   "CEK KERANJANG 👇",
+   "{b} terlipat.",
+   "A folded {b}"
+  ]
+ ],
+ "08": [
+  [
+   "0–4",
+   "Udah beberapa kali pakai {b}. Aku jujur ya.",
+   "REVIEW JUJUR",
+   "{b} di gantungan.",
+   "A {b} on a hanger"
+  ],
+  [
+   "4–10",
+   "Kurangnya: (sebutkan 1 kekurangan kecil yang jujur).",
+   "❌ (KEKURANGAN)",
+   "Tunjukkan kekurangan kecilnya.",
+   "Close-up showing a small honest drawback of a {b}"
+  ],
+  [
+   "10–17",
+   "Tapi kelebihannya: {k}. Nggak ada lagi cerita {m}.",
+   "✅ {K}",
+   "Memakai {b}.",
+   "Wearing a {b} comfortably, neck down"
+  ],
+  [
+   "17–22",
+   "Cocok buat kamu? Cek keranjang kuning.",
+   "COCOK BUAT KAMU? 👇",
+   "{b} terlipat rapi.",
+   "A neatly folded {b}"
+  ]
+ ],
+ "09": [
+  [
+   "0–3",
+   "Satu {b}, tiga gaya.",
+   "1 BARANG = 3 GAYA",
+   "{b} di gantungan.",
+   "A {b} on a hanger"
+  ],
+  [
+   "3–8",
+   "Satu: (gaya pertama).",
+   "GAYA #1",
+   "Gaya pertama (leher ke bawah).",
+   "First outfit styled with a {b}, neck down"
+  ],
+  [
+   "8–13",
+   "Dua: (gaya kedua).",
+   "GAYA #2",
+   "Gaya kedua.",
+   "Second outfit styled with a {b}, neck down"
+  ],
+  [
+   "13–20",
+   "Tiga: (gaya ketiga). Simpan videonya, link di keranjang.",
+   "GAYA #3 + SIMPAN 👇",
+   "Gaya ketiga.",
+   "Third outfit styled with a {b}, neck down"
+  ]
+ ],
+ "10": [
+  [
+   "0–4",
+   "{b} ini {hargaPendek}. Mahal? Aku hitungin.",
+   "MAHAL? 🧮",
+   "Kalkulator HP dan {b}.",
+   "A smartphone calculator next to a {b}"
+  ],
+  [
+   "4–10",
+   "Kalau dipakai sering, harga sekali pakainya jadi murah banget. (Sebutkan hitunganmu sendiri.)",
+   "PER PAKAI MURAH",
+   "Mengetik di kalkulator.",
+   "Fingers typing on a smartphone calculator"
+  ],
+  [
+   "10–16",
+   "Dan {k}.",
+   "{K} ✅",
+   "{b} dipakai.",
+   "Wearing a {b}, neck down"
+  ],
+  [
+   "16–20",
+   "Cek keranjang kuning.",
+   "CEK KERANJANG 👇",
+   "{b} di gantungan.",
+   "A {b} on a hanger"
+  ]
+ ]
+}
