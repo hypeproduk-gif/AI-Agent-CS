@@ -277,3 +277,14 @@ START = [
  ("Hari 6","Gaya 08: Review Jujur","Untuk barang di atas Rp200 ribu yang butuh dipercaya dulu."),
  ("Hari 7","Lihat hasilnya","Pilih 2 video yang paling banyak ditonton, lalu buat ulang dengan kalimat pembuka yang lain."),
 ]
+
+SETTING = "Indonesian home kitchen"
+PLACE = "a bright clean modern Indonesian home kitchen"
+FACELESS = "Only hands visible, no face."
+AMB = "natural kitchen sounds"
+DEF_M = "repot di dapur"
+DEF_K = "jauh lebih praktis"
+PH = ["pemanggang roti", "roti gosong sebelah", "matang rata cuma 2 menit"]
+TPL_FILE = "dapur_tpl.json"
+CATS = [["Semua", None], ["Alat potong & kupas", ["01","03","09"]], ["Alat masak listrik", ["02","04","10"]],
+        ["Panci, wajan, pisau", ["05","06"]], ["Wadah & tempat penyimpanan", ["07"]], ["Barang di atas Rp200 ribu", ["06","08","10"]]]
