@@ -111,7 +111,7 @@ function customScript(P){
  const v=id=>($(id).value||"").trim();
  const b=v("f-b")||"barang ini", m=v("f-m")||D.defM, k=v("f-k")||D.defK, hp=rupiah(v("f-h"));
  const fill=s=>s.replace(/\{b\}/g,b).replace(/\{m\}/g,m).replace(/\{k\}/g,k).replace(/\{B\}/g,b.toUpperCase()).replace(/\{B\}/g,b.toUpperCase()).replace(/\{M\}/g,m.toUpperCase()).replace(/\{K\}/g,k.toUpperCase())
-  .replace(/\{hargaCTA\}/g,hp?`Harganya cuma ${hp}. Cek keranjang kuning.`:"Cek keranjang kuning ya.").replace(/\{hargaPendek\}/g,hp?`harganya ${hp}`:"harganya terjangkau");
+  .replace(/\{hargaCTA\}/g,hp?`Harganya cuma ${hp}. Cek keranjang kuning.`:"Cek keranjang kuning ya.").replace(/\{hargaPendek\}/g,hp?`harganya ${hp}`:"harganya terjangkau").replace(/ini ini/gi,"ini");
  const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
  return {produk:b,durasi:"±20 detik",mine:true,scenes:TPL[P.id].map(r=>({t:r[0],vo:cap(fill(r[1])),ov:fill(r[2]),br:fill(r[3]),ai:fill(r[4])}))};
 }
