@@ -781,7 +781,7 @@ function homeDrill() {
   app.innerHTML = `
   <div class="card"><div class="row"><div><div class="mut">Halo, ${esc(ST.nama)} 👋</div><b style="font-size:20px">${hl == null ? "Atur tanggal ujian" : hl > 0 ? `Ujian ${hl} hari lagi` : hl === 0 ? "Ujian hari ini. Semangat!" : "Ujian sudah lewat"}</b></div><div style="text-align:right"><div class="big">🔥${ST.streak}</div><div class="mut">hari beruntun</div></div></div>
   <div class="row" style="margin-top:10px;gap:8px"><input type="date" id="tgl" value="${ST.ujian || ""}" style="flex:1"><button class="btn sec" id="sv">Simpan</button></div>
-  ${target ? `<p class="mut" style="margin-top:8px">🎯 Target: <b>${target} paket per hari</b> agar ${sisa} paket tersisa selesai sebelum ujian.</p>` : ""}
+  ${target ? (target <= 3 ? `<p class="mut" style="margin-top:8px">🎯 Target: <b>${target} paket per hari</b> agar ${sisa} paket tersisa selesai sebelum ujian.</p>` : `<p class="mut" style="margin-top:8px">🎯 Waktu ${hl} hari: fokus <b>2 drill per topik sehari</b> sesuai materi ujian + <b>1 simulasi tiap akhir pekan</b>.</p>`) : ""}
   <div class="mut" style="margin:10px 0 4px">Kesiapan (rata-rata nilai paket): <b>${kesiapan}</b> · ${paketSelesai}/${totalPaket} paket</div><div class="bar"><i style="width:${(paketSelesai / totalPaket) * 100}%"></i></div></div>
   <details class="card"><summary><b>📌 Cara pakai (1 menit)</b></summary><ol style="margin:8px 0 0;padding-left:20px">
   <li>Isi <b>tanggal ujian</b> di atas. Aplikasi menghitung target paket per hari.</li>
