@@ -44,12 +44,17 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .scene .ov{font-weight:700;font-size:13px;letter-spacing:.02em;min-width:0}
 .scene .vo .k{display:block;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
 .scene .ov::before{content:"Tulisan di layar:  ";font-weight:600;color:var(--muted);font-size:11px;letter-spacing:.07em;text-transform:uppercase}
-.scene .prod{background:var(--soft);border-radius:8px;padding:10px 12px;margin-top:6px;min-width:0}
-.scene .prod .lbl{display:flex;justify-content:space-between;gap:8px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:4px}
-.scene .prod code{font:12.5px/1.55 var(--mono);white-space:pre-wrap;word-break:break-word;display:block}
-.scene .prod .brt{margin:0;font-size:14.5px}
-.scene .prod .cp{border:0;background:none;color:var(--accent);font-weight:600;font-size:12px;letter-spacing:0;text-transform:none;padding:0}
+.prod{background:var(--soft);border-radius:8px;padding:10px 12px;margin-top:6px;min-width:0}
+.prod .lbl{display:flex;justify-content:space-between;gap:8px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:4px}
+.prod code{font:12.5px/1.55 var(--mono);white-space:pre-wrap;word-break:break-word;display:block}
+.prod .brt{margin:0;font-size:14.5px}
+.prod .cp{border:0;background:none;color:var(--accent);font-weight:600;font-size:12px;letter-spacing:0;text-transform:none;padding:0}
 @media (max-width:480px){.scene{grid-template-columns:1fr}.scene .t{grid-row:auto}}
+.aisub{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.aisub .chips{margin:0}
+.setup .prod{background:var(--card);margin-top:8px}
+.setup .prod code{color:var(--fg)}
+.warn{display:block;margin-top:4px;font-size:12.5px;color:var(--accent)}
 .custom{display:flex;flex-direction:column;gap:4px;margin-top:12px;background:var(--soft);border-radius:10px;padding:14px}
 .custom label{font-size:13px;font-weight:600;margin-top:8px}
 .custom input{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%}
@@ -84,14 +89,14 @@ summary{cursor:pointer;font-weight:600}
 </div></section>
 
 <section class="step"><h2><span>3</span>Mau bikin pakai apa?</h2>
-<div class="seg" role="group" aria-label="Cara bikin video"><button type="button" id="m-broll" data-m="broll">Rekam sendiri pakai HP</button><button type="button" id="m-ai" data-m="ai">Pakai AI, tanpa rekam</button></div></section>
+<div class="seg" role="group" aria-label="Cara bikin video"><button type="button" id="m-broll" data-m="broll">Rekam sendiri pakai HP</button><button type="button" id="m-ai" data-m="ai">Pakai AI, tanpa rekam</button></div><div id="aisub" class="aisub" hidden></div></section>
 
 <section class="result" id="result" aria-live="polite"></section>
 </main>
 <div class="toast" id="toast" hidden></div>
 <script>
 const D=__DATA__, CATS=__CATS__;
-const S={cat:0,p:D.patterns[1].id,s:0,m:"broll"};
+const S={cat:0,p:D.patterns[1].id,s:0,m:"broll",f:"no",md:0};
 try{const v=JSON.parse(localStorage.getItem("gen-dapur")||"{}");Object.assign(S,v)}catch(e){}
 const $=id=>document.getElementById(id), esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const pat=()=>D.patterns.find(p=>p.id===S.p)||D.patterns[0];
@@ -161,6 +166,39 @@ function customScript(P){
  const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
  return {produk:b,durasi:"±20 detik",mine:true,scenes:TPL[P.id].map(r=>({t:r[0],vo:cap(fill(r[1])),ov:fill(r[2]),br:fill(r[3]),ai:fill(r[4])}))};
 }
+
+const MODELS=[
+ {label:"Ibu muda berhijab",who:"woman",voice:"warm friendly Indonesian female voice",img:"Photorealistic vertical 9:16 photo of a friendly Indonesian woman in her early 30s wearing a simple pastel hijab and a casual long-sleeve home top, standing in a bright clean modern Indonesian home kitchen, soft natural window light, warm genuine smile, looking at the camera, upper body visible, natural skin texture, smartphone photo look, no text, no logos"},
+ {label:"Ibu muda tanpa hijab",who:"woman",voice:"warm friendly Indonesian female voice",img:"Photorealistic vertical 9:16 photo of a friendly Indonesian woman in her early 30s with shoulder-length straight black hair, wearing a casual plain t-shirt, standing in a bright clean modern Indonesian home kitchen, soft natural window light, warm genuine smile, looking at the camera, upper body visible, natural skin texture, smartphone photo look, no text, no logos"},
+ {label:"Ibu 40-an berhijab",who:"woman",voice:"warm motherly Indonesian female voice",img:"Photorealistic vertical 9:16 photo of a cheerful Indonesian mother in her mid 40s wearing a simple hijab and a modest home dress, standing in a cozy lived-in Indonesian home kitchen, soft natural window light, kind smile, looking at the camera, upper body visible, natural skin texture, smartphone photo look, no text, no logos"},
+ {label:"Bapak muda",who:"man",voice:"friendly casual Indonesian male voice",img:"Photorealistic vertical 9:16 photo of a friendly Indonesian man in his early 30s with short neat black hair, wearing a plain casual t-shirt, standing in a bright clean modern Indonesian home kitchen, soft natural window light, relaxed smile, looking at the camera, upper body visible, natural skin texture, smartphone photo look, no text, no logos"}];
+function holdPrompt(M,produk){return `Use image 1 (the person) and image 2 (my product photo). Show the same person from image 1 holding the product from image 2 naturally at chest height with both hands, in the same kitchen, smiling at the camera. Keep the face, hijab or hair, and clothes exactly the same as image 1. Keep the product's exact shape, color, size and details exactly as in image 2 (the product is: ${produk}). Vertical 9:16, photorealistic, natural window light, no text, no logos.`}
+function promptBox(label,text){return `<div class="prod"><div class="lbl"><span>${esc(label)}</span><button type="button" class="cp" data-copy="${esc(text)}">Salin</button></div><code>${esc(text)}</code></div>`}
+const silent=v=>/^\(tanpa ngomong/.test(v)||/^\(suara /.test(v);
+function toClips(sc){
+ const end=t=>parseInt(String(t).split("–")[1]||"0",10)||0, start=t=>parseInt(t,10)||0;
+ const total=Math.max(...sc.scenes.map(x=>end(x.t)),8), n=Math.max(2,Math.min(4,Math.ceil(total/8)));
+ const clips=Array.from({length:n},()=>({vis:[],vo:[]}));
+ sc.scenes.forEach(x=>{const c=clips[Math.min(n-1,Math.floor(start(x.t)/total*n))];c.vis.push(x.ai);if(!silent(x.vo))c.vo.push(x.vo)});
+ return clips.filter(c=>c.vis.length).map(c=>({vis:c.vis,vo:c.vo.join(" ")}));
+}
+function clipPrompt(c,i,n,face,M){
+ const shots=c.vis.map(v=>v.replace(/\.$/,"")).join("; then ");
+ const noText="No on-screen text, no subtitles, no captions, no logos.";
+ const style="Vertical 9:16, 8 seconds, photorealistic, natural window light, handheld smartphone look, Indonesian home kitchen.";
+ if(!face){
+  const audio=c.vo?`Audio: a ${M.voice.replace("Indonesian","Indonesian")} narrates off-screen in casual Indonesian: "${c.vo}" Natural kitchen sounds underneath.`:"Audio: no speech, only crisp satisfying natural kitchen sounds (ASMR).";
+  return `${style} Only hands visible, no face. Shots: ${shots}. ${audio} ${noText}`;
+ }
+ const talk=(i===0||i===n-1);
+ const p=`the same ${M.who} from the reference image (same face, same outfit)`;
+ if(talk){
+  const say=c.vo?`looks into the camera and speaks in casual Indonesian with a ${M.voice}, natural lip sync, saying: "${c.vo}"`:"smiles at the camera without speaking";
+  return `${style} Medium close-up of ${p}, standing in the kitchen with the product, ${say} While talking she naturally gestures toward the product. Steady framing, natural kitchen ambience. ${noText}`.replace(/ she /g,M.who==="man"?" he ":" she ");
+ }
+ const audio=c.vo?`Audio: ${p.replace("the same","the")} narrates off-screen in casual Indonesian with a ${M.voice}: "${c.vo}"`:"Audio: only natural kitchen sounds.";
+ return `${style} Close-up of the hands of ${p} demonstrating the product. Shots: ${shots}. ${audio} ${noText}`;
+}
 function render(){
  $("start").innerHTML=D.start.map(r=>`<tr><td>${esc(r[0])}</td><td><b>${esc(r[1])}</b><br>${esc(r[2])}</td></tr>`).join("");
  $("cats").innerHTML=CATS.map((c,i)=>`<button type="button" class="chip" data-cat="${i}" aria-pressed="${i===S.cat}">${esc(c[0])}</button>`).join("");
@@ -170,17 +208,34 @@ function render(){
  const P=pat(); if(S.s>=P.scripts.length||S.s<-1)S.s=0;
  $("scripts").innerHTML=P.scripts.map((s,i)=>`<button type="button" class="opt" data-s="${i}" aria-pressed="${i===S.s}"><span class="n">Contoh ${i+1}</span><b>${esc(s.produk)}</b><small>${esc(s.durasi)} · ${s.scenes.length} bagian</small></button>`).join("")+`<button type="button" class="opt mine" data-s="-1" aria-pressed="${S.s===-1}"><span class="n">Barang lain</span><b>Barangku tidak ada di daftar</b><small>Isi nama dan kelebihannya, contoh video langsung jadi</small></button>`;
  $("custom").hidden=S.s!==-1;
- document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===S.m));
- const sc=S.s===-1?customScript(P):P.scripts[S.s], ai=S.m==="ai";
- const scenes=sc.scenes.map((x,i)=>{const prod=ai?x.ai+D.suffix:x.br;
-  return `<div class="scene"><div class="t">Bagian ${i+1}<br>detik ${esc(x.t)}</div><div class="vo"><span class="k">Ucapkan</span>${esc(x.vo)}</div><div class="ov">${esc(x.ov)}</div>
-  <div class="prod"><div class="lbl"><span>${ai?"Perintah untuk AI":"Yang direkam"}</span>${ai?`<button type="button" class="cp" data-copy="${esc(prod)}">Salin</button>`:""}</div>${ai?`<code>${esc(prod)}</code>`:`<p class="brt">${esc(prod)}</p>`}</div></div>`}).join("");
- const allVO=sc.scenes.map(x=>x.vo).join("\n"), allPr=sc.scenes.map((x,i)=>`Bagian ${i+1}: ${x.ai+D.suffix}`).join("\n\n");
- const tips=ai?"Tempel perintah AI satu per satu di Google Flow. Satu perintah jadi satu potongan video pendek. Upload juga foto barang aslinya supaya bentuknya sama. Lalu gabungkan semua potongan di CapCut, rekam suaramu, dan tambahkan tulisan di layar.":"Rekam pakai HP posisi berdiri (tegak), dekat jendela biar terang. Nggak perlu tampil wajah, cukup tangan. Dekatkan HP ke barang supaya suaranya terdengar. Setelah semua bagian direkam, gabungkan di CapCut, rekam suaramu, lalu tambahkan tulisan di layar.";
- $("result").innerHTML=`<div class="rhead"><div><h3>${esc(sc.produk)}</h3><p>Gaya ${P.id} · ${esc(P.name)} · ${esc(sc.durasi)}</p></div>
+ document.querySelectorAll(".seg button[data-m]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===S.m));
+ const sc=S.s===-1?customScript(P):P.scripts[S.s], ai=S.m==="ai", face=S.f==="yes", M=MODELS[S.md]||MODELS[0];
+ $("aisub").hidden=!ai;
+ $("aisub").innerHTML=`<div class="seg" role="group" aria-label="Pakai wajah atau tidak"><button type="button" data-f="no" aria-pressed="${!face}">Tanpa wajah (tangan + suara)</button><button type="button" data-f="yes" aria-pressed="${face}">Pakai model (ngomong ke kamera)</button></div>`
+  +(face?`<div class="chips" role="group" aria-label="Pilih model">${MODELS.map((m,i)=>`<button type="button" class="chip" data-md="${i}" aria-pressed="${i===S.md}">${esc(m.label)}</button>`).join("")}</div>`:"");
+ let body="", allPr="", tips;
+ if(!ai){
+  body=sc.scenes.map((x,i)=>`<div class="scene"><div class="t">Bagian ${i+1}<br>detik ${esc(x.t)}</div><div class="vo"><span class="k">Ucapkan</span>${esc(x.vo)}</div><div class="ov">${esc(x.ov)}</div>
+  <div class="prod"><div class="lbl"><span>Yang direkam</span></div><p class="brt">${esc(x.br)}</p></div></div>`).join("");
+  tips="Rekam pakai HP posisi berdiri (tegak), dekat jendela biar terang. Nggak perlu tampil wajah, cukup tangan. Dekatkan HP ke barang supaya suaranya terdengar. Setelah semua bagian direkam, gabungkan di CapCut, rekam suaramu, lalu tambahkan tulisan di layar.";
+ } else {
+  const clips=toClips(sc), prompts=clips.map((c,i)=>clipPrompt(c,i,clips.length,face,M));
+  allPr=prompts.map((p,i)=>`VIDEO ${i+1}:\n${p}`).join("\n\n");
+  const setup=face?`<div class="why setup"><b>Langkah awal: buat foto model dulu (sekali saja)</b>
+   <ol class="hooks"><li>Buka Gemini (Nano Banana) atau ChatGPT, tempel perintah A untuk membuat foto model.</li>
+   <li>Upload foto model tadi + foto barang asli, lalu tempel perintah B supaya model memegang barangnya.</li>
+   <li>Di Google Flow, pilih <i>Frames to Video</i> dan pakai foto hasil langkah 2 sebagai gambar awal untuk setiap video di bawah. Dengan begitu wajah dan barang tetap sama di semua video.</li></ol>
+   ${promptBox("Perintah A: foto model",M.img)}${promptBox("Perintah B: model pegang barang",holdPrompt(M,sc.produk))}</div>`
+   :`<div class="why setup"><b>Langkah awal (disarankan)</b>Di Google Flow, upload foto barang aslimu lewat <i>Ingredients to Video</i> dan pakai di setiap video di bawah supaya bentuk barangnya sama.</div>`;
+  body=setup+clips.map((c,i)=>`<div class="scene"><div class="t">Video ${i+1}<br>8 detik</div><div class="vo"><span class="k">${face?"Yang diucapkan model":"Suara narator"}</span>${esc(c.vo||"(tanpa suara orang, hanya suara dapur)")}${c.vo.split(/\s+/).filter(Boolean).length>20?`<span class="warn">Kalimat ini agak panjang untuk 8 detik. Potong jadi maksimal 20 kata supaya tidak terburu-buru.</span>`:""}</div>
+   ${promptBox("Perintah untuk Flow / Veo",prompts[i])}</div>`).join("");
+  tips=`Tempel tiap perintah di Google Flow (model Veo), satu perintah jadi satu video 8 detik. Suara ${face?"model":"narator"} sudah ikut dibuat AI, jadi tidak perlu rekam suara. Kalau suaranya kurang pas, matikan suara video dan rekam suaramu sendiri di CapCut. Video AI sengaja dibuat tanpa tulisan karena AI sering salah menulis huruf. Kalau mau ada tulisan, tambahkan sendiri di CapCut.`;
+ }
+ const allVO=sc.scenes.map(x=>x.vo).join("\n");
+ $("result").innerHTML=`<div class="rhead"><div><h3>${esc(sc.produk)}</h3><p>Gaya ${P.id} · ${esc(P.name)} · ${ai?toClips(sc).length*8+" detik ("+toClips(sc).length+" video × 8 detik)":esc(sc.durasi)}</p></div>
  <div class="actions"><button type="button" class="btn" data-copy="${esc(allVO)}">Salin semua ucapan</button>${ai?`<button type="button" class="btn primary" data-copy="${esc(allPr)}">Salin semua perintah AI</button>`:""}</div></div>
- ${sc.mine?`<div class="why"><b>Catatan</b>Bagian dalam kurung (...) silakan diganti dengan kata-katamu sendiri. Kalau pakai AI, upload foto barang aslinya di Flow supaya bentuknya sama.</div>`:""}<div class="why"><b>Cara bikinnya</b>${esc(tips)}</div>
- ${scenes}
+ ${sc.mine?`<div class="why"><b>Catatan</b>Bagian dalam kurung (...) silakan diganti dengan kata-katamu sendiri sebelum dipakai.</div>`:""}<div class="why"><b>Cara bikinnya</b>${esc(tips)}</div>
+ ${body}
  <div class="why"><b>Mau ganti kalimat pembuka? Pilih salah satu</b><ol class="hooks">${P.hooks.map(h=>`<li>${esc(h)}</li>`).join("")}</ol></div>
  <div class="why"><b>Kenapa video ini bikin orang beli</b>${esc(P.psi)}</div>`;
  save();
@@ -191,6 +246,8 @@ document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)r
  else if(b.dataset.p){S.p=b.dataset.p;if(S.s!==-1)S.s=0}
  else if(b.dataset.s!==undefined){S.s=+b.dataset.s}
  else if(b.dataset.m){S.m=b.dataset.m}
+ else if(b.dataset.f){S.f=b.dataset.f}
+ else if(b.dataset.md!==undefined){S.md=+b.dataset.md}
  else return; render();});
 ["f-b","f-m","f-k","f-h"].forEach(id=>{const el=$(id);try{el.value=localStorage.getItem("gen-dapur-"+id)||""}catch(e){}
  el.addEventListener("input",()=>{try{localStorage.setItem("gen-dapur-"+id,el.value)}catch(e){}render()})});
