@@ -248,9 +248,35 @@ def q_next_pending(items: list):
     return next((i for i in pending if bool(i.get("reply")) != last_had_link), pending[0])
 
 
+ENV_FILE = Path(__file__).with_name(".env")
+
+
+def refresh_threads_token():
+    """Perpanjang token Threads (berlaku ~60 hari) dan simpan token baru ke .env."""
+    import requests
+    r = requests.get("https://graph.threads.net/refresh_access_token", timeout=30, params={
+        "grant_type": "th_refresh_token", "access_token": os.environ["THREADS_TOKEN"]})
+    if not r.ok:
+        print("Gagal perpanjang token Threads:", r.text[:300])
+        return
+    new = r.json()["access_token"]
+    os.environ["THREADS_TOKEN"] = new
+    if ENV_FILE.exists():
+        text = re.sub(r"^THREADS_TOKEN=.*$", f"THREADS_TOKEN={new}", ENV_FILE.read_text(), flags=re.M)
+        ENV_FILE.write_text(text)
+    print("Token Threads diperpanjang")
+
+
 def scheduler():
     done = set()
+    last_refresh = 0.0
     while True:
+        if os.getenv("THREADS_TOKEN") and time.time() - last_refresh > 7 * 86400:
+            last_refresh = time.time()
+            try:
+                refresh_threads_token()
+            except Exception:
+                traceback.print_exc()
         now = datetime.now(WIB)
         key = now.strftime("%Y-%m-%d %H:%M")
         if now.strftime("%H:%M") in slot_times() and key not in done and os.getenv("THREADS_TOKEN"):
