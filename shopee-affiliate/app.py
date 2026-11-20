@@ -231,14 +231,21 @@ def q_post(item: dict):
         image_url = f"{os.environ['PUBLIC_BASE_URL'].rstrip('/')}/{item['image']}"
     try:
         pid = ap.threads_post_with_reply(item["text"], item.get("reply", ""), image_url=image_url)
-        item.update(status="posted", post_id=pid, posted_at=datetime.now(WIB).strftime("%d/%m %H:%M"))
+        item.update(status="posted", post_id=pid, posted_ts=time.time(), posted_at=datetime.now(WIB).strftime("%d/%m %H:%M"))
     except Exception as e:
         traceback.print_exc()
         item.update(status="error", error=str(e)[:300])
 
 
 def q_next_pending(items: list):
-    return next((i for i in items if i["status"] == "pending"), None)
+    """Selang-seling: kalau postingan terakhir berlink, utamakan obrolan (tanpa link), dan sebaliknya."""
+    pending = [i for i in items if i["status"] == "pending"]
+    if not pending:
+        return None
+    posted = [i for i in items if i["status"] == "posted"]
+    last = max(posted, key=lambda i: i.get("posted_ts", 0)) if posted else None
+    last_had_link = bool(last.get("reply")) if last else False
+    return next((i for i in pending if bool(i.get("reply")) != last_had_link), pending[0])
 
 
 def scheduler():

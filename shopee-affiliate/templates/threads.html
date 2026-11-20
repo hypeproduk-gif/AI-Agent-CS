@@ -3,14 +3,14 @@
 <h1>🧵 Antrean Threads</h1>
 <div class="card">
   <p class="st">Jadwal posting otomatis (WIB): <b>{{ times|join(", ") }}</b> · {{ pending }} postingan menunggu.
-  Tiap jadwal memposting 1 dari antrean teratas, lalu membalas dengan komentar berisi link.</p>
+  Tiap jadwal memposting 1 postingan, otomatis selang-seling antara postingan jualan (🔗 ada komentar link) dan obrolan (💬 tanpa link).</p>
   {% if not ready %}<p class="st">⚠️ THREADS_TOKEN belum diisi di .env, jadi jadwal belum jalan.</p>{% endif %}
 </div>
 <form class="card" method="post" action="/threads/add" enctype="multipart/form-data" onsubmit="this.classList.add('busy')">
   <label for="bulk">Postingan dari generator <small>tempel satu atau banyak; pisahkan tiap postingan dengan baris <code>---</code>.
   Baris yang diawali <code>KOMENTAR:</code> jadi komentar pertama.</small></label>
   <textarea id="bulk" name="bulk" required placeholder="Udah 2 minggu pakai sunscreen ini tiap pagi...&#10;KOMENTAR: Ini yang aku pakai: https://s.shopee.co.id/...&#10;---&#10;Postingan kedua..."></textarea>
-  <label for="link">Link affiliate <small>dipakai kalau postingan tidak punya baris KOMENTAR</small></label>
+  <label for="link">Link affiliate <small>biasanya KOSONGKAN: postingan jualan dari generator sudah punya baris KOMENTAR. Kalau diisi, semua postingan tanpa KOMENTAR ikut diberi link.</small></label>
   <input type="url" id="link" name="link" placeholder="https://s.shopee.co.id/...">
   <label for="image">Foto <small>opsional, hanya untuk 1 postingan; butuh PUBLIC_BASE_URL https</small></label>
   <input type="file" id="image" name="image" accept="image/*">
@@ -19,7 +19,7 @@
 <h2>Daftar</h2>
 {% for i, it in items %}
 <div class="card">
-  <p class="st">#{{ i + 1 }} · {% if it.status == "pending" %}⏳ menunggu{% elif it.status == "posted" %}✅ terposting {{ it.posted_at }}{% else %}❌ {{ it.error }}{% endif %}{% if it.image %} · 🖼 foto{% endif %}</p>
+  <p class="st">#{{ i + 1 }} · {% if it.status == "pending" %}⏳ menunggu{% elif it.status == "posted" %}✅ terposting {{ it.posted_at }}{% else %}❌ {{ it.error }}{% endif %}{% if it.reply %} · 🔗 jualan{% else %} · 💬 obrolan{% endif %}{% if it.image %} · 🖼 foto{% endif %}</p>
   <div style="white-space:pre-wrap">{{ it.text }}</div>
   {% if it.reply %}<p class="st">💬 {{ it.reply }}</p>{% endif %}
   {% if it.status != "posted" %}
