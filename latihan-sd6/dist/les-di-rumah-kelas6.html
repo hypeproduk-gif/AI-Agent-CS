@@ -807,14 +807,14 @@ function homeDrill() {
   pasangMenu();
 }
 function pilihSim(m) {
-  $("#homeBtn").hidden = false; const nm = m === "MIX" ? "🧩 Campuran 4 Mapel" : MAPEL[m][1] + " " + MAPEL[m][0];
+  keluar(); const nm = m === "MIX" ? "🧩 Campuran 4 Mapel" : MAPEL[m][1] + " " + MAPEL[m][0];
   app.innerHTML = `<div class="card"><h2>⏱️ Simulasi ${nm}</h2><p class="mut">40 soal · ${SIM_MENIT} menit · pembahasan muncul setelah selesai. Kerjakan di tempat tenang, seperti ujian sungguhan.</p>
   <div class="grid" style="grid-template-columns:repeat(5,1fr)">${Array.from({ length: N_SIM }, (_, i) => { const h = ST.sim[`${m}-${i + 1}`]; return `<button class="btn ${h ? "" : "sec"}" data-n="${i + 1}" style="padding:10px 2px">${i + 1}${h ? `<br><small>${h.nilai}</small>` : ""}</button>`; }).join("")}</div></div>`;
   app.querySelectorAll("[data-n]").forEach((b) => (b.onclick = () => ujian(m, +b.dataset.n))); scrollTo(0, 0);
 }
 let timerId = null;
 function ujian(m, n) {
-  $("#homeBtn").hidden = false; clearInterval(timerId);
+  keluar(); clearInterval(timerId);
   const key = `${m}-${n}`, soal = soalSim(m, n), done = ST.sim[key];
   if (done) return reviewUjian(soal, done, `Simulasi ${m === "MIX" ? "Campuran" : MAPEL[m][0]} #${n}`, () => { delete ST.sim[key]; save(); ujian(m, n); });
   ST.simDraft = ST.simDraft || {}; const dr = ST.simDraft[key] || { pil: {}, mulai: Date.now() }; ST.simDraft[key] = dr; save();
@@ -841,7 +841,7 @@ function reviewUjian(soal, h, judul, ulang) {
   $("#ul").onclick = () => { if (confirm("Ulangi simulasi? Nilai lama akan diganti.")) ulang(); }; scrollTo(0, 0);
 }
 function pilihTopik(m) {
-  $("#homeBtn").hidden = false; const tp = [...new Set(BANK[m].map((q) => q.topik))];
+  keluar(); const tp = [...new Set(BANK[m].map((q) => q.topik))];
   const skor = (t) => { const ls = [...Object.values(ST.hasil), ...Object.values(ST.sim)].flatMap((h) => (h.log || []).filter((l) => l.mapel === m && l.topik === t)); return ls.length ? Math.round((ls.filter((l) => l.ok).length / ls.length) * 100) + "%" : "–"; };
   app.innerHTML = `<div class="card"><h2>📚 Drill per Topik</h2><p class="mut">Pilih topik yang sedang dipelajari di sekolah atau yang keluar di UAS/PAS. Tiap klik memberi ${N_TOPIK} soal acak dari topik itu, campuran dasar sampai HOTS.</p>
   <div class="grid" style="grid-template-columns:repeat(4,1fr);margin:10px 0">${Object.entries(MAPEL).map(([k, [n, ic]]) => `<button class="btn ${k === m ? "" : "sec"}" data-tm="${k}" style="padding:8px 4px;font-size:13px">${ic} ${n.split(" ").pop()}</button>`).join("")}</div>
@@ -865,7 +865,7 @@ function drillLemah() {
 // ---------- Kuis (paket/harian/review): jawaban tersimpan otomatis ----------
 function bumpStreak() { if (ST.last !== today()) { const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10); ST.streak = ST.last === y ? ST.streak + 1 : 1; ST.last = today(); } }
 function kuis(soal, o, ulang) {
-  $("#homeBtn").hidden = false; clearInterval(timerId);
+  keluar(); clearInterval(timerId);
   const key = o.key, done = key && !ulang ? ST.hasil[key] : null;
   const src = done && done.pil ? done : key && !ulang && ST.draft[key] ? ST.draft[key] : null;
   const pil = src ? Object.assign({}, src.pil) : {}; const log = src ? src.log.slice() : [];
@@ -929,7 +929,7 @@ const LEGAL = `<div class="legal"><b>⚖️ Hak Cipta & Lisensi Penggunaan</b><b
 <li>Pasal 113 ayat (3): pelanggaran hak ekonomi untuk penggunaan secara komersial diancam <b>pidana penjara paling lama 4 tahun dan/atau denda paling banyak Rp1.000.000.000</b>.</li>
 <li>Setiap kode akses tercatat atas nama pembeli dan tertera pada hasil cetak. Kode yang terbukti disebarkan dapat dinonaktifkan tanpa pengembalian dana.</li></ul></div>`;
 function tentang(first) {
-  $("#homeBtn").hidden = !!first;
+  if (first) $("#homeBtn").hidden = true; else keluar();
   const isi = DRILL
     ? `<p><i>Drill intensif menjelang ujian: paket bertahap, simulasi bertimer, langsung tahu topik lemah.</i></p><p><b>${PRODUK}</b> adalah program persiapan ujian akhir SD di rumah. Isinya <b>${HEMAT ? "320 soal pilihan</b> (80 per mapel)" : "4.000 soal</b> (1.000 per mapel)"} Matematika, Bahasa Indonesia, Bahasa Inggris, dan IPA kelas 6 Kurikulum Merdeka Fase C, termasuk pengulangan materi kelas 4–5 yang sering keluar di ujian, lengkap dengan pembahasan dan ringkasan materi.</p><p>Fitur: <b>${NP * 4} paket drill</b> (${NP} per mapel), <b>${N_SIM * 5} simulasi ujian bertimer</b>, drill topik lemah otomatis, dan hitung mundur ke tanggal ujian. Ini latihan, bukan soal ujian sebenarnya dan bukan jaminan nilai.</p>`
     : `<p><i>Kerjakan, langsung dikoreksi, langsung dibahas. 4 mapel, 40 menit sehari.</i></p><p><b>${PRODUK}</b> adalah program belajar mandiri di rumah sebagai alternatif les bulanan. Isinya <b>4.000 soal</b> (1.000 per mapel) Matematika, Bahasa Indonesia, Bahasa Inggris, dan IPA kelas 6 Kurikulum Merdeka Fase C, lengkap dengan pembahasan dan ringkasan materi.</p><p>Anak cukup belajar <b>±40 menit sehari selama 100 hari</b>. Tingkat kesulitan naik bertahap: hari 1–35 dasar, 36–70 menengah, 71–100 mahir (HOTS).</p>`;
@@ -943,13 +943,22 @@ function setup() {
   $("#go").onclick = async () => { const v = $("#nm").value.trim(); if (!v) return; if (!confirm(`Nama anak: "${v}"\n\nPastikan ini nama ANAK, bukan nama orang tua. Nama tidak bisa diubah. Lanjutkan?`)) return; const r = await server("kunci", { nama: v }); ST.nama = (r && r.nama) || v; save(); home(); };
 }
 function materi(m) {
-  $("#homeBtn").hidden = false;
+  keluar();
   if (!m) { app.innerHTML = `<div class="card"><h2>📘 Materi</h2><p class="mut">Ringkasan materi kelas 6 (dan pengulangan untuk ujian).</p><div class="grid">${Object.entries(MAPEL).map(([k, [n, ic]]) => `<button class="mapel" data-mm="${k}"><span class="ic">${ic}</span><b>${n}</b><small>${MATERI[k].length} bab</small></button>`).join("")}</div></div>`; app.querySelectorAll("[data-mm]").forEach((b) => (b.onclick = () => materi(b.dataset.mm))); return; }
   app.innerHTML = `<div class="card mat"><h2>${MAPEL[m][1]} Materi ${MAPEL[m][0]}</h2><button class="btn sec" id="pm">🖨️ Cetak materi</button>${MATERI[m].map(([j, isi], i) => `<h3>${i + 1}. ${j}</h3>${isi}`).join("")}</div>`;
   $("#pm").onclick = () => cetakHTML(`<h2>Materi ${MAPEL[m][0]} Kelas 6</h2>` + MATERI[m].map(([j, isi], i) => `<h3>${i + 1}. ${j}</h3>${isi}`).join("")); scrollTo(0, 0);
 }
 function cetakMenu() {
-  $("#homeBtn").hidden = false;
+  keluar();
+  if (HEMAT) {
+    app.innerHTML = `<div class="card"><h2>🖨️ Cetak</h2><button class="btn full" id="ca">Cetak SEMUA soal (320 soal + kunci & pembahasan)</button><br><br><button class="btn full sec" id="c3">Cetak ringkasan materi 4 mapel</button>
+    <p class="mut">Tips: pilih “Simpan sebagai PDF” di jendela cetak untuk menyimpan file. Urutan: 32 paket (per mapel), lalu kunci & pembahasan.</p></div>`;
+    $("#ca").onclick = () => { let soal = "", kunci = ""; for (const m in MAPEL) for (let k = 1; k <= NP; k++) { const s = soalPaket(m, k), j = `${MAPEL[m][0]} · Paket ${k} (${["", "Dasar", "Menengah", "HOTS"][paketLevel(k)]})`;
+      soal += `<h2 style="break-before:page">${j}</h2><p>Nama: ______________ Tanggal: ________ Nilai: ____</p>` + lembar(s); kunci += `<h3>${j}</h3>` + s.map((q, i) => `<p><b>${i + 1}. ${"abcd"[q.jawab].toUpperCase()}</b> — ${q.bahas}</p>`).join(""); }
+      cetakHTML(soal + `<h2 style="break-before:page">Kunci Jawaban & Pembahasan</h2>` + kunci); };
+    $("#c3").onclick = () => cetakHTML(Object.keys(MAPEL).map((m) => `<h2>Materi ${MAPEL[m][0]} Kelas 6</h2>` + MATERI[m].map(([j, isi], i) => `<h3>${i + 1}. ${j}</h3>${isi}`).join("")).join(""));
+    return;
+  }
   const pertama = DRILL ? `<label>Cetak paket drill<select id="pm2">${Object.entries(MAPEL).map(([k, [n]]) => `<option value="${k}">${n}</option>`).join("")}</select></label><label>Nomor paket<select id="pk">${Array.from({ length: NP }, (_, i) => `<option>${i + 1}</option>`).join("")}</select></label><br><br><button class="btn full" id="c1">Cetak paket (${PER_PAKET} soal + kunci)</button><br><br><label>Simulasi<select id="sm2"><option value="MIX">Campuran</option>${Object.entries(MAPEL).map(([k, [n]]) => `<option value="${k}">${n}</option>`).join("")}</select></label><label>Nomor<select id="sn">${Array.from({ length: N_SIM }, (_, i) => `<option>${i + 1}</option>`).join("")}</select></label><br><br><button class="btn full" id="c4">Cetak simulasi (40 soal + kunci)</button>` : `<p><button class="btn full" id="c1">Soal hari ke-${pilihHari || hariAktif()} (4 mapel + kunci)</button></p>`;
   app.innerHTML = `<div class="card"><h2>🖨️ Cetak</h2>${pertama}<hr style="margin:16px 0;border:0;border-top:1px solid var(--line)">
   <label>Cetak semua soal satu mapel<select id="cm">${Object.entries(MAPEL).map(([k, [n]]) => `<option value="${k}">${n}</option>`).join("")}</select></label>
@@ -966,7 +975,7 @@ const lembar = (s) => s.map((q, i) => `<div class="pq"><b>${i + 1}.</b> ${q.q}${
 function cetakSoal(judul, s) { cetakHTML(`<h2>${judul}</h2><p>Nama: ______________ Tanggal: ________</p>` + lembar(s) + `<h2>Kunci Jawaban — ${judul}</h2><p>${s.map((q, i) => `${i + 1}${"abcd"[q.jawab]}`).join(", ")}</p>`); }
 function cetakHari(d) { let h = "", kunci = ""; for (const [k, [n]] of Object.entries(MAPEL)) { const s = soalHari(k, d); h += `<h2>${n} — Hari ke-${d}</h2><p>Nama: ______________ Tanggal: ________</p>` + lembar(s); kunci += `<p><b>${n}:</b> ${s.map((q, i) => `${i + 1}${"abcd"[q.jawab]}`).join(", ")}</p>`; } cetakHTML(h + `<h2>Kunci Jawaban Hari ke-${d}</h2>` + kunci); }
 function rapor() {
-  $("#homeBtn").hidden = false; const tp = {};
+  keluar(); const tp = {};
   const sumber = [...Object.values(ST.hasil), ...Object.values(ST.draft), ...Object.values(ST.sim)];
   for (const h of sumber) for (const l of h.log || []) { const k = MAPEL[l.mapel][0] + " — " + l.topik; tp[k] = tp[k] || [0, 0]; tp[k][1]++; if (l.ok) tp[k][0]++; }
   const rataM = (m) => { const ls = sumber.flatMap((h) => (h.log || []).filter((l) => l.mapel === m)); return ls.length ? Math.round((ls.filter((l) => l.ok).length / ls.length) * 100) : "-"; };
@@ -979,14 +988,17 @@ function rapor() {
   $("#rst").onclick = () => { if (confirm("Hapus semua nilai dan progres? Nama tetap tersimpan.")) { ST = { nama: ST.nama, hasil: {}, salah: {}, draft: {}, sim: {}, streak: 0, last: "", kode: ST.kode, setuju: ST.setuju, ujian: ST.ujian }; save(); home(); } };
 }
 function ortu() {
-  $("#homeBtn").hidden = false;
+  keluar();
   const tips = DRILL
     ? `<li><b>Isi tanggal ujian</b> di beranda. Ikuti target paket per hari.</li><li><b>Hari biasa:</b> ${HEMAT ? "2–3 paket drill (±20–30 menit)" : "1–2 paket drill (±25–40 menit)"}. Baca pembahasan setiap soal.</li><li><b>Akhir pekan:</b> 1 simulasi ujian bertimer, lalu bahas soal yang salah bersama.</li><li>Setelah simulasi, klik <b>🎯 Drill Topik Lemah</b> untuk menambal topik dengan nilai terendah.</li><li>Seminggu sebelum ujian: ulang simulasi campuran dan baca 📘 Materi.</li>`
     : `<li><b>Rutin 30–40 menit sehari.</b> 4 mapel × 10 soal.</li><li><b>Biarkan anak membaca pembahasan</b> setiap selesai menjawab.</li><li><b>Akhir pekan:</b> buka “Ulang soal salah” dan “Rapor”, fokuskan bantuan pada topik terendah.</li><li><b>Level naik bertahap:</b> hari 1–35 dasar, 36–70 menengah, 71–100 HOTS.</li>`;
   app.innerHTML = `<div class="card"><h2>👪 Panduan Orang Tua</h2><ol>${tips}</ol>
   <h3>Cakupan materi</h3><p class="mut">Matematika: bilangan bulat, operasi campuran, pangkat & akar, pecahan–desimal–persen, KPK–FPB, perbandingan, kecepatan & debit, lingkaran, volume & luas permukaan (kubus, balok, prisma, tabung), koordinat, statistika.<br>Bahasa Indonesia: ide pokok, simpulan, informasi teks, konjungsi, kalimat efektif, kalimat langsung/tidak langsung, pidato–iklan–slogan, surat resmi, puisi, kata baku, imbuhan.<br>Bahasa Inggris: simple past, future, comparison, health problems, countries, directions, shapes, hobbies, shopping, reading.<br>IPA: tata surya, rotasi–revolusi–gerhana, perkembangbiakan, pubertas, perubahan wujud, pesawat sederhana & gaya, listrik statis, energi, pelestarian lingkungan, pengulangan kelas 4–5.</p></div>`;
 }
-$("#homeBtn").onclick = () => { pilihHari = null; clearInterval(timerId); home(); };
+// Tombol back HP/browser kembali ke beranda aplikasi, bukan keluar halaman.
+function keluar() { $("#homeBtn").hidden = false; if (!(history.state && history.state.sub)) try { history.pushState({ sub: 1 }, ""); } catch {} }
+window.addEventListener("popstate", () => { pilihHari = null; clearInterval(timerId); home(); scrollTo(0, 0); });
+$("#homeBtn").onclick = () => { if (history.state && history.state.sub) return history.back(); pilihHari = null; clearInterval(timerId); home(); };
 home();
 </script>
 </body>
