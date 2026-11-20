@@ -243,9 +243,13 @@ def q_next_pending(items: list):
     if not pending:
         return None
     posted = [i for i in items if i["status"] == "posted"]
-    last = max(posted, key=lambda i: i.get("posted_ts", 0)) if posted else None
-    last_had_link = bool(last.get("reply")) if last else False
-    return next((i for i in pending if bool(i.get("reply")) != last_had_link), pending[0])
+    by_time = sorted(posted, key=lambda i: i.get("posted_ts", 0))
+    last = by_time[-1] if by_time else None
+    want_link = not bool(last.get("reply")) if last else True
+    same_type = [i for i in pending if bool(i.get("reply")) == want_link] or pending
+    # Hindari kiriman (produk) yang sama tayang berturut-turut: pilih batch yang paling lama tidak tayang
+    last_seen = {i.get("batch"): i.get("posted_ts", 0) for i in by_time}
+    return min(same_type, key=lambda i: last_seen.get(i.get("batch"), -1))
 
 
 ENV_FILE = Path(__file__).with_name(".env")
@@ -309,10 +313,11 @@ def threads_add():
         PUB.mkdir(parents=True, exist_ok=True)
         image_name = f"th-{int(time.time())}{Path(img.filename).suffix.lower() or '.jpg'}"
         img.save(PUB / image_name)
+    batch = str(time.time())
     with QLOCK:
         items = q_load()
         for it in new:
-            items.append({**it, "image": image_name, "status": "pending",
+            items.append({**it, "image": image_name, "status": "pending", "batch": batch,
                           "added": datetime.now(WIB).strftime("%d/%m %H:%M")})
         q_save(items)
     return redirect(url_for("threads_page"))

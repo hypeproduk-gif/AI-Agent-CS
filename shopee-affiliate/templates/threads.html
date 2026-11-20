@@ -3,7 +3,7 @@
 <h1>🧵 Antrean Threads</h1>
 <div class="card">
   <p class="st">Jadwal posting otomatis (WIB): <b>{{ times|join(", ") }}</b> · {{ pending }} postingan menunggu.
-  Tiap jadwal memposting 1 postingan, otomatis selang-seling antara postingan jualan (🔗 ada komentar link) dan obrolan (💬 tanpa link).</p>
+  Tiap jadwal memposting 1 postingan, otomatis selang-seling antara postingan jualan (🔗 ada komentar link) dan obrolan (💬 tanpa link), dan kiriman yang sama (mis. 3 variasi 1 produk) disebar supaya tidak tayang berdekatan. Tempel tiap produk sebagai 1 kiriman.</p>
   {% if not ready %}<p class="st">⚠️ THREADS_TOKEN belum diisi di .env, jadi jadwal belum jalan.</p>{% endif %}
 </div>
 <form class="card" method="post" action="/threads/add" enctype="multipart/form-data" onsubmit="this.classList.add('busy')">
