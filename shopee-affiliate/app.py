@@ -269,7 +269,7 @@ def refresh_threads_token():
 
 def scheduler():
     done = set()
-    last_refresh = 0.0
+    last_refresh = time.time() - 6 * 86400  # percobaan pertama sehari setelah start (token min. 24 jam)
     while True:
         if os.getenv("THREADS_TOKEN") and time.time() - last_refresh > 7 * 86400:
             last_refresh = time.time()
