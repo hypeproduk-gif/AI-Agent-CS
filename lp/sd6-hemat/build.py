@@ -4,7 +4,7 @@ import base64, sys, os
 IMG = sys.argv[1]
 OUT = os.path.dirname(os.path.abspath(__file__))
 img = lambda n: 'data:image/jpeg;base64,' + base64.b64encode(open(f'{IMG}/y-{n}.jpg', 'rb').read()).decode()
-CO = 'GANTI-DENGAN-LINK-HALAMAN-CHECKOUT'
+CO = 'https://toolkitparenting.my.id/co-siap-uas-6'
 
 FONT = '<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">'
 CSS = '''<style>
@@ -45,7 +45,7 @@ lp = f'''{FONT}{CSS}<div class="sh">
 <h1>UAS Sudah Dekat.<br><span>Anak Sudah Latihan Berapa&nbsp;Soal?</span></h1>
 <p class="s">320 soal latihan 4 mapel kelas 6, langsung dikoreksi dan dibahas. Cukup ±30 menit sehari dari&nbsp;HP.</p>
 <div class="ph"><img src="{img('home')}" alt="Tampilan aplikasi Siap Ujian Kelas 6"></div>
-<a class="cta" href="{CO}">Mulai Latihan · Rp59.000<small>Sekali bayar · langsung bisa dipakai</small></a>
+<a class="cta" href="{CO}">Mulai Latihan · <s style="opacity:.7;font-weight:600">Rp99.000</s> Rp59.000<small>Paket Hemat · sekali bayar · langsung bisa dipakai</small></a>
 <div class="chips"><span>✓ Matematika</span><span>✓ B. Indonesia</span><span>✓ B. Inggris</span><span>✓ IPA</span></div>
 </div></div>
 
@@ -130,19 +130,31 @@ lp = f'''{FONT}{CSS}<div class="sh">
 
 <div class="price"><div class="w">
 <h2>Mulai Latihan Malam Ini</h2>
-<div class="n">Rp59.000</div><p style="opacity:.85">sekali bayar · akses langsung</p>
+<div class="tag" style="display:inline-block;background:#e11d48;color:#fff;font-weight:800;font-size:13px;padding:4px 12px;border-radius:99px;margin-bottom:6px">PAKET HEMAT · HEMAT Rp40.000</div><div style="font-size:20px;opacity:.75"><s>Rp99.000</s></div><div class="n">Rp59.000</div><p style="opacity:.85">sekali bayar · akses langsung</p>
 <ul><li>✓ 320 soal + pembahasan, 4 mapel</li><li>✓ 32 paket drill + simulasi bertimer</li><li>✓ Drill topik lemah + rapor</li><li>✓ Bisa dicetak semua, sekali klik</li></ul>
 <a class="cta" href="{CO}">Ya, Saya Mau Mulai ›<small>Link aplikasi langsung dikirim setelah bayar</small></a>
 </div></div>
 <div class="foot">© Toolkit Parenting · toolkitparenting.my.id</div>
-<div class="sticky"><a class="cta" href="{CO}">Mulai Latihan · Rp59.000</a></div>
+<div class="sticky"><a class="cta" href="{CO}">Paket Hemat · <s style="opacity:.7;font-weight:600">Rp99.000</s> Rp59.000</a></div>
 </div>'''
 
 co = f'''{FONT}{CSS}<div class="sh">
 <div class="top">⏰ UAS sudah dekat. Setelah bayar, anak bisa mulai latihan hari ini.</div>
 <div class="sec" style="padding:22px 0 10px"><div class="w">
-<div class="ft" style="background:#fff;border:1px solid #e3e6ee;border-radius:14px;padding:14px"><img src="{img('home')}" style="width:96px" alt=""><div><h3>Siap Ujian Kelas 6</h3><p style="font-size:14.5px">320 soal + pembahasan · 4 mapel · simulasi bertimer</p><p style="font-size:22px;font-weight:800;color:var(--nv2)">Rp59.000</p></div></div>
-<ul class="list" style="font-size:15.5px;margin-top:8px">
+<div class="ft" style="background:#fff;border:1px solid #e3e6ee;border-radius:14px;padding:14px"><img src="{img('home')}" style="width:96px" alt=""><div><h3>Siap Ujian Kelas 6</h3><p style="font-size:14.5px">320 soal + pembahasan · 4 mapel · simulasi bertimer</p><p style="font-size:14px;color:var(--mut)"><s>Rp99.000</s> <span style="background:#e11d48;color:#fff;font-weight:800;font-size:11.5px;padding:2px 8px;border-radius:99px">PAKET HEMAT</span></p><p style="font-size:24px;font-weight:800;color:var(--nv2);line-height:1.2">Rp59.000</p></div></div>
+<h3 style="margin:18px 0 6px">Yang Anak Anda Dapat</h3>
+<ul class="list" style="font-size:15.5px">
+<li><b>320 soal</b> Matematika, B. Indonesia, B. Inggris, IPA kelas 6</li>
+<li><b>Pembahasan tiap soal</b>: salah langsung tahu cara benarnya</li>
+<li><b>32 paket drill</b> bertahap, dasar sampai HOTS (±10 menit/paket)</li>
+<li><b>Simulasi ujian 60 menit</b>: terbiasa dengan waktu sebelum hari H</li>
+<li><b>Drill per topik</b>: pilih sesuai kisi-kisi UAS sekolah</li>
+<li><b>Drill topik lemah</b> otomatis + <b>rapor nilai</b> untuk orang tua</li>
+<li><b>Cetak semua soal</b> + kunci sekali klik, ringkasan materi 4 mapel</li>
+<li>Tetap terpakai untuk semester 2 dan ujian akhir SD</li>
+</ul>
+<h3 style="margin:16px 0 6px">Cara Aksesnya</h3>
+<ul class="list" style="font-size:15.5px">
 <li>Link aplikasi <b>langsung dikirim</b> setelah pembayaran</li>
 <li>Tanpa install, tanpa login, buka di HP/laptop</li>
 <li>Sekali bayar, tanpa biaya bulanan</li>
