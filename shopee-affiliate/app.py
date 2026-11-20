@@ -278,7 +278,7 @@ def cleanup_posted(days: float = 3):
         items = q_load()
         keep = []
         for it in items:
-            if it.get("status") == "posted" and it.get("posted_ts", time.time()) < cutoff:
+            if it.get("status") == "posted" and it.get("posted_ts", 0) < cutoff:
                 if it.get("image"):
                     (PUB / it["image"]).unlink(missing_ok=True)
             else:
