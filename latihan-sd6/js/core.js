@@ -156,6 +156,6 @@
     },
     emoji(e, label) { return S.wrap(160, 130, `<text x="80" y="85" text-anchor="middle" font-size="72">${e}</text>` + (label ? S.text(80, 120, label) : "")); },
   };
-  const api = { rng, makeKit, build, S, quota: { 1: 350, 2: 350, 3: 300 } };
+  const api = { rng, makeKit, build, S, quota: (G.QUOTA || { 1: 350, 2: 350, 3: 300 }) };
   if (typeof module !== "undefined") module.exports = api; else G.CORE = api;
 })(typeof window !== "undefined" ? window : globalThis);
