@@ -271,8 +271,25 @@ def refresh_threads_token():
     print("Token Threads diperpanjang")
 
 
+def cleanup_posted(days: float = 3):
+    """Hapus postingan yang sudah tayang lebih dari `days` hari beserta fotonya."""
+    cutoff = time.time() - days * 86400
+    with QLOCK:
+        items = q_load()
+        keep = []
+        for it in items:
+            if it.get("status") == "posted" and it.get("posted_ts", time.time()) < cutoff:
+                if it.get("image"):
+                    (PUB / it["image"]).unlink(missing_ok=True)
+            else:
+                keep.append(it)
+        if len(keep) != len(items):
+            q_save(keep)
+
+
 def scheduler():
     done = set()
+    last_cleanup = 0.0
     last_refresh = time.time() - 6 * 86400  # percobaan pertama sehari setelah start (token min. 24 jam)
     while True:
         if os.getenv("THREADS_TOKEN") and time.time() - last_refresh > 7 * 86400:
@@ -281,6 +298,9 @@ def scheduler():
                 refresh_threads_token()
             except Exception:
                 traceback.print_exc()
+        if time.time() - last_cleanup > 3600:
+            last_cleanup = time.time()
+            cleanup_posted(float(os.getenv("THREADS_KEEP_DAYS", "3")))
         now = datetime.now(WIB)
         key = now.strftime("%Y-%m-%d %H:%M")
         if now.strftime("%H:%M") in slot_times() and key not in done and os.getenv("THREADS_TOKEN"):
