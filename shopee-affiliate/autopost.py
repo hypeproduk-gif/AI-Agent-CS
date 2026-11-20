@@ -173,34 +173,46 @@ def post_instagram(video: Path, thumb: Path, caption: str, slug: str, shopee: st
     return media_id
 
 
-def post_threads(slug: str, text: str, shopee: str) -> str:
+def threads_publish(data: dict, wait: bool = False) -> str:
+    """Buat container Threads lalu publish; data berisi media_type/text/image_url/video_url/reply_to_id."""
     uid, token = os.environ["THREADS_USER_ID"], os.environ["THREADS_TOKEN"]
-    base = os.environ["PUBLIC_BASE_URL"].rstrip("/")
-    r = requests.post(f"{THREADS}/{uid}/threads", data={
-        "media_type": "VIDEO", "video_url": f"{base}/{slug}.mp4",
-        "text": text[:500], "access_token": token}, timeout=60)
-    r.raise_for_status()
+    r = requests.post(f"{THREADS}/{uid}/threads", data={**data, "access_token": token}, timeout=60)
+    if not r.ok:
+        raise RuntimeError(f"Threads {r.status_code}: {r.text[:300]}")
     container = r.json()["id"]
-    for _ in range(60):
+    for _ in range(60 if wait else 3):  # video perlu diproses; teks/gambar cukup jeda singkat
         s = requests.get(f"{THREADS}/{container}",
                          params={"fields": "status,error_message", "access_token": token}).json()
         if s.get("status") == "FINISHED":
             break
         if s.get("status") == "ERROR":
-            raise RuntimeError(f"Threads gagal memproses video: {s}")
-        time.sleep(10)
+            raise RuntimeError(f"Threads gagal memproses media: {s}")
+        time.sleep(10 if wait else 5)
     r = requests.post(f"{THREADS}/{uid}/threads_publish",
                       data={"creation_id": container, "access_token": token}, timeout=60)
-    r.raise_for_status()
-    post_id = r.json()["id"]
-    # link di balasan sendiri agar postingan utama tidak terlihat seperti iklan
-    reply = requests.post(f"{THREADS}/{uid}/threads", data={
-        "media_type": "TEXT", "text": f"Ini link yang aku pakai: {shopee}",
-        "reply_to_id": post_id, "access_token": token}, timeout=60).json()
-    time.sleep(5)
-    requests.post(f"{THREADS}/{uid}/threads_publish",
-                  data={"creation_id": reply["id"], "access_token": token}, timeout=60)
+    if not r.ok:
+        raise RuntimeError(f"Threads {r.status_code}: {r.text[:300]}")
+    return r.json()["id"]
+
+
+def threads_post_with_reply(text: str, reply: str, image_url: str = "", video_url: str = "") -> str:
+    """Posting utama, lalu balasan sendiri berisi link agar postingan utama tidak terlihat seperti iklan."""
+    if video_url:
+        data = {"media_type": "VIDEO", "video_url": video_url}
+    elif image_url:
+        data = {"media_type": "IMAGE", "image_url": image_url}
+    else:
+        data = {"media_type": "TEXT"}
+    post_id = threads_publish({**data, "text": text[:500]}, wait=bool(video_url))
+    if reply:
+        threads_publish({"media_type": "TEXT", "text": reply[:500], "reply_to_id": post_id})
     return post_id
+
+
+def post_threads(slug: str, text: str, shopee: str) -> str:
+    base = os.environ["PUBLIC_BASE_URL"].rstrip("/")
+    return threads_post_with_reply(text, f"Ini link yang aku pakai: {shopee}",
+                                   video_url=f"{base}/{slug}.mp4")
 
 
 def main():

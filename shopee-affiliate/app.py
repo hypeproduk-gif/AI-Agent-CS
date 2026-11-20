@@ -2,7 +2,8 @@
 
 Jalankan: python app.py   (default port 8090, login pakai APP_PASSWORD di .env)
 """
-import json, os, shutil, threading, time, traceback
+import json, os, re, shutil, threading, time, traceback
+from datetime import datetime, timedelta, timezone
 from functools import wraps
 from pathlib import Path
 
@@ -184,6 +185,123 @@ def run_post(slug: str, chosen: list):
         save(slug, j)
 
 
+# ---------- Antrean Threads: teks dari generator, posting otomatis terjadwal ----------
+QUEUE = ap.OUT / "threads_queue.json"
+QLOCK = threading.Lock()
+WIB = timezone(timedelta(hours=7))
+
+
+def q_load() -> list:
+    try:
+        return json.loads(QUEUE.read_text())
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
+
+
+def q_save(items: list):
+    QUEUE.parent.mkdir(exist_ok=True)
+    QUEUE.write_text(json.dumps(items, ensure_ascii=False, indent=2))
+
+
+def slot_times() -> list:
+    return [t.strip() for t in os.getenv("THREADS_TIMES", "07:00,12:00,19:00").split(",") if t.strip()]
+
+
+def parse_bulk(raw: str, link: str) -> list:
+    """Blok dipisah baris '---'. Baris yang diawali 'KOMENTAR:' = balasan berisi link."""
+    items = []
+    for block in re.split(r"^\s*---+\s*$", raw, flags=re.M):
+        post, reply = [], ""
+        for line in block.strip().splitlines():
+            if line.upper().startswith("KOMENTAR:"):
+                reply = line.split(":", 1)[1].strip()
+            else:
+                post.append(line)
+        text = "\n".join(post).strip()
+        if text:
+            if not reply and link:
+                reply = f"Ini yang aku pakai: {link}"
+            items.append({"text": text, "reply": reply})
+    return items
+
+
+def q_post(item: dict):
+    image_url = ""
+    if item.get("image"):
+        image_url = f"{os.environ['PUBLIC_BASE_URL'].rstrip('/')}/{item['image']}"
+    try:
+        pid = ap.threads_post_with_reply(item["text"], item.get("reply", ""), image_url=image_url)
+        item.update(status="posted", post_id=pid, posted_at=datetime.now(WIB).strftime("%d/%m %H:%M"))
+    except Exception as e:
+        traceback.print_exc()
+        item.update(status="error", error=str(e)[:300])
+
+
+def q_next_pending(items: list):
+    return next((i for i in items if i["status"] == "pending"), None)
+
+
+def scheduler():
+    done = set()
+    while True:
+        now = datetime.now(WIB)
+        key = now.strftime("%Y-%m-%d %H:%M")
+        if now.strftime("%H:%M") in slot_times() and key not in done and os.getenv("THREADS_TOKEN"):
+            done.add(key)
+            with QLOCK:
+                items = q_load()
+                item = q_next_pending(items)
+                if item:
+                    q_post(item)
+                    q_save(items)
+        time.sleep(20)
+
+
+@app.get("/threads")
+@login_required
+def threads_page():
+    items = q_load()
+    return render_template("threads.html", items=list(enumerate(items)), times=slot_times(),
+                           ready=bool(os.getenv("THREADS_TOKEN")),
+                           pending=sum(i["status"] == "pending" for i in items))
+
+
+@app.post("/threads/add")
+@login_required
+def threads_add():
+    new = parse_bulk(request.form.get("bulk", ""), request.form.get("link", "").strip())
+    img = request.files.get("image")
+    image_name = ""
+    if img and img.filename and len(new) == 1:
+        PUB.mkdir(parents=True, exist_ok=True)
+        image_name = f"th-{int(time.time())}{Path(img.filename).suffix.lower() or '.jpg'}"
+        img.save(PUB / image_name)
+    with QLOCK:
+        items = q_load()
+        for it in new:
+            items.append({**it, "image": image_name, "status": "pending",
+                          "added": datetime.now(WIB).strftime("%d/%m %H:%M")})
+        q_save(items)
+    return redirect(url_for("threads_page"))
+
+
+@app.post("/threads/<int:i>/<action>")
+@login_required
+def threads_action(i, action):
+    with QLOCK:
+        items = q_load()
+        if not 0 <= i < len(items):
+            abort(404)
+        if action == "delete":
+            items.pop(i)
+        elif action == "now":
+            q_post(items[i])
+        elif action == "up" and i > 0:
+            items[i - 1], items[i] = items[i], items[i - 1]
+        q_save(items)
+    return redirect(url_for("threads_page"))
+
+
 @app.get("/media/<path:name>")
 def media(name):  # publik, dibaca server Instagram/Threads
     return send_from_directory(PUB, name)
@@ -191,4 +309,5 @@ def media(name):  # publik, dibaca server Instagram/Threads
 
 if __name__ == "__main__":
     ap.OUT.mkdir(exist_ok=True)
+    threading.Thread(target=scheduler, daemon=True).start()
     app.run(host="0.0.0.0", port=int(os.getenv("APP_PORT", 8090)))
