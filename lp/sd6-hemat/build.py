@@ -6,7 +6,7 @@ OUT = os.path.dirname(os.path.abspath(__file__))
 img = lambda n: 'data:image/jpeg;base64,' + base64.b64encode(open(f'{IMG}/y-{n}.jpg', 'rb').read()).decode()
 CO = 'https://toolkitparenting.my.id/co-siap-uas-6'
 
-FONT = '<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">'
+FONT = '<meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">'
 CSS = '''<style>
 .sh,.sh *{box-sizing:border-box;margin:0;padding:0}
 .sh{--nv:#0b1f4d;--nv2:#132f6e;--gd:#f5b82e;--gd2:#ffd66b;--ink:#1c2333;--mut:#5b6476;--bg:#f6f7fb;--ok:#16a34a;--no:#dc2626;
@@ -104,9 +104,9 @@ lp = f'''{FONT}{CSS}<div class="sh">
 <div class="sec alt"><div class="w">
 <h2>Cara Dapatnya</h2>
 <ol class="steps">
-<li>Klik tombol, isi nama &amp; nomor WhatsApp.</li>
+<li>Klik tombol, isi nama, email &amp; nomor WhatsApp.</li>
 <li>Bayar Rp59.000 (transfer, e-wallet, QRIS).</li>
-<li>Link aplikasi langsung dikirim. Buka di HP atau laptop, tanpa install, tanpa login.</li>
+<li>Link aplikasi otomatis dikirim ke email Anda. Buka di HP atau laptop, tanpa install, tanpa login.</li>
 </ol>
 </div></div>
 
@@ -132,7 +132,7 @@ lp = f'''{FONT}{CSS}<div class="sh">
 <h2>Mulai Latihan Malam Ini</h2>
 <div class="tag" style="display:inline-block;background:#e11d48;color:#fff;font-weight:800;font-size:13px;padding:4px 12px;border-radius:99px;margin-bottom:6px">PAKET HEMAT · HEMAT Rp40.000</div><div style="font-size:20px;opacity:.75"><s>Rp99.000</s></div><div class="n">Rp59.000</div><p style="opacity:.85">sekali bayar · akses langsung</p>
 <ul><li>✓ 320 soal + pembahasan, 4 mapel</li><li>✓ 32 paket drill + simulasi bertimer</li><li>✓ Drill topik lemah + rapor</li><li>✓ Bisa dicetak semua, sekali klik</li></ul>
-<a class="cta" href="{CO}">Ya, Saya Mau Mulai ›<small>Link aplikasi langsung dikirim setelah bayar</small></a>
+<a class="cta" href="{CO}">Ya, Saya Mau Mulai ›<small>Link aplikasi otomatis dikirim ke email</small></a>
 </div></div>
 <div class="foot">© Toolkit Parenting · toolkitparenting.my.id</div>
 <div class="sticky"><a class="cta" href="{CO}">Paket Hemat · <s style="opacity:.7;font-weight:600">Rp99.000</s> Rp59.000</a></div>
@@ -155,11 +155,11 @@ co = f'''{FONT}{CSS}<div class="sh">
 </ul>
 <h3 style="margin:16px 0 6px">Cara Aksesnya</h3>
 <ul class="list" style="font-size:15.5px">
-<li>Link aplikasi <b>langsung dikirim</b> setelah pembayaran</li>
+<li>Link aplikasi <b>otomatis dikirim ke email</b> setelah pembayaran</li>
 <li>Tanpa install, tanpa login, buka di HP/laptop</li>
 <li>Sekali bayar, tanpa biaya bulanan</li>
 </ul>
-<p class="note" style="font-size:15px">Isi nomor WhatsApp yang aktif. Link aplikasi dikirim ke sana.</p>
+<p class="note" style="font-size:15px">Isi <b>email yang aktif</b>. Link aplikasi otomatis dikirim ke sana setelah pembayaran (cek juga folder Spam/Promosi).</p>
 </div></div>
 </div>'''
 
