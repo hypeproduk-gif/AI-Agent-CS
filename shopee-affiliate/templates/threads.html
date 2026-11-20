@@ -4,6 +4,7 @@
 <div class="card">
   <p class="st">Jadwal posting otomatis (WIB): <b>{{ times|join(", ") }}</b> · {{ pending }} postingan menunggu.
   Tiap jadwal memposting 1 postingan, otomatis selang-seling antara postingan jualan (🔗 ada komentar link) dan obrolan (💬 tanpa link), dan kiriman yang sama (mis. 3 variasi 1 produk) disebar supaya tidak tayang berdekatan. Tempel tiap produk sebagai 1 kiriman.</p>
+  {% if not https %}<p class="st">⚠️ Postingan berfoto belum bisa terposting: PUBLIC_BASE_URL belum https. Postingan teks tetap jalan.</p>{% endif %}
   {% if not ready %}<p class="st">⚠️ THREADS_TOKEN belum diisi di .env, jadi jadwal belum jalan.</p>{% endif %}
 </div>
 <form class="card" method="post" action="/threads/add" enctype="multipart/form-data" onsubmit="this.classList.add('busy')">
@@ -22,7 +23,13 @@
   <p class="st">#{{ i + 1 }} · {% if it.status == "pending" %}⏳ menunggu{% elif it.status == "posted" %}✅ terposting {{ it.posted_at }}{% else %}❌ {{ it.error }}{% endif %}{% if it.reply %} · 🔗 jualan{% else %} · 💬 obrolan{% endif %}{% if it.image %} · 🖼 foto{% endif %}</p>
   <div style="white-space:pre-wrap">{{ it.text }}</div>
   {% if it.reply %}<p class="st">💬 {{ it.reply }}</p>{% endif %}
+  {% if it.image %}<img src="/media/{{ it.image }}" alt="" style="max-height:220px;width:auto;margin-top:8px">{% endif %}
   {% if it.status != "posted" %}
+  <form method="post" action="/threads/{{ i }}/image" enctype="multipart/form-data" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px">
+    <input type="file" name="image" accept="image/*" style="width:auto">
+    <button style="width:auto;margin:0;padding:8px 14px">{% if it.image %}Ganti foto{% else %}Pasang foto{% endif %}</button>
+    {% if it.image %}<button name="remove" value="1" style="width:auto;margin:0;padding:8px 14px;background:var(--mute)">Hapus foto</button>{% endif %}
+  </form>
   <div class="row">
     <form method="post" action="/threads/{{ i }}/now"><button>Posting sekarang</button></form>
     <form method="post" action="/threads/{{ i }}/up"><button style="background:var(--mute)">Naikkan</button></form>

@@ -299,6 +299,7 @@ def scheduler():
 def threads_page():
     items = q_load()
     return render_template("threads.html", items=list(enumerate(items)), times=slot_times(),
+                           https=os.getenv("PUBLIC_BASE_URL", "").startswith("https://"),
                            ready=bool(os.getenv("THREADS_TOKEN")),
                            pending=sum(i["status"] == "pending" for i in items))
 
@@ -319,6 +320,25 @@ def threads_add():
         for it in new:
             items.append({**it, "image": image_name, "status": "pending", "batch": batch,
                           "added": datetime.now(WIB).strftime("%d/%m %H:%M")})
+        q_save(items)
+    return redirect(url_for("threads_page"))
+
+
+@app.post("/threads/<int:i>/image")
+@login_required
+def threads_image(i):
+    img = request.files.get("image")
+    with QLOCK:
+        items = q_load()
+        if not 0 <= i < len(items):
+            abort(404)
+        if img and img.filename:
+            PUB.mkdir(parents=True, exist_ok=True)
+            name = f"th-{int(time.time())}-{i}{Path(img.filename).suffix.lower() or '.jpg'}"
+            img.save(PUB / name)
+            items[i]["image"] = name
+        elif request.form.get("remove"):
+            items[i]["image"] = ""
         q_save(items)
     return redirect(url_for("threads_page"))
 
