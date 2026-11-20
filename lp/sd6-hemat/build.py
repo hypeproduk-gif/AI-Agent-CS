@@ -3,14 +3,14 @@
 import base64, sys, os
 IMG = sys.argv[1]
 OUT = os.path.dirname(os.path.abspath(__file__))
-img = lambda n: 'data:image/jpeg;base64,' + base64.b64encode(open(f'{IMG}/y-{n}.jpg', 'rb').read()).decode()
+img = lambda n: 'data:image/webp;base64,' + base64.b64encode(open(f'{IMG}/y-{n}.webp', 'rb').read()).decode()
 CO = 'https://toolkitparenting.my.id/co-siap-uas-6'
 
-FONT = '<meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">'
+FONT = '<meta charset="utf-8">'  # tanpa font eksternal agar LP ringan
 CSS = '''<style>
 .sh,.sh *{box-sizing:border-box;margin:0;padding:0}
 .sh{--nv:#0b1f4d;--nv2:#132f6e;--gd:#f5b82e;--gd2:#ffd66b;--ink:#1c2333;--mut:#5b6476;--bg:#f6f7fb;--ok:#16a34a;--no:#dc2626;
-font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink);background:var(--bg);font-size:17px;line-height:1.6;width:100%;overflow-x:hidden}
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--bg);font-size:17px;line-height:1.6;width:100%;overflow-x:hidden}
 .sh .w{max-width:560px;margin:0 auto;padding:0 20px}
 .sh h1,.sh h2,.sh h3{text-wrap:balance;line-height:1.25;font-weight:800}.sh p,.sh li{text-wrap:pretty}
 .sh h1{font-size:30px}.sh h2{font-size:24px;margin-bottom:14px}.sh h3{font-size:18px}
@@ -39,6 +39,8 @@ font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink);background
 @media(min-width:700px){.sh h1{font-size:38px}.sh .ft img{width:150px}}
 </style>'''
 
+NOTIF = '<div id="shn" style="position:fixed;top:12px;left:12px;z-index:60;max-width:270px;background:#fff;color:#1c2333;border-radius:12px;box-shadow:0 8px 24px #0003;padding:10px 12px;font:600 13.5px/1.4 system-ui,sans-serif;display:flex;gap:9px;align-items:center;opacity:0;transform:translateY(-12px);transition:.35s;pointer-events:none"><span id="shi" style="font-size:22px">⏰</span><span id="sht"></span></div>\n<script>(function(){var u=new Date(new Date().getFullYear(),11,1),h=Math.ceil((u-new Date())/864e5),M=[["⏰",h>0?"UAS semester 1 kira-kira "+h+" hari lagi":"Persiapan semester 2 dimulai sekarang"],["✅","320 soal 4 mapel + pembahasan"],["⏱️","Simulasi ujian 40 soal / 60 menit"],["📩","Link aplikasi otomatis dikirim ke email"],["💸","Paket Hemat: Rp59.000 sekali bayar"]],i=0,e=document.getElementById("shn");function s(){var m=M[i++%M.length];document.getElementById("shi").textContent=m[0];document.getElementById("sht").textContent=m[1];e.style.opacity=1;e.style.transform="none";setTimeout(function(){e.style.opacity=0;e.style.transform="translateY(-12px)"},4500)}setTimeout(function(){s();setInterval(s,12000)},3000)})()</script>'
+
 lp = f'''{FONT}{CSS}<div class="sh">
 <div class="top">⏰ UAS semester 1 kelas 6 sudah dekat. Mulai latihan hari ini.</div>
 <div class="hero"><div class="w">
@@ -64,7 +66,7 @@ lp = f'''{FONT}{CSS}<div class="sh">
 <h2>Siap Ujian Kelas 6: Latihan Singkat, Langsung Tahu&nbsp;Salahnya</h2>
 <div class="ft"><img src="{img('soal')}" alt="Soal dan pembahasan"><div><h3>Jawab → langsung dibahas</h3><p>Salah? Jawaban benar dan cara mengerjakannya langsung muncul. Anak belajar sendiri, orang tua tidak perlu jadi guru.</p></div></div>
 <div class="ft"><img src="{img('sim')}" alt="Simulasi ujian bertimer"><div><h3>Simulasi ujian 60 menit</h3><p>40 soal dengan timer, seperti ujian sungguhan. Anak terbiasa mengatur waktu sebelum hari H.</p></div></div>
-<div class="ft"><img src="{img('home')}" alt="Paket drill dan nilai"><div><h3>Nilai per paket terlihat</h3><p>Warna hijau, kuning, merah. Sekali lihat, Anda tahu mapel mana yang perlu dikejar.</p></div></div>
+<div class="ft"><div style="width:120px;flex:none;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:#fff;border:1px solid #e3e6ee;border-radius:12px;padding:10px">{''.join(f'<i style="height:22px;border-radius:5px;background:{c}"></i>' for c in ['#86efac','#86efac','#fde68a','#fca5a5','#86efac','#fde68a','#bfdbfe','#e5e7eb'])}</div><div><h3>Nilai per paket terlihat</h3><p>Warna hijau, kuning, merah. Sekali lihat, Anda tahu mapel mana yang perlu dikejar.</p></div></div>
 </div></div>
 
 <div class="sec"><div class="w">
@@ -135,13 +137,14 @@ lp = f'''{FONT}{CSS}<div class="sh">
 <a class="cta" href="{CO}">Ya, Saya Mau Mulai ›<small>Link aplikasi otomatis dikirim ke email</small></a>
 </div></div>
 <div class="foot">© Toolkit Parenting · toolkitparenting.my.id</div>
+{NOTIF}
 <div class="sticky"><a class="cta" href="{CO}">Paket Hemat · <s style="opacity:.7;font-weight:600">Rp99.000</s> Rp59.000</a></div>
 </div>'''
 
 co = f'''{FONT}{CSS}<div class="sh">
 <div class="top">⏰ UAS sudah dekat. Setelah bayar, anak bisa mulai latihan hari ini.</div>
 <div class="sec" style="padding:22px 0 10px"><div class="w">
-<div class="ft" style="background:#fff;border:1px solid #e3e6ee;border-radius:14px;padding:14px"><img src="{img('home')}" style="width:96px" alt=""><div><h3>Siap Ujian Kelas 6</h3><p style="font-size:14.5px">320 soal + pembahasan · 4 mapel · simulasi bertimer</p><p style="font-size:14px;color:var(--mut)"><s>Rp99.000</s> <span style="background:#e11d48;color:#fff;font-weight:800;font-size:11.5px;padding:2px 8px;border-radius:99px">PAKET HEMAT</span></p><p style="font-size:24px;font-weight:800;color:var(--nv2);line-height:1.2">Rp59.000</p></div></div>
+<div class="ft" style="background:#fff;border:1px solid #e3e6ee;border-radius:14px;padding:14px"><img src="{img('thumb')}" style="width:96px" alt=""><div><h3>Siap Ujian Kelas 6</h3><p style="font-size:14.5px">320 soal + pembahasan · 4 mapel · simulasi bertimer</p><p style="font-size:14px;color:var(--mut)"><s>Rp99.000</s> <span style="background:#e11d48;color:#fff;font-weight:800;font-size:11.5px;padding:2px 8px;border-radius:99px">PAKET HEMAT</span></p><p style="font-size:24px;font-weight:800;color:var(--nv2);line-height:1.2">Rp59.000</p></div></div>
 <h3 style="margin:18px 0 6px">Yang Anak Anda Dapat</h3>
 <ul class="list" style="font-size:15.5px">
 <li><b>320 soal</b> Matematika, B. Indonesia, B. Inggris, IPA kelas 6</li>
