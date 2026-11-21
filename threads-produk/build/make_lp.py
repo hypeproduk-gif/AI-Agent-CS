@@ -43,5 +43,7 @@ def build(P):
 <section><div class="wrap"><div class="price-card" style="display:flex;gap:14px;align-items:center">
 <img src="{cov}" alt="{P["name"]}" style="width:{150 if len(P["pdfs"])>1 else 96}px!important;flex:none">
 <div><h3>{P["name"]}</h3>{strike}<div class="price" style="font-size:26px">{P["price"]}</div></div></div>
-{ok(P["stack"])}<p style="font-size:13px">Isi data di bawah. File dikirim otomatis ke email/WhatsApp setelah pembayaran.</p></div></section>'''
+<h3 style="margin-top:14px">Isinya</h3>{ok(P["stack"])}
+<h3 style="margin-top:14px">Setelah pakai ini, kamu bisa:</h3>{ok(P["benefit"])}
+<p style="font-size:13px"><i>{P["honest"]}</i></p><p style="font-size:13px">Isi data di bawah. File dikirim otomatis ke email/WhatsApp setelah pembayaran.</p></div></section>'''
     (ROOT/f'LP-{P["slug"]}.html').write_text(esc(lp)); (ROOT/f'CO-{P["slug"]}.html').write_text(esc(copage))
