@@ -115,4 +115,4 @@ Linknya aku taruh di bawah ya 👇
 - [ ] Catat post dengan balasan terbanyak (bahan iklan & produk)
 
 ---
-**Next level:** mau tahu cara ubah semua ini jadi orderan? → **Ebook "Threads Jadi Duit"** (Rp79rb).
+**Next level:** ambil **Paket Lengkap** (Rp89rb) atau **Paket Ultimate** (Rp129rb).

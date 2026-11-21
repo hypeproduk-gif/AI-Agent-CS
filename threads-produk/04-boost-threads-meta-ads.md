@@ -1,16 +1,8 @@
-# BUNDLE LENGKAP THREADS JADI DUIT
-**Harga: Rp129.000** (normal Rp137rb + bonus eksklusif)
-
-## Isi Bundle
-1. 50 Prompt Hook Threads AI (Rp19rb)
-2. Template 30 Hari Konten Threads (Rp39rb)
-3. Ebook Threads Jadi Duit (Rp79rb)
-4. **EKSKLUSIF: Panduan Boost Threads pakai Meta Ads** (di bawah)
-
----
-
 # BOOST THREADS PAKAI META ADS
 ### Iklankan post yang sudah terbukti. Bukan buang uang ke post yang belum teruji.
+Bagian dari **Paket Ultimate** · by Ghina Elsha
+
+---
 
 ## 1. Syarat Teknis
 - Akun Threads terhubung ke akun **Instagram** (Threads memang login lewat IG).
@@ -67,5 +59,3 @@ Lebih mahal dari itu? Naikkan nilai belanja (jual bundle) atau perbaiki halaman 
 - Budget besar di hari pertama.
 - Arahkan iklan ke profil, bukan langsung ke halaman jualan.
 
----
-**Mau diaudit langsung?** → **Bundle + Audit Akun** (Rp249rb, kuota 10 orang/bulan).
