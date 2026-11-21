@@ -346,6 +346,33 @@ def threads_add():
     return redirect(url_for("threads_page"))
 
 
+@app.get("/api/threads")
+@login_required
+def api_threads_list():
+    return {"times": slot_times(), "paused": (ap.OUT / "threads_paused").exists(), "items": q_load()}
+
+
+@app.post("/api/threads")
+@login_required
+def api_threads_add():
+    """JSON: {"posts":[{"text":"...","reply":"... link ..."}]} atau {"bulk":"teks format antrean"}. 1 request = 1 kiriman."""
+    data = request.get_json(force=True, silent=True) or {}
+    new = [{"text": p["text"].strip(), "reply": (p.get("reply") or "").strip()}
+           for p in data.get("posts", []) if p.get("text", "").strip()]
+    if data.get("bulk"):
+        new += parse_bulk(data["bulk"], data.get("link", ""))
+    if not new:
+        return {"error": "posts/bulk kosong"}, 400
+    batch = str(time.time())
+    with QLOCK:
+        items = q_load()
+        for it in new:
+            items.append({**it, "image": "", "status": "pending", "batch": batch,
+                          "added": datetime.now(WIB).strftime("%d/%m %H:%M")})
+        q_save(items)
+    return {"added": len(new), "batch": batch}
+
+
 @app.post("/threads/pause")
 @login_required
 def threads_pause():
