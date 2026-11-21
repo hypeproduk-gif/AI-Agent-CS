@@ -3,6 +3,19 @@
 **Harga: Rp45.000** · by Ghina Elsha
 
 ---
+# Pendahuluan
+Hai, aku Ghina.
+
+Di iklan Meta ada satu pelajaran yang mahal: iklan sebagus apa pun bakal boncos kalau halaman tujuannya bikin orang ragu. Di Threads, "halaman tujuan" itu adalah **profil kamu**. Orang yang mampir dari komentar cuma butuh beberapa detik untuk memutuskan follow atau pergi.
+
+Setelah mereka follow, masalah kedua muncul: cara jualan. Terlalu keras, orang mundur. Terlalu malu-malu, nggak ada yang tahu kamu jualan.
+
+File ini membereskan dua-duanya:
+- **Bagian 1: Profil.** Checklist, 20 template bio, dan 10 template post pin. Beres dalam 15 menit.
+- **Bagian 2: Soft-selling.** 20 skrip utas jualan halus dan 7 skrip DM, dari orang komen sampai bayar.
+
+**Cara pakai:** kerjakan Bagian 1 hari ini juga. Bagian 2 dipakai pelan-pelan, maksimal 1 dari 5 postinganmu.
+
 
 # BAGIAN 1 — PROFIL (15 menit beres)
 
@@ -205,3 +218,23 @@ Mulai dari halaman [X] ya biar cepat kerasa.
 Kak, gimana hasilnya setelah dicoba?
 Kalau berkenan, boleh aku share (nama aku sensor)? 🫶
 ```
+
+# Penutup
+Profil yang rapi bikin orang mau follow. Skrip yang halus bikin mereka nyaman beli. Dua-duanya baru kerja kalau dipakai.
+
+Mulai hari ini:
+1. Ganti bio pakai salah satu template.
+2. Pin 1 postingan terbaikmu.
+3. Minggu ini, coba 1 skrip jualan halus dan lihat siapa yang membalas.
+
+Kalau mau jadwal posting yang jelas tiap hari, lanjut ke **Kalender 30 Hari Threads**, atau ambil semuanya di **Paket Lengkap**.
+
+## Yuk, lanjut ngobrol di Threads
+Aku lagi bangun akun Threads dari nol, dan semua prosesnya aku tulis terbuka di **@ghinaelsha**: yang berhasil, yang gagal, sampai angka-angkanya.
+
+- **Follow @ghinaelsha** biar update dan tips barunya nggak kelewat.
+- Kalau ada postingan yang kepakai, **like dan tinggalkan komentar**. Komentar kalian yang bikin postingan itu sampai ke lebih banyak orang, dan aku baca semuanya.
+- Punya teman yang lagi belajar jualan online? **Share postingannya** ke dia.
+- Udah coba isi file ini? **Mention @ghinaelsha** di postinganmu. Aku senang banget lihat hasil kalian, dan siapa tahu aku repost.
+
+Sampai ketemu di Threads 🤍

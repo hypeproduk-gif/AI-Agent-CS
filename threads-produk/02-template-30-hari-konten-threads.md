@@ -3,6 +3,20 @@
 **Harga: Rp39.000** · by Ghina Elsha
 
 ---
+# Pendahuluan
+Hai, aku Ghina.
+
+Di iklan, algoritma butuh waktu belajar. Kalau iklannya dimatikan-nyalakan terus, dia nggak pernah selesai belajar. Threads juga mirip: akun yang muncul tiap hari lebih gampang dikenali daripada akun yang meledak sekali lalu hilang seminggu.
+
+Masalahnya, konsisten itu capek kalau tiap pagi harus mikir dari nol. Kalender ini dibuat supaya kamu **tinggal lihat hari ini posting apa**.
+
+Isinya:
+- **Kalender 30 hari**, 3 postingan per hari, lengkap dengan jenis dan tujuannya.
+- **Template isi** untuk tiap jenis postingan, tinggal diisi niche-mu.
+- **Checklist harian** supaya akun tumbuh, bukan cuma ramai sesaat.
+
+**Cara pakai:** cuma bisa 1-2 kali sehari? Pakai slot pagi atau malam saja. Terlewat sehari? Lanjut dari hari berikutnya, nggak perlu mengulang.
+
 
 ## Aturan Main
 - **3 post/hari**: Pagi (06.00–08.00), Siang (12.00–13.00), Malam (20.00–22.00).
@@ -114,5 +128,17 @@ Linknya aku taruh di bawah ya 👇
 - [ ] Komentar bermakna di 5 akun besar seniche
 - [ ] Catat post dengan balasan terbanyak (bahan iklan & produk)
 
----
-**Next level:** ambil **Paket Lengkap** (Rp89rb) atau **Paket Ultimate** (Rp129rb).
+# Penutup
+Tiga puluh hari dari sekarang, bedanya bukan cuma di jumlah follower. Kamu punya kebiasaan posting, stok ide, dan catatan postingan mana yang paling dibalas. Itu modal untuk jualan.
+
+Mulai besok pagi dari Hari 1. Satu postingan dulu juga nggak apa-apa.
+
+## Yuk, lanjut ngobrol di Threads
+Aku lagi bangun akun Threads dari nol, dan semua prosesnya aku tulis terbuka di **@ghinaelsha**: yang berhasil, yang gagal, sampai angka-angkanya.
+
+- **Follow @ghinaelsha** biar update dan tips barunya nggak kelewat.
+- Kalau ada postingan yang kepakai, **like dan tinggalkan komentar**. Komentar kalian yang bikin postingan itu sampai ke lebih banyak orang, dan aku baca semuanya.
+- Punya teman yang lagi belajar jualan online? **Share postingannya** ke dia.
+- Udah coba isi file ini? **Mention @ghinaelsha** di postinganmu. Aku senang banget lihat hasil kalian, dan siapa tahu aku repost.
+
+Sampai ketemu di Threads 🤍

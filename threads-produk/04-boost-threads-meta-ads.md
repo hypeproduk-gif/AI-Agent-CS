@@ -3,6 +3,15 @@
 Bagian dari **Paket Ultimate** · by Ghina Elsha
 
 ---
+# Pendahuluan
+Hai, aku Ghina.
+
+Bagian ini paling dekat dengan keseharianku: iklan Meta. Aku sudah cukup lama melihat budget habis karena satu kesalahan yang sama, yaitu mengiklankan sesuatu yang belum terbukti.
+
+Prinsipku di Threads sederhana: **organik dulu, iklan belakangan.** Iklan cuma untuk mempercepat postingan yang sudah terbukti disukai orang.
+
+Panduan ini sengaja dibuat ringkas: 3 kampanye saja, angka pegangan, dan cara menghitung batas biaya per order sebelum kamu mengeluarkan uang sepeser pun.
+
 
 ## 1. Syarat Teknis
 - Akun Threads terhubung ke akun **Instagram** (Threads memang login lewat IG).
@@ -59,3 +68,17 @@ Lebih mahal dari itu? Naikkan nilai belanja (jual bundle) atau perbaiki halaman 
 - Budget besar di hari pertama.
 - Arahkan iklan ke profil, bukan langsung ke halaman jualan.
 
+# Penutup
+Iklan itu bensin, bukan mesin. Mesinnya adalah konten yang sudah terbukti dibalas orang dan halaman jualan yang jelas.
+
+Sebelum mulai iklan, cek tiga hal: ada postingan yang ramai secara organik, halaman jualanmu lengkap, dan kamu sudah hitung biaya maksimal per order. Kalau tiga-tiganya beres, mulai dari budget kecil dan biarkan jalan 3 hari sebelum diubah.
+
+## Yuk, lanjut ngobrol di Threads
+Aku lagi bangun akun Threads dari nol, dan semua prosesnya aku tulis terbuka di **@ghinaelsha**: yang berhasil, yang gagal, sampai angka-angkanya.
+
+- **Follow @ghinaelsha** biar update dan tips barunya nggak kelewat.
+- Kalau ada postingan yang kepakai, **like dan tinggalkan komentar**. Komentar kalian yang bikin postingan itu sampai ke lebih banyak orang, dan aku baca semuanya.
+- Punya teman yang lagi belajar jualan online? **Share postingannya** ke dia.
+- Udah coba isi file ini? **Mention @ghinaelsha** di postinganmu. Aku senang banget lihat hasil kalian, dan siapa tahu aku repost.
+
+Sampai ketemu di Threads 🤍

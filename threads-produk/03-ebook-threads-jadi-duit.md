@@ -3,6 +3,15 @@
 Bagian dari **Paket Ultimate** · by Ghina Elsha
 
 ---
+# Pendahuluan
+Hai, aku Ghina.
+
+Ebook ini adalah "otak" dari semua file di paketmu. Bank Hook, Kit Profil, dan Kalender itu alat. Di sini kamu belajar urutannya: dari setup akun, bikin postingan yang dibalas, sampai komentar berubah jadi orderan.
+
+Semuanya aku tulis pendek. Tiap bab ditutup tugas **Lakukan Hari Ini**, supaya ebook ini dipraktikkan, bukan cuma dibaca.
+
+**Cara pakai:** baca Bab 1 dan 2 hari ini, kerjakan tugasnya. Bab berikutnya satu per hari. Dalam dua minggu, kamu sudah menjalankan seluruh sistemnya.
+
 
 ## Daftar Isi
 1. Kenapa Threads (dan kenapa sekarang)
@@ -147,7 +156,17 @@ Ada yang mau ditanyain dulu boleh banget 😊
 
 ---
 
-## Penutup
+# Penutup
 Threads itu maraton obrolan, bukan lotre viral. 30 hari konsisten pakai panduan ini lebih kuat daripada 1 post viral lalu hilang.
 
 Lanjutkan ke panduan **Boost Threads pakai Meta Ads** di Paket Ultimate-mu.
+
+## Yuk, lanjut ngobrol di Threads
+Aku lagi bangun akun Threads dari nol, dan semua prosesnya aku tulis terbuka di **@ghinaelsha**: yang berhasil, yang gagal, sampai angka-angkanya.
+
+- **Follow @ghinaelsha** biar update dan tips barunya nggak kelewat.
+- Kalau ada postingan yang kepakai, **like dan tinggalkan komentar**. Komentar kalian yang bikin postingan itu sampai ke lebih banyak orang, dan aku baca semuanya.
+- Punya teman yang lagi belajar jualan online? **Share postingannya** ke dia.
+- Udah coba isi file ini? **Mention @ghinaelsha** di postinganmu. Aku senang banget lihat hasil kalian, dan siapa tahu aku repost.
+
+Sampai ketemu di Threads 🤍

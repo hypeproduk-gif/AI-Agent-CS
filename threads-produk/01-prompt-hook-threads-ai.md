@@ -3,6 +3,19 @@
 **Harga: Rp29.000** · by Ghina Elsha
 
 ---
+# Pendahuluan
+Hai, aku Ghina.
+
+Pernah nggak, udah niat posting, buka Threads, terus bengong di baris pertama? Nulis, hapus, nulis lagi, akhirnya nggak jadi posting.
+
+Aku sering banget begitu. Padahal setelah bertahun-tahun ngurus iklan Meta, aku tahu persis: yang menentukan orang berhenti atau lanjut scroll itu cuma bagian paling atas. Di iklan namanya thumbnail dan headline. Di Threads, namanya baris pertama.
+
+File ini isinya dua hal:
+- **Bagian 1: 50 hook siap pakai.** Tinggal ganti kata di dalam kurung, langsung bisa diposting.
+- **Bagian 2: 50 prompt AI.** Buat kamu yang mau bikin hook sendiri sesuai niche, tanpa batas.
+
+**Cara pakai paling cepat:** buka Bagian 1, pilih satu hook yang paling "kamu banget", isi kurungnya, posting hari ini juga. Kalau stoknya mulai terasa habis, pindah ke Bagian 2.
+
 
 # BAGIAN 1 — 50 HOOK SIAP PAKAI
 Ganti kata dalam `[ ]`, sisanya biarkan. Hook = baris pertama post.
@@ -168,5 +181,22 @@ Ada komentar ini di postinganku: "[KOMENTAR]". Buat 3 balasan hangat, singkat,
 yang mengajak dia ngobrol lagi (akhiri dengan pertanyaan ringan). Jangan jualan.
 ```
 
----
-**Next level:** profil & skrip jualan → **Kit Profil & Soft-Selling** (Rp45rb), atau ambil **Paket Lengkap** (Rp89rb).
+# Penutup
+Hook yang bagus bikin orang berhenti. Yang bikin mereka kembali besoknya adalah kamu yang konsisten muncul dan membalas komentar mereka.
+
+Jadi jangan cuma disimpan. Mulai malam ini:
+1. Pilih **1 hook** dari Bagian 1.
+2. Isi kurungnya dengan cerita atau niche kamu.
+3. Posting, lalu balas setiap komentar yang masuk di jam pertama.
+
+Kalau mau profil yang bikin orang follow dan skrip jualan yang nggak maksa, lanjutkan ke **Kit Profil + Soft-Selling Threads**. Mau semuanya sekalian? Ambil **Paket Lengkap**.
+
+## Yuk, lanjut ngobrol di Threads
+Aku lagi bangun akun Threads dari nol, dan semua prosesnya aku tulis terbuka di **@ghinaelsha**: yang berhasil, yang gagal, sampai angka-angkanya.
+
+- **Follow @ghinaelsha** biar update dan tips barunya nggak kelewat.
+- Kalau ada postingan yang kepakai, **like dan tinggalkan komentar**. Komentar kalian yang bikin postingan itu sampai ke lebih banyak orang, dan aku baca semuanya.
+- Punya teman yang lagi belajar jualan online? **Share postingannya** ke dia.
+- Udah coba isi file ini? **Mention @ghinaelsha** di postinganmu. Aku senang banget lihat hasil kalian, dan siapa tahu aku repost.
+
+Sampai ketemu di Threads 🤍
