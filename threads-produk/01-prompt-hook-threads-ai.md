@@ -1,8 +1,75 @@
-# 50 PROMPT HOOK THREADS AI
-### Copas → Tempel ke ChatGPT/Claude → Hook & Utas Jadi
-**Harga: Rp19.000** · by Ghina Elsha
+# BANK HOOK + PROMPT AI THREADS
+### 50 hook siap pakai + 50 prompt AI untuk bikin hook sendiri tanpa batas
+**Harga: Rp29.000** · by Ghina Elsha
 
 ---
+
+# BAGIAN 1 — 50 HOOK SIAP PAKAI
+Ganti kata dalam `[ ]`, sisanya biarkan. Hook = baris pertama post.
+
+## Curhat / Relate
+1. Jujur ya, aku pernah [hal memalukan] gara-gara [penyebab].
+2. Nggak ada yang bilang kalau [peran] itu ternyata se-capek ini.
+3. Tadi pagi kejadian sesuatu yang bikin aku mikir ulang soal [topik].
+4. Dulu aku ngira [anggapan]. Ternyata salah besar.
+5. Momen paling nyesek minggu ini: [kejadian].
+6. Aku termasuk orang yang [kebiasaan buruk]. Ada temennya?
+7. Kata [mertua/suami/teman]: "[kutipan]". Dan aku cuma bisa senyum.
+8. [X] bulan [aktivitas], hasilnya nol. Ini yang akhirnya aku sadari.
+9. Hal kecil yang bikin aku hampir nyerah [aktivitas].
+10. Ternyata yang bikin aku capek bukan [A], tapi [B].
+
+## Pertanyaan / Pancing Balasan
+11. Aku doang atau kalian juga [kebiasaan]?
+12. Jawab jujur: kamu [pilihan A] atau [pilihan B]?
+13. Sebut 1 hal yang bikin kamu belum mulai [aktivitas].
+14. Kalau dikasih Rp1 juta buat [topik], kamu pakai buat apa?
+15. Kalian tim [A] atau tim [B]? Aku tim [A].
+16. Berapa lama kalian [aktivitas] sampai [hasil]?
+17. Bantu aku pilih dong: [A] atau [B]?
+18. Isi titik-titik: [peran] itu paling capek kalau ...
+19. Apa 1 hal yang pengen kamu bilang ke dirimu 1 tahun lalu soal [topik]?
+20. Siapa yang masih [hal umum] sampai sekarang? 🙋‍♀️
+
+## Opini / Hot Take
+21. Unpopular opinion: [opini].
+22. Berhenti [kebiasaan] kalau kamu mau [hasil].
+23. Kamu nggak butuh [hal mahal] buat [hasil].
+24. Yang bikin kamu gagal bukan [A]. Tapi [B].
+25. Aku nggak setuju sama orang yang bilang [anggapan umum].
+26. Red flag di [topik] yang sering dianggap normal.
+27. [Hal populer] itu overrated. Ini alasannya.
+28. Orang yang [perilaku] biasanya [akibat].
+29. Mitos paling merugikan di [topik]: [mitos].
+30. [Hal] itu bukan bakat. Itu kebiasaan.
+
+## Tips / Nilai
+31. Simpan dulu, nanti pasti kepakai:
+32. 3 hal yang aku lakukan tiap hari supaya [hasil]:
+33. Cara [hasil] dalam 5 menit, tanpa [hal yang ditakutkan]:
+34. Kalau aku mulai [aktivitas] dari nol lagi, aku akan:
+35. Checklist sebelum kamu [aktivitas]:
+36. Rumus sederhana yang aku pakai buat [hasil]:
+37. Bedanya pemula vs yang udah jago di [topik]:
+38. Tools gratis yang bikin [aktivitas] jadi 2x lebih cepat:
+39. Template [hal] yang bisa langsung kamu copas:
+40. Kesalahan [topik] yang paling sering aku lihat:
+
+## Bukti / Jualan Halus
+41. Update hari ke-[X]: [angka awal] → [angka sekarang].
+42. Dari [kondisi awal] ke [hasil] dalam [waktu]. Ini yang aku ubah.
+43. Nggak nyangka [produk] ini dipakai buat [hasil pembeli].
+44. Ada yang DM nanya "[pertanyaan]". Aku jawab di sini ya.
+45. Jangan beli [produk]-ku kalau kamu [kondisi].
+46. Behind the scene bikin [produk] (ternyata nggak segampang itu).
+47. Screenshot ini bikin aku semangat lagi 🥹
+48. Rekap bulan ini, jujur apa adanya:
+49. Yang udah ambil [produk], hasilnya gimana? Aku penasaran.
+50. Sampai [tanggal] aja ya, setelah itu [perubahan].
+
+---
+
+# BAGIAN 2 — 50 PROMPT AI
 
 ## Cara Pakai (2 menit)
 1. Buka ChatGPT / Claude / Gemini (gratis juga bisa).
@@ -102,4 +169,4 @@ yang mengajak dia ngobrol lagi (akhiri dengan pertanyaan ringan). Jangan jualan.
 ```
 
 ---
-**Next level:** mau tahu postingan apa diposting hari apa? → **Template 30 Hari Konten Threads** (Rp39rb).
+**Next level:** profil & skrip jualan → **Kit Profil & Soft-Selling** (Rp45rb), atau ambil **Paket Lengkap** (Rp89rb).
