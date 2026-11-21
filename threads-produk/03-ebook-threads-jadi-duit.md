@@ -2,6 +2,7 @@
 ### Panduan Praktis Ubah Akun Threads Jadi Mesin Orderan — Dari HP, Tanpa Iklan
 Bagian dari **Paket Ultimate** · by Ghina Elsha
 
+
 ---
 # Pendahuluan
 Hai, aku Ghina.
@@ -154,7 +155,6 @@ Ada yang mau ditanyain dulu boleh banget 😊
 9. Beli follower (engagement jadi jeblok, jangkauan turun).
 10. Berhenti di minggu ke-2 karena belum viral.
 
----
 
 # Penutup
 Threads itu maraton obrolan, bukan lotre viral. 30 hari konsisten pakai panduan ini lebih kuat daripada 1 post viral lalu hilang.

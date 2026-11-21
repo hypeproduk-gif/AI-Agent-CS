@@ -14,6 +14,12 @@ body = re.sub(r"\[([^\]\n<]{1,45})\]", r'<span class="ph">[\1]</span>', body)
 body = body.replace("<h1>", '<h1 class="chap">')
 body = body.replace("<h2>Yuk, lanjut ngobrol di Threads</h2>", '<div class="follow"><h2>Yuk, lanjut ngobrol di Threads</h2>', 1)
 if '<div class="follow">' in body: body += "</div>"
+# jaga isi tidak terpotong/nyempil: list pendek, kode, tabel kecil tidak dipecah; judul selalu ikut blok setelahnya
+def _short(m):
+    return m.group(0).replace(m.group(1), m.group(1)+' class="keep"',1) if m.group(0).count("<li")<=12 else m.group(0)
+body = re.sub(r"(<ol|<ul)(?:>|\s)[\s\S]*?</(?:ol|ul)>", _short, body)
+body = re.sub(r"(<h[23][^>]*>[\s\S]*?</h[23]>\s*(?:<p>[\s\S]*?</p>\s*)?(?:<(ol|ul|pre|table|blockquote)[\s\S]*?</\2>|<p>[\s\S]*?</p>))", r'<div class="keep">\1</div>', body)
+body = re.sub(r"(<p><strong>[^<]{1,80}</strong>[^<]{0,80}</p>\s*<(ol|ul|pre|table)[\s\S]*?</\2>)", r'<div class="keep">\1</div>', body)
 CREAM = "#FAF6F1"
 CSS = f"""
 @page{{size:A4;margin:16mm 0 18mm 0}}
@@ -55,6 +61,7 @@ blockquote{{break-inside:avoid;margin:18px 0;padding:14px 18px;border-radius:14p
 blockquote p:first-child strong{{letter-spacing:.08em;font-size:9pt;color:#F4A261}}
 .follow{{break-inside:avoid;margin-top:22px;background:#fff;border:2px solid #F4A261;border-radius:16px;padding:6px 20px 12px}}
 .follow h2{{margin-top:12px}}
+.keep{{break-inside:avoid}}p,li{{orphans:3;widows:3}}
 hr{{border:0;border-top:1px solid #E9DFD3;margin:18px 0}}
 """
 posts = "".join(f'<div class="post"><div class="av"></div><div><b>ghinaelsha <i>●</i></b>{H.escape(h)}<div class="acts">♡ ◯ ⟲ ➤</div></div></div>' for h in hooks[:3])

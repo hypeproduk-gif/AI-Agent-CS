@@ -2,6 +2,7 @@
 ### Profil yang bikin orang follow + utas & DM yang bikin orang klik bayar
 **Harga: Rp45.000** · by Ghina Elsha
 
+
 ---
 # Pendahuluan
 Hai, aku Ghina.
@@ -139,7 +140,6 @@ Gratis buat kamu yang [kondisi]:
 Komen "MAU", aku kirim lewat DM 📩
 ```
 
----
 
 # BAGIAN 2 — SOFT-SELLING
 
@@ -229,7 +229,13 @@ Mulai hari ini:
 
 > **LANGKAH BERIKUTNYA**
 >
-> Kalau mau jadwal posting yang jelas tiap hari, lanjut ke **Kalender 30 Hari Threads**, atau ambil semuanya di **Paket Lengkap**.
+> Mau jadwal posting yang jelas tiap hari? Lanjutkan ke:
+>
+> **→ Kalender 30 Hari Threads**
+>
+> Mau semuanya sekalian? Ambil:
+>
+> **→ Paket Lengkap** (Bank Hook + Kit Profil + Kalender 30 Hari)
 
 ## Yuk, lanjut ngobrol di Threads
 Aku lagi bangun akun Threads dari nol, dan semua prosesnya aku tulis terbuka di **@ghinaelsha**: yang berhasil, yang gagal, sampai angka-angkanya.

@@ -2,6 +2,7 @@
 ### Tinggal isi niche-mu. Tiap hari jelas: posting apa, jam berapa, tujuannya apa.
 **Harga: Rp39.000** · by Ghina Elsha
 
+
 ---
 # Pendahuluan
 Hai, aku Ghina.

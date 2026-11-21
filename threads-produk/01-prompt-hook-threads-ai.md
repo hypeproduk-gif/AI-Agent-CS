@@ -2,6 +2,7 @@
 ### 50 hook siap pakai + 50 prompt AI untuk bikin hook sendiri tanpa batas
 **Harga: Rp29.000** · by Ghina Elsha
 
+
 ---
 # Pendahuluan
 Hai, aku Ghina.
@@ -80,7 +81,6 @@ Ganti kata dalam `[ ]`, sisanya biarkan. Hook = baris pertama post.
 49. Yang udah ambil [produk], hasilnya gimana? Aku penasaran.
 50. Sampai [tanggal] aja ya, setelah itu [perubahan].
 
----
 
 # BAGIAN 2 — 50 PROMPT AI
 
@@ -191,7 +191,13 @@ Jadi jangan cuma disimpan. Mulai malam ini:
 
 > **LANGKAH BERIKUTNYA**
 >
-> Kalau mau profil yang bikin orang follow dan skrip jualan yang nggak maksa, lanjutkan ke **Kit Profil + Soft-Selling Threads**. Mau semuanya sekalian? Ambil **Paket Lengkap**.
+> Mau profil yang bikin orang follow dan skrip jualan yang nggak maksa? Lanjutkan ke:
+>
+> **→ Kit Profil + Soft-Selling Threads**
+>
+> Mau semuanya sekalian? Ambil:
+>
+> **→ Paket Lengkap** (Bank Hook + Kit Profil + Kalender 30 Hari)
 
 ## Yuk, lanjut ngobrol di Threads
 Aku lagi bangun akun Threads dari nol, dan semua prosesnya aku tulis terbuka di **@ghinaelsha**: yang berhasil, yang gagal, sampai angka-angkanya.

@@ -2,6 +2,7 @@
 ### Iklankan post yang sudah terbukti. Bukan buang uang ke post yang belum teruji.
 Bagian dari **Paket Ultimate** · by Ghina Elsha
 
+
 ---
 # Pendahuluan
 Hai, aku Ghina.
