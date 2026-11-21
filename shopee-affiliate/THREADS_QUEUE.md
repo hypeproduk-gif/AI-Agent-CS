@@ -11,6 +11,7 @@ Web: `http://103.55.38.134:8090/threads` (Basic Auth, password = `APP_PASSWORD` 
 - Foto opsional per item (`image`, file di `PUBLIC_DIR=/opt/n8n/media`, disajikan via `PUBLIC_BASE_URL=https://n8n.filodigital.my.id/media`).
 - Item yang tayang > `THREADS_KEEP_DAYS` (default 3) hari dihapus otomatis. Token Threads diperpanjang otomatis tiap 7 hari.
 - Tombol jeda: file `output/threads_paused`.
+- `THREADS_ORDER=fifo` di `.env`: posting persis sesuai urutan antrean (dipakai untuk kalender konten produk digital dari generator). Default `alternate`.
 
 ## Format tempel (halaman web)
 ```

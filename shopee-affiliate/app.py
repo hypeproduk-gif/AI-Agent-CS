@@ -242,6 +242,8 @@ def q_next_pending(items: list):
     pending = [i for i in items if i["status"] == "pending"]
     if not pending:
         return None
+    if os.getenv("THREADS_ORDER", "alternate").lower() == "fifo":
+        return pending[0]  # urut sesuai antrean (kalender konten sudah mengatur rasio jualan/obrolan)
     posted = [i for i in items if i["status"] == "posted"]
     by_time = sorted(posted, key=lambda i: i.get("posted_ts", 0))
     last = by_time[-1] if by_time else None
