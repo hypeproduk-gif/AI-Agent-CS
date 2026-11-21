@@ -189,7 +189,9 @@ Jadi jangan cuma disimpan. Mulai malam ini:
 2. Isi kurungnya dengan cerita atau niche kamu.
 3. Posting, lalu balas setiap komentar yang masuk di jam pertama.
 
-Kalau mau profil yang bikin orang follow dan skrip jualan yang nggak maksa, lanjutkan ke **Kit Profil + Soft-Selling Threads**. Mau semuanya sekalian? Ambil **Paket Lengkap**.
+> **LANGKAH BERIKUTNYA**
+>
+> Kalau mau profil yang bikin orang follow dan skrip jualan yang nggak maksa, lanjutkan ke **Kit Profil + Soft-Selling Threads**. Mau semuanya sekalian? Ambil **Paket Lengkap**.
 
 ## Yuk, lanjut ngobrol di Threads
 Aku lagi bangun akun Threads dari nol, dan semua prosesnya aku tulis terbuka di **@ghinaelsha**: yang berhasil, yang gagal, sampai angka-angkanya.

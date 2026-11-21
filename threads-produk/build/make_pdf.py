@@ -12,6 +12,8 @@ md = "\n".join(_o)
 body = markdown.markdown(md, extensions=["tables", "fenced_code"])
 body = re.sub(r"\[([^\]\n<]{1,45})\]", r'<span class="ph">[\1]</span>', body)
 body = body.replace("<h1>", '<h1 class="chap">')
+body = body.replace("<h2>Yuk, lanjut ngobrol di Threads</h2>", '<div class="follow"><h2>Yuk, lanjut ngobrol di Threads</h2>', 1)
+if '<div class="follow">' in body: body += "</div>"
 CREAM = "#FAF6F1"
 CSS = f"""
 @page{{size:A4;margin:16mm 0 18mm 0}}
@@ -24,7 +26,7 @@ body{{font-family:'Plus Jakarta Sans',sans-serif;font-size:10.5pt;color:#2B2231;
 .cover h1{{font-size:36pt;line-height:1.05;margin:0;font-weight:800}}
 .cover h1 em{{font-style:normal;color:#F4A261}}
 .cover .sub{{font-size:13pt;opacity:.85;margin:6px 0 0;max-width:130mm}}
-.phone{{position:relative;align-self:center;width:92mm;background:#FFFFFF;border-radius:11mm;padding:9mm 5mm 7mm;box-shadow:0 0 0 2.5mm #4A2F59,0 14mm 30mm #0007;color:#1c1c1c}}
+.phone{{position:relative;align-self:center;width:92mm;background:#FFFFFF;border-radius:11mm;padding:9mm 5mm 7mm;border:2.5mm solid #4A2F59;color:#1c1c1c}}
 .phone:before{{content:"";position:absolute;top:3mm;left:50%;transform:translateX(-50%);width:22mm;height:2.2mm;border-radius:2mm;background:#1c1c1c}}
 .pt{{font-weight:800;font-size:11pt;padding:0 2mm 3mm;border-bottom:1px solid #eee}}
 .post{{display:flex;gap:3mm;padding:3.5mm 2mm;border-bottom:1px solid #eee;font-size:8.6pt;line-height:1.45}}
@@ -49,6 +51,10 @@ pre code{{border:0;padding:0;background:none}}
 blockquote{{margin:12px 0;background:#2E1A3A;color:#FAF6F1;border-radius:12px;padding:10px 16px}}
 table{{border-collapse:collapse;width:100%;background:#fff;font-size:9.3pt}}th{{background:#2E1A3A;color:#fff}}td,th{{border:1px solid #E9DFD3;padding:6px 8px}}tr{{break-inside:avoid}}
 .ph{{background:#FCE3CF;color:#8A3B14;border-radius:4px;padding:0 3px;font-weight:600}}
+blockquote{{break-inside:avoid;margin:18px 0;padding:14px 18px;border-radius:14px}}
+blockquote p:first-child strong{{letter-spacing:.08em;font-size:9pt;color:#F4A261}}
+.follow{{break-inside:avoid;margin-top:22px;background:#fff;border:2px solid #F4A261;border-radius:16px;padding:6px 20px 12px}}
+.follow h2{{margin-top:12px}}
 hr{{border:0;border-top:1px solid #E9DFD3;margin:18px 0}}
 """
 posts = "".join(f'<div class="post"><div class="av"></div><div><b>ghinaelsha <i>●</i></b>{H.escape(h)}<div class="acts">♡ ◯ ⟲ ➤</div></div></div>' for h in hooks[:3])

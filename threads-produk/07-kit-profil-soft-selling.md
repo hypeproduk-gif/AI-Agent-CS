@@ -227,7 +227,9 @@ Mulai hari ini:
 2. Pin 1 postingan terbaikmu.
 3. Minggu ini, coba 1 skrip jualan halus dan lihat siapa yang membalas.
 
-Kalau mau jadwal posting yang jelas tiap hari, lanjut ke **Kalender 30 Hari Threads**, atau ambil semuanya di **Paket Lengkap**.
+> **LANGKAH BERIKUTNYA**
+>
+> Kalau mau jadwal posting yang jelas tiap hari, lanjut ke **Kalender 30 Hari Threads**, atau ambil semuanya di **Paket Lengkap**.
 
 ## Yuk, lanjut ngobrol di Threads
 Aku lagi bangun akun Threads dari nol, dan semua prosesnya aku tulis terbuka di **@ghinaelsha**: yang berhasil, yang gagal, sampai angka-angkanya.
