@@ -54,7 +54,7 @@ Cara bikin hook pakai AI dalam 1 menit:
 Terus pilih 1, ganti 1 kalimat pakai gayamu sendiri. Beres.
 ---
 Update minggu ke-2:
-Follower: [ANGKA AWAL] → [ANGKA]
+Follower: 0 → [ANGKA]
 Post paling rame: [POST]
 Pelajaran: postingan yang paling jujur selalu paling dibalas.
 ---

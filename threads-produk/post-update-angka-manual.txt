@@ -4,13 +4,13 @@ Post yang aku tulis 2 menit sambil masak, malah paling rame.
 Threads emang suka yang jujur ternyata.
 ---
 Update Hari 5:
-Follower: [ANGKA AWAL] → [ANGKA]
+Follower: 0 → [ANGKA]
 Views total: [ANGKA]
 Post paling rame: yang [JENIS POST].
 Pelajaran: [1 KALIMAT].
 Lanjut besok 💪
 ---
 Update minggu ke-2:
-Follower: [ANGKA AWAL] → [ANGKA]
+Follower: 0 → [ANGKA]
 Post paling rame: [POST]
 Pelajaran: postingan yang paling jujur selalu paling dibalas.

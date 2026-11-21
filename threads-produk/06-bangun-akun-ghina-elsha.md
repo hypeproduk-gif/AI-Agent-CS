@@ -1,5 +1,5 @@
 # BANGUN AKUN THREADS — GHINA ELSHA
-Konsep: **"Build in public"**, yaitu pindah haluan dari affiliate Shopee ke produk sendiri di depan audiens. Prosesnya sendiri jadi konten dan bukti untuk jualan produk nanti.
+Konsep: **"Build in public"**, yaitu membangun akun dari 0 follower di depan audiens. Prosesnya sendiri jadi konten dan bukti untuk jualan produk nanti.
 
 ---
 
@@ -9,7 +9,7 @@ Konsep: **"Build in public"**, yaitu pindah haluan dari affiliate Shopee ke prod
 **Bio:**
 ```
 Belajar cuan dari Threads, dibantu AI 🤖
-Dari affiliate ke produk sendiri, semua prosesnya aku share
+Bangun akun dari 0 follower, semua prosesnya aku share
 Konten seminggu beres sejam 👇
 ```
 **Link:** sementara kosong / IG. Pasang lynk.id saat rilis produk 1 (Hari 15).
@@ -25,11 +25,11 @@ Konten seminggu beres sejam 👇
 ### Hari 1
 **Pagi**
 ```
-Pengumuman kecil 👋
-Selama ini kalian kenal aku dari rekomendasi skincare & link Shopee.
-Mulai hari ini aku coba hal baru: bikin produk sendiri, jualan di Threads, dibantu AI.
-Targetku: 30 hari, cuan pertama dari produk sendiri.
-Semua prosesnya aku share di sini, termasuk yang gagal. Temenin ya?
+Hai Threads 👋 Aku Ghina.
+Akun ini masih 0 follower, dan mulai hari ini aku bangun dari nol.
+Targetku: 30 hari, cuan pertama dari produk digital buatanku sendiri.
+Semua prosesnya aku share di sini, termasuk yang gagal.
+Temenin ya?
 ```
 **Siang**
 ```
@@ -131,7 +131,7 @@ Balasan di jam pertama itu yang didorong algoritma.
 **Malam**
 ```
 Update Hari 5:
-Follower: [ANGKA AWAL] → [ANGKA]
+Follower: 0 → [ANGKA]
 Views total: [ANGKA]
 Post paling rame: yang [JENIS POST].
 Pelajaran: [1 KALIMAT].
