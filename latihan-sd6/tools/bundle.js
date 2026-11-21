@@ -7,7 +7,7 @@ for (const [mode, nama, out] of [["harian", "Les di Rumah Kelas 6", "les-di-ruma
   const hp = path.join(__dirname, `hash-${mode}.json`);
   const hashes = fs.existsSync(hp) ? fs.readFileSync(hp, "utf8") : "[]";
   let h = base.replace(/__PRODUK__/g, nama);
-  h = h.replace('<script src="js/core.js">', (mode === "demo" ? `<script>window.MODE="hemat";window.DEMO=true;window.NOKODE=true;window.QUOTA={1:30,2:30,3:20}</script>` : mode === "hemat" ? `<script>window.MODE="hemat";window.NOKODE=true;window.QUOTA={1:30,2:30,3:20}</script>` : `<script>window.MODE=${JSON.stringify(mode)};window.KODE_HASH=${hashes}</script>`) + `<script src="js/core.js">`);
+  h = h.replace('<script src="js/core.js">', (mode === "demo" ? `<script>window.MODE="hemat";window.DEMO=true;window.DEMO_NAMA="Diandra Elsha";window.NOKODE=true;window.QUOTA={1:30,2:30,3:20}</script>` : mode === "hemat" ? `<script>window.MODE="hemat";window.NOKODE=true;window.QUOTA={1:30,2:30,3:20}</script>` : `<script>window.MODE=${JSON.stringify(mode)};window.KODE_HASH=${hashes}</script>`) + `<script src="js/core.js">`);
   h = h.replace(/<script src="(js\/[a-z0-9]+\.js)"><\/script>/g, (_, f) => "<script>" + fs.readFileSync(path.join(d, f), "utf8").replace(/<\/script/g, "<\\/script") + "</script>");
   fs.mkdirSync(path.join(d, "dist"), { recursive: true });
   fs.writeFileSync(path.join(d, "dist", out), h);

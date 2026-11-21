@@ -42,7 +42,7 @@ input,select{font:inherit;padding:10px;border:1px solid var(--line);border-radiu
 <header><h1 id="title">📚 Siap Ujian Kelas 6<span id="lic"></span></h1><button id="homeBtn" hidden>🏠 Beranda</button></header>
 <main id="app"></main>
 <div id="print"></div>
-<script>window.MODE="hemat";window.DEMO=true;window.NOKODE=true;window.QUOTA={1:30,2:30,3:20}</script><script>// Inti generator: RNG berbibit (bank soal selalu sama), pembuat soal pilihan ganda, helper SVG.
+<script>window.MODE="hemat";window.DEMO=true;window.DEMO_NAMA="Diandra Elsha";window.NOKODE=true;window.QUOTA={1:30,2:30,3:20}</script><script>// Inti generator: RNG berbibit (bank soal selalu sama), pembuat soal pilihan ganda, helper SVG.
 (function (G) {
   function rng(seed) {
     let a = seed >>> 0;
@@ -1007,14 +1007,14 @@ $("#homeBtn").onclick = () => { if (history.state && history.state.sub) return h
 function seedDemo() {
   const r = CORE.rng(2611), PELUANG = [0, 0.8, 0.65, 0.45];
   const isi = (soal) => { const pil = {}, log = []; soal.forEach((q, i) => { const ok = r() < PELUANG[q.level]; pil[i] = ok ? q.jawab : (q.jawab + 1 + Math.floor(r() * 3)) % 4; log.push({ id: q.id, ok, topik: q.topik, mapel: q.mapel }); }); return { pil, log, benar: log.filter((l) => l.ok).length }; };
-  ST = { nama: "Nama Anak", setuju: 1, hasil: {}, salah: {}, draft: {}, sim: {}, streak: 6, last: today(), demoSeed: 1, ujian: new Date(Date.now() + 12 * 864e5).toISOString().slice(0, 10) };
+  ST = { nama: window.DEMO_NAMA || "Nama Anak", setuju: 1, hasil: {}, salah: {}, draft: {}, sim: {}, streak: 6, last: today(), demoSeed: 2, ujian: new Date(Date.now() + 12 * 864e5).toISOString().slice(0, 10) };
   const selesai = { MTK: 5, BIND: 4, BING: 4, IPA: 3 };
   for (const m in selesai) for (let k = 1; k <= selesai[m]; k++) { const s = soalPaket(m, k), h = isi(s); h.log.forEach((l) => (l.ok ? delete ST.salah[l.id] : (ST.salah[l.id] = 1))); ST.hasil[`P-${m}-${k}`] = { nilai: Math.round((h.benar / s.length) * 100), pil: h.pil, log: h.log, tgl: today() }; }
   { const s = soalPaket("MTK", 6), h = isi(s.slice(0, 4)); ST.draft["P-MTK-6"] = { pil: h.pil, log: h.log }; } // paket 6 sedang dikerjakan
   for (const [m, n, menit] of [["MIX", 1, 54], ["MTK", 1, 58]]) { const s = soalSim(m, n), h = isi(s); h.log.forEach((l) => { if (!l.ok) ST.salah[l.id] = 1; }); ST.sim[`${m}-${n}`] = { nilai: Math.round((h.benar / s.length) * 100), pil: h.pil, log: h.log, tgl: today(), menit }; }
   save();
 }
-if (window.DEMO && !ST.demoSeed) seedDemo();
+if (window.DEMO && ST.demoSeed !== 2) seedDemo();
 home();
 </script>
 </body>
