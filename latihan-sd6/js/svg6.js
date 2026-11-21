@@ -14,9 +14,9 @@
       return S.wrap(300, 220, `<polygon points="30,180 130,180 30,90" fill="#dcfce7" stroke="#15803d" stroke-width="2"/><polygon points="130,180 250,140 150,50 30,90" fill="#bbf7d0" stroke="#15803d" stroke-width="2" fill-opacity=".6"/><line x1="30" y1="90" x2="150" y2="50" stroke="#15803d" stroke-width="2"/><line x1="130" y1="180" x2="250" y2="140" stroke="#15803d" stroke-width="2"/><line x1="150" y1="50" x2="250" y2="140" stroke="#15803d" stroke-width="2"/>` + S.text(80, 200, "a = " + a + " " + sat, { s: 13 }) + S.text(22, 140, ts + " " + sat, { a: "end", s: 13 }) + S.text(205, 175, "t = " + t + " " + sat, { s: 13 }));
     },
     cartesius(x, y, label) {
-      const k = 18, cx = 130, cy = 120; let b = "";
-      for (let i = -6; i <= 6; i++) { b += `<line x1="${cx + i * k}" y1="12" x2="${cx + i * k}" y2="228" stroke="#eee"/><line x1="22" y1="${cy + i * k}" x2="238" y2="${cy + i * k}" stroke="#eee"/>`; if (i) b += S.text(cx + i * k, cy + 14, i, { s: 9 }) + S.text(cx - 8, cy - i * k + 3, i, { s: 9 }); }
-      b += `<line x1="22" y1="${cy}" x2="238" y2="${cy}" stroke="#333" stroke-width="2"/><line x1="${cx}" y1="12" x2="${cx}" y2="228" stroke="#333" stroke-width="2"/>` + S.text(234, cy - 6, "x", { s: 12 }) + S.text(cx + 8, 20, "y", { s: 12 });
+      const k = 18, cx = 130, cy = 120; let b = `<rect x="22" y="12" width="216" height="216" fill="#f8fbff"/>`;
+      for (let i = -6; i <= 6; i++) { b += `<line x1="${cx + i * k}" y1="12" x2="${cx + i * k}" y2="228" stroke="#dbeafe"/><line x1="22" y1="${cy + i * k}" x2="238" y2="${cy + i * k}" stroke="#dbeafe"/>`; if (i) b += S.text(cx + i * k, cy + 14, i, { s: 9 }) + S.text(cx - 8, cy - i * k + 3, i, { s: 9 }); }
+      b += `<line x1="22" y1="${cy}" x2="238" y2="${cy}" stroke="#2563eb" stroke-width="2.5"/><line x1="${cx}" y1="12" x2="${cx}" y2="228" stroke="#16a34a" stroke-width="2.5"/>` + S.text(234, cy - 6, "x", { s: 12 }) + S.text(cx + 8, 20, "y", { s: 12 });
       b += `<circle cx="${cx + x * k}" cy="${cy - y * k}" r="6" fill="#dc2626"/>` + S.text(cx + x * k + 10, cy - y * k - 8, label, { a: "start", c: "#dc2626", s: 14 });
       return S.wrap(260, 240, b);
     },
@@ -27,10 +27,12 @@
         b += `<rect x="180" y="${40 + i * 22}" width="12" height="12" fill="${col[i]}"/>` + S.text(198, 50 + i * 22, `${labels[i]} ${Math.round((v / tot) * 100)}%`, { a: "start", s: 12 }); a0 = a1; });
       return S.wrap(300, 200, b);
     },
-    numline(a, b, mark) { // garis bilangan dari a..b, titik di mark
-      const n = b - a, w = 260 / n; let s = `<line x1="15" y1="40" x2="285" y2="40" stroke="#333" stroke-width="2"/>`;
-      for (let i = 0; i <= n; i++) { const x = 20 + i * w; s += `<line x1="${x}" y1="34" x2="${x}" y2="46" stroke="#333"/>` + S.text(x, 64, a + i, { s: 11 }); }
-      if (mark != null) s += `<circle cx="${20 + (mark - a) * w}" cy="40" r="7" fill="#dc2626"/>` + S.text(20 + (mark - a) * w, 22, "?", { c: "#dc2626", s: 15 });
+    numline(a, b, mark) { // garis bilangan dari a..b, titik di mark (berwarna: negatif merah, positif biru)
+      const n = b - a, w = 260 / n, z = 20 + (0 - a) * w; let s = `<rect width="300" height="75" rx="10" fill="#f8fafc"/>`;
+      if (a < 0) s += `<line x1="15" y1="40" x2="${Math.min(z, 285)}" y2="40" stroke="#f87171" stroke-width="4"/>`;
+      if (b > 0) s += `<line x1="${Math.max(z, 15)}" y1="40" x2="285" y2="40" stroke="#60a5fa" stroke-width="4"/>`;
+      for (let i = 0; i <= n; i++) { const x = 20 + i * w, v = a + i, c = v < 0 ? "#dc2626" : v > 0 ? "#2563eb" : "#111"; s += `<line x1="${x}" y1="33" x2="${x}" y2="47" stroke="${c}" stroke-width="2"/>` + S.text(x, 64, v, { s: 11, c }); }
+      if (mark != null) s += `<circle cx="${20 + (mark - a) * w}" cy="40" r="8" fill="#f59e0b" stroke="#fff" stroke-width="2"/>` + S.text(20 + (mark - a) * w, 22, "?", { c: "#d97706", s: 16 });
       return S.wrap(300, 75, s);
     },
     planets(highlight) {

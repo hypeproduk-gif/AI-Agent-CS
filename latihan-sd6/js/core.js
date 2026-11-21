@@ -92,7 +92,7 @@
       let b = S.text(W / 2, 16, title, { s: 13 });
       const top = Math.ceil(max / 5) * 5 || 5;
       for (let i = 0; i <= 5; i++) { const v = (top / 5) * i, y = 170 - (v / top) * 140; b += `<line x1="40" x2="${W - 10}" y1="${y}" y2="${y}" stroke="#ddd"/>` + S.text(34, y + 4, v, { a: "end", s: 11 }); }
-      labels.forEach((l, i) => { const h = (vals[i] / top) * 140; b += `<rect x="${52 + i * 55}" y="${170 - h}" width="34" height="${h}" fill="#4f8edc"/>` + S.text(69 + i * 55, 188, l, { s: 11 }); });
+      labels.forEach((l, i) => { const h = (vals[i] / top) * 140; b += `<rect x="${52 + i * 55}" y="${170 - h}" width="34" height="${h}" fill="${["#60a5fa", "#f59e0b", "#34d399", "#f472b6", "#a78bfa", "#fb7185"][i % 6]}"/>` + S.text(69 + i * 55, 188, l, { s: 11 }); });
       return S.wrap(W, H + 10, b + (unit ? S.text(8, 30, unit, { a: "start", s: 10 }) : ""));
     },
     fracCircle(n, d) {
