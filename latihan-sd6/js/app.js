@@ -146,7 +146,7 @@ function pilihTopik(m) {
   ${tp.map((t) => `<button class="opt" data-t="${esc(t)}"><b>${esc(t)}</b> <span class="mut">· ${BANK[m].filter((q) => q.topik === t).length} soal · nilai ${skor(t)}</span></button>`).join("")}</div>`;
   app.querySelectorAll("[data-tm]").forEach((b) => (b.onclick = () => pilihTopik(b.dataset.tm)));
   app.querySelectorAll("[data-t]").forEach((b) => (b.onclick = () => { const t = b.dataset.t; const sudah = new Set(Object.values(ST.hasil).flatMap((h) => (h.log || []).filter((l) => l.ok).map((l) => l.id)));
-    const pool = BANK[m].filter((q) => q.topik === t), belum = pool.filter((q) => !sudah.has(q.id)); const soal = rngPick(belum.length >= N_TOPIK ? belum : pool, N_TOPIK, Date.now() % 100000).sort((a, b) => a.level - b.level);
+    const pool = BANK[m].filter((q) => q.topik === t), belum = pool.filter((q) => !sudah.has(q.id)); const soal = rngPick(belum.length >= N_TOPIK ? belum : pool, N_TOPIK, Date.now() % 100000).sort((a, b) => a.level - b.level); if (window.DEMO) soal.sort((a, b) => !!b.img - !!a.img); // demo: soal bergambar di atas
     kuis(soal, { key: null, title: `📚 ${MAPEL[m][0]} · ${t}` }); }));
   scrollTo(0, 0);
 }
@@ -156,7 +156,7 @@ function drillLemah() {
   if (!lemah.length) return alert("Kerjakan beberapa paket dulu agar topik lemah terdeteksi.");
   const sudah = new Set(Object.values(ST.hasil).flatMap((h) => (h.log || []).filter((l) => l.ok).map((l) => l.id)));
   const pool = lemah.flatMap(([m, t]) => BANK[m].filter((q) => q.topik === t && !sudah.has(q.id)));
-  const soal = rngPick(pool, 10, Date.now() % 100000);
+  const soal = rngPick(pool, 10, Date.now() % 100000); if (window.DEMO) soal.sort((a, b) => !!b.img - !!a.img);
   kuis(soal, { key: null, title: `🎯 Drill Topik Lemah: ${lemah.map(([m, t]) => t).join(", ")}` });
 }
 
@@ -283,7 +283,7 @@ function rapor() {
   ${DRILL ? `<div class="card"><h3>Riwayat simulasi ujian</h3>${sims.length ? `<table>${sims.map(([k, h]) => `<tr><td>${k.startsWith("MIX") ? "Campuran" : MAPEL[k.split("-")[0]][0]} #${k.split("-")[1]}</td><td>${h.tgl}</td><td><b>${h.nilai}</b></td></tr>`).join("")}</table>` : `<p class="mut">Belum ada simulasi. Coba 1 simulasi setiap akhir pekan.</p>`}</div>` : ""}
   <div class="card"><h3>Topik yang perlu dilatih lagi</h3>${lemah.length ? `<table>${lemah.map(([k, v]) => `<tr><td>${k}</td><td>${Math.round((v[0] / v[1]) * 100)}% benar</td></tr>`).join("")}</table>` : `<p class="mut">Kerjakan beberapa latihan dulu agar terlihat polanya.</p>`}</div>
   <div class="card"><button class="btn sec" id="rst">Hapus nilai & progres</button><p class="mut">Nama anak terkunci sebagai pemilik lisensi dan tidak ikut terhapus.</p></div>`;
-  $("#rst").onclick = () => { if (confirm("Hapus semua nilai dan progres? Nama tetap tersimpan.")) { ST = { nama: ST.nama, hasil: {}, salah: {}, draft: {}, sim: {}, streak: 0, last: "", kode: ST.kode, setuju: ST.setuju, ujian: ST.ujian }; save(); home(); } };
+  $("#rst").onclick = () => { if (confirm("Hapus semua nilai dan progres? Nama tetap tersimpan.")) { if (window.DEMO) { seedDemo(); return home(); } ST = { nama: ST.nama, hasil: {}, salah: {}, draft: {}, sim: {}, streak: 0, last: "", kode: ST.kode, setuju: ST.setuju, ujian: ST.ujian }; save(); home(); } };
 }
 function ortu() {
   keluar();
@@ -301,13 +301,13 @@ $("#homeBtn").onclick = () => { if (history.state && history.state.sub) return h
 // Peluang benar per level: Dasar 80%, Menengah 65%, HOTS 45% (rata-rata kira-kira 65–75, seperti anak kelas 6 pada umumnya).
 function seedDemo() {
   const r = CORE.rng(2611), PELUANG = [0, 0.8, 0.65, 0.45];
-  const isi = (soal) => { const pil = {}, log = []; soal.forEach((q, i) => { const ok = r() < PELUANG[q.level]; pil[i] = ok ? q.jawab : (q.jawab + 1 + Math.floor(r() * 3)) % 4; log.push({ id: q.id, ok, topik: q.topik, mapel: q.mapel }); }); return { pil, log, benar: log.filter((l) => l.ok).length }; };
-  ST = { nama: window.DEMO_NAMA || "Nama Anak", setuju: 1, hasil: {}, salah: {}, draft: {}, sim: {}, streak: 6, last: today(), demoSeed: 2, ujian: new Date(Date.now() + 12 * 864e5).toISOString().slice(0, 10) };
+  const isi = (soal) => { const pil = {}, log = []; soal.forEach((q, i) => { const ok = r() < (q.topik === "Lingkaran" ? 0.3 : PELUANG[q.level]); /* Lingkaran sengaja jadi topik lemah */ pil[i] = ok ? q.jawab : (q.jawab + 1 + Math.floor(r() * 3)) % 4; log.push({ id: q.id, ok, topik: q.topik, mapel: q.mapel }); }); return { pil, log, benar: log.filter((l) => l.ok).length }; };
+  ST = { nama: window.DEMO_NAMA || "Nama Anak", setuju: 1, hasil: {}, salah: {}, draft: {}, sim: {}, streak: 6, last: today(), demoSeed: 3, ujian: new Date(Date.now() + 12 * 864e5).toISOString().slice(0, 10) };
   const selesai = { MTK: 5, BIND: 4, BING: 4, IPA: 3 };
   for (const m in selesai) for (let k = 1; k <= selesai[m]; k++) { const s = soalPaket(m, k), h = isi(s); h.log.forEach((l) => (l.ok ? delete ST.salah[l.id] : (ST.salah[l.id] = 1))); ST.hasil[`P-${m}-${k}`] = { nilai: Math.round((h.benar / s.length) * 100), pil: h.pil, log: h.log, tgl: today() }; }
   { const s = soalPaket("MTK", 6), h = isi(s.slice(0, 4)); ST.draft["P-MTK-6"] = { pil: h.pil, log: h.log }; } // paket 6 sedang dikerjakan
   for (const [m, n, menit] of [["MIX", 1, 54], ["MTK", 1, 58]]) { const s = soalSim(m, n), h = isi(s); h.log.forEach((l) => { if (!l.ok) ST.salah[l.id] = 1; }); ST.sim[`${m}-${n}`] = { nilai: Math.round((h.benar / s.length) * 100), pil: h.pil, log: h.log, tgl: today(), menit }; }
   save();
 }
-if (window.DEMO && ST.demoSeed !== 2) seedDemo();
+if (window.DEMO && ST.demoSeed !== 3) seedDemo();
 home();
