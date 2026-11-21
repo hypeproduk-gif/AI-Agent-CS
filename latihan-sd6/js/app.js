@@ -2,6 +2,8 @@
 //  MODE "harian": Les di Rumah Kelas 6 — 100 hari × 10 soal × 4 mapel, level naik di hari 36 & 71.
 //  MODE "drill" : Siap Ujian Kelas 6 — paket drill bertahap, simulasi ujian bertimer, drill topik lemah, hitung mundur ujian.
 const MODE = window.MODE || "harian";
+// DEMO: penanda kecil di pilihan benar (titik abu di pojok kanan bawah) untuk rekam layar.
+const DM = (q, j) => (window.DEMO && j === q.jawab ? " dm" : "");
 const HEMAT = MODE === "hemat", DRILL = MODE !== "harian"; // "hemat": versi ringkas drill, 320 soal
 const PRODUK = DRILL ? "Siap Ujian Kelas 6" : "Les di Rumah Kelas 6";
 const MAPEL = { MTK: ["Matematika", "🔢"], BIND: ["Bahasa Indonesia", "📖"], BING: ["Bahasa Inggris", "🇬🇧"], IPA: ["IPA", "🔬"] };
@@ -115,7 +117,7 @@ function ujian(m, n) {
   if (done) return reviewUjian(soal, done, `Simulasi ${m === "MIX" ? "Campuran" : MAPEL[m][0]} #${n}`, () => { delete ST.sim[key]; save(); ujian(m, n); });
   ST.simDraft = ST.simDraft || {}; const dr = ST.simDraft[key] || { pil: {}, mulai: Date.now() }; ST.simDraft[key] = dr; save();
   app.innerHTML = `<div class="card" style="position:sticky;top:58px;z-index:3"><div class="row"><b>⏱️ Simulasi ${m === "MIX" ? "Campuran" : MAPEL[m][0]} #${n}</b><b id="tm" style="font-size:20px"></b></div><div class="mut" id="cnt"></div></div>
-  <div class="card">${soal.map((q, i) => `<div class="qi"><span class="lvl l${q.level}">${i + 1}. ${MAPEL[q.mapel][0]}</span><div class="q">${q.q}</div>${q.img ? `<div class="img">${q.img}</div>` : ""}${q.opsi.map((o, j) => `<button class="opt ${dr.pil[i] === j ? "pk" : ""}" data-i="${i}" data-j="${j}"><b>${"ABCD"[j]}.</b> ${o}</button>`).join("")}</div>`).join("")}
+  <div class="card">${soal.map((q, i) => `<div class="qi"><span class="lvl l${q.level}">${i + 1}. ${MAPEL[q.mapel][0]}</span><div class="q">${q.q}</div>${q.img ? `<div class="img">${q.img}</div>` : ""}${q.opsi.map((o, j) => `<button class="opt ${dr.pil[i] === j ? "pk" : ""}${DM(q, j)}" data-i="${i}" data-j="${j}"><b>${"ABCD"[j]}.</b> ${o}</button>`).join("")}</div>`).join("")}
   <br><button class="btn full" id="kumpul">Kumpulkan jawaban</button></div>`;
   const upd = () => { $("#cnt").textContent = `${Object.keys(dr.pil).length}/${soal.length} dijawab · jawaban tersimpan otomatis`; };
   const sisa = () => SIM_MENIT * 60 - Math.floor((Date.now() - dr.mulai) / 1000);
@@ -168,7 +170,7 @@ function kuis(soal, o, ulang) {
   if (key && ulang) delete ST.draft[key];
   app.innerHTML = `<div class="card"><div class="row"><b>${o.title}</b><span class="mut" id="cnt"></span></div><div class="bar" style="margin-top:8px"><i id="pg" style="width:0"></i></div>
   <div id="skor" class="mut" style="margin-top:8px"></div>${done ? `<button class="btn sec" id="ulang" style="margin-top:10px">🔄 Ulangi dari awal</button>` : ""}</div>
-  <div class="card">${soal.map((q, i) => `<div class="qi" id="q${i}"><span class="lvl l${q.level}">${i + 1}. ${q.topik}</span><div class="q">${q.q}</div>${q.img ? `<div class="img">${q.img}</div>` : ""}${q.opsi.map((x, j) => `<button class="opt" data-i="${i}" data-j="${j}"><b>${"ABCD"[j]}.</b> ${x}</button>`).join("")}<div class="fb"></div></div>`).join("")}
+  <div class="card">${soal.map((q, i) => `<div class="qi" id="q${i}"><span class="lvl l${q.level}">${i + 1}. ${q.topik}</span><div class="q">${q.q}</div>${q.img ? `<div class="img">${q.img}</div>` : ""}${q.opsi.map((x, j) => `<button class="opt${DM(q, j)}" data-i="${i}" data-j="${j}"><b>${"ABCD"[j]}.</b> ${x}</button>`).join("")}<div class="fb"></div></div>`).join("")}
   <br><button class="btn full" id="fin" disabled>Selesai & lihat nilai</button></div>`;
   const tampil = (i) => { const q = soal[i], j = pil[i], ok = j === q.jawab, box = $("#q" + i);
     box.querySelectorAll(".opt").forEach((x, k) => { x.disabled = true; if (k === q.jawab) x.classList.add("ok"); else if (k === j) x.classList.add("no"); });
