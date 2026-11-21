@@ -303,7 +303,8 @@ def scheduler():
             cleanup_posted(float(os.getenv("THREADS_KEEP_DAYS", "3")))
         now = datetime.now(WIB)
         key = now.strftime("%Y-%m-%d %H:%M")
-        if now.strftime("%H:%M") in slot_times() and key not in done and os.getenv("THREADS_TOKEN"):
+        paused = (ap.OUT / "threads_paused").exists()
+        if now.strftime("%H:%M") in slot_times() and key not in done and os.getenv("THREADS_TOKEN") and not paused:
             done.add(key)
             with QLOCK:
                 items = q_load()
@@ -320,6 +321,7 @@ def threads_page():
     items = q_load()
     return render_template("threads.html", items=list(enumerate(items)), times=slot_times(),
                            https=os.getenv("PUBLIC_BASE_URL", "").startswith("https://"),
+                           paused=(ap.OUT / "threads_paused").exists(),
                            ready=bool(os.getenv("THREADS_TOKEN")),
                            pending=sum(i["status"] == "pending" for i in items))
 
@@ -341,6 +343,17 @@ def threads_add():
             items.append({**it, "image": image_name, "status": "pending", "batch": batch,
                           "added": datetime.now(WIB).strftime("%d/%m %H:%M")})
         q_save(items)
+    return redirect(url_for("threads_page"))
+
+
+@app.post("/threads/pause")
+@login_required
+def threads_pause():
+    flag = ap.OUT / "threads_paused"
+    if flag.exists():
+        flag.unlink()
+    else:
+        flag.touch()
     return redirect(url_for("threads_page"))
 
 
