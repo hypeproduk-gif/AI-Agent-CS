@@ -1,6 +1,7 @@
 import sys, re, markdown, pathlib, subprocess, json, html as H
 src, out, title, sub, _price = sys.argv[1:6]
 hooks = json.loads(sys.argv[6]) if len(sys.argv) > 6 else []
+THEME = json.loads(sys.argv[7]) if len(sys.argv) > 7 else {}
 md = pathlib.Path(src).read_text().split("\n---\n", 1)[1]
 _L = re.compile(r"^(\s*[-*]|\s*\d+\.)\s")
 _o = []
@@ -64,6 +65,8 @@ blockquote p:first-child strong{{letter-spacing:.08em;font-size:9pt;color:#F4A26
 .keep{{break-inside:avoid}}p,li{{orphans:3;widows:3}}
 hr{{border:0;border-top:1px solid #E9DFD3;margin:18px 0}}
 """
+for _k, _v in {"#2E1A3A": "base", "#F4A261": "acc", "#B4562A": "h2", "#FCE3CF": "soft", "#8A3B14": "phtx", "#4A2F59": "rim"}.items():
+    if _v in THEME: CSS = CSS.replace(_k, THEME[_v])
 posts = "".join(f'<div class="post"><div class="av"></div><div><b>ghinaelsha <i>●</i></b>{H.escape(h)}<div class="acts">♡ ◯ ⟲ ➤</div></div></div>' for h in hooks[:3])
 cover = f"""<div class="cover"><span class="tag">THREADS TOOLKIT</span>
 <div><h1>{title.replace('+','<em>+</em>')}</h1><p class="sub">{sub}</p></div>

@@ -1,0 +1,42 @@
+{
+ "hook": {
+  "base": "#8E2A1C",
+  "acc": "#FF8A5B",
+  "h2": "#B23A22",
+  "soft": "#FFE1D4",
+  "phtx": "#8E2A1C",
+  "rim": "#B5513F"
+ },
+ "kit": {
+  "base": "#0F4C4A",
+  "acc": "#5FD3C4",
+  "h2": "#13716C",
+  "soft": "#D5F3EF",
+  "phtx": "#0F4C4A",
+  "rim": "#2E6F6C"
+ },
+ "kal": {
+  "base": "#2F4A2B",
+  "acc": "#B8D86B",
+  "h2": "#4C7A2E",
+  "soft": "#E8F2CF",
+  "phtx": "#2F4A2B",
+  "rim": "#4F6B48"
+ },
+ "ebook": {
+  "base": "#14213D",
+  "acc": "#E9B949",
+  "h2": "#8A6A12",
+  "soft": "#F8EBC6",
+  "phtx": "#14213D",
+  "rim": "#34436A"
+ },
+ "meta": {
+  "base": "#1B2F7A",
+  "acc": "#FFD23F",
+  "h2": "#2945B8",
+  "soft": "#FFF1B8",
+  "phtx": "#1B2F7A",
+  "rim": "#3B51A3"
+ }
+}
