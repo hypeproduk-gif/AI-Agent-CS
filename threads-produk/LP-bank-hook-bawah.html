@@ -1,0 +1,31 @@
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet"><style>*{box-sizing:border-box}body{margin:0;font-family:'Plus Jakarta Sans',sans-serif;font-size:14.5px;color:#2B2231;background:#FAF6F1;line-height:1.55}
+h1{font-size:29px;line-height:1.2;margin:10px 0}h2{font-size:23px;line-height:1.25;margin:0 0 12px}h3{font-size:16px;margin:0 0 6px}
+section{padding-block:22px}.wrap{max-width:560px;margin:0 auto;padding-inline:20px}
+.dark{background:#2E1A3A;color:#FAF6F1}.dark h2{color:#F4A261}
+.btn,.btn:link,.btn:visited,.btn:hover,.btn:active,.btn:focus{display:block;text-align:center;background:#2E1A3A;color:#fff!important;-webkit-text-fill-color:#fff!important;text-decoration:none!important;font-weight:800;padding:15px;border-radius:14px;margin-top:14px}
+.dark .btn{background:#C9772F}
+.hero img,section img,.price-card img{width:100%;height:auto!important;max-height:none!important;object-fit:contain!important;aspect-ratio:auto!important;border-radius:12px;display:block}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}.chips span{background:#fff;border:1px solid #E9DFD3;border-radius:99px;padding:4px 11px;font-size:12.5px;font-weight:700}
+.log{list-style:none;padding:0;margin:0}.log li{background:#fff;border-radius:10px;padding:9px 12px;margin:6px 0;border:1px solid #E9DFD3}.log b{color:#B4562A}
+.punch{font-weight:800;color:#C9772F;font-size:16px;margin-top:12px}
+ul.ok{padding-left:0;list-style:none}ul.ok li{margin:8px 0;padding-left:24px;position:relative}ul.ok li:before{content:"\2713";position:absolute;left:0;color:#C9772F;font-weight:800}
+.ex{background:#fff;border:1.5px dashed #F4A261;border-radius:12px;padding:10px 14px;margin:8px 0;font-size:13.5px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.price-card{background:#fff;border:2px solid #2E1A3A;border-radius:16px;padding:18px}.price{font-size:34px;font-weight:800;color:#2E1A3A}
+details{background:#fff;border:1px solid #E9DFD3;border-radius:10px;padding:10px 14px;margin:6px 0}summary{font-weight:700;cursor:pointer}
+#sticky{position:fixed;left:0;right:0;bottom:0;padding:10px 16px;background:#FAF6F1;box-shadow:0 -4px 14px #0002;transform:translateY(110%);transition:.3s;z-index:99}#sticky.show{transform:none}#sticky .btn{margin:0}
+footer{text-align:center;font-size:12px;color:#8a7f8f;padding:20px 20px 90px}</style>
+<section><div class="wrap"><h2>Pertanyaan</h2>
+<details><summary>Akunku masih sepi, cocok?</summary><p>Cocok. Justru akun baru paling butuh hook yang bikin orang berhenti.</p></details>
+<details><summary>Harus pakai AI berbayar?</summary><p>Nggak. ChatGPT, Claude, atau Gemini versi gratis sudah cukup.</p></details>
+<details><summary>Nichenya bebas?</summary><p>Bebas. Semua hook dan prompt tinggal diisi sesuai nichemu.</p></details>
+<details><summary>Bentuk filenya?</summary><p>PDF, bisa dibuka di HP.</p></details>
+<details><summary>Dijamin viral?</summary><p>Nggak ada yang bisa jamin. Hook memperbesar peluang dibaca, sisanya konsistensi.</p></details></div></section>
+<section class="dark"><div class="wrap"><h2>Besok pagi, kamu tinggal pilih hook.</h2><p>Bukan bengong lagi di baris pertama.</p><a class="btn" href="#harga">Ambil Sekarang, Rp29rb</a></div></section>
+<footer>&copy; 2026 Ghina Elsha</footer>
+<div id="sticky"><a class="btn" href="#harga">Aku Mau Bank Hook-nya, Rp29rb</a></div>
+<script>(function(){var s=document.getElementById('sticky'),h=document.querySelector('.hero'),p=document.getElementById('harga');
+if(!s||!('IntersectionObserver' in window))return; if(!h||!p){s.classList.add('show');return;}
+var hv=true,pv=false;function u(){s.classList.toggle('show',!hv&&!pv);}
+new IntersectionObserver(function(e){hv=e[0].isIntersecting;u();}).observe(h);
+new IntersectionObserver(function(e){pv=e[0].isIntersecting;u();},{rootMargin:'0px 0px -20% 0px'}).observe(p);})();</script>
