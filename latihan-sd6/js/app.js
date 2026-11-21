@@ -10,7 +10,7 @@ const LEVEL = [null, { nama: "Level 1 · Dasar", mulai: 1 }, { nama: "Level 2 ·
 const BANK = {}; for (const k in MAPEL) BANK[k] = GEN[k]();
 const BYID = {}; for (const k in BANK) BANK[k].forEach((q) => (BYID[q.id] = q));
 const $ = (s) => document.querySelector(s); const app = $("#app");
-const SKEY = HEMAT ? "sd6x" : DRILL ? "sd6d" : "sd6h";
+const SKEY = window.DEMO ? "sd6demo" : HEMAT ? "sd6x" : DRILL ? "sd6d" : "sd6h";
 const store = { get() { try { return JSON.parse(localStorage.getItem(SKEY) || "{}"); } catch { return {}; } }, set(v) { try { localStorage.setItem(SKEY, JSON.stringify(v)); } catch {} } };
 let ST = Object.assign({ nama: "", hasil: {}, salah: {}, draft: {}, sim: {}, streak: 0, last: "" }, store.get());
 const save = () => store.set(ST);
@@ -295,4 +295,17 @@ function ortu() {
 function keluar() { $("#homeBtn").hidden = false; if (!(history.state && history.state.sub)) try { history.pushState({ sub: 1 }, ""); } catch {} }
 window.addEventListener("popstate", () => { pilihHari = null; clearInterval(timerId); home(); scrollTo(0, 0); });
 $("#homeBtn").onclick = () => { if (history.state && history.state.sub) return history.back(); pilihHari = null; clearInterval(timerId); home(); };
+// ---------- Mode DEMO (untuk rekam layar konten): progres anak terisi otomatis dengan nilai wajar ----------
+// Peluang benar per level: Dasar 80%, Menengah 65%, HOTS 45% (rata-rata kira-kira 65–75, seperti anak kelas 6 pada umumnya).
+function seedDemo() {
+  const r = CORE.rng(2611), PELUANG = [0, 0.8, 0.65, 0.45];
+  const isi = (soal) => { const pil = {}, log = []; soal.forEach((q, i) => { const ok = r() < PELUANG[q.level]; pil[i] = ok ? q.jawab : (q.jawab + 1 + Math.floor(r() * 3)) % 4; log.push({ id: q.id, ok, topik: q.topik, mapel: q.mapel }); }); return { pil, log, benar: log.filter((l) => l.ok).length }; };
+  ST = { nama: "Nama Anak", setuju: 1, hasil: {}, salah: {}, draft: {}, sim: {}, streak: 6, last: today(), demoSeed: 1, ujian: new Date(Date.now() + 12 * 864e5).toISOString().slice(0, 10) };
+  const selesai = { MTK: 5, BIND: 4, BING: 4, IPA: 3 };
+  for (const m in selesai) for (let k = 1; k <= selesai[m]; k++) { const s = soalPaket(m, k), h = isi(s); h.log.forEach((l) => (l.ok ? delete ST.salah[l.id] : (ST.salah[l.id] = 1))); ST.hasil[`P-${m}-${k}`] = { nilai: Math.round((h.benar / s.length) * 100), pil: h.pil, log: h.log, tgl: today() }; }
+  { const s = soalPaket("MTK", 6), h = isi(s.slice(0, 4)); ST.draft["P-MTK-6"] = { pil: h.pil, log: h.log }; } // paket 6 sedang dikerjakan
+  for (const [m, n, menit] of [["MIX", 1, 54], ["MTK", 1, 58]]) { const s = soalSim(m, n), h = isi(s); h.log.forEach((l) => { if (!l.ok) ST.salah[l.id] = 1; }); ST.sim[`${m}-${n}`] = { nilai: Math.round((h.benar / s.length) * 100), pil: h.pil, log: h.log, tgl: today(), menit }; }
+  save();
+}
+if (window.DEMO && !ST.demoSeed) seedDemo();
 home();

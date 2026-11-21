@@ -1,0 +1,1021 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Siap Ujian Kelas 6</title>
+<meta name="theme-color" content="#2563eb">
+
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--ink:#1f2937;--mut:#6b7280;--pri:#2563eb;--ok:#16a34a;--no:#dc2626;--line:#e5e7eb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--pri);color:#fff;padding:14px 16px;position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px}
+header h1{font-size:18px!important;margin:0!important;flex:1;color:#fff!important;display:block!important;line-height:1.3!important}header button{background:#fff3;color:#fff;border:0;border-radius:8px;padding:6px 10px;font-size:14px}
+main{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:16px}
+.card{background:var(--card);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 1px 3px #0001}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mapel{border:2px solid var(--line);border-radius:14px;padding:14px;background:#fff;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.mapel b{display:block;font-size:17px}.mapel small{color:var(--mut)}.mapel.done{border-color:var(--ok);background:#f0fdf4}
+.mapel .ic{font-size:28px}
+.lvl{display:inline-block;padding:2px 10px;border-radius:99px;font-size:13px;font-weight:600}
+.l1{background:#dcfce7;color:#166534}.l2{background:#fef9c3;color:#854d0e}.l3{background:#fee2e2;color:#991b1b}
+.btn{display:inline-block;background:var(--pri);color:#fff;border:0;border-radius:10px;padding:12px 18px;font:inherit;font-weight:600;cursor:pointer}
+.btn.sec{background:#e0e7ff;color:#1e3a8a}.btn.full{width:100%}
+.q{font-size:18px;margin:8px 0 12px}.q blockquote{margin:10px 0;padding:10px 12px;background:#f8fafc;border-left:4px solid #93c5fd;font-size:16px}
+.img{text-align:center;margin:8px 0}.img svg{max-width:100%;height:auto}
+.opt{display:block;width:100%;text-align:left;border:2px solid var(--line);background:#fff;border-radius:12px;padding:12px 14px;margin:8px 0;font:inherit;cursor:pointer}
+.opt.pk{border-color:var(--pri);background:#eff6ff}.opt.ok{border-color:var(--ok);background:#dcfce7}.opt.no{border-color:var(--no);background:#fee2e2}
+.bahas{background:#eff6ff;border-radius:10px;padding:12px;margin-top:10px;border-left:5px solid #a78bfa}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pri)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mut{color:var(--mut);font-size:14px}.big{font-size:40px;font-weight:800}
+table{width:100%;border-collapse:collapse}td,th{padding:6px;border-bottom:1px solid var(--line);text-align:left;font-size:14px}
+input,select{font:inherit;padding:10px;border:1px solid var(--line);border-radius:10px;width:100%}
+.days{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}.days button{border:0;border-radius:6px;padding:6px 0;font-size:12px;background:#e5e7eb;cursor:pointer}
+.days .d{background:#86efac}.days .c{outline:2px solid var(--pri)}
+#print{display:none}#lic{display:block;font-size:12px;opacity:.85;font-weight:400}#wm{position:fixed;inset:-50%;pointer-events:none;z-index:0;transform:rotate(-30deg);display:flex;flex-wrap:wrap;gap:220px 260px;align-content:center;justify-content:center;opacity:.10;font-size:18px;font-weight:700;color:#000;user-select:none}@media print{#wm{display:none}}.qi{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}.qi:first-of-type{border-top:0}.legal{font-size:14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:12px}.mat h3{margin:18px 0 6px;color:var(--pri)}.mat svg{max-width:100%;height:auto}.foot{text-align:center;font-size:12px;color:var(--mut);margin:20px 0}
+@media print{header,main{display:none!important}#print{display:block;font-size:12px}#print .pq{break-inside:avoid;margin:8px 0}#print svg{max-height:140px;width:auto}#print h2{break-before:page}#print h2:first-child{break-before:auto}#print .wm{position:fixed;bottom:0;left:0;right:0;text-align:center;font-size:9px;color:#888}}
+
+</style>
+</head>
+<body>
+<header><h1 id="title">📚 Siap Ujian Kelas 6<span id="lic"></span></h1><button id="homeBtn" hidden>🏠 Beranda</button></header>
+<main id="app"></main>
+<div id="print"></div>
+<script>window.MODE="hemat";window.DEMO=true;window.NOKODE=true;window.QUOTA={1:30,2:30,3:20}</script><script>// Inti generator: RNG berbibit (bank soal selalu sama), pembuat soal pilihan ganda, helper SVG.
+(function (G) {
+  function rng(seed) {
+    let a = seed >>> 0;
+    return function () {
+      a |= 0; a = (a + 0x6d2b79f5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function makeKit(seed) {
+    const r = rng(seed);
+    const K = {
+      r,
+      int: (a, b) => a + Math.floor(r() * (b - a + 1)),
+      pick: (arr) => arr[Math.floor(r() * arr.length)],
+      shuffle(arr) { const x = arr.slice(); for (let i = x.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [x[i], x[j]] = [x[j], x[i]]; } return x; },
+      sample(arr, n) { return K.shuffle(arr).slice(0, n); },
+      gcd: (a, b) => (b ? K.gcd(b, a % b) : Math.abs(a)),
+      lcm: (a, b) => (a / K.gcd(a, b)) * b,
+      fr(n, d) { // pecahan disederhanakan -> string
+        const g = K.gcd(n, d); n /= g; d /= g;
+        if (d === 1) return String(n);
+        if (n > d) { const w = Math.floor(n / d); return w + " " + (n % d) + "/" + d; }
+        return n + "/" + d;
+      },
+      num: (x) => Number(x).toLocaleString("id-ID", { maximumFractionDigits: 3 }),
+      // Buat soal PG: jawaban benar + pengecoh -> 4 opsi unik teracak
+      mk(level, topik, q, benar, pengecoh, bahas, img) {
+        benar = String(benar);
+        const seen = new Set([benar]); const d = [];
+        for (const p of pengecoh) { const s = String(p); if (!seen.has(s)) { seen.add(s); d.push(s); } if (d.length === 3) break; }
+        if (d.length < 3) return null;
+        const opsi = K.shuffle([benar, ...d]);
+        return { level, topik, q, img: img || null, opsi, jawab: opsi.indexOf(benar), bahas: bahas || "" };
+      },
+      // Pengecoh angka di sekitar jawaban
+      near(x, spread) { const out = []; const s = spread || Math.max(1, Math.round(Math.abs(x) * 0.15)); for (let i = 0; i < 12; i++) { const v = x + K.pick([-1, 1]) * K.int(1, s); if (v !== x && v >= 0) out.push(v); } return out; },
+    };
+    return K;
+  }
+  // Kumpulkan soal unik sampai kuota per level terpenuhi
+  function build(mapel, seed, templates, quota) {
+    const K = makeKit(seed); const out = []; const seen = new Set();
+    for (const lv of [1, 2, 3]) {
+      const ts = templates[lv]; let got = 0, tries = 0, i = 0;
+      const cap = Math.ceil((quota[lv] * 2.5) / ts.length), used = ts.map(() => 0);
+      while (got < quota[lv] && tries < quota[lv] * 80) {
+        tries++; const ti = i++ % ts.length; const t = ts[ti];
+        if (used[ti] >= cap && tries < quota[lv] * 40) continue;
+        const s = t(K); if (!s) continue;
+        const key = s.q + "|" + (s.img || "") + "|" + s.opsi[s.jawab];
+        if (seen.has(key)) continue;
+        seen.add(key); used[ti]++; s.level = lv; s.mapel = mapel; out.push(s); got++;
+      }
+    }
+    // Acak dalam level supaya topik bercampur tiap hari
+    const res = [];
+    for (const lv of [1, 2, 3]) res.push(...K.shuffle(out.filter((x) => x.level === lv)));
+    res.forEach((s, i) => (s.id = mapel + "-" + String(i + 1).padStart(4, "0")));
+    return res;
+  }
+  // ---------- SVG ----------
+  const S = {
+    wrap: (w, h, body) => `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="14">${body}</svg>`,
+    text: (x, y, t, o) => `<text x="${x}" y="${y}" text-anchor="${(o && o.a) || "middle"}" fill="${(o && o.c) || "#222"}" font-size="${(o && o.s) || 14}">${t}</text>`,
+    rectLabel(p, l, sat) {
+      const W = 220, H = Math.max(60, Math.min(140, Math.round((220 * l) / p)));
+      return S.wrap(300, H + 50, `<rect x="40" y="10" width="${W}" height="${H}" fill="#ffe8a3" stroke="#c48a00" stroke-width="2"/>` + S.text(150, H + 32, p + " " + sat) + S.text(270, 10 + H / 2 + 5, l + " " + sat, { a: "start" }));
+    },
+    square(s, sat) { return S.wrap(240, 180, `<rect x="50" y="15" width="130" height="130" fill="#cfe9ff" stroke="#1a6fb5" stroke-width="2"/>` + S.text(115, 168, s + " " + sat)); },
+    triangle(a, t, sat) {
+      return S.wrap(280, 190, `<polygon points="30,160 250,160 110,20" fill="#d6f5d6" stroke="#2e8b57" stroke-width="2"/><line x1="110" y1="20" x2="110" y2="160" stroke="#c00" stroke-dasharray="5 4"/><rect x="110" y="150" width="10" height="10" fill="none" stroke="#c00"/>` + S.text(140, 182, "alas = " + a + " " + sat) + S.text(115, 95, "t = " + t + " " + sat, { a: "start", c: "#c00" }));
+    },
+    box(p, l, t, sat) { // balok/kubus isometrik
+      const P = 150, L = 60, T = p === l && l === t ? 110 : 90;
+      const x = 30, y = 50;
+      return S.wrap(300, 210,
+        `<polygon points="${x},${y} ${x + P},${y} ${x + P + L},${y - 35} ${x + L},${y - 35}" fill="#e3d4ff" stroke="#5b3fa8" stroke-width="2"/>` +
+        `<polygon points="${x + P},${y} ${x + P + L},${y - 35} ${x + P + L},${y - 35 + T} ${x + P},${y + T}" fill="#c9b3f5" stroke="#5b3fa8" stroke-width="2"/>` +
+        `<rect x="${x}" y="${y}" width="${P}" height="${T}" fill="#efe6ff" stroke="#5b3fa8" stroke-width="2"/>` +
+        S.text(x + P / 2, y + T + 20, p + " " + sat) + S.text(x + P + L / 2 + 22, y + T - 5, l + " " + sat) + S.text(x - 4, y + T / 2, t + " " + sat, { a: "end" }));
+    },
+    lshape(a, b, c, d, sat) { // gabungan: persegi panjang a x b dikurangi sudut c x d
+      const k = 180 / Math.max(a, b); const A = a * k, B = b * k, C = c * k, D = d * k;
+      return S.wrap(300, 240, `<polygon points="40,20 ${40 + A - C},20 ${40 + A - C},${20 + D} ${40 + A},${20 + D} ${40 + A},${20 + B} 40,${20 + B}" fill="#ffd9d9" stroke="#b22" stroke-width="2"/>` +
+        S.text(40 + A / 2, 40 + B, a + " " + sat) + S.text(32, 20 + B / 2, b + " " + sat, { a: "end" }) + S.text(40 + (A - C) / 2, 15, a - c + " " + sat) + S.text(48 + A, 20 + D + (B - D) / 2, b - d + " " + sat, { a: "start" }));
+    },
+    bars(labels, vals, title, unit) {
+      const max = Math.max(...vals), W = 60 + labels.length * 55, H = 200;
+      let b = S.text(W / 2, 16, title, { s: 13 });
+      const top = Math.ceil(max / 5) * 5 || 5;
+      for (let i = 0; i <= 5; i++) { const v = (top / 5) * i, y = 170 - (v / top) * 140; b += `<line x1="40" x2="${W - 10}" y1="${y}" y2="${y}" stroke="#ddd"/>` + S.text(34, y + 4, v, { a: "end", s: 11 }); }
+      labels.forEach((l, i) => { const h = (vals[i] / top) * 140; b += `<rect x="${52 + i * 55}" y="${170 - h}" width="34" height="${h}" fill="${["#60a5fa", "#f59e0b", "#34d399", "#f472b6", "#a78bfa", "#fb7185"][i % 6]}"/>` + S.text(69 + i * 55, 188, l, { s: 11 }); });
+      return S.wrap(W, H + 10, b + (unit ? S.text(8, 30, unit, { a: "start", s: 10 }) : ""));
+    },
+    fracCircle(n, d) {
+      let b = ""; const cx = 90, cy = 90, R = 70;
+      for (let i = 0; i < d; i++) {
+        const a1 = (2 * Math.PI * i) / d - Math.PI / 2, a2 = (2 * Math.PI * (i + 1)) / d - Math.PI / 2;
+        const x1 = cx + R * Math.cos(a1), y1 = cy + R * Math.sin(a1), x2 = cx + R * Math.cos(a2), y2 = cy + R * Math.sin(a2);
+        b += `<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${R},${R} 0 ${d === 1 ? 1 : 0} 1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${i < n ? "#ff9f43" : "#fff"}" stroke="#333" stroke-width="2"/>`;
+      }
+      return S.wrap(180, 180, b);
+    },
+    fracGrid(n, d) {
+      const w = Math.min(40, 260 / d); let b = "";
+      for (let i = 0; i < d; i++) b += `<rect x="${10 + i * w}" y="10" width="${w}" height="60" fill="${i < n ? "#2ecc71" : "#fff"}" stroke="#333" stroke-width="2"/>`;
+      return S.wrap(20 + d * w, 80, b);
+    },
+    clock(h, m) {
+      const ah = ((h % 12) + m / 60) * 30 * (Math.PI / 180), am = m * 6 * (Math.PI / 180);
+      let b = `<circle cx="90" cy="90" r="80" fill="#fff" stroke="#333" stroke-width="4"/>`;
+      for (let i = 1; i <= 12; i++) { const a = (i * 30 * Math.PI) / 180; b += S.text(90 + 64 * Math.sin(a), 95 - 64 * Math.cos(a), i, { s: 15 }); }
+      b += `<line x1="90" y1="90" x2="${(90 + 40 * Math.sin(ah)).toFixed(1)}" y2="${(90 - 40 * Math.cos(ah)).toFixed(1)}" stroke="#222" stroke-width="6" stroke-linecap="round"/>`;
+      b += `<line x1="90" y1="90" x2="${(90 + 60 * Math.sin(am)).toFixed(1)}" y2="${(90 - 60 * Math.cos(am)).toFixed(1)}" stroke="#d33" stroke-width="3" stroke-linecap="round"/><circle cx="90" cy="90" r="5"/>`;
+      return S.wrap(180, 180, b);
+    },
+    angle(deg) {
+      const a = (deg * Math.PI) / 180, x = 40, y = 130;
+      return S.wrap(260, 150, `<line x1="${x}" y1="${y}" x2="${x + 190}" y2="${y}" stroke="#333" stroke-width="3"/><line x1="${x}" y1="${y}" x2="${(x + 150 * Math.cos(a)).toFixed(1)}" y2="${(y - 150 * Math.sin(a)).toFixed(1)}" stroke="#333" stroke-width="3"/><path d="M${x + 30},${y} A30,30 0 0 0 ${(x + 30 * Math.cos(a)).toFixed(1)},${(y - 30 * Math.sin(a)).toFixed(1)}" fill="none" stroke="#d33" stroke-width="2"/>`);
+    },
+    chain(items) { // rantai makanan dengan panah
+      const w = 110; let b = `<defs><marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#2e7d32"/></marker></defs>`;
+      items.forEach((it, i) => {
+        b += `<rect x="${10 + i * w}" y="20" width="85" height="44" rx="10" fill="#e8f5e9" stroke="#2e7d32"/>` + S.text(52 + i * w, 47, it, { s: 13 });
+        if (i < items.length - 1) b += `<line x1="${96 + i * w}" y1="42" x2="${118 + i * w}" y2="42" stroke="#2e7d32" stroke-width="2" marker-end="url(#ar)"/>`;
+      });
+      return S.wrap(items.length * w, 84, b);
+    },
+    circuit(type, n) { // rangkaian seri / paralel dengan n lampu
+      let b = `<rect x="20" y="70" width="14" height="40" fill="#555"/><rect x="38" y="80" width="6" height="20" fill="#555"/>` + S.text(30, 128, "baterai", { s: 11 });
+      const bulb = (x, y) => `<circle cx="${x}" cy="${y}" r="13" fill="#fff59d" stroke="#333" stroke-width="2"/><path d="M${x - 6},${y - 6} L${x + 6},${y + 6} M${x + 6},${y - 6} L${x - 6},${y + 6}" stroke="#333"/>`;
+      if (type === "seri") {
+        b += `<polyline points="27,70 27,20 280,20 280,160 27,160 27,110" fill="none" stroke="#333" stroke-width="2"/>`;
+        for (let i = 0; i < n; i++) b += bulb(90 + i * (170 / n), 20);
+      } else {
+        b += `<polyline points="27,70 27,20 280,20 M27,110 27,160 280,160" fill="none" stroke="#333" stroke-width="2"/>`;
+        for (let i = 0; i < n; i++) { const x = 120 + i * (150 / n); b += `<line x1="${x}" y1="20" x2="${x}" y2="160" stroke="#333" stroke-width="2"/>` + bulb(x, 90); }
+      }
+      return S.wrap(300, 180, b);
+    },
+    prep(kind) { // kotak dan bola untuk preposisi
+      const box = `<rect x="110" y="70" width="90" height="70" fill="#d7a86e" stroke="#7a4f1d" stroke-width="2"/>`;
+      const ball = (x, y) => `<circle cx="${x}" cy="${y}" r="16" fill="#e74c3c" stroke="#900"/>`;
+      const pos = { on: [155, 54], under: [155, 158], "next to": [230, 124], behind: [175, 72], "in front of": [155, 115], in: [155, 105] };
+      const [x, y] = pos[kind];
+      if (kind === "behind") return S.wrap(300, 180, ball(x, y) + box);
+      if (kind === "in") return S.wrap(300, 180, `<rect x="110" y="70" width="90" height="70" fill="#d7a86e" stroke="#7a4f1d" stroke-width="2" fill-opacity="0.45"/>` + ball(x, y));
+      return S.wrap(300, 180, box + ball(x, y));
+    },
+    mirror(kind) {
+      const shapes = { datar: `<line x1="40" y1="30" x2="40" y2="150" stroke="#4a90d9" stroke-width="8"/>`, cekung: `<path d="M60,30 Q20,90 60,150" fill="none" stroke="#4a90d9" stroke-width="8"/>`, cembung: `<path d="M30,30 Q70,90 30,150" fill="none" stroke="#4a90d9" stroke-width="8"/>` };
+      return S.wrap(180, 180, shapes[kind] + `<line x1="160" y1="60" x2="55" y2="90" stroke="#f39c12" stroke-width="3"/>`);
+    },
+    emoji(e, label) { return S.wrap(160, 130, `<text x="80" y="85" text-anchor="middle" font-size="72">${e}</text>` + (label ? S.text(80, 120, label) : "")); },
+  };
+  const api = { rng, makeKit, build, S, quota: (G.QUOTA || { 1: 350, 2: 350, 3: 300 }) };
+  if (typeof module !== "undefined") module.exports = api; else G.CORE = api;
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+<script>// Tambahan gambar SVG untuk materi kelas 6.
+(function (G) {
+  const C = typeof module !== "undefined" ? require("./core.js") : G.CORE;
+  const S = C.S;
+  Object.assign(S, {
+    circle(val, kind, sat) { // kind: "r" (jari-jari) atau "d" (diameter)
+      const line = kind === "r" ? `<line x1="110" y1="100" x2="190" y2="100" stroke="#c00" stroke-width="2"/>` : `<line x1="30" y1="100" x2="190" y2="100" stroke="#c00" stroke-width="2"/>`;
+      return S.wrap(240, 210, `<circle cx="110" cy="100" r="80" fill="#e0f2fe" stroke="#0369a1" stroke-width="2"/><circle cx="110" cy="100" r="3"/>${line}` + S.text(kind === "r" ? 150 : 110, 92, (kind === "r" ? "r = " : "d = ") + val + " " + sat, { c: "#c00" }));
+    },
+    cylinder(r, t, sat) {
+      return S.wrap(290, 230, `<ellipse cx="110" cy="190" rx="70" ry="18" fill="#fde68a" stroke="#b45309" stroke-width="2"/><rect x="40" y="40" width="140" height="150" fill="#fef3c7" stroke="none"/><line x1="40" y1="40" x2="40" y2="190" stroke="#b45309" stroke-width="2"/><line x1="180" y1="40" x2="180" y2="190" stroke="#b45309" stroke-width="2"/><ellipse cx="110" cy="40" rx="70" ry="18" fill="#fde68a" stroke="#b45309" stroke-width="2"/><line x1="110" y1="40" x2="180" y2="40" stroke="#c00" stroke-width="2"/>` + S.text(146, 33, "r = " + r + " " + sat, { c: "#c00", s: 13 }) + S.text(196, 120, "t = " + t + " " + sat, { a: "start", s: 13 }));
+    },
+    prism(a, ts, t, sat) { // prisma segitiga siku-siku: alas segitiga a, tinggi segitiga ts, tinggi prisma t
+      return S.wrap(345, 220, `<g transform="translate(45,0)"><polygon points="30,180 130,180 30,90" fill="#dcfce7" stroke="#15803d" stroke-width="2"/><polygon points="130,180 250,140 150,50 30,90" fill="#bbf7d0" stroke="#15803d" stroke-width="2" fill-opacity=".6"/><line x1="30" y1="90" x2="150" y2="50" stroke="#15803d" stroke-width="2"/><line x1="130" y1="180" x2="250" y2="140" stroke="#15803d" stroke-width="2"/><line x1="150" y1="50" x2="250" y2="140" stroke="#15803d" stroke-width="2"/>` + S.text(80, 200, "a = " + a + " " + sat, { s: 13 }) + S.text(22, 140, ts + " " + sat, { a: "end", s: 13 }) + S.text(205, 175, "t = " + t + " " + sat, { s: 13 }) + `</g>`);
+    },
+    cartesius(x, y, label) {
+      const k = 18, cx = 130, cy = 120; let b = `<rect x="22" y="12" width="216" height="216" fill="#f8fbff"/>`;
+      for (let i = -6; i <= 6; i++) { b += `<line x1="${cx + i * k}" y1="12" x2="${cx + i * k}" y2="228" stroke="#dbeafe"/><line x1="22" y1="${cy + i * k}" x2="238" y2="${cy + i * k}" stroke="#dbeafe"/>`; if (i) b += S.text(cx + i * k, cy + 14, i, { s: 9 }) + S.text(cx - 8, cy - i * k + 3, i, { s: 9 }); }
+      b += `<line x1="22" y1="${cy}" x2="238" y2="${cy}" stroke="#2563eb" stroke-width="2.5"/><line x1="${cx}" y1="12" x2="${cx}" y2="228" stroke="#16a34a" stroke-width="2.5"/>` + S.text(234, cy - 6, "x", { s: 12 }) + S.text(cx + 8, 20, "y", { s: 12 });
+      b += `<circle cx="${cx + x * k}" cy="${cy - y * k}" r="6" fill="#dc2626"/>` + S.text(cx + x * k + 10, cy - y * k - 8, label, { a: "start", c: "#dc2626", s: 14 });
+      return S.wrap(260, 240, b);
+    },
+    pie(labels, vals, title) {
+      const tot = vals.reduce((a, b) => a + b, 0), col = ["#60a5fa", "#f59e0b", "#34d399", "#f472b6", "#a78bfa"]; let a0 = -Math.PI / 2, b = S.text(130, 16, title, { s: 12 });
+      vals.forEach((v, i) => { const a1 = a0 + (2 * Math.PI * v) / tot, cx = 90, cy = 110, R = 72; const large = a1 - a0 > Math.PI ? 1 : 0;
+        b += `<path d="M${cx},${cy} L${(cx + R * Math.cos(a0)).toFixed(1)},${(cy + R * Math.sin(a0)).toFixed(1)} A${R},${R} 0 ${large} 1 ${(cx + R * Math.cos(a1)).toFixed(1)},${(cy + R * Math.sin(a1)).toFixed(1)} Z" fill="${col[i]}" stroke="#fff" stroke-width="2"/>`;
+        b += `<rect x="180" y="${40 + i * 22}" width="12" height="12" fill="${col[i]}"/>` + S.text(198, 50 + i * 22, `${labels[i]} ${Math.round((v / tot) * 100)}%`, { a: "start", s: 12 }); a0 = a1; });
+      return S.wrap(300, 200, b);
+    },
+    numline(a, b, mark) { // garis bilangan dari a..b, titik di mark (berwarna: negatif merah, positif biru)
+      const n = b - a, w = 260 / n, z = 20 + (0 - a) * w; let s = `<rect width="300" height="75" rx="10" fill="#f8fafc"/>`;
+      if (a < 0) s += `<line x1="15" y1="40" x2="${Math.min(z, 285)}" y2="40" stroke="#f87171" stroke-width="4"/>`;
+      if (b > 0) s += `<line x1="${Math.max(z, 15)}" y1="40" x2="285" y2="40" stroke="#60a5fa" stroke-width="4"/>`;
+      for (let i = 0; i <= n; i++) { const x = 20 + i * w, v = a + i, c = v < 0 ? "#dc2626" : v > 0 ? "#2563eb" : "#111"; s += `<line x1="${x}" y1="33" x2="${x}" y2="47" stroke="${c}" stroke-width="2"/>` + S.text(x, 64, v, { s: 11, c }); }
+      if (mark != null) s += `<circle cx="${20 + (mark - a) * w}" cy="40" r="8" fill="#f59e0b" stroke="#fff" stroke-width="2"/>` + S.text(20 + (mark - a) * w, 22, "?", { c: "#d97706", s: 16 });
+      return S.wrap(300, 75, s);
+    },
+    planets(highlight) {
+      const P = [["Merkurius", 6, "#a8a29e"], ["Venus", 9, "#fbbf24"], ["Bumi", 10, "#3b82f6"], ["Mars", 7, "#ef4444"], ["Yupiter", 20, "#d97706"], ["Saturnus", 17, "#eab308"], ["Uranus", 13, "#67e8f9"], ["Neptunus", 13, "#6366f1"]];
+      let b = `<rect width="420" height="120" fill="#0f172a"/><circle cx="-30" cy="60" r="60" fill="#facc15"/>`; let x = 50;
+      P.forEach(([n, r, c], i) => { x += i ? P[i - 1][1] + r + 14 : 0; b += `<circle cx="${x}" cy="60" r="${r}" fill="${c}"/>`; if (i === highlight) b += `<circle cx="${x}" cy="60" r="${r + 5}" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="3 3"/>` + S.text(x, 108, "?", { c: "#fff", s: 16 }); });
+      return S.wrap(420, 120, b);
+    },
+    lever(kind) { // tuas jenis 1/2/3: T=titik tumpu, B=beban, K=kuasa
+      const pos = { 1: ["B", "T", "K"], 2: ["T", "B", "K"], 3: ["T", "K", "B"] }[kind]; const xs = [50, 150, 250];
+      let b = `<line x1="30" y1="80" x2="270" y2="80" stroke="#78350f" stroke-width="8" stroke-linecap="round"/>`;
+      pos.forEach((p, i) => { if (p === "T") b += `<polygon points="${xs[i] - 18},120 ${xs[i] + 18},120 ${xs[i]},86" fill="#64748b"/>` + S.text(xs[i], 138, "titik tumpu", { s: 11 });
+        if (p === "B") b += `<rect x="${xs[i] - 18}" y="44" width="36" height="34" fill="#f59e0b" stroke="#92400e"/>` + S.text(xs[i], 36, "beban", { s: 11 });
+        if (p === "K") b += `<line x1="${xs[i]}" y1="20" x2="${xs[i]}" y2="72" stroke="#dc2626" stroke-width="3"/><polygon points="${xs[i] - 7},64 ${xs[i] + 7},64 ${xs[i]},76" fill="#dc2626"/>` + S.text(xs[i], 14, "kuasa", { s: 11, c: "#dc2626" }); });
+      return S.wrap(300, 150, b);
+    },
+    eclipse(kind) { // matahari - bumi - bulan
+      const order = kind === "bulan" ? [["Matahari", 22, "#facc15"], ["Bumi", 14, "#3b82f6"], ["Bulan", 8, "#cbd5e1"]] : [["Matahari", 22, "#facc15"], ["Bulan", 8, "#cbd5e1"], ["Bumi", 14, "#3b82f6"]];
+      let b = `<rect width="320" height="110" fill="#0f172a"/>`; order.forEach(([n, r, c], i) => { const x = 50 + i * 110; b += `<circle cx="${x}" cy="50" r="${r}" fill="${c}"/>` + S.text(x, 96, n, { c: "#fff", s: 12 }); });
+      return S.wrap(320, 110, b);
+    },
+  });
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+<script>// Matematika Kelas 6 — Kurikulum Merdeka Fase C (kelas 6) + pengulangan materi ujian SD
+(function (G) {
+  const C = typeof module !== "undefined" ? require("./core.js") : G.CORE;
+  if (typeof module !== "undefined") require("./svg6.js");
+  const S = C.S;
+  const nama = ["Andi", "Bima", "Citra", "Dina", "Eka", "Fajar", "Gita", "Hana", "Indra", "Joni", "Kirana", "Laras", "Raka", "Nadia", "Sinta", "Tegar"];
+  const sg = (n) => (n < 0 ? "−" + Math.abs(n) : String(n));
+  const pr = (n) => (n < 0 ? "(" + sg(n) + ")" : String(n));
+  const T = {
+    1: [
+      (K) => { const a = K.int(-20, 20), b = K.int(-20, 20); if (!a || !b) return null; const op = K.pick(["+", "−"]); const r = op === "+" ? a + b : a - b;
+        return K.mk(1, "Bilangan Bulat", `Hasil dari ${sg(a)} ${op} ${pr(b)} adalah ...`, sg(r), [sg(-r), sg(op === "+" ? a - b : a + b), sg(r + K.pick([1, -1, 2])), sg(Math.abs(a) + Math.abs(b))], `${sg(a)} ${op} ${pr(b)} = ${sg(r)}. Ingat: mengurangi bilangan negatif sama dengan menambah.`); },
+      (K) => { const a = K.int(-6, 5), m = a + K.int(1, 4) - 1; if (m > 6 || m < a) return null; const lo = Math.min(a, -6 + K.int(0, 1)), hi = lo + 10;
+        if (m < lo || m > hi) return null;
+        return K.mk(1, "Bilangan Bulat", "Bilangan yang ditunjukkan tanda tanya pada garis bilangan adalah ...", sg(m), [sg(-m || 1), sg(m + 1), sg(m - 1), sg(m + 2)], `Hitung dari angka 0 ke titik merah. Titik itu menunjukkan ${sg(m)}.`, S.numline(lo, hi, m)); },
+      (K) => { const t1 = K.int(-8, 10), d = K.int(3, 15); const naik = K.r() < 0.5; const t2 = naik ? t1 + d : t1 - d; const kota = K.pick(["Dieng", "Puncak Jaya", "Bandung", "Lembang", "Malang"]);
+        return K.mk(1, "Bilangan Bulat", `Suhu di ${kota} pagi hari ${sg(t1)}°C. Siang harinya suhu ${naik ? "naik" : "turun"} ${d}°C. Suhu siang hari adalah ...`, sg(t2) + "°C", [sg(naik ? t1 - d : t1 + d) + "°C", sg(-t2) + "°C", sg(t2 + 2) + "°C", d + "°C"], `${sg(t1)} ${naik ? "+" : "−"} ${d} = ${sg(t2)}°C.`); },
+      (K) => { const a = K.int(2, 9), b = K.int(2, 9), c = K.int(10, 40), d = K.int(2, 6); const r = c + a * b - d;
+        return K.mk(1, "Operasi Hitung Campuran", `${c} + ${a} × ${b} − ${d} = ...`, r, [(c + a) * b - d, c + a * (b - d), r + d * 2, r - 1], `Kerjakan perkalian dulu: ${a} × ${b} = ${a * b}. Lalu ${c} + ${a * b} − ${d} = ${r}.`); },
+      (K) => { const n = K.int(2, 25); const t = K.r() < 0.5;
+        return t ? K.mk(1, "Pangkat dan Akar", `${n}² = ...`, n * n, [n * 2, n * n + n, (n + 1) * (n + 1), n * 10], `${n}² = ${n} × ${n} = ${n * n}.`) : K.mk(1, "Pangkat dan Akar", `√${n * n} = ...`, n, [n + 1, n - 1 || n + 2, n * 2, (n * n) / 2 | 0], `Karena ${n} × ${n} = ${n * n}, maka √${n * n} = ${n}.`); },
+      (K) => { const n = K.int(2, 12); const t = K.r() < 0.5;
+        return t ? K.mk(1, "Pangkat dan Akar", `${n}³ = ...`, n ** 3, [n * 3, n * n, (n + 1) ** 3, n ** 3 + n], `${n}³ = ${n} × ${n} × ${n} = ${n ** 3}.`) : K.mk(1, "Pangkat dan Akar", `∛${n ** 3} = ...`, n, [n + 1, n - 1 || n + 2, n * 3, n * n], `Karena ${n} × ${n} × ${n} = ${n ** 3}, maka ∛${n ** 3} = ${n}.`); },
+      (K) => { const r = K.pick([7, 14, 21, 28, 35]); const d = 2 * r; const kind = K.pick(["r", "d"]);
+        return K.mk(1, "Lingkaran", `Keliling lingkaran pada gambar adalah ... (π = 22/7)`, `${(2 * 22 * r) / 7} cm`, [`${(22 * r * r) / 7} cm`, `${(22 * r) / 7} cm`, `${(2 * 22 * r) / 7 + 7} cm`, `${4 * r} cm`], `K = π × d = 22/7 × ${d} = ${(2 * 22 * r) / 7} cm.`, S.circle(kind === "r" ? r : d, kind, "cm")); },
+      (K) => { const a = K.int(2, 15), b = K.int(2, 15), c = K.int(2, 12);
+        return K.mk(1, "Volume Bangun Ruang", `Volume balok dengan panjang ${a} cm, lebar ${b} cm, dan tinggi ${c} cm adalah ...`, `${a * b * c} cm³`, [`${a + b + c} cm³`, `${2 * (a * b + a * c + b * c)} cm³`, `${a * b} cm³`, `${a * b * c + a} cm³`], `V = p × l × t = ${a} × ${b} × ${c} = ${a * b * c} cm³.`); },
+      (K) => { const x = K.int(-5, 5), y = K.int(-5, 5); if (!x || !y) return null; const L = K.pick(["A", "B", "P", "Q", "K"]);
+        return K.mk(1, "Koordinat", `Koordinat titik ${L} pada gambar adalah ...`, `(${sg(x)}, ${sg(y)})`, [`(${sg(y)}, ${sg(x)})`, `(${sg(-x)}, ${sg(y)})`, `(${sg(x)}, ${sg(-y)})`, `(${sg(-x)}, ${sg(-y)})`], `Baca sumbu x dulu (mendatar) = ${sg(x)}, lalu sumbu y (tegak) = ${sg(y)}.`, S.cartesius(x, y, L)); },
+      (K) => { const n = K.int(5, 7); const v = Array.from({ length: n }, () => K.int(5, 10)); const cnt = {}; v.forEach((x) => (cnt[x] = (cnt[x] || 0) + 1)); const mx = Math.max(...Object.values(cnt)); const mods = Object.keys(cnt).filter((k) => cnt[k] === mx); if (mods.length > 1 || mx < 2) return null;
+        return K.mk(1, "Statistika", `Nilai ulangan ${K.pick(nama)}: ${v.join(", ")}. Modus data tersebut adalah ...`, mods[0], [...new Set(v.filter((x) => String(x) !== mods[0]).map(String))].concat(["10", "9", "6"]), `Modus = nilai yang paling sering muncul, yaitu ${mods[0]} (muncul ${mx} kali).`); },
+      (K) => { const [n, d] = K.pick([[1, 4], [3, 4], [2, 5], [3, 5], [1, 8], [3, 8], [7, 20], [9, 25], [1, 2]]); const p = (n / d) * 100;
+        return K.mk(1, "Pecahan, Desimal, Persen", `Pecahan ${n}/${d} jika diubah ke persen adalah ...`, K.num(p) + "%", [K.num(p / 10) + "%", K.num(n * 10) + "%", K.num(100 - p) + "%", K.num(p + 5) + "%"], `${n}/${d} × 100% = ${K.num(p)}%.`); },
+      (K) => { const a = K.int(1, 9) + K.int(1, 9) / 10, b = K.int(1, 9) + K.int(1, 99) / 100; const op = K.pick(["+", "−"]); if (op === "−" && b > a) return null; const r = Math.round((op === "+" ? a + b : a - b) * 100) / 100;
+        return K.mk(1, "Pecahan, Desimal, Persen", `${K.num(a)} ${op} ${K.num(b)} = ...`, K.num(r), [K.num(r + 0.1), K.num(r - 0.01), K.num(r * 10), K.num(op === "+" ? Math.abs(a - b) : a + b)], `Sejajarkan koma: ${K.num(a)} ${op} ${K.num(b)} = ${K.num(r)}.`); },
+    ],
+    2: [
+      (K) => { const a = K.int(-12, -2), b = K.int(2, 9); const op = K.pick(["×", ":"]); const r = op === "×" ? a * b : a; const x = op === "×" ? a : a * b;
+        return K.mk(2, "Bilangan Bulat", `${sg(x)} ${op} ${b} = ...`, sg(op === "×" ? a * b : a), [sg(-(op === "×" ? a * b : a)), sg((op === "×" ? a * b : a) + b), sg(x + b), sg(Math.abs(x) * 2)], `Negatif ${op === "×" ? "dikali" : "dibagi"} positif hasilnya negatif: ${sg(x)} ${op} ${b} = ${sg(op === "×" ? a * b : a)}.`); },
+      (K) => { const a = K.int(2, 12), b = K.int(2, 8), c = K.int(2, 6), d = K.int(10, 60); const r = d - a * b + c * c;
+        return K.mk(2, "Operasi Hitung Campuran", `${d} − ${a} × ${b} + ${c}² = ...`, sg(r), [sg((d - a) * b + c * c), sg(d - a * b + c * 2), sg(r + c), sg(r - 2)], `Pangkat dulu: ${c}² = ${c * c}. Perkalian: ${a} × ${b} = ${a * b}. Lalu ${d} − ${a * b} + ${c * c} = ${sg(r)}.`); },
+      (K) => { const w1 = K.int(1, 4), n1 = K.int(1, 3), d1 = 4, w2 = K.int(1, 3), n2 = 1, d2 = 2; const tn = (w1 * d1 + n1) * 1 * 1, L = 4; const t = (w1 * 4 + n1) + (w2 * 2 + n2) * 2;
+        return K.mk(2, "Pecahan", `${w1} ${n1}/4 + ${w2} ${n2}/2 = ...`, K.fr(t, L), [K.fr(t - 1, L), K.fr(t + 2, L), `${w1 + w2} ${n1 + n2}/6`, K.fr(t, 2)], `Ubah ke pecahan biasa: ${w1 * 4 + n1}/4 + ${w2 * 2 + n2}/2 = ${w1 * 4 + n1}/4 + ${(w2 * 2 + n2) * 2}/4 = ${t}/4 = ${K.fr(t, L)}.`); },
+      (K) => { const a = K.int(2, 9), b = K.pick([2, 3, 4, 5]), c = K.int(1, 9), d = K.pick([3, 4, 5, 6]); if (a % b === 0 || c % d === 0) return null;
+        return K.mk(2, "Pecahan", `${a}/${b} × ${c}/${d} = ...`, K.fr(a * c, b * d), [K.fr(a + c, b + d), K.fr(a * d, b * c), K.fr(a * c + 1, b * d), K.fr(a * c, b + d)], `Kalikan pembilang dan penyebut: ${a * c}/${b * d} = ${K.fr(a * c, b * d)}.`); },
+      (K) => { const r = K.pick([7, 14, 21, 28]); const L = (22 * r * r) / 7; const kind = K.pick(["r", "d"]);
+        return K.mk(2, "Lingkaran", `Luas lingkaran pada gambar adalah ... (π = 22/7)`, `${K.num(L)} cm²`, [`${K.num((2 * 22 * r) / 7)} cm²`, `${K.num(L * 2)} cm²`, `${K.num((22 * 4 * r * r) / 7)} cm²`, `${K.num(L / 2)} cm²`], `${kind === "d" ? `r = d : 2 = ${r} cm. ` : ""}L = π × r × r = 22/7 × ${r} × ${r} = ${K.num(L)} cm².`, S.circle(kind === "r" ? r : 2 * r, kind, "cm")); },
+      (K) => { const r = K.pick([10, 20, 5, 15, 30]); const L = 3.14 * r * r;
+        return K.mk(2, "Lingkaran", `Sebuah taman berbentuk lingkaran berjari-jari ${r} m. Luas taman adalah ... (π = 3,14)`, `${K.num(L)} m²`, [`${K.num(2 * 3.14 * r)} m²`, `${K.num(L * 2)} m²`, `${K.num(3.14 * r)} m²`, `${K.num(L + r)} m²`], `L = 3,14 × ${r} × ${r} = ${K.num(L)} m².`); },
+      (K) => { const s = K.int(2, 15);
+        return K.mk(2, "Luas Permukaan", `Luas permukaan kubus dengan panjang rusuk ${s} cm adalah ...`, `${6 * s * s} cm²`, [`${s ** 3} cm²`, `${4 * s * s} cm²`, `${12 * s} cm²`, `${6 * s} cm²`], `Lp kubus = 6 × s × s = 6 × ${s} × ${s} = ${6 * s * s} cm².`); },
+      (K) => { const p = K.int(4, 15), l = K.int(2, 10), t = K.int(2, 10); if (p === l) return null;
+        return K.mk(2, "Luas Permukaan", `Luas permukaan balok berukuran ${p} cm × ${l} cm × ${t} cm adalah ...`, `${2 * (p * l + p * t + l * t)} cm²`, [`${p * l * t} cm²`, `${p * l + p * t + l * t} cm²`, `${2 * (p + l + t)} cm²`, `${2 * (p * l + p * t)} cm²`], `Lp = 2 × (pl + pt + lt) = 2 × (${p * l} + ${p * t} + ${l * t}) = ${2 * (p * l + p * t + l * t)} cm².`); },
+      (K) => { const r = K.pick([7, 14]), t = K.int(5, 20); const V = (22 * r * r * t) / 7;
+        return K.mk(2, "Volume Bangun Ruang", "Volume tabung pada gambar adalah ... (π = 22/7)", `${K.num(V)} cm³`, [`${K.num((22 * r * r) / 7)} cm³`, `${K.num((2 * 22 * r * t) / 7)} cm³`, `${K.num(V * 2)} cm³`, `${K.num(V / 2)} cm³`], `V = π × r × r × t = 22/7 × ${r} × ${r} × ${t} = ${K.num(V)} cm³.`, S.cylinder(r, t, "cm")); },
+      (K) => { const a = 2 * K.int(2, 8), ts = K.int(3, 12), t = K.int(5, 20); const V = (a * ts * t) / 2;
+        return K.mk(2, "Volume Bangun Ruang", "Volume prisma segitiga pada gambar adalah ...", `${K.num(V)} cm³`, [`${K.num(a * ts * t)} cm³`, `${K.num((a * ts) / 2)} cm³`, `${K.num(a + ts + t)} cm³`, `${K.num(V + t)} cm³`], `V = luas alas × tinggi = (½ × ${a} × ${ts}) × ${t} = ${(a * ts) / 2} × ${t} = ${K.num(V)} cm³.`, S.prism(a, ts, t, "cm")); },
+      (K) => { const n = K.pick([5, 7]); let v = Array.from({ length: n }, () => K.int(55, 95)); const so = v.slice().sort((a, b) => a - b); const med = so[(n - 1) / 2];
+        return K.mk(2, "Statistika", `Data tinggi badan (cm) beberapa siswa: ${v.map((x) => x + 80).join(", ")}. Median data tersebut adalah ...`, String(med + 80), [String(so[0] + 80), String(so[n - 1] + 80), String(Math.round(v.reduce((a, b) => a + b) / n) + 80 + 1), String(v[(n - 1) / 2] + 80 === med + 80 ? med + 82 : v[(n - 1) / 2] + 80)], `Urutkan data: ${so.map((x) => x + 80).join(", ")}. Nilai tengahnya ${med + 80}.`); },
+      (K) => { const lab = K.sample(["Sepak bola", "Renang", "Bulu tangkis", "Basket", "Voli"], 4); const pct = K.pick([[40, 30, 20, 10], [50, 25, 15, 10], [35, 30, 25, 10], [45, 25, 20, 10]]); const N = K.pick([40, 60, 80, 120, 200]); const i = K.int(0, 3); const r = (pct[i] * N) / 100; if (r % 1) return null;
+        return K.mk(2, "Statistika", `Diagram lingkaran menunjukkan olahraga kesukaan ${N} siswa. Banyak siswa yang menyukai ${lab[i]} adalah ...`, `${r} siswa`, [`${pct[i]} siswa`, `${r + 4} siswa`, `${(pct[(i + 1) % 4] * N) / 100} siswa`, `${N - r} siswa`], `${pct[i]}% × ${N} = ${r} siswa.`, S.pie(lab, pct, "Olahraga kesukaan siswa")); },
+      (K) => { const v = K.pick([40, 50, 60, 72, 80]), w = K.pick([1.5, 2, 2.5, 3, 4]); const s = v * w; if (s % 1) return null;
+        return K.mk(2, "Kecepatan dan Debit", `Bus melaju dengan kecepatan ${v} km/jam selama ${K.num(w)} jam. Jarak yang ditempuh adalah ...`, `${K.num(s)} km`, [`${K.num(v + w)} km`, `${K.num(v / w)} km`, `${K.num(s + v)} km`, `${K.num(s - 10)} km`], `Jarak = ${v} × ${K.num(w)} = ${K.num(s)} km.`); },
+    ],
+    3: [
+      (K) => { const [a, b] = K.sample([6, 8, 9, 10, 12, 15, 18, 20], 2); const L = K.lcm(a, b); const [x, y] = K.sample(nama, 2);
+        return K.mk(3, "KPK dan FPB", `${x} berenang setiap ${a} hari dan ${y} setiap ${b} hari. Hari ini mereka berenang bersama. Mereka akan berenang bersama lagi ... hari lagi.`, L, [a * b === L ? L * 2 : a * b, K.gcd(a, b), a + b, L + a], `KPK ${a} dan ${b} = ${L}, jadi ${L} hari lagi.`); },
+      (K) => { const g = K.int(4, 12), a = g * K.int(2, 6), b = g * K.int(2, 6), c = g * K.int(2, 6); if (a === b || b === c || a === c) return null; const f = K.gcd(K.gcd(a, b), c);
+        return K.mk(3, "KPK dan FPB", `Bu Guru punya ${a} pensil, ${b} buku, dan ${c} penghapus untuk dibagikan sama banyak ke beberapa kelompok tanpa sisa. Paling banyak kelompok yang dapat dibentuk adalah ...`, `${f} kelompok`, [`${f * 2} kelompok`, `${K.lcm(a, b)} kelompok`, `${(a + b + c) / f | 0} kelompok`, `${f + 1} kelompok`], `FPB ${a}, ${b}, dan ${c} = ${f}.`); },
+      (K) => { const r = K.pick([7, 14, 21]), n = K.pick([10, 20, 50, 100]); const kel = (2 * 22 * r) / 7; const tot = (kel * n) / 100;
+        return K.mk(3, "Lingkaran", `Roda sepeda berjari-jari ${r} cm berputar ${n} kali. Jarak yang ditempuh adalah ... m. (π = 22/7)`, K.num(tot), [K.num(tot * 2), K.num(tot / 2), K.num(((22 * r * r) / 7) * n / 100), K.num(tot + 10)], `Keliling roda = 2 × 22/7 × ${r} = ${kel} cm. Jarak = ${kel} × ${n} = ${K.num(kel * n)} cm = ${K.num(tot)} m.`); },
+      (K) => { const r = K.pick([7, 14]), t = K.pick([10, 20, 30, 50]); const V = (22 * r * r * t) / 7 / 1000;
+        return K.mk(3, "Volume Bangun Ruang", `Tandon air berbentuk tabung berjari-jari ${r} dm dan tinggi ${t} dm diisi penuh. Banyak air adalah ... liter. (π = 22/7)`, K.num(V * 1000), [K.num(V * 100), K.num(V * 2000), K.num((2 * 22 * r * t) / 7), K.num(V * 1000 + 100)], `V = 22/7 × ${r} × ${r} × ${t} = ${K.num(V * 1000)} dm³ = ${K.num(V * 1000)} liter.`, S.cylinder(r, t, "dm")); },
+      (K) => { const s = K.int(5, 20), t = K.int(2, s - 1);
+        return K.mk(3, "Volume Bangun Ruang", `Bak mandi berbentuk kubus dengan rusuk ${s} dm berisi air setinggi ${t} dm. Air yang harus ditambahkan agar penuh adalah ... liter.`, s * s * (s - t), [s * s * t, s ** 3, s * (s - t), s * s * (s - t) + s], `Kekurangan air = ${s} × ${s} × (${s} − ${t}) = ${s * s * (s - t)} dm³ = ${s * s * (s - t)} liter.`); },
+      (K) => { const p = K.pick([40, 50, 60, 80]), l = K.pick([20, 30, 40]), t = K.pick([25, 30, 40, 50]), deb = K.pick([2, 4, 5, 6, 8, 10]); const V = (p * l * t) / 1000; const w = V / deb; if (w % 1) return null;
+        return K.mk(3, "Kecepatan dan Debit", `Akuarium ${p} cm × ${l} cm × ${t} cm diisi air dari keran berdebit ${deb} liter/menit. Akuarium penuh dalam ... menit.`, w, [V, w * 2, w + deb, deb * V], `V = ${p} × ${l} × ${t} = ${p * l * t} cm³ = ${K.num(V)} liter. Waktu = ${K.num(V)} : ${deb} = ${w} menit.`); },
+      (K) => { const v1 = K.pick([40, 50, 60]), v2 = K.pick([30, 40, 50, 70]), J = (v1 + v2) * K.pick([1, 2, 3]); const w = J / (v1 + v2); const jam = K.int(6, 9);
+        return K.mk(3, "Kecepatan dan Debit", `Jarak kota A dan B ${J} km. Pukul 0${jam}.00 Ayah berangkat dari A ke B dengan kecepatan ${v1} km/jam, dan Paman dari B ke A dengan kecepatan ${v2} km/jam. Mereka berpapasan pukul ...`, `${String(jam + w).padStart(2, "0")}.00`, [`${String(jam + w + 1).padStart(2, "0")}.00`, `${String(jam + w).padStart(2, "0")}.30`, `${String(jam + 1).padStart(2, "0")}.00`, `${String(jam + w + 2).padStart(2, "0")}.00`], `Waktu papasan = jarak : (v1 + v2) = ${J} : ${v1 + v2} = ${w} jam. ${String(jam).padStart(2, "0")}.00 + ${w} jam = ${String(jam + w).padStart(2, "0")}.00.`); },
+      (K) => { const a = K.int(2, 5), b = K.int(2, 6); if (a === b || K.gcd(a, b) > 1) return null; const k = K.int(4, 15); const sel = Math.abs(a - b) * k; const [x, y] = K.sample(nama, 2);
+        return K.mk(3, "Perbandingan dan Skala", `Perbandingan uang ${x} dan ${y} = ${a} : ${b}. Selisih uang mereka Rp${K.num(sel * 1000)}. Uang ${y} adalah ...`, "Rp" + K.num(b * k * 1000), ["Rp" + K.num(a * k * 1000), "Rp" + K.num((a + b) * k * 1000), "Rp" + K.num(sel * 1000), "Rp" + K.num(b * k * 1000 + 5000)], `1 bagian = ${K.num(sel * 1000)} : ${Math.abs(a - b)} = ${K.num(k * 1000)}. Uang ${y} = ${b} × ${K.num(k * 1000)} = ${K.num(b * k * 1000)}.`); },
+      (K) => { const v = [K.int(6, 9), K.int(6, 9), K.int(6, 9), K.int(6, 9)]; const tgt = K.int(7, 8); const x = tgt * 5 - v.reduce((a, b) => a + b, 0); if (x < 5 || x > 10) return null;
+        return K.mk(3, "Statistika", `Nilai 4 kali ulangan Sinta: ${v.join(", ")}. Agar rata-rata 5 kali ulangan menjadi ${tgt}, nilai ulangan kelima harus ...`, x, [x + 1, x - 1, tgt, x + 2], `Jumlah 5 nilai = ${tgt} × 5 = ${tgt * 5}. Nilai kelima = ${tgt * 5} − ${v.reduce((a, b) => a + b, 0)} = ${x}.`); },
+      (K) => { const h = K.pick([150, 200, 250, 300, 400, 500]) * 1000, u = K.pick([10, 15, 20, 25]); const j = h + (h * u) / 100; const brg = K.pick(["sepeda", "rak buku", "tas", "sepatu"]);
+        return K.mk(3, "Pecahan, Desimal, Persen", `Pak Budi membeli ${brg} seharga Rp${K.num(h)} lalu menjualnya dengan untung ${u}%. Harga jualnya adalah ...`, "Rp" + K.num(j), ["Rp" + K.num(h - (h * u) / 100), "Rp" + K.num((h * u) / 100), "Rp" + K.num(h + u * 1000), "Rp" + K.num(j + 10000)], `Untung = ${u}% × ${K.num(h)} = ${K.num((h * u) / 100)}. Harga jual = ${K.num(h)} + ${K.num((h * u) / 100)} = ${K.num(j)}.`); },
+      (K) => { const x = K.int(-4, 4), y = K.int(-4, 4), dx = K.int(1, 3), dy = K.int(1, 3); if (!x || !y) return null; const nx = x + dx, ny = y - dy;
+        return K.mk(3, "Koordinat", `Titik P pada gambar digeser ${dx} satuan ke kanan dan ${dy} satuan ke bawah. Koordinat bayangannya adalah ...`, `(${sg(nx)}, ${sg(ny)})`, [`(${sg(x - dx)}, ${sg(y + dy)})`, `(${sg(x + dx)}, ${sg(y + dy)})`, `(${sg(x - dx)}, ${sg(y - dy)})`, `(${sg(ny)}, ${sg(nx)})`], `Ke kanan: x + ${dx} = ${sg(nx)}. Ke bawah: y − ${dy} = ${sg(ny)}.`, S.cartesius(x, y, "P")); },
+      (K) => { const a = K.int(-15, -3), b = K.int(2, 8), c = K.int(-6, -2);
+        return K.mk(3, "Bilangan Bulat", `Hasil dari ${sg(a)} × ${b} : ${pr(c)} ... (dibulatkan jika perlu) adalah ...`.replace(" ... (dibulatkan jika perlu)", ""), sg(Math.round((a * b) / c)), [sg(-Math.round((a * b) / c)), sg(a * b), sg(Math.round(a / c) * b + 1), sg(Math.round((a * b) / c) + 2)], `${sg(a)} × ${b} = ${sg(a * b)}. ${sg(a * b)} : ${pr(c)} = ${sg((a * b) / c)} (negatif : negatif = positif).`) ; },
+    ],
+  };
+  // buang soal bilangan bulat yang hasil baginya tidak bulat
+  const t3 = T[3][T[3].length - 1]; T[3][T[3].length - 1] = (K) => { const s = t3(K); return s && !/\./.test(s.bahas.split("=").pop()) ? s : null; };
+  const gen = () => C.build("MTK", 6105, T, C.quota);
+  if (typeof module !== "undefined") module.exports = gen; else (G.GEN = G.GEN || {}).MTK = gen;
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+<script>// Bahasa Indonesia Kelas 6 — Kurikulum Merdeka Fase C (kelas 6) + persiapan ujian akhir SD
+(function (G) {
+  const C = typeof module !== "undefined" ? require("./core.js") : G.CORE;
+  const cap = (s) => s[0].toUpperCase() + s.slice(1);
+  const konj = [ // [kalimat dengan ___, konjungsi benar, makna]
+    ["Adik tidak masuk sekolah ___ sedang sakit.", "karena", "sebab"], ["Hujan turun sangat deras ___ jalanan banjir.", "sehingga", "akibat"], ["Kakak rajin belajar ___ lulus dengan nilai baik.", "agar", "tujuan"], ["Rina pandai menari ___ menyanyi.", "dan", "penambahan"],
+    ["Ayah ingin membeli sepeda, ___ uangnya belum cukup.", "tetapi", "pertentangan"], ["Kamu mau minum teh ___ kopi?", "atau", "pilihan"], ["Budi tetap berangkat sekolah ___ hujan turun deras.", "meskipun", "pertentangan"], ["Cuci tanganmu ___ makan.", "sebelum", "waktu"],
+    ["Kami pulang ___ pelajaran selesai.", "setelah", "waktu"], ["Ibu memasak ___ ayah membaca koran.", "sementara", "waktu"], ["Tanaman itu layu ___ tidak disiram.", "karena", "sebab"], ["Ia berlatih setiap hari ___ menjadi juara.", "supaya", "tujuan"],
+    ["Rumahnya jauh, ___ ia selalu datang tepat waktu.", "namun", "pertentangan"], ["Kita harus hemat air ___ tidak terjadi kekeringan.", "agar", "tujuan"], ["Pasar itu sangat ramai ___ menjelang hari raya.", "terutama", "penegasan"], ["Ia belajar dengan giat ___ nilainya meningkat.", "sehingga", "akibat"],
+  ];
+  const efektif = [ // [efektif, tidak efektif...]
+    ["Para siswa berkumpul di lapangan.", ["Para siswa-siswa berkumpul di lapangan.", "Para siswa-siswa sedang berkumpul di lapangan sekolah itu semua.", "Siswa-siswa para berkumpul di lapangan."]],
+    ["Kami naik ke lantai dua.", ["Kami naik ke atas lantai dua.", "Kami naik ke atas ke lantai dua.", "Kami ke atas naik lantai dua."]],
+    ["Banyak peserta lomba yang hadir.", ["Banyak peserta-peserta lomba yang hadir.", "Banyak para peserta lomba yang hadir.", "Peserta-peserta banyak lomba hadir."]],
+    ["Saya mundur dua langkah.", ["Saya mundur ke belakang dua langkah.", "Saya mundur dua langkah ke belakang lagi.", "Mundur saya ke belakang dua langkah."]],
+    ["Dia sangat pandai.", ["Dia sangat pandai sekali.", "Dia amat sangat pandai.", "Dia pandai sekali sangat."]],
+    ["Penonton dimohon tenang.", ["Bagi penonton dimohon tenang.", "Kepada penonton dimohon untuk tenang semua.", "Untuk para penonton-penonton dimohon tenang."]],
+    ["Rapat dimulai pukul 08.00.", ["Rapat dimulai pada pukul jam 08.00.", "Rapat dimulai jam pukul 08.00 pagi hari.", "Pukul jam 08.00 rapat dimulai."]],
+    ["Sejak kecil ia suka membaca.", ["Sejak dari kecil ia suka membaca.", "Sejak dari kecil ia sudah suka membaca buku-buku.", "Dari sejak kecil suka ia membaca."]],
+    ["Adik membeli buku, pensil, dan penghapus.", ["Adik membeli buku, pensil, dan penghapus, dan lain-lain sebagainya.", "Adik membeli buku-buku, pensil-pensil, dan penghapus-penghapus.", "Adik buku pensil penghapus membeli."]],
+    ["Semua tamu sudah datang.", ["Semua tamu-tamu sudah datang.", "Semua para tamu sudah datang.", "Tamu-tamu semua sudah pada datang."]],
+  ];
+  const langsung = [ // [langsung, tak langsung]
+    ['Ibu berkata, "Saya akan pergi ke pasar."', "Ibu berkata bahwa dia akan pergi ke pasar."], ['Guru berkata, "Besok kita ulangan matematika."', "Guru berkata bahwa besok mereka ulangan matematika."], ['Ayah berkata, "Saya sudah makan."', "Ayah berkata bahwa dia sudah makan."],
+    ['Rina bertanya, "Kapan kamu pulang?"', "Rina bertanya kapan saya pulang."], ['Kakak berkata, "Aku lelah sekali."', "Kakak berkata bahwa dia lelah sekali."], ['Dokter berkata, "Kamu harus banyak istirahat."', "Dokter berkata bahwa saya harus banyak istirahat."],
+    ['Budi berkata, "Saya suka bermain bola."', "Budi berkata bahwa dia suka bermain bola."], ['Nenek berkata, "Saya rindu cucu-cucuku."', "Nenek berkata bahwa dia rindu cucu-cucunya."],
+  ];
+  const sinonim = [["cerdas", "pintar"], ["indah", "permai"], ["gigih", "tekun"], ["sejahtera", "makmur"], ["kokoh", "kuat"], ["usang", "kuno"], ["cermat", "teliti"], ["lazim", "biasa"], ["kendala", "hambatan"], ["sanggup", "mampu"], ["piawai", "mahir"], ["bugar", "sehat"], ["dahaga", "haus"], ["lapar", "lapar"], ["bimbang", "ragu"], ["hening", "sunyi"], ["fasih", "lancar"], ["gesit", "cekatan"], ["tangguh", "kuat"], ["giat", "rajin"], ["sukar", "sulit"], ["mujur", "beruntung"], ["lancang", "kurang ajar"], ["sengsara", "menderita"], ["berani", "gagah"], ["anjuran", "saran"], ["unggul", "menang"], ["dusta", "bohong"], ["aneka", "beragam"], ["sigap", "tangkas"]].filter((x) => x[0] !== x[1]);
+  const antonim = [["optimis", "pesimis"], ["mayoritas", "minoritas"], ["modern", "tradisional"], ["aktif", "pasif"], ["maju", "mundur"], ["subur", "tandus"], ["hemat", "boros"], ["ramah", "judes"], ["dermawan", "kikir"], ["rajin", "malas"], ["sukses", "gagal"], ["tegas", "ragu-ragu"], ["jujur", "curang"], ["setia", "khianat"], ["ekspor", "impor"], ["pasang", "surut"], ["sempit", "luas"], ["datar", "curam"], ["teratur", "berantakan"], ["rela", "terpaksa"], ["awal", "akhir"], ["agresif", "pasif"], ["mewah", "sederhana"], ["menerima", "menolak"], ["sopan", "kurang ajar"], ["tenang", "gelisah"]];
+  const baku = [["praktik", "praktek"], ["kualitas", "kwalitas"], ["apotek", "apotik"], ["nasihat", "nasehat"], ["izin", "ijin"], ["risiko", "resiko"], ["analisis", "analisa"], ["sistem", "sistim"], ["jadwal", "jadual"], ["karier", "karir"], ["objek", "obyek"], ["ubah", "rubah"], ["provinsi", "propinsi"], ["atlet", "atlit"], ["kuitansi", "kwitansi"], ["hakikat", "hakekat"], ["teknik", "tehnik"], ["silakan", "silahkan"], ["sekadar", "sekedar"], ["zaman", "jaman"], ["rezeki", "rejeki"], ["andal", "handal"], ["imbau", "himbau"], ["napas", "nafas"], ["utang", "hutang"], ["hafal", "hapal"], ["ijazah", "ijasah"], ["konkret", "kongkrit"], ["kategori", "katagori"], ["frekuensi", "frekwensi"], ["aktivitas", "aktifitas"], ["standar", "standard"], ["detail", "detil"], ["telur", "telor"], ["lembap", "lembab"]];
+  const jenisTeks = [["Pidato", "teks yang disampaikan di depan umum untuk menyampaikan gagasan, diawali salam pembuka"], ["Iklan", "teks yang bertujuan membujuk orang agar membeli atau menggunakan sesuatu"], ["Slogan", "kalimat pendek dan menarik yang mudah diingat untuk menyampaikan pesan"], ["Poster", "media berisi gambar dan tulisan singkat untuk ajakan atau informasi"], ["Laporan", "teks yang menyajikan hasil pengamatan secara faktual"], ["Surat resmi", "surat untuk keperluan dinas dengan bahasa baku dan kop surat"], ["Puisi", "karya sastra yang bahasanya padat, berirama, dan penuh makna kiasan"], ["Biografi", "teks yang menceritakan riwayat hidup seorang tokoh"], ["Pengumuman", "teks berisi pemberitahuan kepada orang banyak"], ["Petunjuk", "teks berisi langkah-langkah melakukan sesuatu secara berurutan"]];
+  const slogan = ["Buanglah sampah pada tempatnya!", "Hemat energi, selamatkan bumi.", "Air bersih, hidup sehat.", "Bersih itu sehat.", "Satu pohon, sejuta kehidupan.", "Gemar membaca, jendela dunia.", "Jaga hutan kita, jaga masa depan.", "Disiplin adalah kunci sukses."];
+  const iklan = ["Sabun Wangi Segar, kulit bersih dan harum seharian! Beli sekarang, diskon 20%!", "Susu Sehat Ceria, bikin tulang kuat. Tersedia di toko terdekat!", "Les Renang Lumba-Lumba, pendaftaran dibuka! Hubungi 0812xxxx."];
+  const surat = [["kop surat", "identitas lembaga/instansi di bagian paling atas"], ["tanggal surat", "waktu surat dibuat"], ["nomor surat", "kode urut surat resmi"], ["perihal", "pokok isi surat"], ["salam pembuka", "sapaan hormat di awal isi surat"], ["isi surat", "maksud dan tujuan surat"], ["salam penutup", "ungkapan hormat sebelum tanda tangan"], ["tanda tangan dan nama terang", "identitas pengirim surat"]];
+  const puisi = [
+    { teks: "Ibu, kaulah pelita hidupku<br>Kasihmu tak pernah layu<br>Doamu menemaniku selalu<br>Hingga kelak aku dewasa nanti", tema: "kasih sayang ibu", rima: "a-a-a-b", majas: "metafora (ibu disebut pelita)" },
+    { teks: "Guruku, engkau lentera di kegelapan<br>Ilmu kau tabur tanpa pamrih<br>Jasamu abadi dalam ingatan<br>Terima kasih, guruku tercinta", tema: "jasa guru", rima: "a-b-a-c", majas: "metafora (guru disebut lentera)" },
+    { teks: "Hutan hijau tempat bernaung<br>Burung bernyanyi riang gembira<br>Jangan biarkan hutan merana<br>Jagalah demi anak cucu kita", tema: "pelestarian hutan", rima: "a-b-b-b", majas: "personifikasi (burung bernyanyi, hutan merana)" },
+    { teks: "Indonesia tanah airku<br>Kaya budaya dari Sabang sampai Merauke<br>Kujaga engkau sepanjang waktu<br>Merah putih berkibar di dadaku", tema: "cinta tanah air", rima: "a-b-a-a", majas: "hiperbola (sepanjang waktu)" },
+  ];
+  const bacaan = [ // [judul, teks, ide pokok, simpulan, pertanyaan fakta [q, a, salah...]]
+    ["Manfaat Bersepeda", "Bersepeda menyehatkan jantung dan menguatkan otot kaki. Selain itu, bersepeda tidak menimbulkan polusi udara. Banyak kota kini menyediakan jalur khusus sepeda agar warga aman bersepeda.", "manfaat bersepeda bagi kesehatan dan lingkungan", "Bersepeda baik untuk kesehatan dan ramah lingkungan.", ["Apa manfaat bersepeda bagi lingkungan?", "tidak menimbulkan polusi udara", "menguatkan otot kaki", "menyediakan jalur khusus", "membuat kota ramai"]],
+    ["Bank Sampah Sekolah", "Sekolah kami membuat bank sampah sejak tahun lalu. Setiap siswa menyetor sampah plastik dan kertas yang sudah dipilah. Sampah itu ditimbang lalu dicatat sebagai tabungan. Hasilnya, sekolah lebih bersih dan siswa belajar menabung.", "bank sampah di sekolah", "Bank sampah membuat sekolah bersih dan melatih siswa menabung.", ["Sampah apa yang disetor siswa?", "plastik dan kertas yang sudah dipilah", "sisa makanan", "daun kering", "semua jenis sampah tanpa dipilah"]],
+    ["Gempa Bumi", "Saat gempa terjadi, kita harus tetap tenang. Lindungi kepala dan berlindung di bawah meja yang kuat. Jauhi kaca dan benda yang mudah jatuh. Setelah guncangan berhenti, segera keluar menuju tempat terbuka.", "cara menyelamatkan diri saat gempa", "Saat gempa kita harus tenang dan melindungi diri sampai aman.", ["Ke mana kita pergi setelah guncangan berhenti?", "tempat terbuka", "dekat jendela kaca", "di bawah tangga", "ke dalam lift"]],
+    ["Ki Hajar Dewantara", "Ki Hajar Dewantara lahir di Yogyakarta pada 2 Mei 1889. Ia mendirikan sekolah Taman Siswa agar rakyat dapat bersekolah. Semboyannya yang terkenal adalah Tut Wuri Handayani. Tanggal lahirnya diperingati sebagai Hari Pendidikan Nasional.", "riwayat dan jasa Ki Hajar Dewantara", "Ki Hajar Dewantara berjasa besar bagi pendidikan Indonesia.", ["Sekolah apa yang didirikan Ki Hajar Dewantara?", "Taman Siswa", "Budi Utomo", "Sekolah Rakyat", "Taman Kanak-Kanak"]],
+    ["Hemat Listrik", "Listrik di rumah dapat dihemat dengan cara sederhana. Matikan lampu jika tidak digunakan. Cabut pengisi daya setelah baterai penuh. Gunakan lampu hemat energi. Dengan begitu, tagihan listrik berkurang dan bumi lebih terjaga.", "cara menghemat listrik di rumah", "Menghemat listrik mengurangi tagihan dan menjaga bumi.", ["Apa yang dilakukan setelah baterai penuh?", "mencabut pengisi daya", "mematikan lampu", "membeli lampu baru", "menyalakan kipas"]],
+    ["Batik Indonesia", "Batik adalah warisan budaya Indonesia yang diakui UNESCO pada 2 Oktober 2009. Setiap daerah memiliki motif batik yang khas, seperti Parang dari Yogyakarta dan Mega Mendung dari Cirebon. Kini batik dipakai dalam berbagai acara, baik resmi maupun santai.", "batik sebagai warisan budaya Indonesia", "Batik adalah warisan budaya yang patut dibanggakan dan dilestarikan.", ["Motif batik apa yang berasal dari Cirebon?", "Mega Mendung", "Parang", "Kawung", "Truntum"]],
+    ["Banjir di Kota", "Banjir sering melanda kota saat musim hujan. Penyebabnya antara lain sampah yang menyumbat saluran air dan berkurangnya daerah resapan. Untuk mencegahnya, warga perlu membuang sampah pada tempatnya dan menanam pohon.", "penyebab dan pencegahan banjir di kota", "Banjir dapat dicegah jika warga menjaga kebersihan dan menanam pohon.", ["Apa salah satu penyebab banjir menurut teks?", "sampah menyumbat saluran air", "terlalu banyak pohon", "musim kemarau panjang", "jalan terlalu lebar"]],
+    ["Gemar Membaca", "Membaca membuka wawasan kita tentang dunia. Dengan membaca, kita mengenal banyak kosakata baru. Kebiasaan membaca sebaiknya dimulai sejak kecil, misalnya membaca 15 menit sebelum tidur.", "pentingnya kebiasaan membaca", "Kebiasaan membaca perlu dimulai sejak kecil karena banyak manfaatnya.", ["Contoh kebiasaan membaca menurut teks adalah ...", "membaca 15 menit sebelum tidur", "membaca sambil makan", "membaca satu buku sehari", "membaca saat pelajaran"]],
+  ];
+  const orang = ["Rina", "Bayu", "Dimas", "Salsa", "Fikri", "Nayla", "Raka", "Putri", "Galih", "Wulan", "Kak Dewi", "Pak Ahmad", "Bu Ratna"];
+  const kota = ["Surabaya", "Medan", "Makassar", "Semarang", "Palembang", "Bandung", "Denpasar", "Pontianak", "Manado", "Padang"];
+  const hari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+  const bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+  const relasi = { // [klausa1, konjungsi, klausa2]
+    sebab: [["tidak masuk sekolah", "sedang demam"], ["datang terlambat", "ban sepedanya bocor"], ["mendapat hadiah", "menjadi juara kelas"], ["merasa lelah", "berlari keliling lapangan"], ["memakai jas hujan", "hujan turun deras"], ["pergi ke dokter", "giginya sakit"]],
+    tujuan: [["belajar dengan tekun", "lulus ujian"], ["menabung setiap hari", "dapat membeli sepeda"], ["bangun pagi", "tidak terlambat ke sekolah"], ["berolahraga rutin", "badannya sehat"], ["memakai masker", "tidak tertular flu"], ["mencatat penjelasan guru", "mudah mengulang pelajaran"]],
+    pertentangan: [["sudah belajar keras", "nilainya belum memuaskan"], ["badannya kecil", "larinya sangat cepat"], ["rumahnya jauh", "selalu datang tepat waktu"], ["sedang sakit", "tetap mengerjakan tugas"], ["hujan deras", "tetap berangkat latihan"]],
+  };
+  const kj = { sebab: ["karena", ["sehingga", "agar", "tetapi"]], tujuan: ["agar", ["karena", "tetapi", "atau"]], pertentangan: ["meskipun", ["karena", "agar", "sehingga"]] };
+  const aktivitas = ["pergi ke pasar", "membaca buku cerita", "mengikuti lomba pidato", "berangkat ke Jakarta", "membersihkan kamar", "belajar matematika", "menjenguk nenek", "membeli seragam baru", "berlatih bulu tangkis", "mengerjakan tugas kelompok"];
+  const pelaku = [["Ibu", "dia"], ["Ayah", "dia"], ["Kakak", "dia"], ["Paman", "dia"], ["Pak Guru", "dia"], ["Bu Dokter", "dia"], ["Rina", "dia"], ["Bayu", "dia"]];
+  const imbuh = [["sapu", "menyapu"], ["tulis", "menulis"], ["pukul", "memukul"], ["kirim", "mengirim"], ["sikat", "menyikat"], ["tanam", "menanam"], ["baca", "membaca"], ["cuci", "mencuci"], ["gambar", "menggambar"], ["jual", "menjual"], ["potong", "memotong"], ["siram", "menyiram"], ["kupas", "mengupas"], ["pinjam", "meminjam"], ["tolong", "menolong"], ["cari", "mencari"], ["ambil", "mengambil"], ["dengar", "mendengar"], ["jahit", "menjahit"], ["parkir", "memarkir"]];
+  const salah1 = (w) => { const d = w.d, f = w.f; return [d.replace(/^./, "men" + d[0]), "me" + d, "meng" + d, "mem" + d].filter((x) => x !== f); };
+  const kegiatan = ["lomba cerdas cermat", "pentas seni akhir tahun", "kerja bakti membersihkan desa", "festival layang-layang", "lomba pidato antarsekolah", "bazar buku murah", "penanaman pohon di bantaran sungai", "donor darah massal"];
+  const tempat = ["aula sekolah", "lapangan desa", "balai kota", "taman kota", "gedung olahraga", "tepi Sungai Brantas"];
+  const T = {
+    1: [
+      (K) => { const r = K.pick(Object.keys(relasi)); const [a, b] = K.pick(relasi[r]); const n = K.pick(orang); const [j, s] = kj[r]; return K.mk(1, "Konjungsi", `Kata hubung yang tepat untuk melengkapi kalimat berikut adalah ...<br><i>${n} ${a} ___ ${b}.</i>`, j, s, `${n} ${a} ${j} ${b}. Konjungsi "${j}" menyatakan hubungan ${r}.`); },
+      (K) => { const [a, b] = K.pick(sinonim); const n = K.pick(orang.filter((x) => !/^(Kak|Pak|Bu) /.test(x))); return K.mk(1, "Sinonim", `"${n} adalah anak yang ${a}."<br>Sinonim kata "${a}" pada kalimat tersebut adalah ...`, b, K.sample(antonim, 3).map((x) => x[1]), `"${a}" bermakna sama dengan "${b}".`); },
+      (K) => { const [b, t] = K.pick(baku); const n = K.pick(orang); return K.mk(1, "Kata Baku", `"${n} menulis kata ___ di papan tulis dengan benar."<br>Kata baku yang tepat adalah ...`, b, [t, ...K.sample(baku.filter((x) => x[0] !== b), 2).map((x) => x[1])], `Kata baku: "${b}".`); },
+      (K) => { const n = K.pick(orang), k = K.pick(kota), h = K.pick(hari), bl = K.pick(bulan); const benar = `${n} berlibur ke ${k} pada hari ${h}, bulan ${bl}.`; return K.mk(1, "Huruf Kapital", "Penulisan huruf kapital yang benar terdapat pada kalimat ...", benar, [`${n.toLowerCase()} berlibur ke ${k} pada hari ${h}, bulan ${bl}.`, `${n} berlibur ke ${k.toLowerCase()} pada hari ${h}, bulan ${bl}.`, `${n} Berlibur ke ${k} pada Hari ${h.toLowerCase()}, bulan ${bl.toLowerCase()}.`], "Huruf kapital: awal kalimat, nama orang, nama kota, nama hari, dan nama bulan."); },
+      (K) => { const w = K.pick(imbuh); const n = K.pick(orang); return K.mk(1, "Imbuhan", `Kata dasar "${w[0]}" mendapat awalan me-. Bentuk yang benar adalah ...`, w[1], salah1({ d: w[0], f: w[1] }), `me- + ${w[0]} = ${w[1]}.`); },
+      (K) => { const [k, j] = K.pick(konj); const all = [...new Set(konj.map((x) => x[1]))]; return K.mk(1, "Konjungsi", `Kata hubung yang tepat untuk melengkapi kalimat berikut adalah ...<br><i>${k}</i>`, j, K.sample(all.filter((x) => x !== j && konj.find((y) => y[1] === x)[2] !== konj.find((y) => y[1] === j)[2]), 3), `Kalimat yang benar: ${k.replace("___", j)} (konjungsi ${j} menyatakan ${konj.find((x) => x[1] === j)[2]}).`); },
+      (K) => { const [k, j] = K.pick(konj); const all = [...new Set(konj.map((x) => x[1]))]; return K.mk(1, "Konjungsi", `Kata hubung yang tepat untuk melengkapi kalimat berikut adalah ...<br><i>${k}</i>`, j, K.sample(all.filter((x) => x !== j && konj.find((y) => y[1] === x)[2] !== konj.find((y) => y[1] === j)[2]), 3), `Kalimat yang benar: ${k.replace("___", j)} (konjungsi ${j} menyatakan ${konj.find((x) => x[1] === j)[2]}).`); },
+      (K) => { const [a, b] = K.pick(sinonim); return K.mk(1, "Sinonim", `Sinonim kata "${a}" adalah ...`, b, K.sample(sinonim.filter((x) => x[0] !== a && x[1] !== b), 3).map((x) => x[1]), `"${a}" bermakna sama dengan "${b}".`); },
+      (K) => { const [a, b] = K.pick(antonim); return K.mk(1, "Antonim", `Lawan kata "${a}" adalah ...`, b, K.sample(antonim.filter((x) => x[0] !== a && x[1] !== b), 3).map((x) => x[1]), `Lawan kata "${a}" adalah "${b}".`); },
+      (K) => { const [b, t] = K.pick(baku); return K.mk(1, "Kata Baku", "Penulisan kata baku yang benar adalah ...", b, [t, ...K.sample(baku.filter((x) => x[0] !== b), 2).map((x) => x[1])], `Kata baku: "${b}", bukan "${t}".`); },
+      (K) => { const [n, d] = K.pick(jenisTeks); return K.mk(1, "Jenis Teks", `${cap(d)}. Jenis teks tersebut adalah ...`, n.toLowerCase(), K.sample(jenisTeks.filter((x) => x[0] !== n), 3).map((x) => x[0].toLowerCase()), `${n}: ${d}.`); },
+      (K) => { const [n, d] = K.pick(surat); return K.mk(1, "Surat Resmi", `Bagian surat resmi yang berisi ${d} adalah ...`, n, K.sample(surat.filter((x) => x[0] !== n), 3).map((x) => x[0]), `${cap(n)}: ${d}.`); },
+      (K) => { const s = K.pick(slogan); return K.mk(1, "Slogan dan Iklan", `"${s}"<br>Kalimat tersebut termasuk ...`, "slogan", ["iklan", "pengumuman", "berita"], "Slogan adalah kalimat pendek, menarik, dan mudah diingat untuk menyampaikan pesan."); },
+      (K) => { const [t, j] = K.pick(langsung); return K.mk(1, "Kalimat Langsung", `Kalimat berikut yang merupakan kalimat langsung adalah ...`, t, [j, ...K.sample(langsung.filter((x) => x[0] !== t), 2).map((x) => x[1])], "Kalimat langsung menirukan ucapan persis dan diberi tanda petik."); },
+    ],
+    2: [
+      (K) => { const [p, g] = K.pick(pelaku); const a = K.pick(aktivitas); const w = K.pick(["besok", "nanti sore", "minggu depan", "hari ini"]); const t = `${p} berkata, "Saya akan ${a} ${w}."`; const j = `${p} berkata bahwa ${g} akan ${a} ${w}.`;
+        return K.mk(2, "Kalimat Langsung", `Ubahlah menjadi kalimat tidak langsung!<br><i>${t}</i>`, j, [`${p} berkata bahwa saya akan ${a} ${w}.`, `${p} berkata, bahwa "${g} akan ${a} ${w}."`, `${p} berkata bahwa ${g} sudah ${a} ${w}.`], "Kalimat tidak langsung: tanpa tanda petik, memakai \"bahwa\", dan \"saya\" diganti \"dia\"."); },
+      (K) => { const nn = K.pick(["siswa", "guru", "tamu", "peserta", "pemain", "penonton", "petani", "nelayan"]); const v = K.pick(["berkumpul di aula", "hadir tepat waktu", "duduk di barisan depan", "mendengarkan pengumuman", "berbaris dengan rapi"]);
+        return K.mk(2, "Kalimat Efektif", "Kalimat berikut yang efektif adalah ...", `Para ${nn} ${v}.`, [`Para ${nn}-${nn} ${v}.`, `Semua para ${nn} ${v}.`, `Para ${nn}-${nn} semua ${v}.`], `"Para" sudah bermakna jamak, jadi tidak perlu kata ulang atau "semua".`); },
+      (K) => { const n = K.pick(orang), kg = K.pick(kegiatan), tp = K.pick(tempat), h = K.pick(hari), tg = K.int(1, 28), bl = K.pick(bulan); const teks = `Pada hari ${h}, ${tg} ${bl} 2026, ${n} mengikuti ${kg} di ${tp}. Kegiatan itu diadakan untuk melatih kerja sama dan rasa percaya diri.`;
+        const q = K.pick([["Di mana kegiatan berlangsung?", tp, K.sample(tempat.filter((x) => x !== tp), 3)], ["Siapa yang mengikuti kegiatan?", n, K.sample(orang.filter((x) => x !== n), 3)], ["Kapan kegiatan dilaksanakan?", `${h}, ${tg} ${bl} 2026`, [`${hari[(hari.indexOf(h) + 1) % 7]}, ${tg} ${bl} 2026`, `${h}, ${tg % 28 + 1} ${bl} 2026`, `${h}, ${tg} ${bulan[(bulan.indexOf(bl) + 1) % 12]} 2026`]], ["Apa kegiatan yang diikuti?", kg, K.sample(kegiatan.filter((x) => x !== kg), 3)], ["Mengapa kegiatan itu diadakan?", "untuk melatih kerja sama dan rasa percaya diri", ["untuk mencari juara", "karena hari libur", "agar sekolah ramai"]]]);
+        return K.mk(2, "Informasi Teks", `Bacalah teks berikut!<blockquote>${teks}</blockquote>${q[0]}`, q[1], q[2], "Jawaban terdapat langsung di dalam teks (5W + 1H)."); },
+      (K) => { const r = K.pick(Object.keys(relasi)); const [a, b] = K.pick(relasi[r]); const n = K.pick(orang); const j = kj[r][0]; return K.mk(2, "Konjungsi", `<i>${n} ${a} ${j} ${b}.</i><br>Kata hubung "${j}" pada kalimat tersebut menyatakan hubungan ...`, r, ["sebab", "tujuan", "pertentangan", "waktu", "pilihan"].filter((x) => x !== r), `"${j}" menyatakan hubungan ${r}.`); },
+      (K) => { const [e, s] = K.pick(efektif); return K.mk(2, "Kalimat Efektif", "Kalimat berikut yang efektif adalah ...", e, s, "Kalimat efektif hemat kata, tidak mengulang makna (misalnya \"para\" + kata ulang, \"naik ke atas\")."); },
+      (K) => { const [t, j] = K.pick(langsung); return K.mk(2, "Kalimat Langsung", `Ubahlah menjadi kalimat tidak langsung!<br><i>${t}</i>`, j, K.sample(langsung.filter((x) => x[0] !== t), 3).map((x) => x[1]), "Kalimat tidak langsung tanpa tanda petik, memakai kata \"bahwa\", dan kata ganti disesuaikan."); },
+      (K) => { const b = K.pick(bacaan); return K.mk(2, "Ide Pokok", `Bacalah teks berikut!<blockquote>${b[1]}</blockquote>Ide pokok teks tersebut adalah ...`, b[2], K.sample(bacaan.filter((x) => x !== b), 3).map((x) => x[2]), `Seluruh kalimat membahas ${b[2]}.`); },
+      (K) => { const b = K.pick(bacaan); const [q, a, ...s] = b[4]; return K.mk(2, "Informasi Teks", `Bacalah teks berikut!<blockquote>${b[1]}</blockquote>${q}`, a, s, `Jawabannya tertulis langsung di teks.`); },
+      (K) => { const p = K.pick(puisi); return K.mk(2, "Puisi", `Bacalah puisi berikut!<blockquote>${p.teks}</blockquote>Tema puisi tersebut adalah ...`, p.tema, K.sample(puisi.filter((x) => x !== p), 3).map((x) => x.tema), `Puisi membicarakan ${p.tema}.`); },
+      (K) => { const p = K.pick(puisi); return K.mk(2, "Puisi", `<blockquote>${p.teks}</blockquote>Rima puisi tersebut adalah ...`, p.rima, ["a-a-a-a", "a-b-a-b", "a-a-b-b", "a-b-b-a", "a-a-a-b", "a-b-a-c", "a-b-b-b", "a-b-a-a"].filter((x) => x !== p.rima), "Rima dilihat dari bunyi akhir setiap baris."); },
+      (K) => { const [k, j] = K.pick(konj); const m = konj.find((x) => x[1] === j)[2]; return K.mk(2, "Konjungsi", `<i>${k.replace("___", j)}</i><br>Konjungsi "${j}" pada kalimat tersebut menyatakan hubungan ...`, m, [...new Set(konj.map((x) => x[2]))].filter((x) => x !== m), `"${j}" menyatakan hubungan ${m}.`); },
+      (K) => { const i = K.pick(iklan); return K.mk(2, "Slogan dan Iklan", `"${i}"<br>Tujuan teks tersebut adalah ...`, "membujuk pembaca untuk membeli/menggunakan produk", ["memberi informasi kejadian", "menceritakan pengalaman pribadi", "melaporkan hasil pengamatan"], "Iklan bertujuan membujuk. Ciri: kata ajakan, keunggulan produk, dan informasi pembelian."); },
+    ],
+    3: [
+      (K) => { const b = K.pick(bacaan); return K.mk(3, "Simpulan", `Bacalah teks berikut!<blockquote>${b[1]}</blockquote>Simpulan yang tepat adalah ...`, b[3], K.sample(bacaan.filter((x) => x !== b), 3).map((x) => x[3]), "Simpulan merangkum isi seluruh teks dalam satu kalimat."); },
+      (K) => { const b = K.pick(bacaan); return K.mk(3, "Judul", `<blockquote>${b[1]}</blockquote>Judul yang paling tepat untuk teks tersebut adalah ...`, b[0], K.sample(bacaan.filter((x) => x !== b), 3).map((x) => x[0]), "Judul harus mewakili ide pokok seluruh teks."); },
+      (K) => { const p = K.pick(puisi); return K.mk(3, "Puisi", `<blockquote>${p.teks}</blockquote>Majas yang terdapat dalam puisi tersebut adalah ...`, p.majas, K.sample(puisi.filter((x) => x.majas !== p.majas), 3).map((x) => x.majas), `Puisi ini menggunakan ${p.majas}.`); },
+      (K) => { const [e, s] = K.pick(efektif); const w = K.pick(s); return K.mk(3, "Kalimat Efektif", `Perbaikan kalimat tidak efektif berikut yang tepat adalah ...<br><i>${w}</i>`, e, K.sample(efektif.filter((x) => x[0] !== e), 3).map((x) => x[0]), `Kalimat efektif: "${e}".`); },
+      (K) => { const ks = K.sample(konj, 3); const benar = ks.map((x) => x[1]).join(", "); const pool = [...new Set(konj.map((x) => x[1]))]; const alt = () => ks.map((x, i) => (i === K.int(0, 2) ? K.pick(pool.filter((y) => y !== x[1])) : x[1])).join(", ");
+        return K.mk(3, "Konjungsi", `Lengkapi kalimat-kalimat berikut secara berurutan!<blockquote>${ks.map((x, i) => `(${i + 1}) ${x[0]}`).join("<br>")}</blockquote>`, benar, [alt(), alt(), alt(), alt(), alt()], `Jawaban: ${ks.map((x, i) => `(${i + 1}) ${x[1]}`).join(", ")}.`); },
+      (K) => { const b = K.pick(bacaan); const [q, a] = b[4]; const salah = K.pick(bacaan.filter((x) => x !== b))[4][1]; return K.mk(3, "Informasi Teks", `<blockquote>${b[1]}</blockquote>Pernyataan yang TIDAK sesuai dengan isi teks adalah ...`, `Teks menyebutkan ${salah}.`, [`Teks membahas ${b[2]}.`, `Teks menyebutkan ${a}.`, `Inti teks: ${b[3].charAt(0).toLowerCase() + b[3].slice(1)}`], `Teks tidak menyebutkan "${salah}".`); },
+      (K) => { const [n, d] = K.pick(jenisTeks); const ciri = { Pidato: "Bapak/Ibu guru yang saya hormati serta teman-teman yang saya banggakan.", Iklan: "Dapatkan sekarang juga! Persediaan terbatas!", Pengumuman: "Diberitahukan kepada seluruh siswa bahwa besok sekolah libur.", Petunjuk: "Pertama, siapkan bahan. Kedua, campurkan semua bahan.", Laporan: "Berdasarkan pengamatan, tanaman tumbuh 5 cm dalam seminggu.", "Surat resmi": "Dengan hormat, bersama surat ini kami mengundang Bapak/Ibu ...", Biografi: "Beliau lahir di Jepara pada 21 April 1879.", Puisi: "Bunga mawar merekah di taman<br>Harum semerbak sepanjang zaman", Slogan: "Hemat air, hemat biaya.", Poster: "AYO VAKSIN! (disertai gambar besar)" }[n];
+        return K.mk(3, "Jenis Teks", `"${ciri}"<br>Kutipan tersebut paling mungkin berasal dari teks ...`, n.toLowerCase(), K.sample(jenisTeks.filter((x) => x[0] !== n), 3).map((x) => x[0].toLowerCase()), `Ciri ${n.toLowerCase()}: ${d}.`); },
+      (K) => { const [a, b] = K.pick(antonim); const t = K.pick(["Pedagang itu terkenal", "Tim kami bermain", "Sikap kakak selalu", "Warga desa itu"]); return K.mk(3, "Antonim", `"${t} ${a}."<br>Kalimat yang menggunakan lawan kata dari kata "${a}" adalah ...`, `${t} ${b}.`, K.sample(antonim.filter((x) => x[1] !== b), 3).map((x) => `${t} ${x[1]}.`), `Lawan kata "${a}" adalah "${b}".`); },
+    ],
+  };
+  const gen = () => C.build("BIND", 6301, T, C.quota);
+  if (typeof module !== "undefined") module.exports = gen; else (G.GEN = G.GEN || {}).BIND = gen;
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+<script>// Bahasa Inggris Kelas 6 — Kurikulum Merdeka Fase C (kelas 6)
+(function (G) {
+  const C = typeof module !== "undefined" ? require("./core.js") : G.CORE;
+  const S = C.S;
+  const irr = [["go", "went"], ["eat", "ate"], ["see", "saw"], ["buy", "bought"], ["swim", "swam"], ["write", "wrote"], ["drink", "drank"], ["ride", "rode"], ["sing", "sang"], ["take", "took"], ["make", "made"], ["come", "came"], ["run", "ran"], ["sleep", "slept"], ["read", "read"], ["fly", "flew"], ["give", "gave"], ["bring", "brought"], ["catch", "caught"], ["draw", "drew"], ["get", "got"], ["have", "had"], ["meet", "met"], ["sit", "sat"], ["teach", "taught"]];
+  const reg = [["play", "played"], ["visit", "visited"], ["watch", "watched"], ["clean", "cleaned"], ["cook", "cooked"], ["help", "helped"], ["study", "studied"], ["walk", "walked"], ["open", "opened"], ["paint", "painted"], ["plant", "planted"], ["climb", "climbed"], ["wash", "washed"], ["listen", "listened"], ["carry", "carried"]];
+  const obj = { go: "to the beach", eat: "fried rice", see: "a big elephant", buy: "a new bag", swim: "in the river", write: "a letter", drink: "orange juice", ride: "a horse", sing: "a happy song", take: "many photos", make: "a kite", come: "to my house", run: "around the field", sleep: "early", read: "a comic", fly: "a kite", give: "a present to mother", bring: "an umbrella", catch: "a big fish", draw: "a beautiful mountain", get: "a good score", have: "a party", meet: "my old friend", sit: "under the tree", teach: "my little brother", play: "badminton", visit: "grandmother", watch: "a cartoon", clean: "the classroom", cook: "noodles", help: "my father", study: "English", walk: "to school", open: "the window", paint: "the fence", plant: "a mango tree", climb: "a hill", wash: "the car", listen: "to the radio", carry: "a heavy box" };
+  const past = [...irr, ...reg];
+  const timeP = ["yesterday", "last Sunday", "last week", "two days ago", "last holiday", "last night"];
+  const timeF = ["tomorrow", "next Monday", "next week", "next holiday", "tonight"];
+  const subj = ["I", "We", "They", "She", "He", "My sister", "Rina", "Our class", "My parents", "Budi"];
+  const sick = [["headache", "sakit kepala", "🤕", "take a medicine and rest"], ["toothache", "sakit gigi", "🦷", "go to the dentist"], ["stomachache", "sakit perut", "🤢", "eat soft food and drink warm water"], ["fever", "demam", "🤒", "take a rest and drink a lot of water"], ["cough", "batuk", "😷", "drink warm water and avoid ice"], ["cold", "pilek/flu", "🤧", "wear a jacket and rest"], ["sore eyes", "sakit mata", "👁️", "go to the eye doctor"]];
+  const country = [["Japan", "Japanese", "Tokyo"], ["Indonesia", "Indonesian", "Jakarta"], ["Malaysia", "Malaysian", "Kuala Lumpur"], ["Thailand", "Thai", "Bangkok"], ["China", "Chinese", "Beijing"], ["England", "English", "London"], ["France", "French", "Paris"], ["Korea", "Korean", "Seoul"], ["Australia", "Australian", "Canberra"], ["America", "American", "Washington, D.C."], ["Philippines", "Filipino", "Manila"], ["India", "Indian", "New Delhi"]];
+  const shapes = [["circle", "lingkaran", '<circle cx="80" cy="65" r="45" fill="#93c5fd" stroke="#1d4ed8" stroke-width="3"/>'], ["square", "persegi", '<rect x="35" y="20" width="90" height="90" fill="#fcd34d" stroke="#b45309" stroke-width="3"/>'], ["triangle", "segitiga", '<polygon points="80,15 140,115 20,115" fill="#86efac" stroke="#15803d" stroke-width="3"/>'], ["rectangle", "persegi panjang", '<rect x="15" y="35" width="130" height="65" fill="#f9a8d4" stroke="#be185d" stroke-width="3"/>'], ["star", "bintang", '<polygon points="80,10 95,50 140,50 103,75 117,118 80,92 43,118 57,75 20,50 65,50" fill="#fde047" stroke="#a16207" stroke-width="3"/>'], ["oval", "oval", '<ellipse cx="80" cy="65" rx="65" ry="38" fill="#c4b5fd" stroke="#6d28d9" stroke-width="3"/>']];
+  const hobbies = [["swimming", "berenang"], ["reading", "membaca"], ["drawing", "menggambar"], ["cooking", "memasak"], ["dancing", "menari"], ["singing", "bernyanyi"], ["gardening", "berkebun"], ["fishing", "memancing"], ["cycling", "bersepeda"], ["playing chess", "bermain catur"], ["collecting stamps", "mengoleksi perangko"], ["playing football", "bermain sepak bola"]];
+  const dirs = [["turn left", "belok kiri"], ["turn right", "belok kanan"], ["go straight", "jalan lurus"], ["cross the road", "menyeberang jalan"], ["go past the bank", "lewati bank"], ["stop at the corner", "berhenti di tikungan"]];
+  const places = ["bank", "hospital", "post office", "library", "school", "market", "bakery", "police station", "mosque", "park"];
+  const adj = [["tall", "taller", "tallest"], ["big", "bigger", "biggest"], ["small", "smaller", "smallest"], ["heavy", "heavier", "heaviest"], ["fast", "faster", "fastest"], ["cheap", "cheaper", "cheapest"], ["long", "longer", "longest"], ["old", "older", "oldest"], ["beautiful", "more beautiful", "the most beautiful"], ["expensive", "more expensive", "the most expensive"], ["interesting", "more interesting", "the most interesting"], ["good", "better", "best"], ["bad", "worse", "worst"]];
+  const money = [5000, 10000, 15000, 20000, 25000, 50000, 75000, 100000];
+  const ones = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"], tens = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+  const words = (n) => (n < 20 ? ones[n] : n < 100 ? tens[(n / 10) | 0] + (n % 10 ? "-" + ones[n % 10] : "") : n < 1000 ? ones[(n / 100) | 0] + " hundred" + (n % 100 ? " and " + words(n % 100) : "") : words((n / 1000) | 0) + " thousand" + (n % 1000 ? " " + words(n % 1000) : ""));
+  const T = {
+    1: [
+      (K) => { const [v, p] = K.pick(past); const s = K.pick(subj), t = K.pick(timeP); return K.mk(1, "Simple Past", `${s} ... ${obj[v]} ${t}.`, p, [v, v + "s", v.replace(/e$/, "") + "ing"], `"${t}" menunjukkan masa lampau → verb 2: ${v} → ${p}.`); },
+      (K) => { const [v, p] = K.pick(irr); return K.mk(1, "Simple Past", `The past form (verb 2) of "${v}" is ...`, p, [v + "ed", v + "s", K.pick(irr.filter((x) => x[1] !== p))[1]], `${v} adalah kata kerja tidak beraturan: ${v} → ${p}.`); },
+      (K) => { const x = K.pick(sick); return K.mk(1, "Health Problems", `Look at the picture. "Ouch! I have a ..."`, x[0], K.sample(sick.filter((y) => y !== x), 3).map((y) => y[0]), `${x[0]} = ${x[1]}.`, S.emoji(x[2])); },
+      (K) => { const c = K.pick(country); return K.mk(1, "Countries", `People from ${c[0]} are called ...`, c[1], K.sample(country.filter((y) => y !== c), 3).map((y) => y[1]), `${c[0]} → ${c[1]}.`); },
+      (K) => { const c = K.pick(country); return K.mk(1, "Countries", `The capital city of ${c[0]} is ...`, c[2], K.sample(country.filter((y) => y !== c), 3).map((y) => y[2]), `Ibu kota ${c[0]} adalah ${c[2]}.`); },
+      (K) => { const s = K.pick(shapes); return K.mk(1, "Shapes", "What shape is it?", `It is a ${s[0]}.`, K.sample(shapes.filter((y) => y !== s), 3).map((y) => `It is a${/^[aeiou]/.test(y[0]) ? "n" : ""} ${y[0]}.`), `${s[0]} = ${s[1]}.`, S.wrap(160, 130, s[2])).opsi && K.mk(1, "Shapes", "What shape is it?", `It is a${/^[aeiou]/.test(s[0]) ? "n" : ""} ${s[0]}.`, K.sample(shapes.filter((y) => y !== s), 3).map((y) => `It is a${/^[aeiou]/.test(y[0]) ? "n" : ""} ${y[0]}.`), `${s[0]} = ${s[1]}.`, S.wrap(160, 130, s[2])); },
+      (K) => { const h = K.pick(hobbies); const n = K.pick(["Dina", "Raka", "My father", "Sinta", "Tom"]); return K.mk(1, "Hobbies", `${n} likes ${h[0]}. "${h[0][0].toUpperCase() + h[0].slice(1)}" artinya ...`, h[1], K.sample(hobbies.filter((y) => y !== h), 3).map((y) => y[1]), `${h[0]} = ${h[1]}.`); },
+      (K) => { const d = K.pick(dirs); return K.mk(1, "Directions", `"${d[0][0].toUpperCase() + d[0].slice(1)}" artinya ...`, d[1], K.sample(dirs.filter((y) => y !== d), 3).map((y) => y[1]), `${d[0]} = ${d[1]}.`); },
+      (K) => { const p = K.pick(money); return K.mk(1, "Shopping", `Rp${p.toLocaleString("id-ID")} in English is ...`, `${words(p / 1000)} thousand rupiahs`, [`${words(p / 1000)} hundred rupiahs`, `${words(p / 100)} thousand rupiahs`, `${words(p / 1000 + 5)} thousand rupiahs`], `Rp${p.toLocaleString("id-ID")} = ${words(p / 1000)} thousand rupiahs.`); },
+    ],
+    2: [
+      (K) => { const [v] = K.pick(past); const s = K.pick(subj), t = K.pick(timeF); return K.mk(2, "Future Tense", `${s} ... ${obj[v]} ${t}.`, `will ${v}`, [`${K.pick(past.filter((x) => x[0] === v))[1]}`, `${v}s`, `will ${v}ing`], `"${t}" menunjukkan masa depan → will + verb 1.`); },
+      (K) => { const [v, p] = K.pick(past); const s = K.pick(subj), t = K.pick(timeP); return K.mk(2, "Simple Past", `Bentuk negatif yang benar dari "${s} ${p} ${obj[v]} ${t}." adalah ...`, `${s} did not ${v} ${obj[v]} ${t}.`, [`${s} did not ${p} ${obj[v]} ${t}.`, `${s} does not ${v} ${obj[v]} ${t}.`, `${s} not ${p} ${obj[v]} ${t}.`], "Negatif simple past: did not + verb 1."); },
+      (K) => { const [v, p] = K.pick(past); const s = K.pick(subj.filter((x) => x !== "I")), t = K.pick(timeP); return K.mk(2, "Simple Past", `... ${s === "We" || s === "They" || s === "My parents" ? s.toLowerCase() : s} ${v} ${obj[v]} ${t}?`, "Did", ["Do", "Does", "Was"], "Kalimat tanya simple past: Did + subjek + verb 1."); },
+      (K) => { const x = K.pick(sick); return K.mk(2, "Health Problems", `"I have a ${x[0]}." What should I do?`, `You should ${x[3]}.`, K.sample(sick.filter((y) => y[3] !== x[3]), 3).map((y) => `You should ${y[3]}.`), `Untuk ${x[1]}, sarannya: ${x[3]}.`); },
+      (K) => { const a = K.pick(adj); const [p, q] = K.sample(["the elephant", "the giraffe", "Rina's bag", "my bicycle", "this book", "that car", "the red pen"], 2); return K.mk(2, "Comparison", `${p[0].toUpperCase() + p.slice(1)} is ... than ${q}.`, a[1], [a[0], a[2].replace(/^the /, ""), "more " + a[1]], `Membandingkan dua benda: bentuk comparative (${a[1]}) + than.`); },
+      (K) => { const a = K.pick(adj); return K.mk(2, "Comparison", `Mount Everest is ... mountain in the world.`.replace("Mount Everest is ... mountain", `This is ... ${K.pick(["building", "book", "picture", "car", "garden"])}`), a[2].startsWith("the ") ? a[2] : "the " + a[2], [a[1], a[0], "more " + a[0]], `Superlative: the + ${a[2].replace(/^the /, "")}.`); },
+      (K) => { const p = K.pick(places), d1 = K.pick(dirs.slice(0, 3)), d2 = K.pick(dirs.slice(0, 3)); return K.mk(2, "Directions", `"Go straight, then ${d1[0]}. The ${p} is on your ${d1[0].includes("left") ? "left" : "right"}." Kalimat itu menjelaskan ...`, `arah menuju ${p}`, ["cara memasak", "jadwal pelajaran", "ciri-ciri hewan"], "Kalimat petunjuk arah memakai go straight, turn left/right."); },
+      (K) => { const it = K.pick([["a pencil", 3000], ["a book", 5000], ["a ruler", 2000], ["an eraser", 1500], ["a bag", 45000], ["a pair of shoes", 120000]]); const n = K.int(2, 4); const tot = it[1] * n; return K.mk(2, "Shopping", `The price of ${it[0]} is Rp${it[1].toLocaleString("id-ID")}. I buy ${words(n)}. How much must I pay?`, `Rp${tot.toLocaleString("id-ID")}`, [`Rp${(tot + it[1]).toLocaleString("id-ID")}`, `Rp${it[1].toLocaleString("id-ID")}`, `Rp${(tot - 500).toLocaleString("id-ID")}`], `${n} × Rp${it[1].toLocaleString("id-ID")} = Rp${tot.toLocaleString("id-ID")}.`); },
+    ],
+    3: [
+      (K) => { const n = K.pick(["Dodi", "Laras", "Tono", "Mira"]); const [[v1, p1], [v2, p2]] = K.sample(past, 2); const t = K.pick(timeP); const q = K.pick([["What did " + n + " do first?", `${n} ${p1} ${obj[v1]}.`, [`${n} ${p2} ${obj[v2]}.`, `${n} ${v1} ${obj[v1]} every day.`, `${n} will ${v2} ${obj[v2]}.`]], ["When did it happen?", t[0].toUpperCase() + t.slice(1) + ".", K.sample(timeF.map((x) => x[0].toUpperCase() + x.slice(1) + "."), 3)]]);
+        return K.mk(3, "Reading", `Read the text.<blockquote>${t[0].toUpperCase() + t.slice(1)}, ${n} ${p1} ${obj[v1]}. After that, ${["Laras", "Mira"].includes(n) ? "she" : "he"} ${p2} ${obj[v2]}. It was a fun day.</blockquote>${q[0]}`, q[1], q[2], "Jawaban ada di teks. Perhatikan kata kerja bentuk lampau (verb 2)."); },
+      (K) => { const c = K.pick(country); const n = K.pick(["Yuki", "Pierre", "Min-jun", "Emma", "Somchai", "Raj"]); return K.mk(3, "Countries", `Read the text.<blockquote>Hello, my name is ${n}. I am from ${c[0]}. I live in ${c[2]}. I am ${c[1]}.</blockquote>Where does ${n} live?`, `In ${c[2]}.`, K.sample(country.filter((y) => y !== c), 3).map((y) => `In ${y[2]}.`), `Teks: "I live in ${c[2]}".`); },
+      (K) => { const x = K.pick(sick); const n = K.pick(["Andi", "Lia", "Rudi", "Tika"]); return K.mk(3, "Health Problems", `Read the dialogue.<blockquote>Teacher: You look pale, ${n}. What's wrong?<br>${n}: I have a ${x[0]}, Ma'am.<br>Teacher: You should ${x[3]}.</blockquote>What is wrong with ${n}?`, `${n} has a ${x[0]}.`, K.sample(sick.filter((y) => y !== x), 3).map((y) => `${n} has a ${y[0]}.`), `${n}: "I have a ${x[0]}" (${x[1]}).`); },
+      (K) => { const [v, p] = K.pick(past); const s = K.pick(subj); const wrong = K.pick([v, v + "s", "will " + v]); return K.mk(3, "Simple Past", `Kalimat berikut yang benar adalah ...`, `${s} ${p} ${obj[v]} ${K.pick(timeP)}.`, [`${s} ${wrong} ${obj[v]} yesterday.`, `${s} did not ${p} ${obj[v]} last week.`, `${s} ${p} ${obj[v]} tomorrow.`], "Kata keterangan lampau (yesterday, last ..., ago) memakai verb 2; negatif memakai did not + verb 1."); },
+      (K) => { const a = K.pick(adj); const items = K.sample([["Rina", 145], ["Budi", 150], ["Sari", 138], ["Doni", 155], ["Tika", 142]], 3); const mx = items.reduce((m, x) => (x[1] > m[1] ? x : m)); return K.mk(3, "Comparison", `Height: ${items.map((x) => `${x[0]} ${x[1]} cm`).join(", ")}. Who is the tallest?`, `${mx[0]} is the tallest.`, items.filter((x) => x !== mx).map((x) => `${x[0]} is the tallest.`).concat(["They are the same."]), `${mx[0]} paling tinggi (${mx[1]} cm).`); },
+      (K) => { const p = K.pick(places); const [d1, d2] = K.sample(dirs.slice(0, 3), 2); return K.mk(3, "Directions", `Read the text.<blockquote>From school, ${d1[0]} at the first junction. Then ${d2[0]}. The ${p} is next to the park.</blockquote>Where is the ${p}?`, "Next to the park.", ["In front of the school.", "Behind the hospital.", "Across the river."], `Teks: "The ${p} is next to the park".`); },
+      (K) => { const [v] = K.pick(past); const s = K.pick(subj), t = K.pick(timeF); return K.mk(3, "Future Tense", `"${s} ${s === "I" ? "am" : ["We", "They", "My parents"].includes(s) ? "are" : "is"} going to ${v} ${obj[v]} ${t}." Arti kalimat tersebut menunjukkan kegiatan yang ...`, "akan dilakukan", ["sudah dilakukan", "sedang dilakukan", "selalu dilakukan setiap hari"], `"going to" + verb 1 = rencana yang akan dilakukan.`); },
+    ],
+  };
+  // perbaiki template Shapes (artikel a/an)
+  T[1][5] = (K) => { const s = K.pick(shapes); const art = (w) => `It is a${/^[aeiou]/.test(w) ? "n" : ""} ${w}.`; return K.mk(1, "Shapes", "What shape is it?", art(s[0]), K.sample(shapes.filter((y) => y !== s), 3).map((y) => art(y[0])), `${s[0]} = ${s[1]}.`, S.wrap(160, 130, s[2])); };
+  const gen = () => C.build("BING", 6409, T, C.quota);
+  if (typeof module !== "undefined") module.exports = gen; else (G.GEN = G.GEN || {}).BING = gen;
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+<script>// IPA (IPAS bagian sains) Kelas 6 — Kurikulum Merdeka Fase C (kelas 6) + pengulangan ujian SD
+(function (G) {
+  const C = typeof module !== "undefined" ? require("./core.js") : G.CORE;
+  if (typeof module !== "undefined") require("./svg6.js");
+  const S = C.S;
+  const cap = (s) => s[0].toUpperCase() + s.slice(1);
+  const planet = [["Merkurius", "paling dekat dengan Matahari"], ["Venus", "paling panas dan disebut bintang kejora"], ["Bumi", "satu-satunya planet yang memiliki kehidupan"], ["Mars", "disebut planet merah"], ["Yupiter", "planet terbesar di tata surya"], ["Saturnus", "memiliki cincin yang paling indah"], ["Uranus", "berotasi dengan posisi miring hampir rebah"], ["Neptunus", "paling jauh dari Matahari"]];
+  const wujud = [["mencair", "padat menjadi cair", ["es batu meleleh", "lilin dipanaskan", "mentega dipanaskan di wajan", "cokelat meleleh di tangan", "es krim meleleh"]], ["membeku", "cair menjadi padat", ["air dimasukkan ke freezer menjadi es", "agar-agar mengeras setelah dingin", "lilin cair mengeras kembali"]], ["menguap", "cair menjadi gas", ["air mendidih saat dimasak", "pakaian basah menjadi kering", "air laut menguap terkena panas matahari", "alkohol di tangan cepat hilang"]], ["mengembun", "gas menjadi cair", ["titik air di luar gelas berisi es", "embun di daun pada pagi hari", "kaca mobil berembun saat hujan"]], ["menyublim", "padat menjadi gas", ["kapur barus mengecil di lemari", "es kering (dry ice) berasap", "pengharum ruangan padat habis"]], ["mengkristal", "gas menjadi padat", ["salju terbentuk di awan yang sangat dingin", "bunga es di dinding freezer"]]];
+  const vegetatif = [["umbi batang", ["kentang", "ubi jalar? ", "talas"]], ["umbi lapis", ["bawang merah", "bawang putih", "bunga bakung"]], ["tunas", ["pisang", "bambu", "tebu"]], ["geragih (stolon)", ["stroberi", "pegagan", "rumput teki"]], ["tunas adventif (daun)", ["cocor bebek", "begonia"]], ["rizoma (akar tinggal)", ["jahe", "kunyit", "lengkuas"]], ["umbi akar", ["wortel", "singkong", "bengkuang"]]].map(([a, b]) => [a, b.filter((x) => !x.includes("?"))]);
+  const buatan = [["stek", ["singkong", "mawar", "tebu", "sirih"]], ["cangkok", ["mangga", "jambu air", "rambutan", "jeruk"]], ["okulasi (menempel)", ["durian", "karet", "mangga unggul"]], ["merunduk", ["anggur", "markisa", "alamanda"]]];
+  const hewanBiak = [["bertelur (ovipar)", ["ayam", "bebek", "penyu", "buaya", "kupu-kupu", "ikan mas", "ular"]], ["melahirkan (vivipar)", ["kucing", "sapi", "kambing", "paus", "kelinci", "kuda"]], ["bertelur-melahirkan (ovovivipar)", ["ikan hiu", "kadal", "ular boa", "ikan pari"]], ["membelah diri", ["amoeba", "paramecium", "bakteri"]], ["fragmentasi", ["cacing pipih (planaria)", "bintang laut"]]];
+  const meta = [["sempurna", ["kupu-kupu", "nyamuk", "lalat", "katak", "lebah", "kumbang"], "telur → larva → pupa → dewasa"], ["tidak sempurna", ["belalang", "kecoak", "jangkrik", "capung", "kutu"], "telur → nimfa → dewasa"]];
+  const pesawat = [["tuas (pengungkit)", ["gunting", "linggis", "jungkat-jungkit", "gerobak dorong", "pemecah kemiri", "sekop", "pinset"]], ["katrol", ["timba sumur", "tiang bendera", "derek pengangkat barang"]], ["bidang miring", ["tangga", "jalan berkelok di pegunungan", "papan miring untuk menaikkan barang", "sekrup"]], ["roda berporos", ["setir mobil", "sepeda", "gerinda", "rol pintu geser"]]];
+  const tuasJ = [[1, "titik tumpu berada di antara beban dan kuasa", ["gunting", "linggis", "jungkat-jungkit", "tang"]], [2, "beban berada di antara titik tumpu dan kuasa", ["gerobak dorong", "pemecah kemiri", "pembuka tutup botol"]], [3, "kuasa berada di antara titik tumpu dan beban", ["sekop", "pinset", "alat pancing", "stapler"]]];
+  const energiAlt = [["matahari", "panel surya / PLTS"], ["angin", "kincir angin / PLTB"], ["air", "PLTA (bendungan)"], ["panas bumi", "PLTP"], ["gelombang laut", "pembangkit listrik tenaga ombak"], ["biogas", "kotoran hewan yang difermentasi"]];
+  const fakta = [
+    [1, "Tata Surya", "Pusat tata surya kita adalah ...", "Matahari", ["Bumi", "Bulan", "Yupiter"], "Semua planet beredar mengelilingi Matahari."],
+    [1, "Tata Surya", "Jumlah planet dalam tata surya adalah ...", "8 planet", ["7 planet", "9 planet", "10 planet"], "Merkurius, Venus, Bumi, Mars, Yupiter, Saturnus, Uranus, Neptunus."],
+    [1, "Rotasi dan Revolusi", "Perputaran Bumi pada porosnya disebut ...", "rotasi", ["revolusi", "gravitasi", "gerhana"], "Rotasi Bumi berlangsung sekitar 24 jam."],
+    [1, "Rotasi dan Revolusi", "Peredaran Bumi mengelilingi Matahari disebut ...", "revolusi", ["rotasi", "orbit bulan", "presesi"], "Revolusi Bumi berlangsung sekitar 365¼ hari."],
+    [2, "Rotasi dan Revolusi", "Akibat rotasi Bumi adalah ...", "terjadinya siang dan malam", ["pergantian musim", "perubahan rasi bintang", "adanya tahun kabisat"], "Bagian Bumi yang menghadap Matahari mengalami siang."],
+    [2, "Rotasi dan Revolusi", "Akibat revolusi Bumi adalah ...", "pergantian musim", ["siang dan malam", "perbedaan waktu antarwilayah", "gerak semu harian Matahari"], "Revolusi + kemiringan sumbu Bumi menyebabkan pergantian musim."],
+    [2, "Rotasi dan Revolusi", "Perbedaan waktu WIB, WITA, dan WIT disebabkan oleh ...", "rotasi Bumi", ["revolusi Bumi", "revolusi Bulan", "gerhana"], "Karena Bumi berotasi dari barat ke timur, wilayah timur lebih dulu siang."],
+    [2, "Rotasi dan Revolusi", "Lama Bumi sekali berevolusi adalah ...", "365¼ hari", ["24 jam", "29½ hari", "27⅓ hari"], "Sisa ¼ hari dikumpulkan menjadi tahun kabisat setiap 4 tahun."],
+    [1, "Rotasi dan Revolusi", "Bulan adalah satelit alami dari ...", "Bumi", ["Matahari", "Mars", "Venus"], "Bulan beredar mengelilingi Bumi."],
+    [2, "Gerhana", "Gerhana Matahari terjadi saat posisi ...", "Bulan berada di antara Matahari dan Bumi", ["Bumi berada di antara Matahari dan Bulan", "Matahari berada di antara Bumi dan Bulan", "Bulan berada di belakang Bumi"], "Bayangan Bulan jatuh ke Bumi sehingga Matahari tertutup."],
+    [2, "Gerhana", "Gerhana Bulan terjadi saat posisi ...", "Bumi berada di antara Matahari dan Bulan", ["Bulan berada di antara Matahari dan Bumi", "Matahari berada di antara Bumi dan Bulan", "Bulan sejajar di samping Matahari"], "Bayangan Bumi menutupi Bulan."],
+    [3, "Gerhana", "Saat gerhana Matahari kita tidak boleh melihat langsung ke Matahari karena ...", "sinarnya dapat merusak retina mata", ["Matahari menjadi panas sekali", "Bulan memantulkan cahaya", "udara menjadi dingin"], "Gunakan kacamata khusus gerhana."],
+    [1, "Perkembangbiakan", "Perkembangbiakan tumbuhan dengan biji disebut perkembangbiakan ...", "generatif", ["vegetatif", "buatan", "fragmentasi"], "Generatif = melalui peleburan sel kelamin (penyerbukan)."],
+    [2, "Perkembangbiakan", "Menempelnya serbuk sari pada kepala putik disebut ...", "penyerbukan", ["pembuahan", "pembelahan", "pembibitan"], "Setelah penyerbukan terjadi pembuahan menghasilkan biji."],
+    [2, "Perkembangbiakan", "Penyerbukan yang dibantu angin terjadi pada tanaman ...", "padi dan jagung", ["mawar dan melati", "vanili dan salak", "teratai dan eceng gondok"], "Serbuk sari padi dan jagung ringan sehingga mudah diterbangkan angin."],
+    [3, "Perkembangbiakan", "Petani vanili membantu penyerbukan dengan tangan karena ...", "bentuk bunganya menyulitkan penyerbukan alami", ["vanili tidak punya serbuk sari", "lebah takut pada vanili", "agar bunganya cepat layu"], "Penyerbukan buatan dilakukan oleh manusia."],
+    [3, "Perkembangbiakan", "Keuntungan perkembangbiakan dengan cangkok adalah ...", "cepat berbuah dan sifatnya sama dengan induk", ["akarnya tunggang dan kuat", "menghasilkan varietas baru", "tidak perlu tanaman induk"], "Kelemahan cangkok: akarnya serabut sehingga mudah tumbang."],
+    [1, "Pubertas", "Masa peralihan dari anak-anak menuju dewasa disebut ...", "pubertas", ["metamorfosis", "regenerasi", "adaptasi"], "Pubertas biasanya terjadi pada usia 10–15 tahun."],
+    [2, "Pubertas", "Ciri pubertas pada anak laki-laki adalah ...", "suara membesar dan tumbuh jakun", ["pinggul membesar", "mengalami menstruasi", "suara menjadi lebih tinggi"], "Ciri lain: tumbuh kumis dan otot membesar."],
+    [2, "Pubertas", "Ciri pubertas pada anak perempuan adalah ...", "mengalami menstruasi dan pinggul membesar", ["tumbuh jakun", "suara membesar", "tumbuh kumis"], "Perubahan ini dipengaruhi hormon."],
+    [3, "Pubertas", "Sikap yang tepat saat mengalami pubertas adalah ...", "menjaga kebersihan diri dan makan bergizi", ["mengurung diri di kamar", "tidak mandi agar tidak sakit", "mengurangi makan agar kurus"], "Pubertas wajar; jaga kebersihan dan kesehatan."],
+    [1, "Listrik", "Listrik yang muatannya diam dan tidak mengalir disebut listrik ...", "statis", ["dinamis", "arus searah", "bolak-balik"], "Contoh: penggaris plastik digosok ke rambut lalu menarik kertas kecil."],
+    [2, "Listrik", "Contoh peristiwa listrik statis adalah ...", "penggaris yang digosok ke rambut dapat menarik sobekan kertas", ["lampu menyala saat saklar ditekan", "kipas angin berputar", "baterai menyalakan senter"], "Gosokan membuat benda bermuatan listrik."],
+    [2, "Listrik", "Petir merupakan contoh peristiwa ...", "listrik statis di alam", ["listrik dinamis buatan", "gaya magnet", "pembiasan cahaya"], "Petir terjadi karena perpindahan muatan antara awan dan bumi."],
+    [3, "Listrik", "Gedung tinggi dipasangi penangkal petir agar ...", "muatan listrik petir dialirkan ke tanah", ["gedung terlihat indah", "petir tertarik ke awan", "listrik gedung bertambah"], "Penangkal petir terbuat dari logam konduktor yang ditanam ke tanah."],
+    [1, "Gaya", "Gaya yang menyebabkan benda jatuh ke bawah disebut gaya ...", "gravitasi", ["gesek", "magnet", "pegas"], "Gravitasi menarik benda ke pusat Bumi."],
+    [2, "Gaya", "Ban sepeda dibuat beralur untuk ...", "memperbesar gaya gesek agar tidak licin", ["memperkecil gaya gesek", "membuat ban lebih ringan", "mempercepat aus"], "Alur ban mencengkeram jalan."],
+    [3, "Gaya", "Engsel pintu diberi pelumas agar ...", "gaya geseknya berkurang dan tidak berderit", ["gaya geseknya bertambah", "pintu sulit dibuka", "pintu menjadi berat"], "Pelumas mengurangi gesekan."],
+    [1, "Pelestarian Lingkungan", "Menanam kembali hutan yang gundul disebut ...", "reboisasi", ["erosi", "abrasi", "polusi"], "Reboisasi = penghijauan kembali hutan."],
+    [2, "Pelestarian Lingkungan", "Gas yang paling banyak menyebabkan efek rumah kaca adalah ...", "karbon dioksida", ["oksigen", "nitrogen", "hidrogen"], "Karbon dioksida memerangkap panas di atmosfer."],
+    [2, "Pelestarian Lingkungan", "Naiknya suhu rata-rata Bumi disebut ...", "pemanasan global", ["gerhana", "revolusi", "kondensasi"], "Penyebab utama: pembakaran bahan bakar fosil dan penebangan hutan."],
+    [3, "Pelestarian Lingkungan", "Dampak pemanasan global adalah ...", "es di kutub mencair dan permukaan laut naik", ["Bumi menjadi lebih dingin", "lapisan ozon menebal", "hutan tumbuh lebih cepat"], "Air laut naik dapat menenggelamkan pantai."],
+    [3, "Pelestarian Lingkungan", "Kebiasaan yang membantu mengurangi pemanasan global adalah ...", "naik sepeda atau angkutan umum", ["membakar sampah plastik", "menyalakan lampu sepanjang hari", "menebang pohon di halaman"], "Mengurangi pemakaian bahan bakar fosil."],
+    [1, "Energi", "Energi yang tidak akan habis disebut energi ...", "terbarukan", ["fosil", "tidak terbarukan", "kimia"], "Contoh: matahari, angin, air."],
+    [2, "Energi", "Batu bara dan minyak bumi termasuk sumber energi ...", "tidak terbarukan", ["terbarukan", "alternatif", "tak terbatas"], "Bahan bakar fosil butuh jutaan tahun untuk terbentuk."],
+  ];
+  // Pengulangan materi kelas 4–5 yang sering keluar di ujian akhir SD
+  const organ = [["jantung", "memompa darah ke seluruh tubuh"], ["paru-paru", "tempat pertukaran oksigen dan karbon dioksida"], ["lambung", "mencerna makanan dengan asam lambung"], ["usus halus", "menyerap sari-sari makanan"], ["usus besar", "menyerap air dari sisa makanan"], ["ginjal", "menyaring darah dan membentuk urine"], ["hati", "menghasilkan empedu"], ["otak", "pusat pengatur seluruh kegiatan tubuh"], ["kulit", "mengeluarkan keringat dan melindungi tubuh"], ["trakea", "saluran udara menuju paru-paru"], ["kerongkongan", "menyalurkan makanan ke lambung"], ["pupil", "tempat masuknya cahaya ke mata"], ["gendang telinga", "bergetar saat menerima bunyi"]];
+  const sifatCahaya = [["merambat lurus", ["berkas cahaya senter di ruang gelap", "cahaya matahari masuk lewat celah genting", "bayangan benda terbentuk di belakang benda"]], ["dapat dipantulkan", ["bayangan wajah di cermin", "periskop pada kapal selam", "kaca spion kendaraan"]], ["dapat dibiaskan", ["pensil tampak patah di dalam gelas berisi air", "dasar kolam tampak lebih dangkal", "lup memperbesar huruf"]], ["dapat diuraikan", ["pelangi setelah hujan", "warna-warni pada gelembung sabun", "cahaya melewati prisma kaca"]], ["menembus benda bening", ["cahaya masuk lewat kaca jendela", "akuarium kaca terlihat isinya"]]];
+  const konduktor = { konduktor: ["kawat tembaga", "besi", "aluminium", "air garam", "seng", "paku", "sendok logam"], isolator: ["karet", "plastik", "kayu kering", "kaca", "kain", "kertas", "styrofoam"] };
+  const T = {
+    1: [
+      (K) => { const y = K.int(2001, 2060); const kab = y % 4 === 0; return K.mk(1, "Rotasi dan Revolusi", `Tahun ${y} termasuk tahun ...`, kab ? "kabisat (366 hari)" : "biasa (365 hari)", ["kabisat (366 hari)", "biasa (365 hari)", "kabisat (365 hari)", "biasa (364 hari)"].filter((x) => x !== (kab ? "kabisat (366 hari)" : "biasa (365 hari)")), `Tahun yang habis dibagi 4 adalah tahun kabisat. ${y} : 4 ${kab ? "habis" : "tidak habis"}.`); },
+      (K) => { const o = K.pick(organ); return K.mk(1, "Pengulangan Kelas 4–5", `Organ tubuh yang berfungsi ${o[1]} adalah ...`, o[0], K.sample(organ.filter((x) => x !== o), 3).map((x) => x[0]), `${cap(o[0])} berfungsi ${o[1]}.`); },
+      (K) => { const k = K.pick(Object.keys(konduktor)); const b = K.pick(konduktor[k]); const o = k === "konduktor" ? "isolator" : "konduktor"; return K.mk(1, "Pengulangan Kelas 4–5", `Benda berikut yang termasuk ${k} listrik adalah ...`, b, K.sample(konduktor[o], 3), `${cap(b)} termasuk ${k}.`); },
+      (K) => { const i = K.int(0, 7); return K.mk(1, "Tata Surya", "Planet yang ditandai tanda tanya pada gambar adalah ...", planet[i][0], K.sample(planet.filter((_, j) => j !== i), 3).map((x) => x[0]), `Urutan dari Matahari: ${planet.map((x) => x[0]).join(", ")}. Planet ke-${i + 1} adalah ${planet[i][0]}.`, S.planets(i)); },
+      (K) => { const i = K.int(0, 7); return K.mk(1, "Tata Surya", `Planet yang ${planet[i][1]} adalah ...`, planet[i][0], K.sample(planet.filter((_, j) => j !== i), 3).map((x) => x[0]), `${planet[i][0]}: ${planet[i][1]}.`); },
+      (K) => { const w = K.pick(wujud); const c = K.pick(w[2]); return K.mk(1, "Perubahan Wujud", `Peristiwa "${c}" merupakan contoh perubahan wujud ...`, w[0], K.sample(wujud.filter((x) => x !== w), 3).map((x) => x[0]), `${cap(w[0])} = ${w[1]}.`); },
+      (K) => { const w = K.pick(wujud); return K.mk(1, "Perubahan Wujud", `Perubahan wujud dari ${w[1]} disebut ...`, w[0], K.sample(wujud.filter((x) => x !== w), 3).map((x) => x[0]), `${cap(w[0])} = ${w[1]}.`); },
+      (K) => { const h = K.pick(hewanBiak); const a = K.pick(h[1]); return K.mk(1, "Perkembangbiakan", `${cap(a)} berkembang biak dengan cara ...`, h[0], K.sample(hewanBiak.filter((x) => x !== h), 3).map((x) => x[0]), `${cap(a)} berkembang biak dengan ${h[0]}.`); },
+      (K) => { const v = K.pick(vegetatif); const t = K.pick(v[1]); return K.mk(1, "Perkembangbiakan", `Tanaman ${t} berkembang biak secara vegetatif alami dengan ...`, v[0], K.sample(vegetatif.filter((x) => x !== v), 3).map((x) => x[0]), `${cap(t)} berkembang biak dengan ${v[0]}.`); },
+      (K) => { const p = K.pick(pesawat); const a = K.pick(p[1]); return K.mk(1, "Pesawat Sederhana", `${cap(a)} termasuk pesawat sederhana jenis ...`, p[0], K.sample(pesawat.filter((x) => x !== p), 3).map((x) => x[0]), `${cap(a)} bekerja dengan prinsip ${p[0]}.`); },
+      (K) => { const [s, a] = K.pick(energiAlt); return K.mk(1, "Energi", `Energi alternatif dari ${s} dimanfaatkan melalui ...`, a, K.sample(energiAlt.filter((x) => x[0] !== s), 3).map((x) => x[1]), `${cap(s)} → ${a}.`); },
+      (K) => { const f = K.pick(fakta.filter((x) => x[0] === 1)); return K.mk(1, f[1], f[2], f[3], f[4], f[5]); },
+      (K) => { const w = K.pick(wujud); const c = K.pick(w[2]); return K.mk(1, "Perubahan Wujud", `Contoh peristiwa ${w[0]} adalah ...`, c, K.sample(wujud.filter((x) => x !== w).map((x) => K.pick(x[2])), 3), `${cap(c)} termasuk ${w[0]} (${w[1]}).`); },
+      (K) => { const h = K.pick(hewanBiak); const a = K.pick(h[1]); return K.mk(1, "Perkembangbiakan", `Hewan berikut yang berkembang biak dengan ${h[0]} adalah ...`, a, K.sample(hewanBiak.filter((x) => x !== h).flatMap((x) => x[1]), 3), `${cap(a)} berkembang biak dengan ${h[0]}.`); },
+      (K) => { const v = K.pick([...vegetatif, ...buatan]); const t = K.pick(v[1]); return K.mk(1, "Perkembangbiakan", `Tanaman berikut yang dapat diperbanyak dengan ${v[0]} adalah ...`, t, K.sample([...vegetatif, ...buatan].filter((x) => x !== v).flatMap((x) => x[1]).filter((x) => !v[1].includes(x)), 3), `${cap(t)} dapat diperbanyak dengan ${v[0]}.`); },
+      (K) => { const p = K.pick(pesawat); const a = K.pick(p[1]); return K.mk(1, "Pesawat Sederhana", `Alat berikut yang termasuk ${p[0]} adalah ...`, a, K.sample(pesawat.filter((x) => x !== p).flatMap((x) => x[1]), 3), `${cap(a)} termasuk ${p[0]}.`); },
+      (K) => { const m = K.pick(meta); const a = K.pick(m[1]); const o = meta.find((x) => x !== m); return K.mk(1, "Perkembangbiakan", `Hewan berikut yang mengalami metamorfosis ${m[0]} adalah ...`, a, K.sample(o[1], 3), `${cap(a)}: ${m[2]}.`); },
+      (K) => { const h = K.pick(hewanBiak.slice(0, 3)); const [a, b] = K.sample(h[1], 2); const o = hewanBiak.filter((x) => x !== h); const wrong = () => { const [x, y] = K.sample(o, 2); return `${K.pick(x[1])} dan ${K.pick(y[1])}`; };
+        return K.mk(1, "Perkembangbiakan", `Kelompok hewan yang berkembang biak dengan ${h[0]} adalah ...`, `${a} dan ${b}`, [wrong(), wrong(), `${a} dan ${K.pick(o[0][1])}`, wrong()], `${cap(a)} dan ${b} sama-sama ${h[0]}.`); },
+      (K) => { const i = K.int(0, 7); return K.mk(1, "Tata Surya", `Planet urutan ke-${i + 1} dari Matahari adalah ...`, planet[i][0], K.sample(planet.filter((_, j) => j !== i), 3).map((x) => x[0]), `Urutan: ${planet.map((x, j) => `${j + 1}. ${x[0]}`).join(", ")}.`); },
+    ],
+    2: [
+      (K) => { const y = K.int(2001, 2060); const kab = y % 4 === 0; return K.mk(2, "Rotasi dan Revolusi", `Bulan Februari pada tahun ${y} berjumlah ... hari.`, kab ? "29" : "28", ["28", "29", "30", "31"].filter((x) => x !== (kab ? "29" : "28")), kab ? `${y} habis dibagi 4 → tahun kabisat → Februari 29 hari (sisa ¼ hari revolusi Bumi dikumpulkan).` : `${y} tidak habis dibagi 4 → bukan tahun kabisat → Februari 28 hari.`); },
+      (K) => { const s = K.pick(sifatCahaya); const c = K.pick(s[1]); return K.mk(2, "Pengulangan Kelas 4–5", `Peristiwa "${c}" menunjukkan sifat cahaya ...`, s[0], K.sample(sifatCahaya.filter((x) => x !== s), 3).map((x) => x[0]), `${cap(c)}: cahaya ${s[0]}.`); },
+      (K) => { const s = K.pick(sifatCahaya); const c = K.pick(s[1]); return K.mk(2, "Pengulangan Kelas 4–5", `Contoh peristiwa yang menunjukkan cahaya ${s[0]} adalah ...`, c, K.sample(sifatCahaya.filter((x) => x !== s).map((x) => K.pick(x[1])), 3), `${cap(c)}: cahaya ${s[0]}.`); },
+      (K) => { const o = K.pick(organ); return K.mk(2, "Pengulangan Kelas 4–5", `Fungsi ${o[0]} adalah ...`, o[1], K.sample(organ.filter((x) => x !== o), 3).map((x) => x[1]), `${cap(o[0])}: ${o[1]}.`); },
+      (K) => { const p = K.pick(pesawat); const [a, b] = K.sample(p[1], 2); const o = pesawat.filter((x) => x !== p); return K.mk(2, "Pesawat Sederhana", `Kelompok alat yang termasuk ${p[0]} adalah ...`, `${a} dan ${b}`, [0, 1, 2].map(() => `${a} dan ${K.pick(K.pick(o)[1])}`), `${cap(a)} dan ${b} termasuk ${p[0]}.`); },
+      (K) => { const w = K.pick(wujud); const c = K.pick(w[2]); return K.mk(2, "Perubahan Wujud", `"${cap(c)}." Perubahan wujud yang terjadi adalah dari ...`, w[1], K.sample(wujud.filter((x) => x !== w).map((x) => x[1]), 3), `${cap(c)} = ${w[0]} (${w[1]}).`); },
+      (K) => { const v = K.pick(vegetatif); const [a, b] = K.sample(v[1].length >= 2 ? v[1] : [...v[1], "x"], 2); if (b === "x") return null; const o = vegetatif.filter((x) => x !== v); return K.mk(2, "Perkembangbiakan", `${cap(a)} dan ${b} sama-sama berkembang biak secara vegetatif alami dengan ...`, v[0], K.sample(o, 3).map((x) => x[0]), `Keduanya berkembang biak dengan ${v[0]}.`); },
+      (K) => { const i = K.int(0, 7); const j = K.int(0, 7); if (i === j) return null; const d = i < j; return K.mk(2, "Tata Surya", `Dibandingkan ${planet[j][0]}, letak planet ${planet[i][0]} ... Matahari.`, d ? "lebih dekat ke" : "lebih jauh dari", ["lebih dekat ke", "lebih jauh dari", "sama jaraknya dengan", "berada di dalam"].filter((x) => x !== (d ? "lebih dekat ke" : "lebih jauh dari")), `Urutan: ${planet.map((x) => x[0]).join(" → ")}.`); },
+      (K) => { const m = K.pick(meta); const a = K.pick(m[1]); return K.mk(2, "Perkembangbiakan", `${cap(a)} mengalami metamorfosis ...`, m[0], ["sempurna", "tidak sempurna", "bertahap", "membelah diri"].filter((x) => x !== m[0]), `Metamorfosis ${m[0]}: ${m[2]}.`); },
+      (K) => { const m = K.pick(meta); return K.mk(2, "Perkembangbiakan", `Urutan metamorfosis ${m[0]} adalah ...`, m[2], ["telur → pupa → larva → dewasa", "telur → nimfa → pupa → dewasa", m[0] === "sempurna" ? "telur → nimfa → dewasa" : "telur → larva → pupa → dewasa", "larva → telur → pupa → dewasa"], `Metamorfosis ${m[0]}: ${m[2]}.`); },
+      (K) => { const b = K.pick(buatan); const t = K.pick(b[1]); return K.mk(2, "Perkembangbiakan", `Petani memperbanyak tanaman ${t} dengan cara vegetatif buatan, yaitu ...`, b[0], K.sample(buatan.filter((x) => x !== b), 3).map((x) => x[0]), `${cap(t)} umumnya diperbanyak dengan ${b[0]}.`); },
+      (K) => { const j = K.pick(tuasJ); return K.mk(2, "Pesawat Sederhana", "Gambar menunjukkan tuas (pengungkit) golongan ...", `golongan ${j[0]}`, ["golongan 1", "golongan 2", "golongan 3", "bukan tuas"].filter((x) => x !== `golongan ${j[0]}`), `Tuas golongan ${j[0]}: ${j[1]}.`, S.lever(j[0])); },
+      (K) => { const j = K.pick(tuasJ); const a = K.pick(j[2]); return K.mk(2, "Pesawat Sederhana", `${cap(a)} termasuk tuas golongan ...`, `${j[0]}`, ["1", "2", "3", "4"].filter((x) => x !== String(j[0])), `${cap(a)}: ${j[1]}.`); },
+      (K) => { const k = K.pick(["matahari", "bulan"]); return K.mk(2, "Gerhana", "Posisi benda langit pada gambar menunjukkan terjadinya ...", `gerhana ${k}`, ["gerhana matahari", "gerhana bulan", "bulan purnama", "pergantian musim"].filter((x) => x !== `gerhana ${k}`), k === "bulan" ? "Bumi di tengah, bayangan Bumi menutupi Bulan." : "Bulan di tengah, bayangan Bulan menutupi Matahari dari Bumi.", S.eclipse(k)); },
+      (K) => { const w = K.pick(wujud); const c = K.pick(w[2]); const ket = { mencair: "menyerap panas", menguap: "menyerap panas", menyublim: "menyerap panas", membeku: "melepas panas", mengembun: "melepas panas", mengkristal: "melepas panas" }[w[0]]; return K.mk(2, "Perubahan Wujud", `Pada peristiwa "${c}", benda ...`, ket, [ket === "menyerap panas" ? "melepas panas" : "menyerap panas", "tidak berubah suhunya sama sekali", "berubah menjadi zat baru"], `${cap(w[0])} (${w[1]}) terjadi karena benda ${ket}.`); },
+      (K) => { const f = K.pick(fakta.filter((x) => x[0] === 2)); return K.mk(2, f[1], f[2], f[3], f[4], f[5]); },
+      (K) => { const f = K.pick(fakta.filter((x) => x[0] === 1)); return K.mk(2, f[1], "Pernyataan yang BENAR adalah ...", f[2].replace("...", f[3]), f[4].map((w) => f[2].replace("...", w)), f[5]); },
+    ],
+    3: [
+      (K) => { const h = K.pick(hewanBiak.slice(0, 3)); const [a, b] = K.sample(h[1], 2); return K.mk(3, "Perkembangbiakan", `${cap(a)} dan ${b} memiliki persamaan cara berkembang biak, yaitu ...`, h[0], K.sample(hewanBiak.filter((x) => x !== h), 3).map((x) => x[0]), `Keduanya berkembang biak dengan ${h[0]}.`); },
+      (K) => { const j = K.pick(tuasJ); const [a, b] = K.sample(j[2], 2); return K.mk(3, "Pesawat Sederhana", `${cap(a)} dan ${b} sama-sama tuas golongan ${j[0]} karena ...`, j[1], tuasJ.filter((x) => x !== j).map((x) => x[1]).concat(["tidak memiliki titik tumpu"]), `Tuas golongan ${j[0]}: ${j[1]}.`); },
+      (K) => { const w = K.pick(wujud); const [c1, c2] = K.sample(w[2].length >= 2 ? w[2] : [...w[2], ...w[2]], 2); if (c1 === c2) return null; const lain = K.pick(wujud.filter((x) => x !== w)); return K.mk(3, "Perubahan Wujud", `Peristiwa berikut yang mengalami perubahan wujud SAMA dengan "${c1}" adalah ...`, c2, K.sample(wujud.filter((x) => x !== w).map((x) => K.pick(x[2])), 3), `Keduanya ${w[0]} (${w[1]}).`); },
+      (K) => { const i = K.int(0, 6); return K.mk(3, "Tata Surya", `Planet yang terletak tepat sesudah ${planet[i][0]} (dihitung dari Matahari) adalah ...`, planet[i + 1][0], K.sample(planet.filter((_, j) => j !== i + 1), 3).map((x) => x[0]), `Urutan: ${planet.map((x) => x[0]).join(" → ")}.`); },
+      (K) => { const zona = [["WIB", 0], ["WITA", 1], ["WIT", 2]]; const [a, b] = K.sample(zona, 2); const h = K.int(6, 14); const hb = h + (b[1] - a[1]); return K.mk(3, "Rotasi dan Revolusi", `Saat di Jakarta (WIB) pukul ${String(h + (0 - a[1] + a[1])).padStart(2, "0")}.00`.replace(/.*/, `Saat di wilayah ${a[0]} pukul ${String(h).padStart(2, "0")}.00, di wilayah ${b[0]} pukul ...`), `${String(hb).padStart(2, "0")}.00`, [`${String(h - (b[1] - a[1])).padStart(2, "0")}.00`, `${String(h).padStart(2, "0")}.00`, `${String(hb + 1).padStart(2, "0")}.00`], `WIT lebih cepat 1 jam dari WITA, WITA lebih cepat 1 jam dari WIB (akibat rotasi Bumi). ${b[0]} = ${String(hb).padStart(2, "0")}.00.`); },
+      (K) => { const b = K.pick(buatan); const plus = { stek: "mudah dan murah, cukup potongan batang", cangkok: "cepat berbuah dan sifatnya sama dengan induk", "okulasi (menempel)": "menggabungkan dua sifat unggul tanaman", merunduk: "tanaman baru tetap mendapat makanan dari induk saat berakar" }[b[0]]; return K.mk(3, "Perkembangbiakan", `Keuntungan memperbanyak tanaman dengan ${b[0]} adalah ...`, plus, K.sample(Object.entries({ stek: 1, cangkok: 1, "okulasi (menempel)": 1, merunduk: 1 }).filter(([k]) => k !== b[0]).map(([k]) => ({ stek: "mudah dan murah, cukup potongan batang", cangkok: "cepat berbuah dan sifatnya sama dengan induk", "okulasi (menempel)": "menggabungkan dua sifat unggul tanaman", merunduk: "tanaman baru tetap mendapat makanan dari induk saat berakar" }[k])), 3), `${cap(b[0])}: ${plus}.`); },
+      (K) => { const f = K.pick(fakta.filter((x) => x[0] === 3)); return K.mk(3, f[1], f[2], f[3], f[4], f[5]); },
+      (K) => { const f = K.pick(fakta.filter((x) => x[0] >= 2)); return K.mk(3, f[1], "Pernyataan yang BENAR adalah ...", f[2].replace("...", f[3]), f[4].map((w) => f[2].replace("...", w)), f[5]); },
+      (K) => { const f = K.pick(fakta.filter((x) => x[0] >= 2)); const w = K.pick(f[4]); const same = fakta.filter((x) => x !== f && x[1] === f[1]); if (same.length < 3) return null; return K.mk(3, f[1], "Pernyataan yang SALAH adalah ...", f[2].replace("...", w), K.sample(same, 3).map((g) => g[2].replace("...", g[3])), `Yang benar: ${f[2].replace("...", f[3])}`); },
+      (K) => { const p = K.pick(pesawat); const [a, b] = K.sample(p[1], 2); return K.mk(3, "Pesawat Sederhana", `Prinsip kerja ${a} sama dengan ...`, b, K.sample(pesawat.filter((x) => x !== p).flatMap((x) => x[1]), 3), `Keduanya termasuk ${p[0]}.`); },
+    ],
+  };
+  const gen = () => C.build("IPA", 6207, T, C.quota);
+  if (typeof module !== "undefined") module.exports = gen; else (G.GEN = G.GEN || {}).IPA = gen;
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+<script>// Ringkasan materi kelas 6 (Kurikulum Merdeka Fase C) + pengulangan untuk ujian akhir SD
+(function (G) {
+  const S = G.CORE.S;
+  G.MATERI = {
+    MTK: [
+      ["Bilangan Bulat", `${S.numline(-5, 5, null)}<p>Bilangan di kiri nol negatif, di kanan nol positif. Makin ke kanan makin besar: −5 &lt; −2 &lt; 0 &lt; 3.</p><p><b>Penjumlahan/pengurangan:</b> a − (−b) = a + b. Contoh: 4 − (−3) = 7; −6 + 2 = −4.</p><p><b>Perkalian/pembagian tanda:</b> (+)(+) = +, (−)(−) = +, (+)(−) = −. Contoh: −4 × 3 = −12; −12 : (−3) = 4.</p><p>Soal cerita suhu: naik = tambah, turun = kurang.</p>`],
+      ["Operasi Hitung Campuran", `<p>Urutan: <b>kurung → pangkat/akar → kali/bagi (kiri ke kanan) → tambah/kurang (kiri ke kanan)</b>.</p><p>Contoh: 20 − 3 × 4 + 2² = 20 − 12 + 4 = 12.</p>`],
+      ["Pangkat dan Akar", `<p>Pangkat dua: 7² = 7 × 7 = 49. Akar kuadrat: √49 = 7.</p><p>Pangkat tiga: 4³ = 4 × 4 × 4 = 64. Akar pangkat tiga: ∛64 = 4.</p><p>Hafalkan: 1², 2², … 25² dan 1³ … 10³.</p>`],
+      ["Pecahan, Desimal, Persen", `<p>Pecahan campuran → pecahan biasa: 2 ¾ = (2 × 4 + 3)/4 = 11/4.</p><p>Penjumlahan beda penyebut: samakan penyebut (KPK). Perkalian: pembilang × pembilang, penyebut × penyebut. Pembagian: kali kebalikan.</p><p>Persen: ¾ = 75%. <b>Untung</b> = harga jual − harga beli; harga jual = beli + untung%.</p>`],
+      ["KPK dan FPB (Soal Cerita)", `<p><b>KPK</b> untuk “bersamaan lagi”, “setiap … hari/menit”. <b>FPB</b> untuk “dibagi sama banyak”, “paling banyak kelompok/kantong”.</p><p>Cara: pohon faktor. 12 = 2² × 3, 18 = 2 × 3² → KPK = 36, FPB = 6.</p>`],
+      ["Perbandingan dan Skala", `<p>Bagian A = a/(a+b) × jumlah. Jika yang diketahui <b>selisih</b>: 1 bagian = selisih : (b − a).</p><p>Jarak sebenarnya = jarak peta × penyebut skala.</p>`],
+      ["Kecepatan dan Debit", `<p>Jarak = kecepatan × waktu. Waktu berpapasan = jarak : (v₁ + v₂).</p><p>Debit = volume : waktu. 1 dm³ = 1 liter, 1.000 cm³ = 1 liter.</p>`],
+      ["Lingkaran", `${S.circle(7, "r", "cm")}<p>d = 2 × r. π = 22/7 (jika r kelipatan 7) atau 3,14.</p><p><b>Keliling</b> = π × d = 2 × π × r. <b>Luas</b> = π × r × r.</p><p>Contoh: r = 7 cm → K = 44 cm, L = 154 cm². Jarak roda berputar n kali = n × keliling.</p>`],
+      ["Volume dan Luas Permukaan Bangun Ruang", `${S.cylinder(7, 10, "cm")}<p>Kubus: V = s³, Lp = 6 × s². Balok: V = p × l × t, Lp = 2(pl + pt + lt).</p><p>Prisma: V = luas alas × tinggi. Tabung: V = π × r² × t.</p>`],
+      ["Koordinat Kartesius", `${S.cartesius(3, -2, "A")}<p>Titik ditulis (x, y): x = mendatar (kanan +, kiri −), y = tegak (atas +, bawah −). Titik A = (3, −2).</p><p>Pergeseran: ke kanan x bertambah, ke bawah y berkurang.</p>`],
+      ["Statistika", `${S.pie(["A", "B", "C", "D"], [40, 30, 20, 10], "Contoh diagram lingkaran")}<p><b>Mean</b> (rata-rata) = jumlah data : banyak data. <b>Median</b> = nilai tengah setelah data diurutkan. <b>Modus</b> = nilai paling sering muncul.</p><p>Diagram lingkaran: banyak = persen × total.</p>`],
+    ],
+    BIND: [
+      ["Ide Pokok, Simpulan, Judul", `<p><b>Ide pokok</b> = gagasan utama paragraf. <b>Simpulan</b> = ringkasan isi seluruh teks dalam satu kalimat. <b>Judul</b> mewakili ide pokok, singkat, menarik.</p>`],
+      ["Informasi dalam Teks (5W + 1H)", `<p>Apa, siapa, kapan, di mana, mengapa, bagaimana. Jawaban dicari langsung di teks. Untuk soal “TIDAK sesuai”, cek satu per satu pilihan dengan isi teks.</p>`],
+      ["Konjungsi (Kata Hubung)", `<p><b>Sebab:</b> karena, sebab. <b>Akibat:</b> sehingga, maka. <b>Tujuan:</b> agar, supaya. <b>Pertentangan:</b> tetapi, namun, meskipun. <b>Waktu:</b> sebelum, sesudah, sementara. <b>Pilihan:</b> atau. <b>Penambahan:</b> dan.</p>`],
+      ["Kalimat Efektif", `<p>Hemat kata dan tidak bermakna ganda. Hindari: “para siswa-siswa” → <b>para siswa</b>; “naik ke atas” → <b>naik</b>; “sangat … sekali” → pilih salah satu; “sejak dari” → <b>sejak</b>.</p>`],
+      ["Kalimat Langsung dan Tidak Langsung", `<p>Langsung: Ibu berkata, “Saya akan ke pasar.” Tidak langsung: Ibu berkata <b>bahwa dia</b> akan ke pasar. Tanda petik hilang, kata ganti disesuaikan (saya → dia).</p>`],
+      ["Jenis Teks: Pidato, Iklan, Slogan, Poster, Pengumuman", `<p><b>Pidato:</b> salam pembuka, isi, penutup. <b>Iklan:</b> membujuk membeli. <b>Slogan:</b> pendek, mudah diingat. <b>Poster:</b> gambar + tulisan singkat. <b>Pengumuman:</b> pemberitahuan untuk banyak orang.</p>`],
+      ["Surat Resmi", `<p>Bagian: kop surat, nomor, tanggal, perihal, alamat tujuan, salam pembuka, isi, salam penutup, tanda tangan dan nama terang. Bahasa baku dan sopan.</p>`],
+      ["Puisi", `<p><b>Tema</b> = gagasan pokok puisi. <b>Rima</b> = persamaan bunyi akhir baris (a-a-a-a, a-b-a-b). <b>Majas:</b> metafora (ibu pelita hidupku), personifikasi (burung bernyanyi), hiperbola (berlebihan), simile (seperti/bagai).</p>`],
+      ["Kata Baku, Sinonim, Antonim, Imbuhan", `<p>Kata baku: praktik, apotek, izin, risiko, silakan. Sinonim: cermat = teliti. Antonim: dermawan × kikir.</p><p>Imbuhan me-: s → ny (menyapu), t → n (menulis), p → m (memukul), k → ng (mengirim).</p>`],
+      ["Huruf Kapital", `<p>Dipakai pada awal kalimat, nama orang, nama kota/negara, nama hari dan bulan, nama lembaga, judul.</p>`],
+    ],
+    BING: [
+      ["Simple Past Tense", `<p>Kejadian lampau: Subject + verb 2. Kata kunci: yesterday, last week, ago.</p><p>Regular: play → played, study → studied. Irregular: go → went, eat → ate, buy → bought, see → saw.</p><p>Negatif: did not + verb 1 (I did not go). Tanya: Did + subject + verb 1? (Did you go?)</p>`],
+      ["Future Tense", `<p>Will + verb 1: I will visit grandma tomorrow. Be going to + verb 1 untuk rencana: She is going to swim next week.</p>`],
+      ["Comparison", `<p>Comparative (2 benda): tall → taller than; beautiful → more beautiful than. Superlative (lebih dari 2): the tallest, the most beautiful. Khusus: good → better → best, bad → worse → worst.</p>`],
+      ["Health Problems", `<p>headache (sakit kepala), toothache (sakit gigi), stomachache (sakit perut), fever (demam), cough (batuk), cold (pilek).</p><p>Saran: You should take a rest / go to the dentist / drink warm water.</p>`],
+      ["Countries and Nationalities", `<p>Japan – Japanese – Tokyo; Thailand – Thai – Bangkok; England – English – London; France – French – Paris; Korea – Korean – Seoul.</p>`],
+      ["Directions", `<p>turn left (belok kiri), turn right (belok kanan), go straight (lurus), cross the road (menyeberang), next to (di samping), across from (di seberang).</p>`],
+      ["Shapes, Hobbies, Shopping", `<p>circle, square, triangle, rectangle, star, oval. Hobbies: swimming, reading, drawing, gardening.</p><p>How much is it? It is twenty thousand rupiahs (Rp20.000).</p>`],
+    ],
+    IPA: [
+      ["Tata Surya", `${S.planets(null)}<p>Matahari pusat tata surya. Urutan planet: Merkurius, Venus, Bumi, Mars, Yupiter, Saturnus, Uranus, Neptunus. Yupiter terbesar, Merkurius terdekat, Saturnus bercincin, Mars planet merah.</p>`],
+      ["Rotasi, Revolusi, Gerhana", `${S.eclipse("matahari")}<p><b>Rotasi</b> (±24 jam): siang-malam, perbedaan waktu WIB-WITA-WIT. <b>Revolusi</b> (365¼ hari): pergantian musim, tahun kabisat setiap 4 tahun.</p><p><b>Gerhana Matahari:</b> Bulan di antara Matahari dan Bumi. <b>Gerhana Bulan:</b> Bumi di antara Matahari dan Bulan.</p>`],
+      ["Perkembangbiakan Makhluk Hidup", `<p><b>Tumbuhan vegetatif alami:</b> umbi (kentang), umbi lapis (bawang), tunas (pisang), geragih (stroberi), rizoma (jahe), tunas daun (cocor bebek). <b>Buatan:</b> stek, cangkok, okulasi, merunduk. <b>Generatif:</b> penyerbukan → biji.</p><p><b>Hewan:</b> ovipar (bertelur), vivipar (melahirkan), ovovivipar (hiu, kadal), membelah diri (amoeba), fragmentasi (planaria).</p><p><b>Metamorfosis sempurna:</b> telur → larva → pupa → dewasa (kupu-kupu). <b>Tidak sempurna:</b> telur → nimfa → dewasa (belalang).</p>`],
+      ["Pubertas", `<p>Masa peralihan anak ke dewasa (±10–15 tahun). Laki-laki: suara membesar, jakun, kumis. Perempuan: menstruasi, pinggul membesar. Jaga kebersihan dan makan bergizi.</p>`],
+      ["Perubahan Wujud Benda", `<p>Mencair (padat → cair), membeku (cair → padat), menguap (cair → gas), mengembun (gas → cair), menyublim (padat → gas, kapur barus), mengkristal (gas → padat).</p><p>Menyerap panas: mencair, menguap, menyublim. Melepas panas: membeku, mengembun, mengkristal.</p>`],
+      ["Pesawat Sederhana dan Gaya", `${S.lever(1)}<p>Tuas golongan 1: titik tumpu di tengah (gunting). Golongan 2: beban di tengah (gerobak). Golongan 3: kuasa di tengah (sekop, pinset).</p><p>Katrol (timba sumur), bidang miring (tangga, sekrup), roda berporos (setir). Gaya gravitasi, gaya gesek (ban beralur, pelumas).</p>`],
+      ["Listrik dan Energi", `<p>Listrik statis (penggaris digosok, petir), listrik dinamis (arus mengalir). Penangkal petir mengalirkan muatan ke tanah.</p><p>Energi terbarukan: matahari, angin, air, panas bumi. Tidak terbarukan: minyak bumi, batu bara.</p>`],
+      ["Pelestarian Lingkungan", `<p>Pemanasan global akibat gas rumah kaca (karbon dioksida). Dampak: es kutub mencair, permukaan laut naik. Solusi: reboisasi, hemat listrik, naik sepeda/angkutan umum.</p>`],
+      ["Pengulangan Kelas 4–5", `<p>Organ: jantung (memompa darah), paru-paru (pertukaran gas), usus halus (menyerap sari makanan), ginjal (menyaring darah).</p><p>Sifat cahaya: merambat lurus, dipantulkan, dibiaskan, diuraikan, menembus benda bening. Konduktor: logam; isolator: karet, plastik, kayu.</p>`],
+    ],
+  };
+})(window);
+</script>
+<script>// Aplikasi Kelas 6 — dua mode dari bank soal yang sama:
+//  MODE "harian": Les di Rumah Kelas 6 — 100 hari × 10 soal × 4 mapel, level naik di hari 36 & 71.
+//  MODE "drill" : Siap Ujian Kelas 6 — paket drill bertahap, simulasi ujian bertimer, drill topik lemah, hitung mundur ujian.
+const MODE = window.MODE || "harian";
+const HEMAT = MODE === "hemat", DRILL = MODE !== "harian"; // "hemat": versi ringkas drill, 320 soal
+const PRODUK = DRILL ? "Siap Ujian Kelas 6" : "Les di Rumah Kelas 6";
+const MAPEL = { MTK: ["Matematika", "🔢"], BIND: ["Bahasa Indonesia", "📖"], BING: ["Bahasa Inggris", "🇬🇧"], IPA: ["IPA", "🔬"] };
+const PER_HARI = 10, HARI = 100, PER_PAKET = HEMAT ? 10 : 25, N_SIM = HEMAT ? 3 : 10, N_TOPIK = HEMAT ? 10 : 15, SIM_N = 40, SIM_MENIT = 60;
+const LEVEL = [null, { nama: "Level 1 · Dasar", mulai: 1 }, { nama: "Level 2 · Menengah", mulai: 36 }, { nama: "Level 3 · Mahir (HOTS)", mulai: 71 }];
+const BANK = {}; for (const k in MAPEL) BANK[k] = GEN[k]();
+const BYID = {}; for (const k in BANK) BANK[k].forEach((q) => (BYID[q.id] = q));
+const $ = (s) => document.querySelector(s); const app = $("#app");
+const SKEY = window.DEMO ? "sd6demo" : HEMAT ? "sd6x" : DRILL ? "sd6d" : "sd6h";
+const store = { get() { try { return JSON.parse(localStorage.getItem(SKEY) || "{}"); } catch { return {}; } }, set(v) { try { localStorage.setItem(SKEY, JSON.stringify(v)); } catch {} } };
+let ST = Object.assign({ nama: "", hasil: {}, salah: {}, draft: {}, sim: {}, streak: 0, last: "" }, store.get());
+const save = () => store.set(ST);
+const today = () => new Date().toISOString().slice(0, 10);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const rngPick = (arr, n, seed) => { const r = CORE.rng(seed), x = arr.slice(); for (let i = x.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [x[i], x[j]] = [x[j], x[i]]; } return x.slice(0, n); };
+
+// ---------- Mode harian ----------
+const levelHari = (d) => (d >= 71 ? 3 : d >= 36 ? 2 : 1);
+function soalHari(m, d) { const lv = levelHari(d); const pool = BANK[m].filter((q) => q.level === lv); const i = (d - LEVEL[lv].mulai) * PER_HARI; return pool.slice(i, i + PER_HARI); }
+const hariSelesai = (d) => Object.keys(MAPEL).every((m) => ST.hasil[m + d]);
+const hariAktif = () => { for (let d = 1; d <= HARI; d++) if (!hariSelesai(d)) return d; return HARI; };
+let pilihHari = null;
+
+// ---------- Mode drill ----------
+const NP = HEMAT ? 8 : 40, PAKET = { MTK: NP, BIND: NP, BING: NP, IPA: NP }; // penuh: 1–14 dasar, 15–28 menengah, 29–40 HOTS · hemat: 1–3, 4–6, 7–8
+const LV_MULAI = HEMAT ? [0, 1, 4, 7] : [0, 1, 15, 29], LV_TXT = HEMAT ? "1–3 Dasar · 4–6 Menengah · 7–8 HOTS" : "1–14 Dasar · 15–28 Menengah · 29–40 HOTS";
+const paketLevel = (k) => (k >= LV_MULAI[3] ? 3 : k >= LV_MULAI[2] ? 2 : 1);
+function soalPaket(m, k) { const lv = paketLevel(k); const pool = BANK[m].filter((q) => q.level === lv); const start = (k - LV_MULAI[lv]) * PER_PAKET; return pool.slice(start, start + PER_PAKET); }
+function soalSim(m, n) { // m = kode mapel atau "MIX"; n = nomor simulasi 1–N_SIM
+  if (m === "MIX") return Object.keys(MAPEL).flatMap((k, i) => rngPick(BANK[k], SIM_N / 4, 9000 + n * 13 + i));
+  const B = BANK[m], a = rngPick(B.filter((q) => q.level === 1), 12, n * 101), b = rngPick(B.filter((q) => q.level === 2), 16, n * 103), c = rngPick(B.filter((q) => q.level === 3), 12, n * 107);
+  return [...a, ...b, ...c];
+}
+const hariLagi = () => { if (!ST.ujian) return null; return Math.ceil((new Date(ST.ujian) - new Date(today())) / 864e5); };
+
+function gate() {
+  watermark(); $("#homeBtn").hidden = true;
+  if (!window.PREVIEW && !window.NOKODE && !ST.kode && (window.KODE_HASH || (location.protocol.startsWith("http") && !/localhost|127\.0\.0\.1/.test(location.hostname)))) { aktivasi(); return false; }
+  if (!ST.setuju) { tentang(true); return false; }
+  if (!ST.nama) { setup(); return false; }
+  return true;
+}
+const menuBawah = (extra) => `<div class="grid">${extra || ""}<button class="btn sec" id="review" ${Object.keys(ST.salah).length ? "" : "disabled"}>🔁 Ulang soal salah (${Object.keys(ST.salah).length})</button><button class="btn sec" id="rapor">📊 Rapor</button><button class="btn sec" id="materi">📘 Materi</button><button class="btn sec" id="cetak">🖨️ Cetak soal & materi</button><button class="btn sec" id="ortu">👪 Panduan orang tua</button><button class="btn sec" id="ttg">ℹ️ Tentang & hak cipta</button></div><div class="foot">© ${PEMBUAT}<br>Lisensi penggunaan pribadi · Dilarang menyebarluaskan</div>`;
+function pasangMenu() { $("#review").onclick = review; $("#rapor").onclick = rapor; $("#cetak").onclick = cetakMenu; $("#materi").onclick = () => materi(); $("#ttg").onclick = () => tentang(); $("#ortu").onclick = ortu; }
+
+function home() {
+  if (!gate()) return;
+  if (DRILL) return homeDrill();
+  const d = pilihHari || hariAktif(); const lv = levelHari(d);
+  const selesai = Array.from({ length: HARI }, (_, i) => hariSelesai(i + 1)).filter(Boolean).length;
+  app.innerHTML = `
+  <div class="card"><div class="row"><div><div class="mut">Halo, ${esc(ST.nama)} 👋</div><b style="font-size:22px">Hari ke-${d}</b> <span class="lvl l${lv}">${LEVEL[lv].nama}</span></div><div style="text-align:right"><div class="big">🔥${ST.streak}</div><div class="mut">hari beruntun</div></div></div>
+  <div class="mut" style="margin:10px 0 4px">Progres ${selesai}/${HARI} hari</div><div class="bar"><i style="width:${selesai}%"></i></div></div>
+  <details class="card"><summary><b>📌 Cara pakai (1 menit)</b></summary><ol style="margin:8px 0 0;padding-left:20px">
+  <li>Kerjakan <b>4 mapel</b> di bawah setiap hari. Satu mapel = 10 soal, ±10 menit.</li>
+  <li>Klik mapel → <b>scroll</b> dan pilih jawaban. Benar/salah dan pembahasan langsung muncul. Jawaban tersimpan otomatis.</li>
+  <li>Setelah 10 soal terjawab, klik <b>Selesai & lihat nilai</b>. Kartu mapel jadi hijau ✅.</li>
+  <li>Jika 4 mapel sudah hijau, aplikasi pindah ke <b>hari berikutnya</b> (kerjakan besok, 1 hari 1 sesi). Level naik di hari 36 dan 71.</li>
+  <li>Bingung materinya? Buka <b>📘 Materi</b>. Akhir pekan, buka <b>🔁 Ulang soal salah</b> dan <b>📊 Rapor</b>.</li></ol></details>
+  <div class="grid">${Object.entries(MAPEL).map(([k, [n, ic]]) => { const h = ST.hasil[k + d], dr = ST.draft[k + d]; const nb = dr ? dr.log.filter((l) => l.ok).length : 0; return `<button class="mapel ${h ? "done" : ""}" data-m="${k}"><span class="ic">${ic}</span><b>${n}</b><small>${h ? `✅ Nilai ${h.nilai} · lihat jawaban` : dr ? `⏳ ${Object.keys(dr.pil).length}/${PER_HARI} dijawab · ${nb} benar · lanjutkan` : `${PER_HARI} soal · ±10 menit`}</small></button>`; }).join("")}</div>
+  <div class="card" style="margin-top:14px"><b>Pilih hari</b> <span class="mut">(hijau = selesai)</span><div class="days" style="margin-top:8px">${Array.from({ length: HARI }, (_, i) => `<button class="${hariSelesai(i + 1) ? "d" : ""} ${i + 1 === d ? "c" : ""}" data-d="${i + 1}">${i + 1}</button>`).join("")}</div>
+  <div class="mut" style="margin-top:8px">Hari 1–35: Level 1 · Hari 36–70: Level 2 · Hari 71–100: Level 3</div></div>${menuBawah()}`;
+  app.querySelectorAll("[data-m]").forEach((b) => (b.onclick = () => kuis(soalHari(b.dataset.m, d), { key: b.dataset.m + d, title: `${MAPEL[b.dataset.m][1]} ${MAPEL[b.dataset.m][0]} · Hari ke-${d}` })));
+  app.querySelectorAll("[data-d]").forEach((b) => (b.onclick = () => { pilihHari = +b.dataset.d; home(); }));
+  pasangMenu();
+}
+
+let tabM = "MTK";
+function homeDrill() {
+  const hl = hariLagi();
+  const paketSelesai = Object.keys(ST.hasil).filter((k) => k.startsWith("P-")).length, totalPaket = Object.values(PAKET).reduce((a, b) => a + b, 0);
+  const sisa = totalPaket - paketSelesai; const target = hl && hl > 0 ? Math.max(1, Math.ceil(sisa / hl)) : null;
+  const nilai = Object.entries(ST.hasil).filter(([k]) => k.startsWith("P-")).map(([, h]) => h.nilai);
+  const kesiapan = nilai.length ? Math.round(nilai.reduce((a, b) => a + b) / nilai.length) : 0;
+  app.innerHTML = `
+  <div class="card"><div class="row"><div><div class="mut">Halo, ${esc(ST.nama)} 👋</div><b style="font-size:20px">${hl == null ? "Atur tanggal ujian" : hl > 0 ? `Ujian ${hl} hari lagi` : hl === 0 ? "Ujian hari ini. Semangat!" : "Ujian sudah lewat"}</b></div><div style="text-align:right"><div class="big">🔥${ST.streak}</div><div class="mut">hari beruntun</div></div></div>
+  <div class="row" style="margin-top:10px;gap:8px"><input type="date" id="tgl" value="${ST.ujian || ""}" style="flex:1"><button class="btn sec" id="sv">Simpan</button></div>
+  ${target ? (target <= 3 ? `<p class="mut" style="margin-top:8px">🎯 Target: <b>${target} paket per hari</b> agar ${sisa} paket tersisa selesai sebelum ujian.</p>` : `<p class="mut" style="margin-top:8px">🎯 Waktu ${hl} hari: fokus <b>2 drill per topik sehari</b> sesuai materi ujian + <b>1 simulasi tiap akhir pekan</b>.</p>`) : ""}
+  <div class="mut" style="margin:10px 0 4px">Kesiapan (rata-rata nilai paket): <b>${kesiapan}</b> · ${paketSelesai}/${totalPaket} paket</div><div class="bar"><i style="width:${(paketSelesai / totalPaket) * 100}%"></i></div></div>
+  <details class="card"><summary><b>📌 Cara pakai (1 menit)</b></summary><ol style="margin:8px 0 0;padding-left:20px">
+  <li>Isi <b>tanggal ujian</b> di atas. Aplikasi menghitung target paket per hari.</li>
+  <li><b>📦 Paket Drill</b>: ${NP} paket per mapel, ${PER_PAKET} soal per paket, langsung dibahas. ${LV_TXT}.</li>
+  <li><b>⏱️ Simulasi Ujian</b>: 40 soal, ${SIM_MENIT} menit, tanpa pembahasan sampai selesai (seperti ujian sungguhan).</li>
+  <li><b>📚 Drill per Topik</b>: pilih topik yang keluar di UAS/PAS sekolah, ${N_TOPIK} soal per latihan.</li>
+  <li><b>🎯 Drill Topik Lemah</b>: 10 soal otomatis dari topik dengan nilai terendah.</li>
+  <li>Jawaban tersimpan otomatis. Akhir pekan, cek <b>📊 Rapor</b>.</li></ol></details>
+  <div class="card"><b>📦 Paket Drill</b> <span class="mut">(warna = nilai)</span>
+  <div class="grid" style="grid-template-columns:repeat(4,1fr);margin:10px 0">${Object.entries(MAPEL).map(([k, [n, ic]]) => `<button class="btn ${k === tabM ? "" : "sec"}" data-tab="${k}" style="padding:8px 4px;font-size:13px">${ic} ${n.split(" ").pop()}</button>`).join("")}</div>
+  <div class="days" style="grid-template-columns:repeat(8,1fr)">${Array.from({ length: PAKET[tabM] }, (_, i) => { const h = ST.hasil[`P-${tabM}-${i + 1}`], dr = ST.draft[`P-${tabM}-${i + 1}`]; const bg = h ? (h.nilai >= 80 ? "#86efac" : h.nilai >= 60 ? "#fde68a" : "#fca5a5") : dr ? "#bfdbfe" : ""; return `<button data-p="${i + 1}" style="${bg ? "background:" + bg : ""}" title="${h ? "Nilai " + h.nilai : ""}">${i + 1}</button>`; }).join("")}</div>
+  <div class="mut" style="margin-top:8px">${LV_TXT} · <span style="color:#16a34a">hijau ≥80</span> · <span style="color:#a16207">kuning 60–79</span> · <span style="color:#dc2626">merah &lt;60</span> · <span style="color:#1d4ed8">biru = belum selesai</span></div></div>
+  <div class="card"><b>⏱️ Simulasi Ujian</b> <span class="mut">(40 soal · ${SIM_MENIT} menit)</span>
+  <div class="grid" style="grid-template-columns:repeat(5,1fr);margin-top:10px">${["MIX", ...Object.keys(MAPEL)].map((m) => `<button class="btn sec" data-sm="${m}" style="padding:8px 2px;font-size:12px">${m === "MIX" ? "🧩 Campuran" : MAPEL[m][1] + " " + MAPEL[m][0].split(" ").pop()}</button>`).join("")}</div></div>
+  ${menuBawah(`<button class="btn" id="topik" style="grid-column:1/-1">📚 Drill per Topik (pilih sesuai materi UAS/PAS)</button><button class="btn" id="lemah" style="grid-column:1/-1">🎯 Drill Topik Lemah (10 soal)</button>`)}`;
+  $("#sv").onclick = () => { ST.ujian = $("#tgl").value || null; save(); home(); };
+  app.querySelectorAll("[data-tab]").forEach((b) => (b.onclick = () => { tabM = b.dataset.tab; home(); }));
+  app.querySelectorAll("[data-p]").forEach((b) => (b.onclick = () => { const k = +b.dataset.p; kuis(soalPaket(tabM, k), { key: `P-${tabM}-${k}`, title: `${MAPEL[tabM][1]} ${MAPEL[tabM][0]} · Paket ${k} · ${["", "Dasar", "Menengah", "HOTS"][paketLevel(k)]}` }); }));
+  app.querySelectorAll("[data-sm]").forEach((b) => (b.onclick = () => pilihSim(b.dataset.sm)));
+  $("#lemah").onclick = drillLemah; $("#topik").onclick = () => pilihTopik(tabM);
+  pasangMenu();
+}
+function pilihSim(m) {
+  keluar(); const nm = m === "MIX" ? "🧩 Campuran 4 Mapel" : MAPEL[m][1] + " " + MAPEL[m][0];
+  app.innerHTML = `<div class="card"><h2>⏱️ Simulasi ${nm}</h2><p class="mut">40 soal · ${SIM_MENIT} menit · pembahasan muncul setelah selesai. Kerjakan di tempat tenang, seperti ujian sungguhan.</p>
+  <div class="grid" style="grid-template-columns:repeat(5,1fr)">${Array.from({ length: N_SIM }, (_, i) => { const h = ST.sim[`${m}-${i + 1}`]; return `<button class="btn ${h ? "" : "sec"}" data-n="${i + 1}" style="padding:10px 2px">${i + 1}${h ? `<br><small>${h.nilai}</small>` : ""}</button>`; }).join("")}</div></div>`;
+  app.querySelectorAll("[data-n]").forEach((b) => (b.onclick = () => ujian(m, +b.dataset.n))); scrollTo(0, 0);
+}
+let timerId = null;
+function ujian(m, n) {
+  keluar(); clearInterval(timerId);
+  const key = `${m}-${n}`, soal = soalSim(m, n), done = ST.sim[key];
+  if (done) return reviewUjian(soal, done, `Simulasi ${m === "MIX" ? "Campuran" : MAPEL[m][0]} #${n}`, () => { delete ST.sim[key]; save(); ujian(m, n); });
+  ST.simDraft = ST.simDraft || {}; const dr = ST.simDraft[key] || { pil: {}, mulai: Date.now() }; ST.simDraft[key] = dr; save();
+  app.innerHTML = `<div class="card" style="position:sticky;top:58px;z-index:3"><div class="row"><b>⏱️ Simulasi ${m === "MIX" ? "Campuran" : MAPEL[m][0]} #${n}</b><b id="tm" style="font-size:20px"></b></div><div class="mut" id="cnt"></div></div>
+  <div class="card">${soal.map((q, i) => `<div class="qi"><span class="lvl l${q.level}">${i + 1}. ${MAPEL[q.mapel][0]}</span><div class="q">${q.q}</div>${q.img ? `<div class="img">${q.img}</div>` : ""}${q.opsi.map((o, j) => `<button class="opt ${dr.pil[i] === j ? "pk" : ""}" data-i="${i}" data-j="${j}"><b>${"ABCD"[j]}.</b> ${o}</button>`).join("")}</div>`).join("")}
+  <br><button class="btn full" id="kumpul">Kumpulkan jawaban</button></div>`;
+  const upd = () => { $("#cnt").textContent = `${Object.keys(dr.pil).length}/${soal.length} dijawab · jawaban tersimpan otomatis`; };
+  const sisa = () => SIM_MENIT * 60 - Math.floor((Date.now() - dr.mulai) / 1000);
+  const tick = () => { const s = sisa(); if (s <= 0) { clearInterval(timerId); alert("Waktu habis! Jawaban dikumpulkan otomatis."); return kumpul(); } $("#tm").textContent = `${String((s / 60) | 0).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; $("#tm").style.color = s < 300 ? "#dc2626" : ""; };
+  app.querySelectorAll(".opt").forEach((b) => (b.onclick = () => { const i = +b.dataset.i, j = +b.dataset.j; dr.pil[i] = j; b.parentNode.querySelectorAll(".opt").forEach((x) => x.classList.toggle("pk", x === b)); save(); upd(); }));
+  const kumpul = () => { clearInterval(timerId); const benar = soal.filter((q, i) => dr.pil[i] === q.jawab).length, nilai = Math.round((benar / soal.length) * 100);
+    const log = soal.map((q, i) => ({ id: q.id, ok: dr.pil[i] === q.jawab, topik: q.topik, mapel: q.mapel })); log.forEach((l) => (l.ok ? delete ST.salah[l.id] : (ST.salah[l.id] = 1)));
+    ST.sim[key] = { nilai, pil: dr.pil, log, tgl: today(), menit: Math.min(SIM_MENIT, Math.ceil((Date.now() - dr.mulai) / 60000)) }; delete ST.simDraft[key]; bumpStreak(); save();
+    reviewUjian(soal, ST.sim[key], `Simulasi ${m === "MIX" ? "Campuran" : MAPEL[m][0]} #${n}`, () => { delete ST.sim[key]; save(); ujian(m, n); }); };
+  $("#kumpul").onclick = () => { const k = Object.keys(dr.pil).length; if (k < soal.length && !confirm(`Masih ada ${soal.length - k} soal kosong. Kumpulkan sekarang?`)) return; kumpul(); };
+  upd(); tick(); timerId = setInterval(tick, 1000); scrollTo(0, 0);
+}
+function reviewUjian(soal, h, judul, ulang) {
+  const benar = soal.filter((q, i) => h.pil[i] === q.jawab).length; const tp = {};
+  soal.forEach((q, i) => { const k = MAPEL[q.mapel][0] + " — " + q.topik; tp[k] = tp[k] || [0, 0]; tp[k][1]++; if (h.pil[i] === q.jawab) tp[k][0]++; });
+  const lemah = Object.entries(tp).filter(([, v]) => v[0] < v[1]).sort((a, b) => a[1][0] / a[1][1] - b[1][0] / b[1][1]).slice(0, 5);
+  app.innerHTML = `<div class="card" style="text-align:center"><div class="mut">${judul}</div><div class="big">${h.nilai}</div><p>${benar} dari ${soal.length} benar · ${h.menit || "-"} menit</p>${lemah.length ? `<p class="mut">Perlu dilatih: ${lemah.map(([k]) => k).join(", ")}</p>` : ""}<button class="btn sec" id="ul">🔄 Ulangi simulasi ini</button></div>
+  <div class="card"><b>Pembahasan</b>${soal.map((q, i) => { const j = h.pil[i], ok = j === q.jawab; return `<div class="qi"><span class="lvl l${q.level}">${i + 1}. ${q.topik}</span><div class="q">${q.q}</div>${q.img ? `<div class="img">${q.img}</div>` : ""}${q.opsi.map((o, k) => `<div class="opt ${k === q.jawab ? "ok" : k === j ? "no" : ""}"><b>${"ABCD"[k]}.</b> ${o}</div>`).join("")}<div class="bahas"><b>${j == null ? "⚪ Tidak dijawab." : ok ? "✅ Benar!" : "❌ Belum tepat."}</b> ${q.bahas}</div></div>`; }).join("")}</div>`;
+  $("#ul").onclick = () => { if (confirm("Ulangi simulasi? Nilai lama akan diganti.")) ulang(); }; scrollTo(0, 0);
+}
+function pilihTopik(m) {
+  keluar(); const tp = [...new Set(BANK[m].map((q) => q.topik))];
+  const skor = (t) => { const ls = [...Object.values(ST.hasil), ...Object.values(ST.sim)].flatMap((h) => (h.log || []).filter((l) => l.mapel === m && l.topik === t)); return ls.length ? Math.round((ls.filter((l) => l.ok).length / ls.length) * 100) + "%" : "–"; };
+  app.innerHTML = `<div class="card"><h2>📚 Drill per Topik</h2><p class="mut">Pilih topik yang sedang dipelajari di sekolah atau yang keluar di UAS/PAS. Tiap klik memberi ${N_TOPIK} soal acak dari topik itu, campuran dasar sampai HOTS.</p>
+  <div class="grid" style="grid-template-columns:repeat(4,1fr);margin:10px 0">${Object.entries(MAPEL).map(([k, [n, ic]]) => `<button class="btn ${k === m ? "" : "sec"}" data-tm="${k}" style="padding:8px 4px;font-size:13px">${ic} ${n.split(" ").pop()}</button>`).join("")}</div>
+  ${tp.map((t) => `<button class="opt" data-t="${esc(t)}"><b>${esc(t)}</b> <span class="mut">· ${BANK[m].filter((q) => q.topik === t).length} soal · nilai ${skor(t)}</span></button>`).join("")}</div>`;
+  app.querySelectorAll("[data-tm]").forEach((b) => (b.onclick = () => pilihTopik(b.dataset.tm)));
+  app.querySelectorAll("[data-t]").forEach((b) => (b.onclick = () => { const t = b.dataset.t; const sudah = new Set(Object.values(ST.hasil).flatMap((h) => (h.log || []).filter((l) => l.ok).map((l) => l.id)));
+    const pool = BANK[m].filter((q) => q.topik === t), belum = pool.filter((q) => !sudah.has(q.id)); const soal = rngPick(belum.length >= N_TOPIK ? belum : pool, N_TOPIK, Date.now() % 100000).sort((a, b) => a.level - b.level);
+    kuis(soal, { key: null, title: `📚 ${MAPEL[m][0]} · ${t}` }); }));
+  scrollTo(0, 0);
+}
+function drillLemah() {
+  const tp = {}; for (const h of [...Object.values(ST.hasil), ...Object.values(ST.draft), ...Object.values(ST.sim)]) for (const l of h.log || []) { const k = l.mapel + "|" + l.topik; tp[k] = tp[k] || [0, 0]; tp[k][1]++; if (l.ok) tp[k][0]++; }
+  const lemah = Object.entries(tp).filter(([, v]) => v[1] >= 3).sort((a, b) => a[1][0] / a[1][1] - b[1][0] / b[1][1]).slice(0, 3).map(([k]) => k.split("|"));
+  if (!lemah.length) return alert("Kerjakan beberapa paket dulu agar topik lemah terdeteksi.");
+  const sudah = new Set(Object.values(ST.hasil).flatMap((h) => (h.log || []).filter((l) => l.ok).map((l) => l.id)));
+  const pool = lemah.flatMap(([m, t]) => BANK[m].filter((q) => q.topik === t && !sudah.has(q.id)));
+  const soal = rngPick(pool, 10, Date.now() % 100000);
+  kuis(soal, { key: null, title: `🎯 Drill Topik Lemah: ${lemah.map(([m, t]) => t).join(", ")}` });
+}
+
+// ---------- Kuis (paket/harian/review): jawaban tersimpan otomatis ----------
+function bumpStreak() { if (ST.last !== today()) { const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10); ST.streak = ST.last === y ? ST.streak + 1 : 1; ST.last = today(); } }
+function kuis(soal, o, ulang) {
+  keluar(); clearInterval(timerId);
+  const key = o.key, done = key && !ulang ? ST.hasil[key] : null;
+  const src = done && done.pil ? done : key && !ulang && ST.draft[key] ? ST.draft[key] : null;
+  const pil = src ? Object.assign({}, src.pil) : {}; const log = src ? src.log.slice() : [];
+  if (key && ulang) delete ST.draft[key];
+  app.innerHTML = `<div class="card"><div class="row"><b>${o.title}</b><span class="mut" id="cnt"></span></div><div class="bar" style="margin-top:8px"><i id="pg" style="width:0"></i></div>
+  <div id="skor" class="mut" style="margin-top:8px"></div>${done ? `<button class="btn sec" id="ulang" style="margin-top:10px">🔄 Ulangi dari awal</button>` : ""}</div>
+  <div class="card">${soal.map((q, i) => `<div class="qi" id="q${i}"><span class="lvl l${q.level}">${i + 1}. ${q.topik}</span><div class="q">${q.q}</div>${q.img ? `<div class="img">${q.img}</div>` : ""}${q.opsi.map((x, j) => `<button class="opt" data-i="${i}" data-j="${j}"><b>${"ABCD"[j]}.</b> ${x}</button>`).join("")}<div class="fb"></div></div>`).join("")}
+  <br><button class="btn full" id="fin" disabled>Selesai & lihat nilai</button></div>`;
+  const tampil = (i) => { const q = soal[i], j = pil[i], ok = j === q.jawab, box = $("#q" + i);
+    box.querySelectorAll(".opt").forEach((x, k) => { x.disabled = true; if (k === q.jawab) x.classList.add("ok"); else if (k === j) x.classList.add("no"); });
+    box.querySelector(".fb").innerHTML = `<div class="bahas"><b>${ok ? "✅ Benar!" : "❌ Belum tepat."}</b> ${q.bahas}</div>`; };
+  const update = () => { const n = Object.keys(pil).length, benar = Object.entries(pil).filter(([i, j]) => soal[i].jawab === j).length;
+    $("#cnt").textContent = `${n}/${soal.length} dijawab`; $("#pg").style.width = (n / soal.length) * 100 + "%";
+    $("#skor").innerHTML = n ? `${done ? "Skor" : "Skor sementara"}: <b>${benar} benar</b> dari ${n} soal${n < soal.length && key ? " · jawaban tersimpan otomatis, bisa dilanjutkan nanti" : ""}` : "";
+    $("#fin").disabled = n < soal.length || !!done; if (done) $("#fin").textContent = `✅ Sudah selesai · Nilai ${done.nilai}`; };
+  Object.keys(pil).forEach((i) => tampil(+i)); update();
+  const first = soal.findIndex((_, i) => !(i in pil)); if (Object.keys(pil).length && first > 0 && !done) setTimeout(() => { $("#q" + first).scrollIntoView({ block: "start" }); scrollBy(0, -80); }, 50); else scrollTo(0, 0);
+  if (done) $("#ulang").onclick = () => kuis(soal, o, true);
+  app.querySelectorAll(".opt").forEach((b) => (b.onclick = () => {
+    const i = +b.dataset.i, j = +b.dataset.j, q = soal[i]; if (i in pil) return; pil[i] = j; const ok = j === q.jawab;
+    log.push({ id: q.id, ok, topik: q.topik, mapel: q.mapel }); if (ok) delete ST.salah[q.id]; else ST.salah[q.id] = 1;
+    if (key) ST.draft[key] = { pil, log, tgl: today() }; bumpStreak();
+    save(); tampil(i); update();
+  }));
+  $("#fin").onclick = () => {
+    const benar = log.filter((l) => l.ok).length, nilai = Math.round((benar / soal.length) * 100);
+    if (key) { ST.hasil[key] = { nilai, log, pil, tgl: today() }; delete ST.draft[key]; }
+    save(); const bintang = nilai >= 90 ? "⭐⭐⭐" : nilai >= 70 ? "⭐⭐" : nilai >= 50 ? "⭐" : "💪";
+    app.innerHTML = `<div class="card" style="text-align:center"><div class="big">${bintang}</div><h2>Nilai ${nilai}</h2><p>${benar} dari ${soal.length} soal benar.</p><p class="mut">${nilai >= 70 ? "Keren! Pertahankan ya." : "Tidak apa-apa, soal yang salah tersimpan di menu Ulang Soal Salah."}</p><button class="btn full" id="bk">Kembali ke beranda</button></div>`;
+    $("#bk").onclick = home; scrollTo(0, 0);
+  };
+}
+function review() { const s = Object.keys(ST.salah).map((id) => BYID[id]).filter(Boolean).slice(0, 10); if (s.length) kuis(s, { key: null, title: "🔁 Ulang soal salah" }); }
+
+// ---------- Kode akses, lisensi, watermark ----------
+async function sha(t) { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)); return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join(""); }
+async function cekKode(kode) {
+  if (window.KODE_HASH) { try { return window.KODE_HASH.includes(await sha(kode)); } catch { return false; } }
+  try { const r = await fetch("/api/verify", { method: "POST", body: JSON.stringify({ kode }) }); return (await r.json()).ok; } catch { return false; }
+}
+const LISENSI_URL = "";
+const devId = () => ST.dev || (ST.dev = Math.random().toString(36).slice(2, 10));
+async function server(aksi, data) { if (!LISENSI_URL) return null; try { const r = await fetch(LISENSI_URL, { method: "POST", body: JSON.stringify(Object.assign({ aksi, kode: await sha(ST.kode), dev: devId() }, data || {})) }); return await r.json(); } catch { return null; } }
+function watermark() {
+  document.getElementById("lic").textContent = ST.nama ? `Lisensi: ${ST.nama}${ST.kode ? " · " + ST.kode : ""}` : "";
+  let w = document.getElementById("wm"); if (!ST.nama) { if (w) w.remove(); return; }
+  if (!w) { w = document.createElement("div"); w.id = "wm"; document.body.appendChild(w); }
+  const t = `Lisensi: ${esc(ST.nama)}${ST.kode ? " · " + ST.kode : ""}`; w.innerHTML = Array.from({ length: 14 }, () => `<span>${t}</span>`).join("");
+}
+function aktivasi() {
+  $("#homeBtn").hidden = true;
+  app.innerHTML = `<div class="card"><h2>🔐 Masukkan Kode Akses</h2><p>Kode akses ada di <b>halaman member (LMS) Toolkit Parenting</b> setelah pembayaran terkonfirmasi. Cukup sekali aktivasi per perangkat.</p><p class="mut">Belum bisa masuk halaman member? Cek email dari Scalev (juga folder spam/promosi), atau hubungi admin Toolkit Parenting dengan nomor pesanan.</p>
+  <input id="kd" placeholder="Kode dari halaman member" autocapitalize="characters"><br><br><button class="btn full" id="ak">Aktifkan</button><p id="msg" class="mut"></p></div>`;
+  $("#ak").onclick = async () => { const k = $("#kd").value.trim().toUpperCase(); $("#msg").textContent = "Memeriksa..."; if (await cekKode(k)) { ST.kode = k; const r = await server("cek"); if (r && r.ok === false) { ST.kode = ""; $("#msg").textContent = "❌ " + r.pesan; return; } if (r && r.nama) ST.nama = r.nama; save(); home(); } else $("#msg").textContent = "❌ Kode tidak valid. Periksa lagi atau hubungi penjual."; };
+}
+const PEMBUAT = "Toolkit Parenting (toolkitparenting.my.id)";
+const LEGAL = `<div class="legal"><b>⚖️ Hak Cipta & Lisensi Penggunaan</b><br>© ${new Date().getFullYear()} ${PEMBUAT}. Seluruh soal, materi, gambar, dan aplikasi ini dilindungi <b>Undang-Undang Republik Indonesia Nomor 28 Tahun 2014 tentang Hak Cipta</b>.
+<ul><li>Lisensi ini <b>hanya untuk penggunaan pribadi</b> oleh satu keluarga pembeli. Mencetak untuk anak sendiri diperbolehkan.</li>
+<li><b>Dilarang</b> menyebarkan, membagikan kode akses, menggandakan, mengunggah ulang, menjual kembali, atau memakai untuk bimbel/les berbayar tanpa izin tertulis.</li>
+<li>Pasal 9 UU Hak Cipta: penggandaan, pendistribusian, dan pengumuman ciptaan hanya boleh dilakukan pencipta/pemegang hak cipta atau dengan izinnya.</li>
+<li>Pasal 113 ayat (3): pelanggaran hak ekonomi untuk penggunaan secara komersial diancam <b>pidana penjara paling lama 4 tahun dan/atau denda paling banyak Rp1.000.000.000</b>.</li>
+<li>Setiap kode akses tercatat atas nama pembeli dan tertera pada hasil cetak. Kode yang terbukti disebarkan dapat dinonaktifkan tanpa pengembalian dana.</li></ul></div>`;
+function tentang(first) {
+  if (first) $("#homeBtn").hidden = true; else keluar();
+  const isi = DRILL
+    ? `<p><i>Drill intensif menjelang ujian: paket bertahap, simulasi bertimer, langsung tahu topik lemah.</i></p><p><b>${PRODUK}</b> adalah program persiapan ujian akhir SD di rumah. Isinya <b>${HEMAT ? "320 soal pilihan</b> (80 per mapel)" : "4.000 soal</b> (1.000 per mapel)"} Matematika, Bahasa Indonesia, Bahasa Inggris, dan IPA kelas 6 Kurikulum Merdeka Fase C, termasuk pengulangan materi kelas 4–5 yang sering keluar di ujian, lengkap dengan pembahasan dan ringkasan materi.</p><p>Fitur: <b>${NP * 4} paket drill</b> (${NP} per mapel), <b>${N_SIM * 5} simulasi ujian bertimer</b>, drill topik lemah otomatis, dan hitung mundur ke tanggal ujian. Ini latihan, bukan soal ujian sebenarnya dan bukan jaminan nilai.</p>`
+    : `<p><i>Kerjakan, langsung dikoreksi, langsung dibahas. 4 mapel, 40 menit sehari.</i></p><p><b>${PRODUK}</b> adalah program belajar mandiri di rumah sebagai alternatif les bulanan. Isinya <b>4.000 soal</b> (1.000 per mapel) Matematika, Bahasa Indonesia, Bahasa Inggris, dan IPA kelas 6 Kurikulum Merdeka Fase C, lengkap dengan pembahasan dan ringkasan materi.</p><p>Anak cukup belajar <b>±40 menit sehari selama 100 hari</b>. Tingkat kesulitan naik bertahap: hari 1–35 dasar, 36–70 menengah, 71–100 mahir (HOTS).</p>`;
+  app.innerHTML = `<div class="card"><h2>📚 Tentang Produk Ini</h2>${isi}<p><b>Dibuat oleh:</b> ${PEMBUAT}.</p>${LEGAL}
+  ${first ? `<label style="display:flex;gap:8px;margin-top:12px"><input type="checkbox" id="agr" style="width:auto"> Saya memahami dan menyetujui ketentuan penggunaan pribadi di atas.</label><br><button class="btn full" id="ok" disabled>Lanjut</button>` : ""}</div>`;
+  if (first) { $("#agr").onchange = (e) => ($("#ok").disabled = !e.target.checked); $("#ok").onclick = () => { ST.setuju = 1; save(); home(); }; }
+}
+function setup() {
+  app.innerHTML = `<div class="card"><h2>Selamat datang! 🎉</h2><p>${DRILL ? `Persiapan ujian SD kelas 6: <b>${HEMAT ? "320" : "4.000"} soal</b>, ${NP * 4} paket drill, dan ${N_SIM * 5} simulasi ujian bertimer.` : "Latihan 10 soal per mapel setiap hari selama 100 hari: <b>4.000 soal</b> kelas 6, level naik di hari ke-36 dan ke-71."}</p>
+  <label><b>Nama ANAK yang akan belajar</b> (bukan nama ayah/ibu)<input id="nm" placeholder="contoh: Rafi Pratama"></label><p class="mut">👧🧒 Isi dengan nama siswa kelas 6 yang akan mengerjakan soal. Nama ini tampil di rapor.</p><p class="mut">⚠️ Nama dikunci sebagai pemilik lisensi dan tercetak di setiap lembar. Pastikan sudah benar.</p><br><button class="btn full" id="go">Mulai Belajar</button></div>`;
+  $("#go").onclick = async () => { const v = $("#nm").value.trim(); if (!v) return; if (!confirm(`Nama anak: "${v}"\n\nPastikan ini nama ANAK, bukan nama orang tua. Nama tidak bisa diubah. Lanjutkan?`)) return; const r = await server("kunci", { nama: v }); ST.nama = (r && r.nama) || v; save(); home(); };
+}
+function materi(m) {
+  keluar();
+  if (!m) { app.innerHTML = `<div class="card"><h2>📘 Materi</h2><p class="mut">Ringkasan materi kelas 6 (dan pengulangan untuk ujian).</p><div class="grid">${Object.entries(MAPEL).map(([k, [n, ic]]) => `<button class="mapel" data-mm="${k}"><span class="ic">${ic}</span><b>${n}</b><small>${MATERI[k].length} bab</small></button>`).join("")}</div></div>`; app.querySelectorAll("[data-mm]").forEach((b) => (b.onclick = () => materi(b.dataset.mm))); return; }
+  app.innerHTML = `<div class="card mat"><h2>${MAPEL[m][1]} Materi ${MAPEL[m][0]}</h2><button class="btn sec" id="pm">🖨️ Cetak materi</button>${MATERI[m].map(([j, isi], i) => `<h3>${i + 1}. ${j}</h3>${isi}`).join("")}</div>`;
+  $("#pm").onclick = () => cetakHTML(`<h2>Materi ${MAPEL[m][0]} Kelas 6</h2>` + MATERI[m].map(([j, isi], i) => `<h3>${i + 1}. ${j}</h3>${isi}`).join("")); scrollTo(0, 0);
+}
+function cetakMenu() {
+  keluar();
+  if (HEMAT) {
+    app.innerHTML = `<div class="card"><h2>🖨️ Cetak</h2><button class="btn full" id="ca">Cetak SEMUA soal (320 soal + kunci & pembahasan)</button><br><br><button class="btn full sec" id="c3">Cetak ringkasan materi 4 mapel</button>
+    <p class="mut">Tips: pilih “Simpan sebagai PDF” di jendela cetak untuk menyimpan file. Urutan: 32 paket (per mapel), lalu kunci & pembahasan.</p></div>`;
+    $("#ca").onclick = () => { let soal = "", kunci = ""; for (const m in MAPEL) for (let k = 1; k <= NP; k++) { const s = soalPaket(m, k), j = `${MAPEL[m][0]} · Paket ${k} (${["", "Dasar", "Menengah", "HOTS"][paketLevel(k)]})`;
+      soal += `<h2 style="break-before:page">${j}</h2><p>Nama: ______________ Tanggal: ________ Nilai: ____</p>` + lembar(s); kunci += `<h3>${j}</h3>` + s.map((q, i) => `<p><b>${i + 1}. ${"abcd"[q.jawab].toUpperCase()}</b> — ${q.bahas}</p>`).join(""); }
+      cetakHTML(soal + `<h2 style="break-before:page">Kunci Jawaban & Pembahasan</h2>` + kunci); };
+    $("#c3").onclick = () => cetakHTML(Object.keys(MAPEL).map((m) => `<h2>Materi ${MAPEL[m][0]} Kelas 6</h2>` + MATERI[m].map(([j, isi], i) => `<h3>${i + 1}. ${j}</h3>${isi}`).join("")).join(""));
+    return;
+  }
+  const pertama = DRILL ? `<label>Cetak paket drill<select id="pm2">${Object.entries(MAPEL).map(([k, [n]]) => `<option value="${k}">${n}</option>`).join("")}</select></label><label>Nomor paket<select id="pk">${Array.from({ length: NP }, (_, i) => `<option>${i + 1}</option>`).join("")}</select></label><br><br><button class="btn full" id="c1">Cetak paket (${PER_PAKET} soal + kunci)</button><br><br><label>Simulasi<select id="sm2"><option value="MIX">Campuran</option>${Object.entries(MAPEL).map(([k, [n]]) => `<option value="${k}">${n}</option>`).join("")}</select></label><label>Nomor<select id="sn">${Array.from({ length: N_SIM }, (_, i) => `<option>${i + 1}</option>`).join("")}</select></label><br><br><button class="btn full" id="c4">Cetak simulasi (40 soal + kunci)</button>` : `<p><button class="btn full" id="c1">Soal hari ke-${pilihHari || hariAktif()} (4 mapel + kunci)</button></p>`;
+  app.innerHTML = `<div class="card"><h2>🖨️ Cetak</h2>${pertama}<hr style="margin:16px 0;border:0;border-top:1px solid var(--line)">
+  <label>Cetak semua soal satu mapel<select id="cm">${Object.entries(MAPEL).map(([k, [n]]) => `<option value="${k}">${n}</option>`).join("")}</select></label>
+  <label>Level<select id="cl">${[1, 2, 3].map((l) => `<option value="${l}">Level ${l} (${BANK.MTK.filter((q) => q.level === l).length} soal)</option>`).join("")}</select></label><br><br>
+  <button class="btn full sec" id="c2">Cetak soal + kunci jawaban</button><br><br><button class="btn full sec" id="c3">Cetak semua materi 4 mapel</button>
+  <p class="mut">Tips: pilih “Simpan sebagai PDF” di jendela cetak untuk menyimpan file.</p></div>`;
+  if (DRILL) { $("#c1").onclick = () => { const m = $("#pm2").value, k = +$("#pk").value; cetakSoal(`${MAPEL[m][0]} — Paket ${k}`, soalPaket(m, k)); }; $("#c4").onclick = () => { const m = $("#sm2").value, n = +$("#sn").value; cetakSoal(`Simulasi ${m === "MIX" ? "Campuran" : MAPEL[m][0]} #${n}`, soalSim(m, n)); }; }
+  else $("#c1").onclick = () => cetakHari(pilihHari || hariAktif());
+  $("#c2").onclick = () => { const m = $("#cm").value, lv = +$("#cl").value; cetakSoal(`${MAPEL[m][0]} — Level ${lv}`, BANK[m].filter((q) => q.level === lv)); };
+  $("#c3").onclick = () => cetakHTML(Object.keys(MAPEL).map((m) => `<h2>Materi ${MAPEL[m][0]} Kelas 6</h2>` + MATERI[m].map(([j, isi], i) => `<h3>${i + 1}. ${j}</h3>${isi}`).join("")).join(""));
+}
+function cetakHTML(h) { $("#print").innerHTML = h + `<div class="wm">© ${PEMBUAT} · Lisensi pribadi ${esc(ST.nama || "")} ${ST.kode ? "· " + ST.kode : ""} · Dilarang disebarluaskan (UU No. 28 Th. 2014)</div>`; window.print(); }
+const lembar = (s) => s.map((q, i) => `<div class="pq"><b>${i + 1}.</b> ${q.q}${q.img ? `<div>${q.img}</div>` : ""}<div>${q.opsi.map((o, j) => `${"abcd"[j]}. ${o}`).join("&nbsp;&nbsp;&nbsp; ")}</div></div>`).join("");
+function cetakSoal(judul, s) { cetakHTML(`<h2>${judul}</h2><p>Nama: ______________ Tanggal: ________</p>` + lembar(s) + `<h2>Kunci Jawaban — ${judul}</h2><p>${s.map((q, i) => `${i + 1}${"abcd"[q.jawab]}`).join(", ")}</p>`); }
+function cetakHari(d) { let h = "", kunci = ""; for (const [k, [n]] of Object.entries(MAPEL)) { const s = soalHari(k, d); h += `<h2>${n} — Hari ke-${d}</h2><p>Nama: ______________ Tanggal: ________</p>` + lembar(s); kunci += `<p><b>${n}:</b> ${s.map((q, i) => `${i + 1}${"abcd"[q.jawab]}`).join(", ")}</p>`; } cetakHTML(h + `<h2>Kunci Jawaban Hari ke-${d}</h2>` + kunci); }
+function rapor() {
+  keluar(); const tp = {};
+  const sumber = [...Object.values(ST.hasil), ...Object.values(ST.draft), ...Object.values(ST.sim)];
+  for (const h of sumber) for (const l of h.log || []) { const k = MAPEL[l.mapel][0] + " — " + l.topik; tp[k] = tp[k] || [0, 0]; tp[k][1]++; if (l.ok) tp[k][0]++; }
+  const rataM = (m) => { const ls = sumber.flatMap((h) => (h.log || []).filter((l) => l.mapel === m)); return ls.length ? Math.round((ls.filter((l) => l.ok).length / ls.length) * 100) : "-"; };
+  const lemah = Object.entries(tp).filter(([, v]) => v[1] >= 3).sort((a, b) => a[1][0] / a[1][1] - b[1][0] / b[1][1]).slice(0, 8);
+  const sims = Object.entries(ST.sim).sort((a, b) => (a[1].tgl < b[1].tgl ? -1 : 1));
+  app.innerHTML = `<div class="card"><h2>📊 Rapor ${esc(ST.nama)}</h2><table><tr><th>Mapel</th><th>% benar</th></tr>${Object.entries(MAPEL).map(([k, [n]]) => `<tr><td>${n}</td><td><b>${rataM(k)}</b></td></tr>`).join("")}</table></div>
+  ${DRILL ? `<div class="card"><h3>Riwayat simulasi ujian</h3>${sims.length ? `<table>${sims.map(([k, h]) => `<tr><td>${k.startsWith("MIX") ? "Campuran" : MAPEL[k.split("-")[0]][0]} #${k.split("-")[1]}</td><td>${h.tgl}</td><td><b>${h.nilai}</b></td></tr>`).join("")}</table>` : `<p class="mut">Belum ada simulasi. Coba 1 simulasi setiap akhir pekan.</p>`}</div>` : ""}
+  <div class="card"><h3>Topik yang perlu dilatih lagi</h3>${lemah.length ? `<table>${lemah.map(([k, v]) => `<tr><td>${k}</td><td>${Math.round((v[0] / v[1]) * 100)}% benar</td></tr>`).join("")}</table>` : `<p class="mut">Kerjakan beberapa latihan dulu agar terlihat polanya.</p>`}</div>
+  <div class="card"><button class="btn sec" id="rst">Hapus nilai & progres</button><p class="mut">Nama anak terkunci sebagai pemilik lisensi dan tidak ikut terhapus.</p></div>`;
+  $("#rst").onclick = () => { if (confirm("Hapus semua nilai dan progres? Nama tetap tersimpan.")) { ST = { nama: ST.nama, hasil: {}, salah: {}, draft: {}, sim: {}, streak: 0, last: "", kode: ST.kode, setuju: ST.setuju, ujian: ST.ujian }; save(); home(); } };
+}
+function ortu() {
+  keluar();
+  const tips = DRILL
+    ? `<li><b>Isi tanggal ujian</b> di beranda. Ikuti target paket per hari.</li><li><b>Hari biasa:</b> ${HEMAT ? "2–3 paket drill (±20–30 menit)" : "1–2 paket drill (±25–40 menit)"}. Baca pembahasan setiap soal.</li><li><b>Akhir pekan:</b> 1 simulasi ujian bertimer, lalu bahas soal yang salah bersama.</li><li>Setelah simulasi, klik <b>🎯 Drill Topik Lemah</b> untuk menambal topik dengan nilai terendah.</li><li>Seminggu sebelum ujian: ulang simulasi campuran dan baca 📘 Materi.</li>`
+    : `<li><b>Rutin 30–40 menit sehari.</b> 4 mapel × 10 soal.</li><li><b>Biarkan anak membaca pembahasan</b> setiap selesai menjawab.</li><li><b>Akhir pekan:</b> buka “Ulang soal salah” dan “Rapor”, fokuskan bantuan pada topik terendah.</li><li><b>Level naik bertahap:</b> hari 1–35 dasar, 36–70 menengah, 71–100 HOTS.</li>`;
+  app.innerHTML = `<div class="card"><h2>👪 Panduan Orang Tua</h2><ol>${tips}</ol>
+  <h3>Cakupan materi</h3><p class="mut">Matematika: bilangan bulat, operasi campuran, pangkat & akar, pecahan–desimal–persen, KPK–FPB, perbandingan, kecepatan & debit, lingkaran, volume & luas permukaan (kubus, balok, prisma, tabung), koordinat, statistika.<br>Bahasa Indonesia: ide pokok, simpulan, informasi teks, konjungsi, kalimat efektif, kalimat langsung/tidak langsung, pidato–iklan–slogan, surat resmi, puisi, kata baku, imbuhan.<br>Bahasa Inggris: simple past, future, comparison, health problems, countries, directions, shapes, hobbies, shopping, reading.<br>IPA: tata surya, rotasi–revolusi–gerhana, perkembangbiakan, pubertas, perubahan wujud, pesawat sederhana & gaya, listrik statis, energi, pelestarian lingkungan, pengulangan kelas 4–5.</p></div>`;
+}
+// Tombol back HP/browser kembali ke beranda aplikasi, bukan keluar halaman.
+function keluar() { $("#homeBtn").hidden = false; if (!(history.state && history.state.sub)) try { history.pushState({ sub: 1 }, ""); } catch {} }
+window.addEventListener("popstate", () => { pilihHari = null; clearInterval(timerId); home(); scrollTo(0, 0); });
+$("#homeBtn").onclick = () => { if (history.state && history.state.sub) return history.back(); pilihHari = null; clearInterval(timerId); home(); };
+// ---------- Mode DEMO (untuk rekam layar konten): progres anak terisi otomatis dengan nilai wajar ----------
+// Peluang benar per level: Dasar 80%, Menengah 65%, HOTS 45% (rata-rata kira-kira 65–75, seperti anak kelas 6 pada umumnya).
+function seedDemo() {
+  const r = CORE.rng(2611), PELUANG = [0, 0.8, 0.65, 0.45];
+  const isi = (soal) => { const pil = {}, log = []; soal.forEach((q, i) => { const ok = r() < PELUANG[q.level]; pil[i] = ok ? q.jawab : (q.jawab + 1 + Math.floor(r() * 3)) % 4; log.push({ id: q.id, ok, topik: q.topik, mapel: q.mapel }); }); return { pil, log, benar: log.filter((l) => l.ok).length }; };
+  ST = { nama: "Nama Anak", setuju: 1, hasil: {}, salah: {}, draft: {}, sim: {}, streak: 6, last: today(), demoSeed: 1, ujian: new Date(Date.now() + 12 * 864e5).toISOString().slice(0, 10) };
+  const selesai = { MTK: 5, BIND: 4, BING: 4, IPA: 3 };
+  for (const m in selesai) for (let k = 1; k <= selesai[m]; k++) { const s = soalPaket(m, k), h = isi(s); h.log.forEach((l) => (l.ok ? delete ST.salah[l.id] : (ST.salah[l.id] = 1))); ST.hasil[`P-${m}-${k}`] = { nilai: Math.round((h.benar / s.length) * 100), pil: h.pil, log: h.log, tgl: today() }; }
+  { const s = soalPaket("MTK", 6), h = isi(s.slice(0, 4)); ST.draft["P-MTK-6"] = { pil: h.pil, log: h.log }; } // paket 6 sedang dikerjakan
+  for (const [m, n, menit] of [["MIX", 1, 54], ["MTK", 1, 58]]) { const s = soalSim(m, n), h = isi(s); h.log.forEach((l) => { if (!l.ok) ST.salah[l.id] = 1; }); ST.sim[`${m}-${n}`] = { nilai: Math.round((h.benar / s.length) * 100), pil: h.pil, log: h.log, tgl: today(), menit }; }
+  save();
+}
+if (window.DEMO && !ST.demoSeed) seedDemo();
+home();
+</script>
+</body>
+</html>
