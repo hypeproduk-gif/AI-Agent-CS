@@ -23,6 +23,16 @@ Geser buat lihat contohnya 👉
 Ini 2 dari 50 hook yang tinggal kamu ganti kata di kurungnya.
 Kalau stoknya habis, ada 50 prompt AI buat bikin hook baru sesuai niche-mu.
 
+**Headline per kartu carousel** (semua link ke LP Bank Hook)
+| Kartu | Headline |
+|---|---|
+| B1 | Bengong di baris pertama? |
+| B2 | 1 baris yang menentukan |
+| B3 | Contoh hook #1, tinggal ganti kata |
+| B4 | Contoh hook #2, ada 50 kayak gini |
+| B5 | + 50 prompt AI, stok nggak habis |
+| B6 | Ambil sekarang, Rp29rb |
+
 ## Headline (pilih/rotasi)
 1. Stop bengong di baris pertama
 2. 50 hook Threads, tinggal ganti 1 kata
