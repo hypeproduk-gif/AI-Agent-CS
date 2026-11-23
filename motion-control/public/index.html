@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Motion Control AI</title>
+<style>
+:root{--bg:#0f1115;--card:#1a1d24;--fg:#e8eaf0;--mut:#9aa0ad;--acc:#7c5cff;--bd:#2a2f3a}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--fg)}
+main{max-width:960px;margin:auto;padding:24px 16px}h1{margin:0 0 4px}p.s{color:var(--mut);margin:0 0 24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px}
+label{font-weight:600;display:block;margin-bottom:8px}input,textarea,select{width:100%;background:#0f1115;color:var(--fg);border:1px solid var(--bd);border-radius:8px;padding:8px}
+textarea{min-height:70px}.prev{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.prev img,.prev video{max-height:140px;max-width:100%;border-radius:8px}
+button{margin-top:16px;width:100%;padding:14px;border:0;border-radius:10px;background:var(--acc);color:#fff;font-size:16px;font-weight:700;cursor:pointer}
+button:disabled{opacity:.5}#out{margin-top:20px}#out video,#out img{width:100%;border-radius:12px;margin-top:8px}.err{color:#ff6b6b}
+</style></head><body><main>
+<h1>Motion Control AI</h1><p class="s">Upload video gerakan + foto model + produk → video AI model memakai produk dengan gerakan yang sama.</p>
+<form id="f"><div class="grid">
+<div class="card"><label>1. Video referensi gerakan</label><input type="file" name="video" accept="video/*" required><div class="prev" id="pv"></div></div>
+<div class="card"><label>2. Foto model</label><input type="file" name="model" accept="image/*" required><div class="prev" id="pm"></div></div>
+<div class="card"><label>3. Produk (maks 5, opsional)</label><input type="file" name="products" accept="image/*" multiple><div class="prev" id="pp"></div></div>
+</div>
+<div class="grid" style="margin-top:16px">
+<div class="card"><label>Prompt gambar (opsional)</label><textarea name="imagePrompt" placeholder="Contoh: model memakai hijab dan tas dari foto produk, latar kamar estetik"></textarea></div>
+<div class="card"><label>Prompt video (opsional)</label><textarea name="videoPrompt" placeholder="Contoh: pencahayaan natural, kamera stabil"></textarea>
+<label style="margin-top:8px">Orientasi karakter</label><select name="orientation"><option value="video">Ikuti video (maks 30 dtk)</option><option value="image">Ikuti foto (maks 10 dtk)</option></select>
+<label style="margin-top:8px">Audio</label><select name="keepSound"><option value="true">Pakai audio asli video</option><option value="false">Tanpa audio</option></select></div>
+</div>
+<button id="b">Generate Video</button></form>
+<div id="out"></div>
+</main><script>
+const f=document.getElementById('f'),out=document.getElementById('out'),b=document.getElementById('b');
+function prev(name,box,tag){f[name].onchange=e=>{const p=document.getElementById(box);p.innerHTML='';[...e.target.files].forEach(x=>{const el=document.createElement(tag);el.src=URL.createObjectURL(x);if(tag==='video'){el.controls=true;el.muted=true}p.appendChild(el)})}}
+prev('video','pv','video');prev('model','pm','img');prev('products','pp','img');
+f.onsubmit=async e=>{e.preventDefault();b.disabled=true;out.innerHTML='Mengirim...';
+ try{const r=await fetch('/api/generate',{method:'POST',body:new FormData(f)});const j=await r.json();if(!r.ok)throw new Error(j.error);poll(j.id)}catch(x){out.innerHTML=`<p class=err>${x.message}</p>`;b.disabled=false}};
+async function poll(id){const j=await (await fetch('/api/jobs/'+id)).json();
+ let h=`<p>${j.step||''}</p>`;if(j.composite)h+=`<p>Gambar model + produk:</p><img src="${j.composite}">`;
+ if(j.video)h+=`<p>Video hasil:</p><video src="${j.video}" controls autoplay loop></video><p><a href="${j.video}" download style="color:#7c5cff">Download video</a></p>`;
+ if(j.error)h+=`<p class=err>Error: ${j.error}</p>`;out.innerHTML=h;
+ if(j.status==='running')setTimeout(()=>poll(id),4000);else b.disabled=false}
+</script></body></html>
