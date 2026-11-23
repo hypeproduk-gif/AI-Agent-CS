@@ -1,59 +1,62 @@
 <!doctype html>
 <html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Motion Control Prompt</title>
+<title>Video ke Prompt</title>
 <style>
 :root{--bg:#0f1115;--card:#1a1d24;--fg:#e8eaf0;--mut:#9aa0ad;--acc:#7c5cff;--bd:#2a2f3a}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--fg)}
-main{max-width:960px;margin:auto;padding:24px 16px}h1{margin:0 0 4px}p.s{color:var(--mut);margin:0 0 24px}
+main{max-width:960px;margin:auto;padding:24px 16px}h1{margin:0 0 4px}p.s{color:var(--mut);margin:0 0 20px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px}
 label{font-weight:600;display:block;margin:10px 0 6px}label:first-child{margin-top:0}
 input,textarea,select{width:100%;background:#0f1115;color:var(--fg);border:1px solid var(--bd);border-radius:8px;padding:8px;font:inherit}
-textarea{min-height:64px}.prev{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.prev img,.prev video{max-height:120px;max-width:100%;border-radius:8px}
-button{padding:12px 16px;border:0;border-radius:10px;background:var(--acc);color:#fff;font-weight:700;cursor:pointer}
-#gen{width:100%;margin-top:16px;font-size:16px}.out{margin-top:16px;display:none}
-.out pre{white-space:pre-wrap;background:#0f1115;border:1px solid var(--bd);border-radius:8px;padding:12px;font-size:14px}
-.row{display:flex;justify-content:space-between;align-items:center}.hint{color:var(--mut);font-size:13px}
+textarea{min-height:60px}.prev{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.prev img,.prev video{max-height:120px;max-width:100%;border-radius:8px}
+button{padding:10px 14px;border:0;border-radius:10px;background:var(--acc);color:#fff;font-weight:700;cursor:pointer}button:disabled{opacity:.5}
+#gen{width:100%;margin-top:16px;font-size:16px;padding:14px}#out{margin-top:16px}
+pre{white-space:pre-wrap;background:#0f1115;border:1px solid var(--bd);border-radius:8px;padding:12px;font-size:14px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}.hint{color:var(--mut);font-size:13px}.err{color:#ff6b6b}a{color:#a28bff}
 </style></head><body><main>
-<h1>Motion Control Prompt</h1>
-<p class="s">Isi detail video, model, dan produk → dapat prompt siap pakai (gratis, tanpa API). Pakai di Nano Banana/ChatGPT (gambar) lalu Kling Motion Control / Google Flow (video).</p>
+<h1>Video ke Prompt</h1>
+<p class="s">Upload video (+ foto model & produk opsional) → AI menganalisis gerakan, kamera, latar → keluar prompt gambar & video siap pakai.</p>
+<div class="card" style="margin-bottom:16px"><label>Gemini API key (gratis)</label>
+<input id="key" type="password" placeholder="AIza...">
+<span class="hint">Ambil gratis di <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a>. Disimpan hanya di browser ini.</span></div>
 <div class="grid">
-<div class="card"><label>Video referensi (preview saja)</label><input type="file" id="v" accept="video/*"><div class="prev" id="pv"></div>
-<label>Gerakan di video</label><textarea id="motion" placeholder="Contoh: jalan ke kamera, putar badan, pegang tas, pose ke cermin"></textarea>
-<label>Durasi (detik)</label><input id="dur" type="number" value="8" min="3" max="30"></div>
-<div class="card"><label>Foto model (preview saja)</label><input type="file" id="m" accept="image/*"><div class="prev" id="pm"></div>
-<label>Deskripsi model</label><textarea id="model" placeholder="Contoh: wanita Indonesia 25 tahun, hijab, kulit sawo matang, tinggi semampai"></textarea></div>
-<div class="card"><label>Foto produk (preview saja)</label><input type="file" id="p" accept="image/*" multiple><div class="prev" id="pp"></div>
-<label>Produk</label><textarea id="prod" placeholder="Contoh: tas selempang kulit coklat logo emas; kacamata hitam"></textarea>
-<label>Cara dipakai</label><select id="use"><option value="wearing">Dipakai</option><option value="holding">Dipegang</option><option value="wearing and showing">Dipakai + ditunjukkan</option></select></div>
-<div class="card"><label>Latar</label><select id="bg"><option>minimalist bedroom with soft daylight</option><option>full-length mirror in a bright room</option><option>cozy living room</option><option>clean white studio</option><option>quiet residential street, golden hour</option><option>modern cafe interior</option></select>
-<label>Rasio</label><select id="ar"><option>9:16</option><option>4:5</option><option>1:1</option><option>16:9</option></select>
-<label>Gaya</label><select id="style"><option>UGC smartphone, natural and authentic</option><option>premium fashion editorial</option><option>e-commerce catalog, clean</option></select></div>
+<div class="card"><label>1. Video referensi *</label><input type="file" id="v" accept="video/*"><div class="prev" id="pv"></div><span class="hint">Disarankan &lt; 20MB, 3–30 detik.</span></div>
+<div class="card"><label>2. Foto model (opsional)</label><input type="file" id="m" accept="image/*"><div class="prev" id="pm"></div></div>
+<div class="card"><label>3. Foto produk (opsional)</label><input type="file" id="p" accept="image/*" multiple><div class="prev" id="pp"></div></div>
+<div class="card"><label>Rasio</label><select id="ar"><option>9:16</option><option>4:5</option><option>1:1</option><option>16:9</option></select>
+<label>Catatan tambahan (opsional)</label><textarea id="note" placeholder="Contoh: ganti latar jadi kamar estetik, produk tas harus kelihatan jelas"></textarea></div>
 </div>
-<button id="gen">Buat Prompt</button>
-<div class="out" id="out">
-<div class="card"><div class="row"><b>1. Prompt Gambar (lampirkan foto model + produk)</b><button data-c="o1">Copy</button></div><pre id="o1"></pre><span class="hint">Nano Banana / ChatGPT / Gemini — upload foto model dulu, lalu foto produk.</span></div>
-<div class="card" style="margin-top:12px"><div class="row"><b>2. Prompt Video Motion Control</b><button data-c="o2">Copy</button></div><pre id="o2"></pre><span class="hint">Kling Motion Control: upload gambar hasil langkah 1 + video referensi, tempel prompt ini.</span></div>
-<div class="card" style="margin-top:12px"><div class="row"><b>3. Prompt Video Alternatif (tanpa video referensi)</b><button data-c="o3">Copy</button></div><pre id="o3"></pre><span class="hint">Google Flow / Veo / Kling image-to-video.</span></div>
-</div>
+<button id="gen">Analisis Video → Prompt</button>
+<div id="out"></div>
 </main><script>
 const $=id=>document.getElementById(id);
+try{$('key').value=localStorage.getItem('gk')||''}catch(e){}
 function prev(i,b,t){$(i).onchange=e=>{$(b).innerHTML='';[...e.target.files].forEach(x=>{const el=document.createElement(t);el.src=URL.createObjectURL(x);if(t=='video'){el.controls=1;el.muted=1}$(b).appendChild(el)})}}
 prev('v','pv','video');prev('m','pm','img');prev('p','pp','img');
-$('gen').onclick=()=>{
- const model=$('model').value||'the person in image 1',prod=$('prod').value||'the products in the other images',
- use=$('use').value,bg=$('bg').value,ar=$('ar').value,st=$('style').value,mo=$('motion').value||'the movement in the reference video',d=$('dur').value;
- $('o1').textContent=`Use image 1 as the model reference: ${model}. Keep the exact same face, identity, skin tone, hair/hijab and body proportions.
-Make the model ${use} ${prod} from the other reference images. Preserve every product detail exactly: shape, color, material, texture, stitching, logo and text — no redesign, no extra items.
-Full body, front-facing, standing in a neutral pose with arms slightly away from the body (so motion transfer works cleanly). Setting: ${bg}. Style: ${st}. Photorealistic, natural lighting, sharp focus, realistic fabric folds, aspect ratio ${ar}.
-Avoid: distorted hands, extra fingers, changed face, warped logo, blurry product, text artifacts.`;
- $('o2').textContent=`The character from the image performs exactly the same motion as the reference video: ${mo}. Follow the reference body movement, timing and camera framing precisely.
-Keep the character's face, identity and outfit 100% consistent in every frame. The ${prod} stays locked: same shape, color, logo and details, no morphing, no flicker, moves naturally with the body.
-Setting: ${bg}. Style: ${st}. Realistic cloth physics, natural lighting, stable background, smooth ${d}-second motion, ${ar}.
-Negative: face change, product deformation, logo glitch, extra limbs, flickering, background warping.`;
- $('o3').textContent=`${d}-second ${ar} video, ${st}. ${model} ${use} ${prod}, in a ${bg}.
-Action: ${mo}. Camera: handheld-steady medium-full shot, slight follow movement.
-Keep face, outfit and product identical to the start image throughout; product shape, color and logo locked with no morphing or glitch. Realistic cloth movement, natural light, no on-screen text.`;
- $('out').style.display='block';$('out').scrollIntoView({behavior:'smooth'})};
-document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText($(b.dataset.c).textContent);b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1200)});
+const b64=f=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result.split(',')[1]);fr.readAsDataURL(f)});
+const part=async f=>({inline_data:{mime_type:f.type||'video/mp4',data:await b64(f)}});
+const SECTIONS=[['analysis','Analisis Video'],['image_prompt','Prompt Gambar (Nano Banana / ChatGPT — lampirkan foto model + produk)'],['motion_prompt','Prompt Kling Motion Control (gambar hasil + video referensi)'],['video_prompt','Prompt Google Flow / Veo (image-to-video, tanpa video referensi)']];
+$('gen').onclick=async()=>{
+ const key=$('key').value.trim(),v=$('v').files[0];
+ if(!key||!v){$('out').innerHTML='<p class=err>Isi API key dan upload video dulu.</p>';return}
+ try{localStorage.setItem('gk',key)}catch(e){}
+ $('gen').disabled=true;$('out').innerHTML='<p>Menganalisis video... (10–60 detik)</p>';
+ try{
+  const parts=[{text:'VIDEO REFERENSI:'},await part(v)];
+  if($('m').files[0])parts.push({text:'FOTO MODEL:'},await part($('m').files[0]));
+  for(const f of $('p').files)parts.push({text:'FOTO PRODUK:'},await part(f));
+  parts.push({text:`Kamu ahli prompt AI video untuk konten fashion/produk. Analisis video referensi secara detail: gerakan tubuh per detik, pose, ekspresi, gerakan kamera, framing, durasi, latar, pencahayaan, mood. Jika ada foto model/produk, deskripsikan detailnya (wajah, rambut/hijab, warna, bahan, logo produk). Tujuan: membuat ulang video ini dengan model memakai/memegang produk tersebut.
+Rasio: ${$('ar').value}. Catatan user: ${$('note').value||'-'}.
+Balas HANYA JSON: {"analysis":"ringkasan analisis video dalam Bahasa Indonesia (gerakan per detik, kamera, latar)","image_prompt":"prompt English untuk image edit: model dari foto memakai produk, pose awal sama seperti frame pertama video, identitas & detail produk terkunci, latar, pencahayaan, rasio, negative","motion_prompt":"prompt English untuk Kling Motion Control: ikuti gerakan video referensi, wajah/outfit/produk konsisten, tanpa glitch logo","video_prompt":"prompt English image-to-video lengkap dengan timeline gerakan per detik, kamera, cahaya, tanpa teks di layar"}`});
+  const model='gemini-2.5-flash';
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({contents:[{parts}],generationConfig:{responseMimeType:'application/json'}})});
+  const j=await r.json();if(!r.ok)throw new Error(j.error?.message||r.status);
+  const o=JSON.parse(j.candidates[0].content.parts.map(p=>p.text||'').join(''));
+  $('out').innerHTML=SECTIONS.map(([k,t],i)=>`<div class=card style="margin-top:12px"><div class=row><b>${t}</b><button data-c="o${i}">Copy</button></div><pre id="o${i}"></pre></div>`).join('');
+  SECTIONS.forEach(([k],i)=>$('o'+i).textContent=o[k]||'');
+  document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{navigator.clipboard.writeText($(b.dataset.c).textContent);b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1200)});
+ }catch(e){$('out').innerHTML=`<p class=err>Error: ${e.message}</p>`}
+ $('gen').disabled=false};
 </script></body></html>
