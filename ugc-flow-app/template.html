@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flow UGC Studio</title>
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1d1d1f;--mut:#6b6b70;--line:#e3e1dc;--acc:#d9480f;--accs:#fff1e8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141416;--card:#1e1e21;--ink:#f2f2f2;--mut:#9a9aa0;--line:#2e2e33;--acc:#ff7a3d;--accs:#2a1a12}}
+:root[data-theme="dark"]{--bg:#141416;--card:#1e1e21;--ink:#f2f2f2;--mut:#9a9aa0;--line:#2e2e33;--acc:#ff7a3d;--accs:#2a1a12}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+.wrap{max-width:960px;margin:0 auto;padding:24px 16px 80px}
+h1{font-size:26px;margin:0 0 4px}.sub{color:var(--mut);margin:0 0 24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 12px}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 4px}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+textarea{min-height:70px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.row{grid-template-columns:1fr}}
+.angles{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.ang{border:1px solid var(--line);border-radius:10px;padding:10px;cursor:pointer;background:var(--bg)}
+.ang b{display:block;font-size:14px}.ang span{font-size:12px;color:var(--mut)}
+.ang.on{border-color:var(--acc);background:var(--accs)}
+button{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:12px 18px;font:600 15px system-ui;cursor:pointer}
+button:disabled{opacity:.5;cursor:wait}
+.ghost{background:transparent;color:var(--acc);border:1px solid var(--acc);padding:6px 10px;font-size:13px}
+.hint{font-size:12px;color:var(--mut);margin-top:4px}
+#preview{max-height:120px;border-radius:8px;margin-top:8px;display:none}
+.out h3{display:flex;justify-content:space-between;align-items:center;font-size:15px;margin:0 0 8px}
+pre{white-space:pre-wrap;word-wrap:break-word;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;font:13px/1.55 ui-monospace,Menlo,monospace;margin:0}
+.err{color:#c92a2a;white-space:pre-wrap}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Flow UGC Studio</h1>
+<p class="sub">Foto produk + angle → paket produksi iklan UGC Google Flow lengkap, ditulis Claude.</p>
+
+<div class="card">
+<h2>1. API Key</h2>
+<input id="key" type="password" placeholder="sk-ant-...">
+<div class="hint">Disimpan hanya di browser kamu (localStorage), dikirim langsung ke api.anthropic.com.</div>
+<label>Model</label>
+<select id="model"><option value="claude-sonnet-5-5">Sonnet 5.5 (cepat, hemat)</option><option value="claude-opus-5-5">Opus 5.5 (kualitas tertinggi)</option></select>
+</div>
+
+<div class="card">
+<h2>2. Produk</h2>
+<label>Foto produk (JPG/PNG)</label>
+<input id="img" type="file" accept="image/jpeg,image/png,image/webp">
+<img id="preview" alt="">
+<div class="row">
+<div><label>Nama produk</label><input id="pname" placeholder="mis. Salep Glowing FILO"></div>
+<div><label>Nama file produk di Flow</label><input id="pfile" placeholder="filo-salep.jpg"></div>
+</div>
+<label>Deskripsi satu baris</label><input id="pdesc" placeholder="Salep pencerah wajah, hasil terlihat 2 minggu">
+<label>Kategori</label>
+<select id="cat"><option>suplemen</option><option>kecantikan / skincare</option><option>pakaian / fashion</option><option>makanan / minuman</option><option>peralatan rumah</option><option>produk digital</option><option>lainnya</option></select>
+</div>
+
+<div class="card">
+<h2>3. Angle iklan</h2>
+<div class="angles" id="angles"></div>
+</div>
+
+<div class="card">
+<h2>4. Kreator</h2>
+<div class="row">
+<div><label>Model kreator</label><select id="char"></select></div>
+<div><label>Catatan tambahan (opsional)</label><input id="cnote" placeholder="mis. berhijab, usia 30an"></div>
+</div>
+<label>Catatan brief lain (opsional)</label><textarea id="extra" placeholder="Klaim utama, promo, harga, gaya bahasa brand..."></textarea>
+</div>
+
+<div class="actions"><button id="go">Generate paket produksi</button><span id="status" class="hint"></span></div>
+<div id="err" class="err"></div>
+
+<div id="out"></div>
+<div class="actions" id="dl" style="display:none"><button class="ghost" id="dlbtn">Download semua (.md)</button></div>
+</div>
+
+<script>
+const SKILL = __SKILL__;
+const ANGLES=[["testimonial","Testimonial","5 shot · hasil spesifik"],["car-on-the-go","Mobil / On-the-Go","4 shot · kepraktisan"],["unboxing","Unboxing","3–4 shot · reveal"],["lifestyle-demo","Lifestyle Demo","5 shot · rutinitas"],["problem-solution","Problem-Solution","4 shot · masalah→solusi"],["grwm","GRWM","4 shot · siap-siap"],["day-in-the-life","Day in the Life","5 shot · scene cepat"],["car-talking-head","Car Talking Head","3 shot · curhat"],["reply-to-comment","Reply to Comment","3 shot · jawab FAQ"],["before-after","Before / After","3 shot · hasil visual"],["mirror-try-on","Mirror Try-On","3–4 shot · fashion"],["pov","POV","3 shot · first person"],["storytime","Storytime","4 shot · cerita"],["walk-and-talk","Walk and Talk","3 shot · outdoor"],["podcast-clip","Podcast Clip","3 shot · kamera statis"]];
+const CHARS=["Model 1 — Perempuan Fitness (25–30)","Model 2 — Pria Fitness (25–32)","Model 3 — Ibu Rumah Tangga (30–38)","Model 4 — Mahasiswa (20–24)","Model 5 — Perempuan Profesional (28–36)","Model 6 — Pria Outdoor (27–35)","Model 7 — Kreator Kecantikan (22–29)","Model 8 — Pria Sehari-hari (24–34)","Pilihkan otomatis sesuai produk"];
+const SECTIONS=[["CHARACTER","1. Prompt gambar kreator","character-prompt.md"],["SHOTLIST","2. Shot list + dialogue","shot-list.md"],["FLOW","3. Prompt Flow bertag aset","flow-prompts.md"],["AGENT","4. Briefing Agent mode","agent-instruction.md"],["VOICEOVER","5. Skrip voiceover ElevenLabs","voiceover-script.md"]];
+const $=id=>document.getElementById(id);
+let angle="testimonial",img=null,result={};
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+$("key").value=store.get("ugc_key")||"";
+$("angles").innerHTML=ANGLES.map(a=>`<div class="ang${a[0]==angle?" on":""}" data-a="${a[0]}"><b>${a[1]}</b><span>${a[2]}</span></div>`).join("");
+$("angles").onclick=e=>{const d=e.target.closest(".ang");if(!d)return;angle=d.dataset.a;document.querySelectorAll(".ang").forEach(x=>x.classList.toggle("on",x===d))};
+$("char").innerHTML=CHARS.map((c,i)=>`<option ${i==8?"selected":""}>${c}</option>`).join("");
+$("img").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{img={type:f.type,data:r.result.split(",")[1]};$("preview").src=r.result;$("preview").style.display="block";if(!$("pfile").value)$("pfile").value=f.name.toLowerCase().replace(/\s+/g,"-")};r.readAsDataURL(f)};
+
+const SYSTEM=`Kamu adalah produser iklan UGC untuk Google Flow. Ikuti SEMUA aturan di dokumen skill berikut secara ketat (skill utama + tiga referensinya).
+
+${SKILL}
+
+FORMAT OUTPUT WAJIB: tulis tepat lima bagian, masing-masing diawali baris penanda persis seperti ini (tanpa teks lain sebelum penanda pertama):
+=== CHARACTER ===
+=== SHOTLIST ===
+=== FLOW ===
+=== AGENT ===
+=== VOICEOVER ===
+Isi tiap bagian berupa teks polos siap copy-paste (boleh baris baru, hindari tabel markdown). Jumlah shot mengikuti struktur angle yang dipilih (bukan selalu 5). Durasi tiap shot dan timing voiceover mengikuti angle. Selalu gunakan creator.png dan nama file produk yang diberikan persis. Patuhi batas kata dialogue (~3 kata/detik), nama produk tidak muncul di Shot 1, CTA gaya UGC, modifier gaya wajib (kecuali Podcast Clip pakai kamera statis), dan solusi kategori rawan halusinasi.`;
+
+$("go").onclick=async()=>{
+  const key=$("key").value.trim();$("err").textContent="";
+  if(!key)return $("err").textContent="Isi API key dulu.";
+  if(!$("pname").value.trim())return $("err").textContent="Isi nama produk.";
+  store.set("ugc_key",key);
+  const pfile=$("pfile").value.trim()||"produk.jpg";
+  const brief=`Produk: ${$("pname").value}\nDeskripsi: ${$("pdesc").value||"-"}\nKategori: ${$("cat").value}\nNama file produk di Flow: ${pfile}\nAngle: ${angle}\nModel kreator: ${$("char").value}${$("cnote").value?" — "+$("cnote").value:""}\nCatatan brief: ${$("extra").value||"-"}\n\nBuat paket produksi lengkap.${img?" Foto produk terlampir — perhatikan warna, bentuk kemasan, dan label untuk deskriptor visual.":""}`;
+  const content=[];if(img)content.push({type:"image",source:{type:"base64",media_type:img.type,data:img.data}});content.push({type:"text",text:brief});
+  $("go").disabled=true;$("status").textContent="Menulis paket produksi… (±30–60 detik)";$("out").innerHTML="";$("dl").style.display="none";
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:$("model").value,max_tokens:8000,system:SYSTEM,messages:[{role:"user",content}]})});
+    const j=await res.json();
+    if(!res.ok)throw new Error(j.error?.message||res.status);
+    render(j.content.filter(c=>c.type==="text").map(c=>c.text).join(""));
+    $("status").textContent="Selesai.";
+  }catch(e){$("err").textContent="Gagal: "+e.message;$("status").textContent=""}
+  $("go").disabled=false;
+};
+
+function render(txt){
+  result={};
+  SECTIONS.forEach(([k],i)=>{const s=txt.indexOf(`=== ${k} ===`);if(s<0)return;const n=SECTIONS.slice(i+1).map(([x])=>txt.indexOf(`=== ${x} ===`)).filter(x=>x>s);result[k]=txt.slice(s+k.length+8,n.length?Math.min(...n):undefined).trim()});
+  if(!Object.keys(result).length)result.CHARACTER=txt;
+  $("out").innerHTML=SECTIONS.filter(([k])=>result[k]).map(([k,t])=>`<div class="card out"><h3>${t}<button class="ghost" data-k="${k}">Copy</button></h3><pre></pre></div>`).join("");
+  $("out").querySelectorAll(".out").forEach((el,i)=>{const k=el.querySelector("button").dataset.k;el.querySelector("pre").textContent=result[k]});
+  $("dl").style.display="flex";
+}
+$("out").onclick=e=>{const b=e.target.closest("button[data-k]");if(!b)return;navigator.clipboard.writeText(result[b.dataset.k]).then(()=>{b.textContent="Tersalin";setTimeout(()=>b.textContent="Copy",1200)})};
+$("dlbtn").onclick=()=>{const md=SECTIONS.filter(([k])=>result[k]).map(([k,t,f])=>`# ${t} (${f})\n\n${result[k]}\n`).join("\n---\n\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([md],{type:"text/markdown"}));a.download=(($("pname").value||"ugc").toLowerCase().replace(/\W+/g,"-"))+"-production-package.md";a.click()};
+</script>
+</body>
+</html>
