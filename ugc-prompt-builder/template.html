@@ -1,0 +1,171 @@
+<title>UGC Prompt Builder</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{--bg:#f5f4f0;--card:#fff;--ink:#1c1b1a;--mut:#6d6a64;--line:#e2dfd8;--acc:#c2410c;--accs:#fdeee4;--good:#2f7d4f;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151414;--card:#1f1e1d;--ink:#f1efec;--mut:#a29e97;--line:#33312e;--acc:#fb7a3c;--accs:#2c1b12;--good:#5fcf8b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#151414;--card:#1f1e1d;--ink:#f1efec;--mut:#a29e97;--line:#33312e;--acc:#fb7a3c;--accs:#2c1b12;--good:#5fcf8b;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:920px;margin:0 auto;padding-block:28px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-size:26px;margin:0 0 4px;text-wrap:balance}.sub{color:var(--mut);margin:0 0 20px;max-width:60ch}
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 22px;padding:0;list-style:none;font-size:13px;color:var(--mut)}
+.steps li{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+.steps b{color:var(--acc)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 12px}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 4px}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,.ang:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.row>*{min-width:0}
+@media(max-width:640px){.row{grid-template-columns:1fr}}
+.angles{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:8px}
+.ang{border:1px solid var(--line);border-radius:10px;padding:10px;cursor:pointer;background:var(--bg);text-align:left;color:var(--ink);font:inherit}
+.ang b{display:block;font-size:14px}.ang span{font-size:12px;color:var(--mut)}
+.ang[aria-pressed="true"]{border-color:var(--acc);background:var(--accs)}
+.hint{font-size:12px;color:var(--mut);margin-top:4px}
+button.main{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:12px 18px;font:600 15px system-ui;cursor:pointer}
+.ghost{display:inline-block;background:transparent;color:var(--acc);border:1px solid var(--acc);border-radius:10px;padding:8px 12px;font:600 13px system-ui;cursor:pointer;text-decoration:none}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#out{min-height:260px;font:12.5px/1.5 ui-monospace,Menlo,monospace}
+.ok{color:var(--good);font-size:13px}
+.err{color:#c92a2a;font-size:14px;margin:8px 0}
+ol.how{margin:8px 0 0;padding-left:20px;color:var(--mut);font-size:14px}ol.how li{margin:3px 0}
+</style>
+
+<div class="wrap">
+<h1>UGC Prompt Builder</h1>
+<p class="sub">Isi data produk, pilih angle dan kreator, lalu salin satu prompt lengkap ke ChatGPT, Gemini, atau Claude. AI akan menulis paket produksi iklan UGC untuk Google Flow.</p>
+<ul class="steps"><li><b>1</b> Isi brief</li><li><b>2</b> Salin prompt</li><li><b>3</b> Tempel di AI + lampirkan foto produk</li><li><b>4</b> Pakai hasilnya di Flow</li></ul>
+
+<div class="card">
+<h2>Produk</h2>
+<div class="row">
+<div><label for="pname">Nama produk</label><input id="pname" placeholder="mis. Kacamata Anti Radiasi"></div>
+<div><label for="pfile">Nama file foto produk di Flow</label><input id="pfile" placeholder="kacamata-anti-radiasi.jpg"></div>
+</div>
+<label for="pdesc">Deskripsi singkat</label><input id="pdesc" placeholder="Frame transparan coklat, lensa filter blue light">
+<label for="pvis">Tampilan produk (warna, bentuk, bahan)</label><input id="pvis" placeholder="Frame transparan coklat keabuan, bulat-persegi, engsel logam perak">
+<div class="hint">Penting kalau AI yang kamu pakai tidak bisa melihat foto.</div>
+<label for="cat">Kategori</label>
+<select id="cat"><option>suplemen</option><option>kecantikan / skincare</option><option>pakaian / fashion</option><option>aksesori</option><option>makanan / minuman</option><option>peralatan rumah</option><option>gadget</option><option>lainnya</option></select>
+</div>
+
+<div class="card">
+<h2>Angle iklan</h2>
+<div class="angles" id="angles"></div>
+</div>
+
+<div class="card">
+<h2>Kreator dan format</h2>
+<div class="row">
+<div><label for="char">Model kreator</label><select id="char"></select></div>
+<div><label for="cnote">Catatan kreator (opsional)</label><input id="cnote" placeholder="mis. berhijab, usia 30an"></div>
+</div>
+<div class="row">
+<div><label for="dur">Durasi per shot</label><select id="dur"><option value="8" selected>8 detik</option><option value="10">10 detik</option></select></div>
+<div><label for="shots">Jumlah shot</label><select id="shots"><option value="asli" selected>Ikuti struktur angle</option><option value="3">Ringkas jadi 3 shot</option></select></div>
+</div>
+<label for="extra">Catatan brief lain (opsional)</label><textarea id="extra" rows="2" placeholder="Klaim utama, promo, gaya bahasa brand..."></textarea>
+</div>
+
+<div class="actions"><button class="main" id="go">Buat prompt</button></div>
+<div class="err" id="err" role="alert"></div>
+
+<div class="card" id="result" hidden>
+<h2>Prompt siap ditempel</h2>
+<div class="actions" style="margin-bottom:10px">
+<button class="ghost" id="copy">Salin prompt</button>
+<a class="ghost" href="https://chatgpt.com/" target="_blank" rel="noopener">Buka ChatGPT</a>
+<a class="ghost" href="https://gemini.google.com/" target="_blank" rel="noopener">Buka Gemini</a>
+<a class="ghost" href="https://claude.ai/new" target="_blank" rel="noopener">Buka Claude</a>
+<span class="ok" id="copied"></span>
+</div>
+<textarea id="out" readonly></textarea>
+<ol class="how">
+<li>Buka chat baru di ChatGPT, Gemini, atau Claude.</li>
+<li>Lampirkan foto produk, lalu tempel prompt ini dan kirim.</li>
+<li>Kamu akan dapat 5 bagian: prompt gambar kreator, shot list, prompt Flow per shot, briefing Agent mode, dan skrip voiceover.</li>
+<li>Minta revisi langsung di chat itu, misalnya "ganti dialog shot 2 jadi lebih santai".</li>
+</ol>
+</div>
+</div>
+
+<script>
+const D = __DATA__;
+const ANGLES=[["Testimonial","5 shot · hasil spesifik"],["Mobil / On-the-Go","4 shot · kepraktisan"],["Unboxing","3–4 shot · reveal"],["Lifestyle Demo","5 shot · rutinitas"],["Problem-Solution","4 shot · masalah→solusi"],["GRWM","4 shot · siap-siap"],["Day in the Life","5 shot · scene cepat"],["Car Talking Head","3 shot · curhat"],["Reply to Comment","3 shot · jawab FAQ"],["Before / After","3 shot · hasil visual"],["Mirror Try-On","3–4 shot · fashion"],["POV","3 shot · first person"],["Storytime","4 shot · cerita"],["Walk and Talk","3 shot · outdoor"],["Podcast Clip","3 shot · kamera statis"]];
+const CHARS=["A — Anak Kos Aktif (P, 21–24)","B — Ibu Muda Praktis (P, 29–36)","C — Hijaber Kantoran (P, 25–32)","D — Beauty Enthusiast (P, 22–28)","E — Mas Gym (L, 24–32)","F — Bapak Muda Rumahan (L, 28–38)","G — Anak Motor / Outdoor (L, 23–32)","H — Profesional Muda (P/L, 27–35)"];
+const $=id=>document.getElementById(id);
+let angle=9;
+$("angles").innerHTML=ANGLES.map((a,i)=>`<button type="button" class="ang" data-i="${i}" aria-pressed="${i===angle}"><b>${a[0]}</b><span>${a[1]}</span></button>`).join("");
+$("angles").onclick=e=>{const b=e.target.closest(".ang");if(!b)return;angle=+b.dataset.i;document.querySelectorAll(".ang").forEach(x=>x.setAttribute("aria-pressed",x===b))};
+$("char").innerHTML=`<option value="auto" selected>Pilihkan otomatis sesuai produk</option>`+CHARS.map((c,i)=>`<option value="${i}">${c}</option>`).join("");
+
+function build(){
+  const v=id=>$(id).value.trim();
+  const ci=$("char").value, three=$("shots").value==="3", dur=$("dur").value;
+  const chars=ci==="auto"?D.chars.join("\n\n"):D.chars[+ci];
+  const pfile=v("pfile")||"produk.jpg";
+  return `Kamu adalah produser iklan video UGC untuk Google Flow. Ikuti semua aturan di panduan berikut dengan ketat, lalu buat paket produksi untuk brief di bagian paling bawah.
+
+==================== PANDUAN ====================
+
+${D.main}
+
+${D.prompting}
+
+# Angle yang dipakai
+
+${D.angles[angle]}
+
+${D.chHead.trim()}
+
+${chars}
+
+${D.chAdj}
+
+==================== ATURAN TAMBAHAN ====================
+
+- Bagian 1 (prompt gambar kreator): tulis SATU prompt, diawali "Gunakan wajah dari model.png sebagai referensi, jaga wajahnya identik." Hasilnya akan disimpan sebagai creator.png. Jangan sebut model.png di bagian lain.
+- Semua shot berdurasi ${dur} detik. Batas dialog ±${dur*3} kata per shot. Timing voiceover dihitung dari durasi ini.
+- ${three?"Padatkan jadi tepat 3 shot: Shot 1 hook + masalah, Shot 2 produk masuk, Shot 3 hasil + CTA. Pertahankan ciri visual angle.":"Jumlah shot mengikuti struktur angle di atas."}
+- Gunakan nama file creator.png dan ${pfile} persis seperti ini di semua prompt Flow dan briefing Agent.
+- ${ci==="auto"?"Pilih satu arketipe kreator yang paling cocok dengan produk, dan sebutkan alasannya dalam satu kalimat.":"Pakai arketipe kreator di atas, sesuaikan pakaian dan lokasi dengan angle."}
+
+==================== FORMAT JAWABAN ====================
+
+Jawab dalam bahasa Indonesia dengan 5 bagian berjudul:
+1. Prompt Gambar Kreator
+2. Shot List
+3. Prompt Flow per Shot
+4. Briefing Agent Mode
+5. Skrip Voiceover
+
+Taruh setiap prompt yang akan disalin (prompt gambar, tiap prompt Flow, briefing Agent, skrip voiceover) di dalam code block terpisah supaya mudah disalin. Jangan menambahkan penjelasan panjang di luar 5 bagian itu.
+
+==================== BRIEF ====================
+
+Produk: ${v("pname")}
+Deskripsi: ${v("pdesc")||"-"}
+Tampilan produk: ${v("pvis")||"lihat foto terlampir"}
+Kategori: ${$("cat").value}
+Nama file produk di Flow: ${pfile}
+Angle: ${ANGLES[angle][0]}
+Kreator: ${ci==="auto"?"pilihkan otomatis":CHARS[+ci]}${v("cnote")?" — "+v("cnote"):""}
+Durasi per shot: ${dur} detik
+Jumlah shot: ${three?"ringkas jadi 3 shot":"ikuti struktur angle"}
+Catatan: ${v("extra")||"-"}
+
+Foto produk terlampir di pesan ini. Perhatikan warna, bentuk, dan bahannya untuk deskripsi visual di setiap prompt.`;
+}
+
+$("go").onclick=()=>{
+  $("err").textContent="";
+  if(!$("pname").value.trim()){$("err").textContent="Isi nama produk dulu.";$("pname").focus();return}
+  $("out").value=build();$("result").hidden=false;$("copied").textContent="";
+  $("result").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+};
+$("copy").onclick=()=>{
+  const t=$("out");
+  navigator.clipboard.writeText(t.value).then(()=>{$("copied").textContent="Prompt tersalin"}).catch(()=>{t.focus();t.select();$("copied").textContent="Tekan Ctrl+C / Cmd+C untuk menyalin"});
+};
+</script>
