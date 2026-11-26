@@ -1,115 +1,78 @@
----
-name: flow-ugc-ads-characters
-description: Delapan template prompt gambar model kreator UGC orang Indonesia yang sudah dioptimalkan untuk realisme di ChatGPT Images 2.0 dan Nano Banana Pro. Mencakup model fitness, ibu rumah tangga, mahasiswa, profesional, outdoor, kecantikan, dan pria sehari-hari, beserta panduan cara menyesuaikannya.
----
+# Bank Kreator
 
-# Model Karakter Kreator
+Delapan arketipe kreator Indonesia sebagai titik awal prompt gambar. Semua prompt diawali referensi `model.png`; hasilnya disimpan sebagai `creator.png`. Ganti pakaian dan lokasi sesuai produk dan angle.
 
-Delapan pre-built prompt gambar karakter kreator UGC orang Indonesia, dioptimalkan untuk realisme. Masing-masing sudah disesuaikan untuk ChatGPT Images 2.0 dan Nano Banana Pro. Salin dan tempel langsung — atau modifikasi outfit/lingkungan agar sesuai dengan konteks brand kamu.
+## Ciri yang membuat gambar terasa asli
 
----
-
-## Model 1 — Perempuan Fitness (25–30)
-
-Terbaik untuk: suplemen, pakaian olahraga, protein, produk wellness, DTC yang berkaitan dengan kesehatan
-
-```
-Foto iPhone candid seorang perempuan Indonesia berusia 27 tahun, kulit sawo matang, rambut hitam panjang sedang diikat ponytail dengan flyaways alami, bintik-bintik ringan di hidung dan pipi, makeup minimal — hanya maskara, mengenakan tank top olahraga lavender yang pas dan legging senada. Berdiri di dapur rumah bergaya Indonesia yang cerah, sudut sedikit rendah seolah dia yang memegang ponselnya sendiri. Cahaya jendela pagi yang lembut dari kiri, eksposur sedikit tidak merata di sisi kanan wajahnya. Tekstur kulit nyata dan tidak diretuh dengan pori-pori terlihat. Helai rambut alami lepas di sekitar wajah. Tanpa pencahayaan studio. Realisme gaya editorial.
-```
+Setiap prompt kreator wajib memuat:
+- **"Foto iPhone candid"** — sinyal realisme paling kuat.
+- **Identitas Indonesia** — kulit sawo matang / kuning langsat, rambut hitam atau cokelat gelap.
+- **Minimal satu ketidakrapian** — anak rambut, kerutan kaus, bekas lipatan, mata sedikit sembab.
+- **Lokasi nyata dengan benda di latar** — bukan latar polos.
+- **Cahaya dengan arah dan cacat kecil** — satu sisi wajah lebih gelap, sedikit overexposed.
+- **"Tekstur kulit asli, tidak diretus. Tanpa lampu studio."**
 
 ---
 
-## Model 2 — Pria Fitness (25–32)
-
-Terbaik untuk: suplemen, protein, pre-workout, perlengkapan gym, wellness pria
-
+## A. Anak Kos Aktif — perempuan 21–24
+Cocok: camilan, minuman, skincare terjangkau, fashion trending, alat belajar.
 ```
-Foto iPhone candid seorang pria Indonesia berusia 28 tahun, kulit sawo matang, rambut hitam pendek sedikit basah, janggut tipis 2–3 hari, tanpa makeup, mengenakan kaos olahraga abu-abu yang pas, sedikit berkeringat di kerah. Berdiri di gym dengan peralatan terlihat dan sedikit blur di latar belakang. Diambil dari sedikit di bawah level mata seolah dia yang memegang ponsel. Cahaya fluoresen gym overhead, sedikit keras di bahu, lebih lembut di wajah. Tekstur kulit nyata, pori-pori terlihat, sedikit kemerahan setelah olahraga. Framing tidak sempurna yang natural, sedikit off-center. Tanpa pencahayaan studio.
+Gunakan wajah dari model.png sebagai referensi, jaga wajahnya identik. Foto iPhone candid, perempuan Indonesia 22 tahun, kulit sawo matang, rambut hitam sebahu dengan anak rambut berdiri di ubun-ubun, tanpa makeup selain lip tint tipis, memakai kaus oversized abu-abu dengan sablon pudar dan celana kulot hitam. Duduk bersila di kasur kamar kos, rak kecil berisi buku dan botol skincare di belakangnya. Diambil dari atas sedikit seolah HP dipegang sendiri. Cahaya sore dari jendela kecil di kanan, sisi kiri wajah agak gelap. Tekstur kulit asli, pori terlihat, tidak diretus. Tanpa lampu studio.
 ```
+
+## B. Ibu Muda Praktis — perempuan 29–36
+Cocok: peralatan dapur, kebersihan, produk anak, makanan praktis, organizer.
+```
+Gunakan wajah dari model.png sebagai referensi, jaga wajahnya identik. Foto iPhone candid, perempuan Indonesia 33 tahun, kulit kuning langsat, rambut hitam dicepol asal dengan beberapa helai lepas, wajah tanpa makeup dan sedikit lelah, memakai daster katun motif bunga kecil warna biru pudar. Berdiri di dapur rumah, rak piring dan termos di meja belakang. Diambil setinggi mata, agak miring. Cahaya pagi dari jendela dapur di kiri, sedikit terlalu terang di pipi. Tekstur kulit asli, tidak diretus. Tanpa lampu studio.
+```
+
+## C. Hijaber Kantoran — perempuan 25–32
+Cocok: skincare, kosmetik, fashion muslim, aksesori kerja, kacamata.
+```
+Gunakan wajah dari model.png sebagai referensi, jaga wajahnya identik. Foto iPhone candid, perempuan Indonesia 27 tahun, kulit sawo matang, memakai hijab pashmina warna mocca dengan lipatan yang tidak simetris, makeup tipis — bedak, alis, lip cream nude, memakai kemeja linen putih. Duduk di meja kerja rumah dengan laptop dan cangkir kopi di samping. Diambil dari depan sedikit bawah, subjek agak ke kiri frame. Cahaya jendela siang dari kanan, layar laptop memberi pantulan kebiruan di pipi. Tekstur kulit asli, tidak diretus. Tanpa lampu studio.
+```
+
+## D. Beauty Enthusiast — perempuan 22–28
+Cocok: makeup, skincare, parfum, haircare, aksesori kecantikan.
+```
+Gunakan wajah dari model.png sebagai referensi, jaga wajahnya identik. Foto iPhone candid, perempuan Indonesia 24 tahun, kulit kuning langsat, rambut cokelat gelap bergelombang dengan sedikit frizz, makeup lengkap tapi natural — base tipis, blush peach, maskara, bibir glossy, memakai tank top rib putih. Berdiri di depan cermin wastafel, botol skincare berjajar di rak. Diambil sedikit dari atas seperti selfie cermin. Lampu kuning di atas cermin, bayangan halus di bawah dagu. Makeup terlihat sebagai makeup, kulit asli tidak dihaluskan. Tanpa lampu studio.
+```
+
+## E. Mas Gym — laki-laki 24–32
+Cocok: suplemen, protein, perlengkapan olahraga, perawatan pria.
+```
+Gunakan wajah dari model.png sebagai referensi, jaga wajahnya identik. Foto iPhone candid, laki-laki Indonesia 27 tahun, kulit sawo matang, rambut hitam pendek sedikit basah keringat, kumis dan janggut tipis tidak rata, memakai kaus olahraga hitam dengan noda keringat di dada. Berdiri di gym, rak dumbel buram di belakang. Diambil dari bawah setinggi dada. Lampu neon plafon agak keras di dahi dan bahu. Tekstur kulit asli, wajah sedikit memerah. Tanpa lampu studio.
+```
+
+## F. Bapak Muda Rumahan — laki-laki 28–38
+Cocok: gadget, peralatan rumah, makanan & minuman, otomotif ringan, produk keluarga.
+```
+Gunakan wajah dari model.png sebagai referensi, jaga wajahnya identik. Foto iPhone candid, laki-laki Indonesia 32 tahun, kulit sawo matang, rambut pendek rapi sedikit berantakan di depan, bercukur bersih, memakai kaus polo navy yang agak kusut. Duduk di sofa ruang tamu, meja kayu dengan gelas teh dan remote TV di depan. Diambil setinggi mata, subjek agak ke kanan. Lampu ruangan hangat dari kiri dan cahaya jendela redup dari kanan. Tekstur kulit asli. Tanpa lampu studio. Ekspresi biasa, tidak berpose.
+```
+
+## G. Anak Motor / Outdoor — laki-laki 23–32
+Cocok: perlengkapan outdoor, jaket, sepatu, minuman energi, produk perjalanan.
+```
+Gunakan wajah dari model.png sebagai referensi, jaga wajahnya identik. Foto iPhone candid, laki-laki Indonesia 26 tahun, kulit sawo matang agak gosong matahari, rambut hitam acak-acakan bekas helm, memakai jaket parasut hijau army di atas kaus hitam. Berdiri di pinggir jalan perbukitan, motor dan pepohonan buram di belakang. Diambil setinggi mata dengan tangan terentang. Cahaya mendung merata, sedikit kusam. Tekstur kulit asli, ada kilap keringat di dahi. Tanpa lampu studio.
+```
+
+## H. Profesional Muda — perempuan / laki-laki 27–35
+Cocok: produk premium, wellness, produktivitas, podcast clip, produk edukasi.
+```
+Gunakan wajah dari model.png sebagai referensi, jaga wajahnya identik. Foto iPhone candid, perempuan Indonesia 30 tahun, kulit kuning langsat, rambut hitam diikat rendah dengan anak rambut di pelipis, makeup natural, memakai sweater rajut krem. Duduk di meja dengan mikrofon podcast kecil dan rak buku buram di belakang. Diambil setinggi mata, sedikit off-center. Cahaya jendela dari kanan dan ring light lemah dari depan. Tekstur kulit asli, tidak diretus. Tanpa lampu studio. Ekspresi tenang.
+```
+Ganti menjadi laki-laki dengan kemeja oxford biru muda bila produk lebih cocok untuk audiens pria.
 
 ---
 
-## Model 3 — Ibu Rumah Tangga (30–38)
+## Menyesuaikan dengan angle
 
-Terbaik untuk: peralatan rumah, organisasi, wellness keluarga, makanan/minuman praktis, produk anak, produk yang menghemat waktu
-
-```
-Foto iPhone candid seorang perempuan Indonesia berusia 34 tahun, kulit sawo matang, rambut hitam sepanjang bahu dalam half-up kasual, tanpa makeup kecuali lip balm ringan, anting stud emas kecil, mengenakan kemeja katun santai di atas tank top putih. Berdiri di dapur rumah dengan piring dan cangkir kopi terlihat di meja di belakangnya. Diambil di level mata, sedikit off-center. Cahaya overhead dapur pagi yang hangat, sedikit lebih lembut dari jendela di sebelah kanan. Tekstur kulit nyata, sedikit mata lelah. Flyaways alami. Tanpa pencahayaan studio. Energi candid yang tidak dipose.
-```
-
----
-
-## Model 4 — Mahasiswa (20–24)
-
-Terbaik untuk: minuman energi, camilan, alat produktivitas pelajar, fashion, DTC terjangkau, apapun yang sedang trending di TikTok
-
-```
-Foto iPhone candid seorang perempuan Indonesia berusia 22 tahun, kulit sawo matang, rambut hitam panjang dengan gelombang alami dan flyaways, tanpa makeup, tindik hidung kecil, mengenakan crewneck grafis oversized dan jeans high-waist. Duduk di kursi pengemudi mobil, lingkungan perumahan khas Indonesia terlihat melalui jendela di belakangnya. Diambil sedikit di atas level mata seolah memegang ponsel ke atas. Cahaya sore mendung yang lembut melalui kaca depan, sedikit dingin. Tekstur kulit nyata, bintik-bintik ringan di batang hidung. Rambut berantakan, tidak ditata. Tanpa pencahayaan studio. Energi candid, sedikit bosan.
-```
-
----
-
-## Model 5 — Perempuan Profesional (28–36)
-
-Terbaik untuk: kecantikan, perawatan kulit, wellness profesional, alat produktivitas, DTC premium
-
-```
-Foto iPhone candid seorang perempuan Indonesia berusia 31 tahun, kulit sawo matang, rambut hitam diikat longgar dengan helai membingkai wajah, makeup natural — foundation ringan, bibir netral, hanya brow gel, mengenakan crewneck krem lembut yang pas. Berdiri di home office atau ruang tamu apartemen cerah, rak buku sedikit blur di latar belakang. Diambil di level mata, sedikit off-center. Cahaya jendela natural yang lembut dari kanan. Tekstur kulit nyata. Rambut sedikit tidak sempurna — bukan baru dari salon. Tanpa pencahayaan studio. Energi tenang dan terkontrol.
-```
-
----
-
-## Model 6 — Pria Outdoor (27–35)
-
-Terbaik untuk: perlengkapan outdoor, suplemen, protein, produk petualangan/perjalanan, DTC yang berdekatan dengan pakaian kerja
-
-```
-Foto iPhone candid seorang pria Indonesia berusia 30 tahun, kulit sawo matang, rambut hitam sedikit berantakan karena angin, janggut tipis 3 hari, mengenakan jaket lapangan hijau olive lusuh di atas kaos putih. Berdiri di luar ruangan dengan pepohonan atau perbukitan tropis terlihat dan sedikit blur di belakangnya. Diambil di level mata, sedikit off-center. Cahaya outdoor natural mendung — lembut dan merata, tanpa bayangan. Tekstur kulit nyata, sedikit terpapar sinar matahari. Rambut berantakan karena angin. Tanpa pencahayaan studio. Energi santai dan suka alam.
-```
-
----
-
-## Model 7 — Kreator Kecantikan (22–29)
-
-Terbaik untuk: makeup, perawatan kulit, perawatan rambut, parfum, aksesori kecantikan, apapun di kategori kecantikan/perawatan diri
-
-```
-Foto iPhone candid seorang perempuan Indonesia berusia 25 tahun, kulit sawo matang, rambut hitam panjang bergelombang, makeup penuh tapi natural — foundation senada kulit, blush lembut, maskara, bibir glossy, mengenakan tank top putih ribbed yang pas. Berdiri di kamar mandi cerah dengan ubin putih dan tanaman hias di rak di belakangnya, sedikit blur. Diambil sedikit di atas level mata seolah memegang ponsel di depan cermin wastafel. Cahaya kamar mandi natural — hangat, sedikit overhead. Tekstur kulit nyata — makeup terlihat sebagai makeup, bukan yang dihaluskan. Sedikit flyaways rambut. Tanpa pencahayaan studio. Energi hangat dan ramah.
-```
-
----
-
-## Model 8 — Pria Sehari-hari (24–34)
-
-Terbaik untuk: produk rumah tangga, makanan/minuman, teknologi konsumen, apapun yang membutuhkan sinyal kepercayaan "orang biasa" — sebagian besar kategori DTC mendapat manfaat dari model ini
-
-```
-Foto iPhone candid seorang pria Indonesia berusia 29 tahun, kulit sawo matang, rambut pendek hitam, bersih tanpa janggut, tanpa fitur mencolok, mengenakan sweatshirt crewneck biru navy polos. Duduk di sofa di ruang tamu dengan remote TV dan botol air di meja kopi sedikit blur di belakangnya. Diambil di level mata, sedikit off-center. Cahaya lampu overhead yang hangat dari kiri, cahaya ambient yang lebih lembut dari jendela di kanan. Tekstur kulit nyata. Tanpa pencahayaan studio. Energi netral, santai, sepenuhnya tidak performatif — terlihat seperti seseorang yang mengambil ponselnya untuk membuat video singkat.
-```
-
----
-
-## Cara menyesuaikan model ini
-
-Setiap model adalah titik awal. Modifikasi:
-
-- **Outfit** — sesuaikan dengan estetika brand. Olahraga → kasual → profesional → fashion
-- **Lingkungan** — sesuaikan dengan konteks produk. Dapur / mobil / gym / kamar mandi / ruang tamu / luar ruangan
-- **Rentang usia** — sesuaikan untuk cocok dengan ICP kamu
-- **Rambut/fitur** — sesuaikan untuk keberagaman demografis Indonesia (warna kulit, bentuk wajah, tekstur rambut bisa bervariasi antar daerah)
-
-**Lingkungan tambahan untuk angle-angle baru:**
-- **Podcast Clip** — tambahkan setup meja duduk dengan mic terlihat di frame dan ring light atau cahaya jendela dari samping. Model Profesional atau Pria Sehari-hari paling cocok untuk tone conversational ini.
-- **Mirror Try-On** — gunakan lingkungan kamar tidur dengan cermin full-body terlihat, karakter memegang HP dengan tangan terentang di refleksi.
-- **Day in the Life** — karena angle ini berpindah lingkungan beberapa kali dalam satu video, pastikan deskripsi wajah/rambut/outfit karakter di prompt tetap identik di setiap shot walau lingkungan berbeda, supaya konsistensi karakter terjaga antar scene.
-- **Walk and Talk** — gunakan model dengan lingkungan luar ruangan (Model 6 Pria Outdoor cocok, atau modifikasi model lain ke setting trotoar/taman).
-
-Selalu pertahankan:
-- "Foto iPhone candid" dalam prompt
-- "Indonesia" dan deskriptor fisik yang sesuai (kulit sawo matang, rambut hitam/coklat gelap) sebagai penanda utama identitas model
-- Ketidaksempurnaan spesifik (flyaways, bintik-bintik, pencahayaan sedikit tidak sempurna)
-- Lingkungan nyata dalam frame bahkan untuk gambar referensi karakter
-- "Tanpa pencahayaan studio"
-- "Tekstur kulit nyata" atau "Tekstur kulit nyata, tidak diretuh"
-
-Ini adalah sinyal yang memisahkan gambar kreator UGC dari foto stok atau gambar model AI.
+| Angle | Penyesuaian lokasi di prompt kreator |
+|-------|--------------------------------------|
+| Mobil / Car Talking Head | Duduk di kursi pengemudi, sabuk pengaman, perumahan terlihat lewat jendela |
+| GRWM | Depan cermin kamar mandi / meja rias |
+| Mirror Try-On | Cermin berdiri di kamar, HP di tangan terlihat di pantulan |
+| Walk and Talk | Trotoar atau taman, siang hari |
+| Podcast Clip | Meja dengan mikrofon terlihat |
+| Before / After malam | Meja kerja kamar, lampu meja + cahaya layar |
+| Day in the Life | Pilih lokasi pagi; deskripsi wajah & pakaian ditulis identik di semua shot |

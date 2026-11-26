@@ -1,190 +1,98 @@
----
-name: flow-ugc-ads-prompting
-description: Referensi cara menulis prompt yang menghasilkan output bergaya UGC di Google Flow. Berisi modifier gaya wajib (termasuk pengecualian static camera untuk Podcast Clip), sintaks tag aset, pacing dialogue, pola dialogue UGC, struktur briefing Agent mode, dan kategori shot yang rawan halusinasi (termasuk overlay teks komentar dan framing POV).
----
+# Aturan Prompt Video UGC
 
-# Referensi Prompting Flow
+Model video cenderung menghasilkan gambar yang terlalu rapi: wajah di tengah, kulit licin, cahaya studio. Untuk iklan UGC itu justru merugikan. Prompt harus **sengaja memasukkan ketidaksempurnaan** yang biasa muncul di video HP.
 
-Cara menulis prompt yang menghasilkan output bergaya UGC di Google Flow, bukan output bergaya iklan komersial.
+## Lima modifier yang selalu ada
 
----
+| Modifier | Mencegah |
+|----------|----------|
+| `nuansa handheld, sedikit goyangan kamera` | Gambar kaku seperti pakai tripod |
+| `candid` | Kesan adegan yang disiapkan |
+| `tekstur kulit natural` | Kulit plastik khas AI |
+| `framing tidak sempurna` | Subjek selalu di tengah |
+| pencahayaan sesuai lokasi | Cahaya studio bawaan model |
 
-## Masalah Utama
+**Pengecualian:** angle Podcast Clip memakai `kamera statis di tripod, tanpa goyangan`. Empat modifier lainnya tetap dipakai.
 
-Tanpa modifier gaya yang spesifik, Gemini Omni Flash secara default menghasilkan output yang terlihat komersial: pencahayaan sempurna, framing terpusat, kulit mulus, komposisi berkualitas studio. Itu kebalikan dari yang mengkonversi di Meta dan TikTok. UGC mengkonversi karena terlihat nyata. Prompt kamu harus sengaja menghadirkan ketidaksempurnaan.
+## Kamus pencahayaan
 
----
+| Lokasi | Pilihan |
+|--------|---------|
+| Dapur | cahaya jendela pagi dari samping · lampu gantung dapur hangat |
+| Mobil | cahaya mendung lewat kaca depan · matahari sore dari jendela samping |
+| Kamar mandi | lampu cermin wastafel · lampu plafon kuning |
+| Kamar tidur | cahaya pagi tembus gorden · lampu tidur hangat |
+| Meja kerja malam | lampu meja hangat dari samping + cahaya layar kebiruan |
+| Gym | lampu neon plafon, agak keras · cahaya jendela besar |
+| Luar ruangan | langit mendung merata · matahari sore, sedikit silau |
+| Setup podcast | ring light lembut dari depan · cahaya jendela dari samping |
 
-## Modifier Gaya Wajib (Setiap Shot)
+Gunakan satu kombinasi yang sama di semua shot yang lokasinya sama.
 
-Tambahkan semua ini ke setiap prompt:
+## Menyebut aset
 
-| Modifier | Fungsinya |
-|----------|-----------|
-| `nuansa handheld, sedikit goyangan kamera` | Menghilangkan tampilan tripod yang terkunci |
-| `candid` | Salah satu sinyal realisme terkuat — memberitahu model bahwa ini bukan set yang disiapkan |
-| `tekstur kulit natural` | Mencegah ciri khas AI "kulit plastik" |
-| `framing tidak sempurna` | Gemini memusatkan segalanya tanpa ini — UGC nyata tidak pernah terkomposisi sempurna |
-| `[pencahayaan sesuai lingkungan]` | Menggantikan inferensi cahaya studio default |
+Flow mengenali gambar yang diunggah dari **nama file yang ditulis di kalimat prompt** — tanpa tanda kurung atau simbol khusus.
 
-**Pilihan pencahayaan per lingkungan:**
-- Dapur: `cahaya jendela pagi yang lembut` / `cahaya overhead dapur yang hangat`
-- Mobil: `cahaya hari mendung lembut melalui kaca depan` / `cahaya samping sore yang hangat`
-- Kamar mandi: `cahaya vanity natural` / `overhead kamar mandi yang hangat`
-- Gym: `lampu fluoresen overhead, sedikit keras` / `cahaya natural dari jendela`
-- Luar ruangan: `cahaya natural mendung` / `sinar matahari sore langsung, sedikit menyipit`
-- Kamar tidur: `cahaya pagi lembut melalui tirai` / `lampu samping tempat tidur, hangat`
-- Meja/setup podcast: `ring light lembut dari depan` / `cahaya jendela natural dari samping, mic terlihat di frame`
+> creator.png duduk di jok mobil memegang botol-tumbler.jpg ...
 
-**Pengecualian handheld — Podcast Clip:**
-Modifier "nuansa handheld, sedikit goyangan kamera" berlaku untuk semua angle KECUALI Podcast Clip. Angle ini justru butuh `kamera statis, tripod, tidak ada goyangan` — ini yang membedakannya secara visual dari angle lain. Tetap pertahankan modifier lain (candid, tekstur kulit natural, framing tidak sempurna).
+- Ejaan harus sama persis dengan file yang diunggah, termasuk huruf besar-kecil dan ekstensi.
+- `creator.png` disebut di semua shot. Lupa sekali = wajah bisa berubah.
+- File produk disebut setiap kali produk ada di frame. Lupa = model mengarang produk lain.
+- Beri nama file yang deskriptif (`serum-vitc.jpg`), bukan `IMG_2231.jpg`.
+- `model.png` hanya untuk membuat gambar kreator, tidak dipakai di Flow.
 
----
+## Panjang dialog
 
-## Sintaks Tag Aset
+±3 kata per detik.
 
-Referensikan aset yang diunggah menggunakan nama file persis di dalam prompt. Flow mengidentifikasi aset dan menggunakannya sebagai referensi visual.
+| Durasi | Batas kata |
+|--------|-----------|
+| 6 dtk | 18 |
+| 8 dtk | 24 |
+| 10 dtk | 30 |
 
-**Format:** langsung nama file di dalam kalimat — tanpa tanda kurung, tanpa sintaks khusus.
+Lebih dari batas → bicara terburu-buru dan terdengar membaca naskah. Jauh di bawah batas → ada jeda kosong yang canggung.
 
-```
-creator.png berdiri di dapur cerah memegang goli-bottle.jpg...
-```
+## Gaya bahasa
 
-**Aturan:**
-- Nama file harus persis sama dengan yang kamu unggah (case-sensitive)
-- Tag kreator DAN produk di setiap shot, bahkan jika produk bukan fokus utama
-- Untuk shot hanya lingkungan (produk tidak dalam frame), tetap tag kreator
+Tulis seperti orang mengirim voice note ke teman.
 
-**Apa yang merusaknya:**
-- Lupa tag gambar kreator = tampilan karakter berubah antar shot
-- Lupa tag produk = model menghalusikan produk generik
-- Menggunakan nama file yang tidak jelas seperti `image1.jpg` — gunakan nama yang deskriptif
+**Terdengar asli**
+- "Jujur aku nggak nyangka bakal sebagus ini."
+- "Oke, ini harus aku ceritain."
+- "Udah dua minggu, dan bedanya kerasa."
+- "Awalnya aku ragu, tapi..."
+- "Kalian harus coba sendiri."
 
----
+**Terdengar iklan — hindari**
+- "Hadir dengan formula terbaru..."
+- "Rasakan sensasinya..."
+- "Teruji klinis..."
+- "Dapatkan sekarang juga..."
 
-## Pacing Dialogue
+**CTA yang aman**: "Linknya di bawah ya." · "Aku taruh linknya di keranjang kuning." · "Coba aja dulu, nggak rugi."
+**CTA yang merusak**: "Beli sekarang" · "Order hari ini" · "Kunjungi website kami" · menyebut kode diskon di dialog.
 
-Perkirakan sekitar 3 kata per detik waktu tayang.
+## Adegan yang rawan glitch
 
-| Durasi shot | Maksimal dialogue |
-|-------------|-------------------|
-| 6 detik | ~18 kata |
-| 7 detik | ~21 kata |
-| 8 detik | ~24 kata |
-| 9 detik | ~27 kata |
+| Adegan | Masalah | Cara aman |
+|--------|---------|-----------|
+| Makan / minum | Makanan hilang, gerakan mulut aneh | Pegang produk ke kamera sambil tersenyum, tanpa mengonsumsi |
+| Memakai makeup | Warna pindah tempat, belepotan | Tunjukkan hasil jadi, bukan proses aplikasi |
+| Tangan memegang benda rumit | Jari berlebih, produk berubah bentuk | Satu gerakan sederhana: ambil, pegang, putar, atau taruh |
+| Tulisan di kemasan | Huruf rusak | Produk mengisi 30–40% frame, resolusi minimal 720p |
+| Memakai kacamata / aksesori wajah | Frame melengkung, lensa berubah | Gerakan pelan, satu kali, kedua tangan |
+| Overlay komentar TikTok | Teks acak | Tulis instruksi singkat di prompt, tapi tambahkan teks aslinya di CapCut |
+| Sudut pandang orang pertama (POV) | Proporsi tangan aneh | Satu interaksi tangan per shot |
 
-Dialogue yang terlalu banyak terkesan terburu-buru dan terdengar seperti skrip. Terlalu sedikit menyisakan keheningan. Tetap dalam batas anggaran.
-
----
-
-## Pola Dialogue UGC
-
-Tulis dialogue seperti orang nyata berkirim pesan — bukan seperti brand menulis copy.
-
-**Hijau (boleh digunakan):**
-- "Oke aku harus cerita tentang ini."
-- "Bro, ini akhirnya dateng."
-- "Aku udah nunggu-nunggu buat posting ini."
-- "Ini jadi favorit baruku."
-- "Dengerin dulu."
-- "Awalnya aku skeptis tapi..."
-- "Minggu kedua dan aku udah mulai ngerasain bedanya."
-
-**Merah (hindari):**
-- "Memperkenalkan produk inovatif terbaru kami..."
-- "Rasakan perbedaannya dengan..."
-- "Terbukti secara klinis..."
-- "Beli sekarang dan hemat..."
-- Apapun yang terdengar seperti ditulis oleh brand
-
-**Pola CTA yang berhasil:**
-- "Linknya ada di bawah."
-- "Kamu literally nggak rugi apa-apa."
-- "Coba aja dulu 30 hari."
-- "Nanti aku link-in."
-- "Percaya aku soal ini."
-
-**Pola CTA yang merusak nuansa UGC:**
-- "Beli sekarang"
-- "Order hari ini"
-- "Pakai kode [X] untuk diskon [Y]%" (simpan ini untuk caption, bukan dialogue)
-- "Kunjungi website kami"
-
----
-
-## Struktur Briefing Agent Mode
-
-Saat menggunakan Agent mode, susun instruksimu seperti brief sutradara — bukan prompt shot tunggal.
-
-**Template:**
+## Template final per shot
 
 ```
-Aku sedang membuat iklan UGC vertikal [N] shot untuk [produk].
-
-Aset yang sudah diunggah:
-- creator.png — kreator UGC
-- [produk].jpg — produk
-
-Generate shot-shot ini secara berurutan:
-
-Shot 1: [satu kalimat: lingkungan + aksi + dialogue]. [pencahayaan], handheld, candid, framing tidak sempurna. 9:16, 8 detik.
-
-Shot 2: [struktur yang sama]. [pencahayaan], handheld, candid. 9:16, 8 detik.
-
-[lanjutkan untuk setiap shot]
-
-Jaga konsistensi penampilan creator.png di semua shot.
+Video UGC vertikal, creator.png [posisi] di [lokasi spesifik], memakai [pakaian identik].
+[Satu aksi]. [file-produk + cara dipegang + warna/bentuk/bahan].
+Berbicara langsung ke kamera: "[dialog sesuai batas kata]."
+Nuansa handheld, sedikit goyangan kamera, candid, tekstur kulit natural, framing tidak sempurna, [pencahayaan].
+Vertikal 9:16, [durasi] detik.
 ```
 
-**Apa yang membuat Agent mode lebih baik dari prompt biasa:**
-- Menyimpan konteks produksi penuh di semua shot
-- Mempertahankan referensi aset tanpa harus men-tag ulang setiap kali
-- Bisa mengulang shot tanpa harus membriefing ulang dari awal
-- Menangani loop produksi — jika sebuah shot terlihat salah, kamu bisa bilang "ulangi Shot 3 dengan pencahayaan lebih hangat" dan ia tahu shot mana dan aset mana
-
----
-
-## Kategori Sulit — Apa yang Harus Dihindari dan Cara Mengatasinya
-
-Beberapa tipe shot secara konsisten menghasilkan halusinasi di Gemini Omni Flash:
-
-**Makan / minum:**
-Masalah: makanan menghilang, warna muncul di permukaan yang salah, gerakan konsumsi terlihat aneh.
-Solusi: "memegang [produk] ke arah kamera, tersenyum, tidak makan atau minum." Akhiri dengan pose memegang, bukan konsumsi.
-
-**Aplikasi makeup:**
-Masalah: warna berpindah ke bagian tubuh yang salah, bekas makeup yang sudah ada muncul, smudging.
-Solusi: "memegang [produk] ke arah kamera, tidak mengaplikasikan. Tampilan jadi — [deskripsikan hasilnya]." Tunjukkan hasilnya tanpa menunjukkan proses aplikasinya.
-
-**Interaksi tangan-objek yang kompleks:**
-Masalah: jari ekstra, objek berubah bentuk, produk berubah bentuk di tengah shot.
-Solusi: jaga interaksi tetap sederhana — ambil, pegang, putar, letakkan. Satu aksi per shot.
-
-**Teks kecil / tulisan halus pada kemasan:**
-Masalah: teks berantakan, terutama dari jarak lengan atau resolusi 480p.
-Solusi: jaga produk tetap besar dalam frame (mengisi 30–40% shot), gunakan minimal 720p untuk shot yang menampilkan produk, gunakan Agent mode (bukan generate standar) untuk shot apapun di mana keterbacaan label penting.
-
-**Overlay teks komentar (angle Reply to Comment):**
-Masalah: model sering menghasilkan teks acak/tidak terbaca saat diminta merender overlay komentar gaya TikTok langsung di video.
-Solusi: deskripsikan overlay sebagai instruksi singkat ("overlay teks komentar TikTok muncul di atas layar, tulisan singkat: '[teks]'") tapi jangan berharap hasilnya presisi pixel-perfect — kalau butuh keterbacaan sempurna, lebih aman tambahkan overlay teks di tahap editing (CapCut) daripada mengandalkan model generate teksnya.
-
-**Framing POV (angle POV):**
-Masalah: tangan/jari tambahan atau proporsi tangan aneh saat kamera full first-person dan interaksi tangan-produk terlihat dominan di frame.
-Solusi: sama seperti interaksi tangan-objek biasa — satu aksi sederhana per shot (ambil, pegang, putar), jangan minta gerakan tangan kompleks bersamaan dalam satu shot POV.
-
----
-
-## Template Prompt Per Shot (Lengkap)
-
-```
-Video UGC vertikal, [creator.png] [lingkungan — ruangan/setting spesifik], 
-[detail outfit], [aksi — satu aksi saja]. 
-[product.jpg jika dalam frame — bagaimana mereka memegang/berinteraksi + perkuat warna/deskriptor]. 
-Berbicara langsung ke lensa: "[dialogue — dalam batas kata]." 
-Nuansa handheld, sedikit goyangan kamera, candid, tekstur kulit natural, 
-[pencahayaan sesuai lingkungan], framing tidak sempurna. 
-Vertikal 9:16, [X] detik.
-```
-
-Isi setiap kurung. Prompt yang samar = output AI yang generik. Prompt yang spesifik = output UGC.
+Semakin spesifik isi tiap kurung, semakin kecil peluang hasilnya terlihat generik.

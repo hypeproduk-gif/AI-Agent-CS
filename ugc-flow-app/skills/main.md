@@ -1,245 +1,126 @@
----
-name: flow-ugc-ads
-description: Hasilkan paket produksi iklan video UGC multi-shot untuk Google Flow. Cukup berikan gambar produk dan angle iklan, skill ini menghasilkan semua yang dibutuhkan untuk menjalankan sesi produksi penuh di Agent mode Flow — prompt gambar kreator realistis, prompt shot yang sudah di-tag aset, skrip dialogue lengkap, satu instruksi briefing Agent, dan skrip voiceover ElevenLabs. Gunakan kapanpun user ingin membuat iklan UGC di Google Flow, generate iklan video gaya kreator, atau mengubah foto produk menjadi iklan vertikal multi-shot tanpa menggunakan API. Juga aktifkan pada frasa seperti "Flow UGC ad," "iklan Google Flow," "Flow production package," atau ketika user mengunggah gambar produk dan menyebut Flow atau Gemini Omni.
----
+# UGC Flow Studio — Alur Produksi
 
-# Google Flow UGC Ad Generator
+Panduan ini mengubah satu foto produk menjadi paket produksi video iklan bergaya kreator (UGC) yang siap dikerjakan di Google Flow. Tidak ada video yang dibuat di sini — yang dihasilkan adalah semua bahan yang dibutuhkan user untuk men-generate sendiri di Flow, lalu merakitnya di CapCut.
 
-Menghasilkan paket produksi lengkap untuk iklan video UGC multi-shot di Google Flow. Satu gambar produk ditambah satu angle iklan menghasilkan semua yang dibutuhkan user untuk menjalankan sesi penuh di Agent mode Flow — prompt kreator, shot list, prompt bertag, instruksi Agent, dan skrip voiceover.
+## Prinsip dasar
 
-## Apa yang dilakukan skill ini
+Iklan UGC laku karena **tidak terlihat seperti iklan**. Penonton berhenti scroll untuk orang yang terasa nyata, bukan untuk produksi yang mulus. Setiap keputusan di paket ini — dialog, pencahayaan, framing, pilihan kreator — diarahkan ke satu tujuan: video yang terasa direkam sendiri oleh pengguna asli pakai HP.
 
-1. Mengambil path gambar produk dan angle iklan dari user
-2. Opsional membaca `brand/brand-dna.md`, `brand/brand-voice.md`, `brand/icp-cards.md` jika ada — dilewati diam-diam jika tidak ada
-3. Menghasilkan prompt gambar kreator AI realistis yang dioptimalkan untuk ChatGPT Images 2.0 atau Nano Banana Pro
-4. Menulis skrip direct response 5 shot dengan dialogue untuk setiap scene
-5. Menghasilkan lima prompt Flow yang sudah di-tag aset, siap langsung ditempel ke Flow
-6. Menulis satu instruksi briefing Agent mode yang mencakup seluruh sesi produksi
-7. Menghasilkan skrip voiceover siap ElevenLabs untuk audio post-production
+Tiga pertanyaan yang selalu dijawab sebelum menulis:
+1. **Siapa yang paling dipercaya membicarakan produk ini?** → menentukan arketipe kreator.
+2. **Momen apa dalam hidup penonton yang membuat produk ini relevan?** → menentukan lokasi dan angle.
+3. **Bukti apa yang bisa ditunjukkan dalam beberapa detik?** → menentukan shot produk.
 
-Skill ini TIDAK memanggil API apapun. Skill ini menghasilkan paket produksi. User menjalankan generate aktual di UI browser Flow.
+## Input
 
-## Sebelum memulai
+| Data | Wajib? | Jika kosong |
+|------|--------|-------------|
+| Foto produk | Ya | — |
+| Nama + deskripsi singkat | Ya | Tanyakan |
+| Angle iklan | Ya | Tanyakan, jangan diasumsikan |
+| Kategori produk | Disarankan | Tebak dari foto & deskripsi |
+| Profil kreator | Opsional | Pilih arketipe yang paling cocok dengan kategori |
+| Durasi per shot | Opsional | 8 detik |
 
-User membutuhkan:
-- Langganan Google AI Pro ($19.99/bulan) di labs.google.com/flow
-- Gambar produk yang tersimpan di lokal (JPG atau PNG)
-- Opsional: gambar kreator yang sudah ada, atau generate menggunakan prompt karakter yang dihasilkan skill ini
+## Output — lima bagian
 
-Tidak perlu API key. Tidak perlu kode. Tidak perlu terminal. Ini adalah alat berbasis UI.
+1. **Prompt gambar kreator** — untuk ChatGPT Images / Nano Banana. User mengunggah `model.png` (wajah influencer) sebagai referensi; hasil gambar disimpan sebagai `creator.png`.
+2. **Shot list** — naskah untuk dibaca dan disetujui sebelum menghabiskan kredit.
+3. **Prompt Flow per shot** — satu prompt per klip, sudah memuat nama file aset.
+4. **Briefing Agent mode** — satu teks untuk menjalankan semua shot sekaligus bila Agent mode aktif.
+5. **Skrip voiceover** — dengan timing, untuk ElevenLabs.
 
-## Alur Kerja
+## 1. Prompt gambar kreator
 
-### Langkah 1 — Pengumpulan Data
+Susunan kalimat, berurutan:
 
-Kumpulkan dari user:
+> Gunakan wajah dari model.png sebagai referensi, jaga wajahnya identik. Foto iPhone candid, [gender] Indonesia usia [N] tahun, [warna kulit], [rambut + satu ketidakrapian], [riasan], memakai [pakaian spesifik — sebut bahan/warna]. [Posisi] di [lokasi nyata + 2 benda di latar]. Diambil dari [sudut kamera seolah dipegang sendiri]. [Sumber cahaya + arah + satu ketidaksempurnaan]. Tekstur kulit asli, pori terlihat, tidak diretus. Tanpa lampu studio.
 
-1. **Gambar produk** — path file atau deskripsi (wajib)
-2. **Nama produk + deskripsi satu baris** — jika tidak diberikan, tanya
-3. **Angle iklan** — jika user belum menyebutkan angle secara eksplisit, WAJIB tanya dulu sebelum lanjut ke Langkah 3 (generate prompt detail). Tampilkan pilihan berikut ke user:
-   - `testimonial` — kreator berbicara ke kamera tentang hasil (default)
-   - `car/on-the-go` — kreator di dalam mobil atau dalam perjalanan, angle kepraktisan
-   - `unboxing` — kreator membuka dan bereaksi terhadap produk
-   - `lifestyle-demo` — kreator menggunakan produk di lingkungan alami
-   - `problem-solution` — kondisi sebelum, perkenalan produk, kondisi sesudah
-   - `grwm` — get ready with me, produk dipakai natural di tengah rutinitas
-   - `day-in-the-life` — produk muncul di beberapa momen sepanjang hari, scene berganti cepat
-   - `car-talking-head` — talking head santai di dalam mobil, tanpa demo aksi
-   - `reply-to-comment` — jawab komentar TikTok soal produk, overlay teks di layar
-   - `before-after` — kondisi sebelum, transisi, kondisi sesudah
-   - `mirror-try-on` — coba produk di depan cermin, HP dipegang tangan terentang
-   - `pov` — sudut pandang orang pertama berinteraksi dengan produk
-   - `storytime` — cerita personal yang berujung ke penemuan produk
-   - `walk-and-talk` — kreator jalan di luar ruangan sambil bicara ke kamera
-   - `podcast-clip` — kamera statis gaya podcast, mic terlihat di frame
+Larangan: kata pujian fisik ("cantik", "tampan", "menawan", "sempurna"), latar polos, pose model, pencahayaan rata.
 
-   Hanya lanjut generate detail setelah user memilih salah satu. Jangan asumsikan angle default tanpa konfirmasi, kecuali user memang sudah menyebutkannya di pesan awal.
-4. **Deskripsi kreator** — deskripsi singkat (usia, jenis kelamin, vibe). Jika tidak diberikan, gunakan default: "perempuan 27 tahun, berkaitan dengan fitness, tidak terlihat seperti model"
-5. **Kategori brand/produk** — suplemen, kecantikan, pakaian, makanan/minuman, peralatan rumah, dll. Menentukan angle dan arketipe kreator yang paling sesuai.
+Lokasi dan pakaian di gambar ini mengikuti lokasi utama angle, supaya `creator.png` langsung cocok dipakai di shot pertama.
 
-Jangan tanya semuanya sekaligus. Tapi angle WAJIB dikonfirmasi dulu sebelum generate prompt detail — ini beda dari data lain yang bisa ditanya belakangan secara natural.
+## 2. Shot list
 
-### Langkah 2 — Cek Konteks Brand
-
-Cari:
-- `brand/brand-dna.md`
-- `brand/brand-voice.md`
-- `brand/icp-cards.md`
-
-Jika ada, baca diam-diam. Gunakan untuk mempertajam suara dialogue dan penargetan ICP. Jangan sebut ini ke user. Jika tidak ada, lanjutkan — skill ini bekerja hanya dengan gambar produk.
-
-### Langkah 3 — Generate Prompt Gambar Kreator
-
-Hasilkan prompt gambar karakter yang bisa ditempel user ke ChatGPT Images 2.0 atau Nano Banana Pro.
-
-Ikuti formula ini persis:
+Format tiap shot:
 
 ```
-Foto iPhone candid seorang [gender] berusia [usia] tahun, [detail fisik spesifik — warna/tekstur rambut dengan flyaways alami, bintik-bintik atau tidak, dll.], makeup [minimal/natural/tanpa], mengenakan [outfit kasual spesifik — pakaian nyata, bukan "stylish"], [detail lingkungan — duduk di mobil / berdiri di dapur / dll.]. Diambil dari [sudut sedikit — sudut rendah sedikit off-center / sedikit di atas level mata]. [Pencahayaan spesifik — cahaya hari mendung lembut melalui jendela / cahaya dapur pagi yang hangat / lampu fluoresen overhead di gym]. Eksposur sedikit tidak sempurna. Tekstur kulit nyata, tidak diretuh. Flyaways rambut alami. Tanpa pencahayaan studio. Realisme gaya editorial.
+Shot N — [fungsi shot]
+Lokasi   : ...
+Aksi     : satu aksi saja
+Produk   : tampil / tidak — bagaimana
+Dialog   : "..."
 ```
 
-Aturan:
-- Jangan pernah gunakan "cantik," "indah," "memukau," atau deskriptor model
-- Selalu sertakan lingkungan spesifik, bahkan di shot referensi karakter
-- Selalu sertakan setidaknya satu ketidaksempurnaan yang disengaja (flyaways, bintik-bintik, pencahayaan tidak merata)
-- Selalu sertakan "Foto iPhone candid" — salah satu sinyal realisme terkuat
-- Sesuaikan arketipe kreator dengan kategori produk (lihat `references/characters.md`)
+Aturan naskah:
+- **Kalimat pertama = hook.** Harus tetap menarik walau dibaca sebagai caption tanpa suara.
+- **Nama produk tidak disebut di Shot 1.** Penonton belum peduli; perkenalkan setelah masalahnya terasa.
+- **Spesifik mengalahkan umum.** "Kulitku lebih bagus" lemah; "jerawat di dagu tinggal satu" kuat.
+- **Kecepatan bicara ±3 kata per detik.** 8 detik ≈ 24 kata, 10 detik ≈ 30 kata.
+- **CTA santai.** "Linknya di bawah ya" — bukan "beli sekarang", "order hari ini", atau kode diskon (taruh di caption).
+- Klaim harus bisa dipertanggungjawabkan. Jangan menulis klaim medis atau angka hasil yang tidak diberikan user.
 
-Beritahu user: simpan gambar yang dihasilkan sebagai `creator.png` dan unggah ke proyek Flow mereka bersama gambar produk. Kedua nama file harus deskriptif: `creator.png` dan `[nama-produk].jpg`.
-
-### Langkah 4 — Tulis Skrip DR 5 Shot
-
-Untuk angle yang dipilih, tulis shot list lengkap. Setiap shot mendapat:
+## 3. Prompt Flow per shot
 
 ```
-Shot N/5 — [Nama Shot]
-Lingkungan: [di mana kreator berada — ruangan/setting/konteks spesifik]
-Aksi: [tepat apa yang terjadi — satu aksi saja per shot]
-Produk dalam frame: [ya/tidak — dan jika ya, bagaimana]
-Dialogue: [apa yang dikatakan kreator — ~3 kata per detik, suara UGC]
+Video UGC vertikal, creator.png [posisi] di [lokasi], memakai [pakaian]. [Satu aksi].
+[Jika produk tampil: nama-file-produk + cara dipegang + deskripsi warna/bentuk/bahan].
+Berbicara langsung ke kamera: "[dialog]."
+[Modifier gaya]. [Pencahayaan lokasi]. Vertikal 9:16, [durasi] detik.
 ```
 
-**Struktur direct response (default — angle testimonial):**
+- `creator.png` disebut di **setiap** prompt — tanpa itu wajah kreator berganti.
+- File produk disebut di setiap shot yang menampilkan produk, disertai deskripsi visual yang menguatkan referensi.
+- Pakaian ditulis ulang identik di tiap shot.
 
-| Shot | Fungsi | Lingkungan | Produk |
-|------|--------|------------|--------|
-| 1 — Hook | Hentikan scroll dengan satu klaim | Dapur / kamar mandi / netral | Ya — dipegang ke arah kamera |
-| 2 — Problem | Buat penonton merasakan masalahnya | Kamar tidur / meja / mobil | Tidak |
-| 3 — Discovery | Perkenalkan produk secara natural | Dapur / kamar mandi | Ya — membuka/berinteraksi |
-| 4 — Transformation | Tunjukkan hasilnya. Spesifik, tidak samar | Gym / luar ruangan / kerja | Tidak |
-| 5 — CTA | Satu aksi, hilangkan hambatan | Kembali ke lingkungan Shot 1 | Ya — dipegang ke arah kamera |
-
-**Aturan dialogue:**
-- Suara UGC: "Oke aku harus cerita tentang ini" bukan "Memperkenalkan produk baru kami"
-- ~3 kata per detik waktu tayang. Shot 7 detik = ~21 kata maksimal
-- Baris pertama adalah hook — harus berfungsi tanpa suara (caption yang membawanya saat autoplay)
-- Nama produk muncul di Shot 3 atau setelahnya, tidak pernah Shot 1
-- CTA harus singkat dan kuat: "linknya ada di bawah" / "kamu literally nggak rugi apa-apa" — jangan pernah "beli sekarang" atau "shop now"
-- Jika `brand/brand-voice.md` sudah dimuat, tirukan pola kalimatnya
-
-Lihat `references/angles.md` untuk breakdown per shot dari seluruh angle preset.
-
-### Langkah 5 — Tulis Prompt Flow Bertag Aset
-
-Untuk setiap shot, hasilkan prompt siap tempel ke Flow. Setiap prompt men-tag gambar kreator dan gambar produk berdasarkan nama file.
-
-**Struktur prompt:**
+## 4. Briefing Agent mode
 
 ```
-Video UGC vertikal, [creator.png] [detail lingkungan + outfit], [aksi]. [product.jpg jika dalam frame — bagaimana mereka memegang/berinteraksi dengannya]. Berbicara langsung ke lensa: "[dialogue]." [Modifier gaya]. Vertikal 9:16, 8 detik.
+Aku sedang membuat iklan UGC vertikal [N] shot untuk [produk].
+
+Aset:
+- creator.png — kreator
+- [file-produk] — produk ([deskripsi visual singkat])
+
+Buat shot berikut secara berurutan:
+
+Shot 1: [lokasi]. creator.png [aksi]. Berbicara ke kamera: "[dialog]." [cahaya], [modifier]. 9:16, [durasi] detik.
+...
+
+Jaga wajah, rambut, dan pakaian creator.png identik di semua shot. Semua shot vertikal 9:16.
 ```
 
-**Modifier gaya wajib untuk setiap shot:**
-- `nuansa handheld, sedikit goyangan kamera`
-- `candid`
-- `tekstur kulit natural`
-- `[pencahayaan sesuai lingkungan — cahaya jendela lembut / cahaya natural mendung / cahaya dapur hangat]`
-- `framing tidak sempurna`
+Catatan untuk user: brief ini hanya jalan di Agent mode. Di mode biasa, satu prompt = satu klip, jadi pakai prompt per shot.
 
-**Shot yang menampilkan produk tambahan:**
-- `label produk terlihat jelas`
-- `botol [warna produk]` atau deskriptor yang sesuai — perkuat referensi visual
-
-**Contoh (Shot 1 — Hook, angle testimonial, produk suplemen):**
+## 5. Skrip voiceover
 
 ```
-Video UGC vertikal, creator.png berdiri di dapur cerah, rambut auburn diikat ekor kuda longgar, atasan olahraga lavender muda, memegang goli-bottle.jpg ke arah kamera dengan kedua tangan. Label produk terlihat jelas, botol merah. Berbicara langsung ke lensa: "Aku udah minum ini tiap pagi selama 30 hari dan energiku beneran beda." Nuansa handheld, sedikit goyangan kamera, candid, tekstur kulit natural, cahaya jendela lembut, framing tidak sempurna. Vertikal 9:16, 8 detik.
+VOICEOVER — [Produk]
+Total ±[N] detik
+
+[Shot 1 · 0–8 dtk]
+"..."
+[Shot 2 · 8–16 dtk]
+"..."
+
+ElevenLabs: Stability 0.45–0.55 · Similarity 0.75 · Style 0.25–0.35
+Karakter suara: ngobrol, hangat, sedikit tidak rapi — bukan penyiar.
 ```
 
-### Langkah 6 — Tulis Instruksi Briefing Agent Mode
+Timing dihitung dari durasi per shot yang dipilih.
 
-Hasilkan satu instruksi yang bisa ditempel user ke Agent mode Flow untuk membriefing seluruh sesi sekaligus.
+## Ringkas jadi 3 shot
 
-Format:
+Jika user meminta 3 shot untuk angle yang aslinya lebih panjang:
+- Shot 1 — hook + masalah
+- Shot 2 — produk masuk (penemuan / demo / pemakaian)
+- Shot 3 — hasil + CTA
 
-```
-Aku sedang membuat iklan UGC vertikal 5 shot untuk [nama produk].
+Ciri khas visual angle tetap dipertahankan.
 
-Aset yang sudah diunggah:
-- creator.png — kreator UGC
-- [nama-file-produk].jpg — produk
+## Batasan yang perlu disampaikan ke user
 
-Generate shot-shot ini secara berurutan:
-
-Shot 1: [lingkungan]. creator.png [aksi + interaksi produk]. Berbicara ke kamera: "[dialogue]." [pencahayaan], handheld, candid, framing tidak sempurna. 9:16, 8 detik.
-
-Shot 2: [lingkungan berbeda]. creator.png [aksi, tanpa produk]. Berbicara ke kamera: "[dialogue]." [pencahayaan], handheld, candid. 9:16, 8 detik.
-
-Shot 3: [lingkungan]. creator.png [aksi + interaksi produk]. Berbicara ke kamera: "[dialogue]." [pencahayaan], handheld, candid. 9:16, 8 detik.
-
-Shot 4: [lingkungan aktif]. creator.png [aksi, tanpa produk]. Berbicara ke kamera: "[dialogue]." [pencahayaan], handheld, candid. 9:16, 8 detik.
-
-Shot 5: [lingkungan bersih]. creator.png memegang [nama-file-produk].jpg ke arah kamera. Berbicara ke kamera: "[dialogue]." [pencahayaan], handheld, candid. 9:16, 8 detik.
-
-Jaga konsistensi penampilan creator.png di semua shot. Generate setiap shot dalam format vertikal 9:16.
-```
-
-### Langkah 7 — Tulis Skrip Voiceover ElevenLabs
-
-Hasilkan skrip voiceover lengkap — semua lima shot berurutan, dengan catatan timing.
-
-Format:
-
-```
-SKRIP VOICEOVER — [Nama Produk] UGC Ad
-Total durasi: ~40 detik
-
-[Shot 1 — 0–8 dtk]
-"[dialogue]"
-
-[Shot 2 — 8–16 dtk]
-"[dialogue]"
-
-[Shot 3 — 16–24 dtk]
-"[dialogue]"
-
-[Shot 4 — 24–33 dtk]
-"[dialogue]"
-
-[Shot 5 — 33–42 dtk]
-"[dialogue]"
-
----
-Pengaturan ElevenLabs: Stability 0.5, Similarity 0.75, Style 0.3
-Gaya suara yang direkomendasikan: conversational, hangat, bukan announcer
-```
-
-Beritahu user: generate klip video di Flow terlebih dahulu. Kemudian rekam atau generate voiceover ini di ElevenLabs. Gabungkan keduanya di CapCut — layer video + layer audio + caption.
-
-### Langkah 8 — Pengiriman
-
-Sajikan paket produksi lengkap dalam urutan ini:
-
-1. **Prompt gambar kreator** — tempel ke ChatGPT Images 2.0 atau Nano Banana Pro
-2. **Shot list dengan dialogue** — minta persetujuan sebelum generate
-3. **Lima prompt Flow bertag aset** — satu per shot, tempel satu per satu
-4. **Instruksi briefing Agent mode** — tempel sekali untuk membriefing seluruh sesi
-5. **Skrip voiceover ElevenLabs** — gunakan setelah video selesai digenerate
-
-Tanya user apakah mereka ingin mengubah dialogue atau angle sebelum generate. Perubahan dialogue gratis. Regenerasi klip menghabiskan kredit.
-
-## Struktur file yang dihasilkan skill ini
-
-```
-[nama-proyek]-production-package/
-├── character-prompt.md       # Prompt ChatGPT Images / Nano Banana
-├── shot-list.md              # Skrip 5 shot dengan dialogue
-├── flow-prompts.md           # 5 prompt bertag aset untuk Flow
-├── agent-instruction.md      # Briefing Agent mode tunggal
-└── voiceover-script.md       # Skrip siap ElevenLabs dengan timing
-```
-
-## Referensi
-
-- `references/prompting.md` — modifier gaya, sintaks tag aset, struktur briefing Agent mode, apa yang merusak konsistensi karakter
-- `references/angles.md` — breakdown per shot untuk seluruh angle preset
-- `references/characters.md` — template prompt gambar karakter untuk 8 arketipe kreator
-
-## Batasan yang jujur
-
-- Skill ini menghasilkan prompt, bukan video. User yang generate video di UI browser Flow.
-- Konsistensi suara antar shot tidak mungkin dilakukan di Flow tanpa fitur Avatar (hanya wajah/suara sendiri). Rencanakan untuk post-production di ElevenLabs.
-- Teks label produk bisa berantakan ketika produk kecil dalam frame atau lingkungan kompleks. Jaga produk tetap besar dan dekat di shot yang menampilkan produk.
-- Konsistensi karakter di Flow membutuhkan tag `creator.png` di setiap prompt shot. Satu tag yang terlewat = kreator berubah tampilan.
-- Agent mode Flow masih eksperimental. Jika tidak menjalankan semua shot secara otomatis, tempel prompt individual satu per satu.
-- Shot makan/minum menghasilkan halusinasi. Gunakan ending hold-and-show atau hold-and-smile untuk produk yang dikonsumsi.
+- Suara kreator bisa berbeda antar klip di Flow. Solusinya voiceover terpisah di ElevenLabs.
+- Tulisan kecil di kemasan sering rusak. Buat produk besar di frame.
+- Adegan makan, minum, dan memakai makeup rawan glitch — tunjukkan sebelum dan sesudah, bukan prosesnya.
+- Agent mode masih eksperimental; prompt per shot adalah cadangan yang selalu bisa dipakai.
