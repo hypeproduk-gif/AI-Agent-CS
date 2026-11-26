@@ -57,8 +57,6 @@ pre{white-space:pre-wrap;word-wrap:break-word;background:var(--bg);border:1px so
 <div><label>Nama file produk di Flow</label><input id="pfile" placeholder="filo-salep.jpg"></div>
 </div>
 <label>Deskripsi satu baris</label><input id="pdesc" placeholder="Salep pencerah wajah, hasil terlihat 2 minggu">
-<label>Sudut pandang</label>
-<select id="mode"><option value="Kreator (default)">Kreator — pengguna merekomendasikan</option><option value="Brand Owner">Brand Owner — pemilik brand bicara langsung</option><option value="Produk Digital">Produk Digital — ebook, template, kelas, tools</option><option value="POV Seller">POV Seller — di balik layar toko</option></select>
 <label>Kategori</label>
 <select id="cat"><option>suplemen</option><option>kecantikan / skincare</option><option>pakaian / fashion</option><option>makanan / minuman</option><option>peralatan rumah</option><option>produk digital</option><option>lainnya</option></select>
 </div>
@@ -111,7 +109,6 @@ FORMAT OUTPUT WAJIB: tulis tepat lima bagian, masing-masing diawali baris penand
 === VOICEOVER ===
 ATURAN BAGIAN CHARACTER (prompt gambar untuk ChatGPT Images / Nano Banana): user mengunggah foto wajah influencer bernama model.png sebagai referensi. Tulis SATU prompt gambar saja, diawali "Gunakan wajah dari model.png sebagai referensi, jaga wajahnya identik.", mengikuti formula prompt kreator, dengan lingkungan dan outfit yang sesuai lokasi utama iklan; hasilnya disimpan user sebagai creator.png. Jangan buat prompt gambar per shot. Jangan pernah menyebut model.png di bagian FLOW, AGENT, atau SHOTLIST — di sana tetap pakai creator.png.
 DURASI: gunakan durasi per shot dari brief untuk setiap shot, batas kata dialogue mengikuti durasi itu (~3 kata/detik), dan timing voiceover dihitung dari durasi itu.
-MODE: terapkan aturan "Mode Sudut Pandang" sesuai mode di brief (siapa di frame, lokasi, cara menampilkan produk, aturan dialog). Untuk Produk Digital jangan minta model merender teks layar yang harus terbaca.
 JUMLAH SHOT: jika brief berisi "RINGKAS JADI 3 SHOT" dan angle aslinya lebih dari 3 shot, padatkan jadi tepat 3 shot: Shot 1 = hook + masalah, Shot 2 = produk (discovery/demo/penggunaan), Shot 3 = hasil + CTA. Pertahankan ciri visual angle, nama produk tidak di Shot 1, dan sesuaikan Agent briefing serta timing voiceover ke 3 shot.
 Isi tiap bagian berupa teks polos siap copy-paste (boleh baris baru, hindari tabel markdown). Jumlah shot mengikuti struktur angle yang dipilih (bukan selalu 5). Durasi tiap shot dan timing voiceover mengikuti angle. Selalu gunakan creator.png dan nama file produk yang diberikan persis. Patuhi batas kata dialogue (~3 kata/detik), nama produk tidak muncul di Shot 1, CTA gaya UGC, modifier gaya wajib (kecuali Podcast Clip pakai kamera statis), dan solusi kategori rawan halusinasi.`;
 
@@ -121,7 +118,7 @@ $("go").onclick=async()=>{
   if(!$("pname").value.trim())return $("err").textContent="Isi nama produk.";
   store.set("ugc_key",key);
   const pfile=$("pfile").value.trim()||"produk.jpg";
-  const brief=`Produk: ${$("pname").value}\nDeskripsi: ${$("pdesc").value||"-"}\nKategori: ${$("cat").value}\nNama file produk di Flow: ${pfile}\nMode sudut pandang: ${$("mode").value}\nAngle: ${angle}\nModel kreator: ${$("char").value}${$("cnote").value?" — "+$("cnote").value:""}\nDurasi per shot: ${$("dur").value} detik\nJumlah shot: ${$("shots").value==="3"?"RINGKAS JADI 3 SHOT":"ikuti struktur angle"}\nCatatan brief: ${$("extra").value||"-"}\n\nBuat paket produksi lengkap.${img?" Foto produk terlampir — perhatikan warna, bentuk kemasan, dan label untuk deskriptor visual.":""}`;
+  const brief=`Produk: ${$("pname").value}\nDeskripsi: ${$("pdesc").value||"-"}\nKategori: ${$("cat").value}\nNama file produk di Flow: ${pfile}\nAngle: ${angle}\nModel kreator: ${$("char").value}${$("cnote").value?" — "+$("cnote").value:""}\nDurasi per shot: ${$("dur").value} detik\nJumlah shot: ${$("shots").value==="3"?"RINGKAS JADI 3 SHOT":"ikuti struktur angle"}\nCatatan brief: ${$("extra").value||"-"}\n\nBuat paket produksi lengkap.${img?" Foto produk terlampir — perhatikan warna, bentuk kemasan, dan label untuk deskriptor visual.":""}`;
   const content=[];if(img)content.push({type:"image",source:{type:"base64",media_type:img.type,data:img.data}});content.push({type:"text",text:brief});
   $("go").disabled=true;$("status").textContent="Menulis paket produksi… (±30–60 detik)";$("out").innerHTML="";$("dl").style.display="none";
   try{
