@@ -78,11 +78,12 @@ Mode menentukan **siapa yang bicara dan apa yang dijual**. Angle tetap dipilih d
 |------|-------|-----|
 | 1 | Hook aktivitas | Seller di tengah packing / restock dengan tumpukan paket: "Ini kenapa [produk] kemarin sampai sold out." |
 | 2 | Produk + alasan laku | Mengambil satu unit dari stok, menunjukkan satu keunggulan |
-| 3 | Bukti + CTA | Tumpukan paket siap kirim / kurir datang: "Stok tinggal sedikit, checkout di keranjang kuning ya." |
+| 3 | Bukti + CTA | Tumpukan paket siap kirim / kurir datang: "Yang kemarin kehabisan, sekarang ready lagi. Cek linknya sebelum abis." |
 
 **Aturan dialog:**
 - Angka konkret (jumlah paket, sudah berapa kali restock) adalah bukti sosial terkuat — tapi hanya pakai angka yang diberikan user.
 - Kelangkaan boleh, asal benar. Jangan mengarang "tinggal 5".
+- CTA netral platform: jangan sebut warna keranjang (kuning/oranye) atau fitur khusus satu platform.
 - Nada: sibuk tapi ramah, seperti seller yang sempat ngobrol di sela kerja.
 
 **Catatan visual:** tumpukan paket, plastik, dan rak penuh membuat frame ramai — jaga produk utama tetap besar di frame saat ditunjukkan (30–40%).

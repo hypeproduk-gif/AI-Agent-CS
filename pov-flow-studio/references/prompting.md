@@ -161,7 +161,23 @@ Tulis seperti orang mengirim voice note ke teman.
 - "Teruji klinis..."
 - "Dapatkan sekarang juga..."
 
-**CTA yang aman**: "Linknya di bawah ya." · "Aku taruh linknya di keranjang kuning." · "Coba aja dulu, nggak rugi."
+**CTA — netral platform dan bervariasi**
+
+Iklan bisa tayang di TikTok, Shopee, Instagram, atau Facebook, jadi CTA **tidak boleh menyebut warna keranjang** (kuning identik TikTok, oranye Shopee) atau fitur khusus satu platform. Gunakan kata netral: "link", "di bawah", "cek", "klik".
+
+Pilih CTA yang **berbeda di setiap iklan**, sesuai angle dan pemicunya:
+
+| Pemicu | Contoh CTA |
+|--------|-----------|
+| Rasa penasaran | "Cek sendiri deh, linknya di bawah." · "Klik linknya, liat detailnya dulu." |
+| Promo / harga | "Cek promonya sekarang, lagi ada potongan." · "Harganya lagi turun, cek di link bawah." |
+| Kelangkaan (hanya jika benar) | "Stoknya cepet abis, mending amanin sekarang." · "Sebelum promonya selesai, cek dulu." |
+| Bukti sosial | "Liat sendiri ulasannya, rame banget." · "Udah ribuan yang pake, cek linknya." |
+| Tanpa risiko | "Coba aja dulu, nggak rugi." · "Cek dulu aja, nggak harus beli sekarang." |
+| Personal | "Percaya deh, kamu bakal nyesel kalau nggak coba." · "Ini buat kamu yang [masalah], cek linknya." |
+| Ringan / santai | "Linknya di bawah ya." · "Klik aja, nanti kamu ngerti kenapa aku suka." |
+
+Aturan: promo, diskon, stok terbatas, atau jumlah pembeli **hanya disebut jika user memberikan infonya**. Jangan mengarang. Tanpa info itu, pakai pemicu penasaran, tanpa risiko, atau personal.
 **CTA yang merusak**: "Beli sekarang" · "Order hari ini" · "Kunjungi website kami" · menyebut kode diskon di dialog.
 
 ## Adegan yang rawan glitch
