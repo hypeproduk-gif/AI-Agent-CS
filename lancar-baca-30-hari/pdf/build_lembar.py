@@ -88,14 +88,17 @@ for judul, kal in CERITA.items():
 
 # KARTU
 def kartu(items, level, title):
-    cells = "".join(f'<div class="kt" style="border-color:{LVL[level]}">{x}</div>' for x in items)
-    return f'<section class="pg kartu" style="--c:{LVL[level]}"><div class="tab">Kartu</div><div class="t">{title}</div><div class="s">Gunting di garis putus-putus</div><div class="kts">{cells}</div></section>'
+    rows = [items[i:i+4] for i in range(0, len(items), 4)]
+    cells = "<table class='kt'>" + "".join("<tr>" + "".join(f"<td style='border-color:{LVL[level]}'>{x}</td>" for x in r) + "</tr>" for r in rows) + "</table>"
+    return f'<section class="pg kartu" style="--c:{LVL[level]}"><div class="tab">Kartu</div><div class="t">{title}</div><div class="s">Gunting di garis putus-putus</div>{cells}</section>'
 setB = [k+v for k in KONS for v in VOK]
 pages.append(kartu([h for h in VOK + KONS], 1, "Kartu Set A · Huruf"))
 for i in range(0, len(setB), 20):
     pages.append(kartu(setB[i:i+20], 2, "Kartu Set B · Suku Kata"))
-pages.append(kartu([b for _, b in KATA3] + ["mama","papa","kakak","adik","sate","kue","tahu","baju"], 3, "Kartu Set C · Kata"))
-pages.append(kartu(["kan","man","bus","top","lat","bak","nga","nya","ngi","nyi","cing","dok","jan","lan","tal","ral","mah","pak","sen","ban"], 4, "Kartu Set D · Suku Kata Tertutup"))
+setC = [b for _, b in KATA3] + ["mama","papa","kakak","adik","sate","kue","tahu","baju","pipi","kuku","sapu","rusa","nenek","gula","lima","dadu"]
+for i in range(0, len(setC), 20):
+    pages.append(kartu(setC[i:i+20], 3, "Kartu Set C · Kata"))
+pages.append(kartu(["kan","man","bus","top","lat","bak","nga","nya","ngi","nyi","cing","dok","jan","lan","tal","ral","mah","pak","sen","ban","bul"], 4, "Kartu Set D · Suku Kata Tertutup"))
 
 # TRACKER & SERTIFIKAT
 circles = "".join(f'<div class="ci{" star" if (i+1)%5==0 else ""}{" tes" if i+1 in (1,15,30) else ""}">{i+1}</div>' for i in range(30))
@@ -125,7 +128,7 @@ table.grid{{width:100%;border-collapse:collapse;font:500 30pt Fr;text-align:cent
 .kal{{font:500 24pt Fr;color:#1F4E4A}} .draw{{height:45mm;border:1.5px dashed #D9CFC0;border-radius:4mm;margin:3mm 0 7mm}}
 .ekor{{font:500 34pt Fr;color:#1F4E4A;margin:auto}} .ekor td{{padding:3mm 4mm}} .blank{{border-bottom:2px solid #C8735A;width:50mm}}
 .cerita{{font:400 19pt/1.9 Fr;margin-top:7mm}} .q{{font-size:12pt;line-height:2.4}}
-.row.pick{{font-size:22pt}} .kts{{display:flex;flex-wrap:wrap}} .kt{{width:45mm;height:44mm;border:1.5px dashed;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:500 34pt Fr;color:#1F4E4A;margin:0 -0.75px -0.75px 0}}
+.row.pick{{font-size:22pt}} .kts{{display:flex;flex-wrap:wrap}} table.kt{{border-collapse:collapse;margin:0 auto}} table.kt td{{width:38mm;height:38mm;border:1.5px dashed;text-align:center;font:500 32pt Fr;color:#1F4E4A;padding:0}}
 .tracker{{border-color:#C99A3B}} .cis{{display:flex;flex-wrap:wrap;gap:7mm 9mm;justify-content:center;margin-top:10mm;flex-direction:row}}
 .ci{{width:22mm;height:22mm;border-radius:50%;border:1.5px dashed #C99A3B;font:600 9pt Jk;color:#C99A3B;display:flex;align-items:flex-start;justify-content:center;padding-top:1.5mm;box-sizing:border-box}}
 .ci.star{{background:#FBF0D9;border-style:solid}} .ci.tes{{border-color:#C8735A;color:#C8735A}} .ci.tes::after{{content:" ✎"}}

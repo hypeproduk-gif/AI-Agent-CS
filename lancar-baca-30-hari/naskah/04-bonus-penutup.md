@@ -6,10 +6,10 @@
 ## Isi Kartu
 | Set | Warna tepi | Isi | Jumlah |
 |---|---|---|---|
-| A | Kuning | Vokal + 12 konsonan (huruf kecil besar) | 17 |
+| A | Kuning | 5 vokal + 11 konsonan Level 1 | 16 |
 | B | Hijau | Suku kata terbuka: ma–mo, sa–so, la–lo, ba–bo, ta–to, ka–ko, pa–po, na–no, da–do, ra–ro, ga–go | 55 |
-| C | Biru | Kata Level 3 + gambar di balik kartu | 30 |
-| D | Ungu | Suku kata tertutup & gabungan: kan, man, bus, top, nga, nya, ... | 18 |
+| C | Biru | Kata Level 3 | 28 |
+| D | Terakota | Suku kata tertutup & gabungan: kan, man, bus, top, nga, nya, ... | 21 |
 
 ## 6 Permainan (masing-masing 4 menit, untuk menit 8–12)
 
