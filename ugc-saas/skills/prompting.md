@@ -1,18 +1,28 @@
 # Aturan Prompt Video UGC
 
-Model video cenderung menghasilkan gambar yang terlalu rapi: wajah di tengah, kulit licin, cahaya studio. Untuk iklan UGC itu justru merugikan. Prompt harus **sengaja memasukkan ketidaksempurnaan** yang biasa muncul di video HP.
+Target gaya: **UGC modern yang jernih**. Videonya terasa direkam sendiri pakai HP terbaru (komposisi santai, gerakan alami, lokasi nyata), tapi gambarnya tetap **HD, tajam, dan bersih** — bukan buram, berbintik, atau bernuansa retro. Yang dibuat "tidak sempurna" hanya gaya rekamnya, bukan kualitas gambarnya.
 
-## Lima modifier yang selalu ada
+## Modifier yang selalu ada
 
 | Modifier | Mencegah |
 |----------|----------|
-| `nuansa handheld, sedikit goyangan kamera` | Gambar kaku seperti pakai tripod |
+| `direkam dengan iPhone terbaru, video 4K HD, fokus tajam, warna bersih dan natural` | Hasil buram, berbintik, atau bernuansa retro |
+| `wajah identik dengan creator.png, jernih dan tajam` | Wajah berubah atau ikut buram |
+| `handheld halus, gerakan kamera sangat ringan` | Gambar kaku seperti pakai tripod |
 | `candid` | Kesan adegan yang disiapkan |
-| `tekstur kulit natural` | Kulit plastik khas AI |
-| `framing tidak sempurna` | Subjek selalu di tengah |
+| `tekstur kulit natural tapi jernih` | Kulit plastik khas AI |
+| `komposisi santai, sedikit off-center` | Subjek selalu di tengah |
 | pencahayaan sesuai lokasi | Cahaya studio bawaan model |
 
-**Pengecualian:** angle Podcast Clip memakai `kamera statis di tripod, tanpa goyangan`. Empat modifier lainnya tetap dipakai.
+**Pengecualian:** angle Podcast Clip memakai `kamera statis di tripod, tanpa goyangan`. Modifier lainnya tetap dipakai.
+
+## Jernih, bukan retro
+
+Kata-kata berikut membuat model menurunkan kualitas gambar, jadi **jangan dipakai**: grain, noise, film, retro, vintage, VHS, blur, buram, low quality, eksposur tidak sempurna, cahaya kusam, overexposed, "wajah agak gelap".
+
+Kesan UGC didapat dari: lokasi nyata, pakaian sehari-hari, ekspresi dan gerakan alami, bicara langsung ke kamera, komposisi tidak simetris. Bukan dari gambar yang jelek.
+
+Cahaya selalu **terang dan bersih** dari sumber alami (jendela, lampu ruangan). Untuk adegan malam, tambahkan "wajah tetap terang dan jelas".
 
 ## Kamus pencahayaan
 
@@ -23,7 +33,7 @@ Model video cenderung menghasilkan gambar yang terlalu rapi: wajah di tengah, ku
 | Kamar mandi | lampu cermin wastafel · lampu plafon kuning |
 | Kamar tidur | cahaya pagi tembus gorden · lampu tidur hangat |
 | Meja kerja malam | lampu meja hangat dari samping + cahaya layar kebiruan |
-| Gym | lampu neon plafon, agak keras · cahaya jendela besar |
+| Gym | lampu plafon terang · cahaya jendela besar |
 | Luar ruangan | langit mendung merata · matahari sore, sedikit silau |
 | Setup podcast | ring light lembut dari depan · cahaya jendela dari samping |
 
@@ -108,7 +118,7 @@ Tulis seperti orang mengirim voice note ke teman.
 Video UGC vertikal, creator.png [posisi] di [lokasi spesifik], memakai [pakaian identik].
 [Satu aksi]. [file-produk + cara dipegang + warna/bentuk/bahan].
 Berbicara langsung ke kamera: "[dialog sesuai batas kata]."
-Nuansa handheld, sedikit goyangan kamera, candid, tekstur kulit natural, framing tidak sempurna, [pencahayaan].
+Direkam dengan iPhone terbaru, video 4K HD, fokus tajam, warna bersih dan natural. Wajah identik dengan creator.png, jernih dan tajam. Handheld halus, candid, tekstur kulit natural tapi jernih, komposisi santai sedikit off-center, [pencahayaan terang dan bersih].
 Vertikal 9:16, [durasi] detik.
 ```
 

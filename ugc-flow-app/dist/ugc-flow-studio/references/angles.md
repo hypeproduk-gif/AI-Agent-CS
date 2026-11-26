@@ -18,7 +18,7 @@ Kolom "Produk" menunjukkan apakah produk tampil di frame. Shot tanpa produk teta
 | 4 | Hasil | Lokasi aktif (luar, gym, kantor), bergerak lebih segar | Tidak | Perubahan bertahap: "Minggu pertama..., minggu ketiga..." |
 | 5 | CTA | Kembali ke lokasi Shot 1 | Ya | Ulang masalah singkat + ajakan coba + penghilang risiko |
 
-Cahaya Shot 2 sedikit lebih redup dari shot lain supaya kontrasnya terasa.
+Shot 2 boleh memakai cahaya yang lebih hangat atau suasana pagi untuk membedakan suasana, tapi wajah tetap terang dan jelas.
 
 ---
 

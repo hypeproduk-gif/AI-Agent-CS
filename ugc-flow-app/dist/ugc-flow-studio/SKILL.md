@@ -9,7 +9,7 @@ Panduan ini mengubah satu foto produk menjadi paket produksi video iklan bergaya
 
 ## Prinsip dasar
 
-Iklan UGC laku karena **tidak terlihat seperti iklan**. Penonton berhenti scroll untuk orang yang terasa nyata, bukan untuk produksi yang mulus. Setiap keputusan di paket ini — dialog, pencahayaan, framing, pilihan kreator — diarahkan ke satu tujuan: video yang terasa direkam sendiri oleh pengguna asli pakai HP.
+Iklan UGC laku karena **tidak terlihat seperti iklan**, tapi gambarnya tetap jernih dan HD seperti konten kreator masa kini. Penonton berhenti scroll untuk orang yang terasa nyata, bukan untuk produksi yang mulus. Setiap keputusan di paket ini — dialog, pencahayaan, framing, pilihan kreator — diarahkan ke satu tujuan: video yang terasa direkam sendiri oleh pengguna asli pakai HP.
 
 Tiga pertanyaan yang selalu dijawab sebelum menulis:
 1. **Siapa yang paling dipercaya membicarakan produk ini?** → menentukan arketipe kreator.
@@ -40,9 +40,9 @@ Tiga pertanyaan yang selalu dijawab sebelum menulis:
 
 Susunan kalimat, berurutan:
 
-> Gunakan wajah dari model.png sebagai referensi, jaga wajahnya identik. Foto iPhone candid, [gender] Indonesia usia [N] tahun, [warna kulit], [rambut + satu ketidakrapian], [riasan], memakai [pakaian spesifik — sebut bahan/warna]. [Posisi] di [lokasi nyata + 2 benda di latar]. Diambil dari [sudut kamera seolah dipegang sendiri]. [Sumber cahaya + arah + satu ketidaksempurnaan]. Tekstur kulit asli, pori terlihat, tidak diretus. Tanpa lampu studio.
+> Gunakan wajah dari model.png sebagai referensi, jaga wajahnya identik. Foto iPhone candid resolusi tinggi, fokus tajam di wajah, [gender] Indonesia usia [N] tahun, [warna kulit], [rambut + satu ketidakrapian], [riasan], memakai [pakaian spesifik — sebut bahan/warna]. [Posisi] di [lokasi nyata + 2 benda di latar]. Diambil dari [sudut kamera seolah dipegang sendiri]. [Sumber cahaya alami yang terang + arah]. Tekstur kulit asli dan jernih, tidak diretus berlebihan. Tanpa lampu studio.
 
-Larangan: kata pujian fisik ("cantik", "tampan", "menawan", "sempurna"), latar polos, pose model, pencahayaan rata.
+Larangan: kata pujian fisik ("cantik", "tampan", "menawan", "sempurna"), latar polos, pose model, dan kata yang menurunkan kualitas (grain, retro, buram, kusam).
 
 Lokasi dan pakaian di gambar ini mengikuti lokasi utama angle, supaya `creator.png` langsung cocok dipakai di shot pertama.
 
@@ -85,7 +85,7 @@ Aturan naskah:
 Video UGC vertikal, creator.png [posisi] di [lokasi], memakai [pakaian]. [Satu aksi].
 [Jika produk tampil: nama-file-produk + cara dipegang + deskripsi warna/bentuk/bahan].
 Berbicara langsung ke kamera: "[dialog]."
-[Modifier gaya]. [Pencahayaan lokasi]. Vertikal 9:16, [durasi] detik.
+[Modifier gaya: 4K HD, fokus tajam, wajah identik dengan creator.png]. [Pencahayaan lokasi yang terang]. Vertikal 9:16, [durasi] detik.
 ```
 
 - `creator.png` disebut di **setiap** prompt — tanpa itu wajah kreator berganti.
