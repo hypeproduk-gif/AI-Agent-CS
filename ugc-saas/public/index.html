@@ -93,7 +93,7 @@ const $=id=>document.getElementById(id);
 let angle="testimonial",imgs=[],result={};
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 $("key").value=store.get("ugc_key")||"";
-async function checkCredit(){const k=$("key").value.trim();if(!k)return;try{const r=await fetch("/api/license?key="+encodeURIComponent(k));const j=await r.json();$("credit").textContent=r.ok?`Sisa kredit: ${j.credits} generate`+(j.expiresAt?` · berlaku sampai ${new Date(j.expiresAt).toLocaleDateString("id-ID")}`:""):j.error}catch(e){}}
+async function checkCredit(){const k=$("key").value.trim();if(!k)return;try{const r=await fetch("/api/license?key="+encodeURIComponent(k));const j=await r.json();$("credit").textContent=r.ok?`Sisa kredit: ${j.credits} · hari ini ${j.usedToday}/${j.dailyLimit}`+(j.expiresAt?` · berlaku sampai ${new Date(j.expiresAt).toLocaleDateString("id-ID")}`:""):j.error}catch(e){}}
 $("key").onchange=checkCredit;checkCredit();
 $("angles").innerHTML=ANGLES.map(a=>`<div class="ang${a[0]==angle?" on":""}" data-a="${a[0]}"><b>${a[1]}</b><span>${a[2]}</span></div>`).join("");
 $("angles").onclick=e=>{const d=e.target.closest(".ang");if(!d)return;angle=d.dataset.a;document.querySelectorAll(".ang").forEach(x=>x.classList.toggle("on",x===d))};
@@ -114,7 +114,7 @@ $("go").onclick=async()=>{
     const j=await res.json();
     if(!res.ok)throw new Error(j.error||res.status);
     render(j.text);
-    $("status").textContent="Selesai. Sisa kredit: "+j.credits;$("credit").textContent="Sisa kredit: "+j.credits+" generate";
+    $("status").textContent="Selesai. Sisa kredit: "+j.credits;$("credit").textContent=`Sisa kredit: ${j.credits} · hari ini ${j.usedToday}/${j.dailyLimit}`;
   }catch(e){$("err").textContent=e.message;$("status").textContent=""}
   $("go").disabled=false;
 };

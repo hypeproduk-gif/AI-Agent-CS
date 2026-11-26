@@ -14,6 +14,8 @@ Web app berbayar: pembeli memasukkan **kode lisensi**, lalu generate paket produ
 - Lisensi dengan jumlah kredit dan masa aktif opsional
 - Admin: buat kode (bisa banyak sekaligus), tambah kredit, nonaktifkan, dan lihat pemakaian token 30 hari
 - Prompt skill hanya ada di server (`skills/`, `prompt-template.txt`)
+- Batas harian per kode lisensi: 20 generate per hari (reset 00.00 WIB), bisa diubah lewat `DAILY_LIMIT`
+- Prompt caching untuk menekan biaya input API
 - Rate limit: 5 generate per menit per IP
 - Database SQLite satu file, tanpa server database terpisah
 
@@ -35,6 +37,7 @@ Buka `http://localhost:3000` (app pembeli) dan `http://localhost:3000/admin.html
    - `ANTHROPIC_API_KEY`
    - `ADMIN_TOKEN` (string acak minimal 16 karakter)
    - `MODEL=claude-sonnet-5-5`
+   - `DAILY_LIMIT=20`
    - `DB_PATH=/data/app.db`
 4. Tambahkan **Volume** dengan mount path `/data`. Tanpa volume, data lisensi hilang setiap kali deploy ulang.
 5. Di **Settings → Networking**, klik Generate Domain. Kamu bisa juga memakai domain sendiri.

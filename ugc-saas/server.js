@@ -13,6 +13,7 @@ const {
   ANTHROPIC_API_KEY,
   ADMIN_TOKEN,
   MODEL = "claude-sonnet-5-5",
+  DAILY_LIMIT = "20",
   PORT = 3000,
   DB_PATH = path.join(__dirname, "data", "app.db"),
 } = process.env;
@@ -59,9 +60,13 @@ const q = {
   list: db.prepare(`SELECT l.*, (SELECT COUNT(*) FROM usage u WHERE u.key = l.key AND u.ok = 1) AS used
                     FROM licenses l ORDER BY created_at DESC LIMIT 500`),
   update: db.prepare("UPDATE licenses SET credits = COALESCE(?, credits), active = COALESCE(?, active), expires_at = COALESCE(?, expires_at) WHERE key = ?"),
+  today: db.prepare(`SELECT COUNT(*) AS n FROM usage WHERE key = ? AND ok = 1
+                     AND date(created_at, '+7 hours') = date('now', '+7 hours')`),
   stats: db.prepare(`SELECT COUNT(*) AS runs, COALESCE(SUM(input_tokens),0) AS input, COALESCE(SUM(output_tokens),0) AS output
                      FROM usage WHERE ok = 1 AND created_at >= datetime('now','-30 days')`),
 };
+
+const DAILY = Math.max(parseInt(DAILY_LIMIT) || 20, 1);
 
 function newKey() {
   const part = () => crypto.randomBytes(3).toString("hex").toUpperCase();
@@ -74,6 +79,7 @@ function checkLicense(key) {
   if (!lic.active) return { error: "Lisensi ini dinonaktifkan. Hubungi penjual.", status: 403 };
   if (lic.expires_at && new Date(lic.expires_at) < new Date()) return { error: "Masa berlaku lisensi sudah habis.", status: 403 };
   if (lic.credits <= 0) return { error: "Kredit habis. Beli paket kredit tambahan.", status: 402 };
+  if (q.today.get(lic.key).n >= DAILY) return { error: `Batas ${DAILY} generate per hari sudah tercapai. Coba lagi besok (reset pukul 00.00 WIB).`, status: 429 };
   return { lic };
 }
 
@@ -88,7 +94,7 @@ const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY });
 app.get("/api/license", rateLimit({ windowMs: 60_000, limit: 30 }), (req, res) => {
   const lic = q.get.get(String(req.query.key || "").trim().toUpperCase());
   if (!lic) return res.status(404).json({ error: "Kode lisensi tidak ditemukan." });
-  res.json({ credits: lic.credits, active: !!lic.active, expiresAt: lic.expires_at });
+  res.json({ credits: lic.credits, active: !!lic.active, expiresAt: lic.expires_at, usedToday: q.today.get(lic.key).n, dailyLimit: DAILY });
 });
 
 app.post("/api/generate", rateLimit({ windowMs: 60_000, limit: 5 }), async (req, res) => {
@@ -111,12 +117,15 @@ app.post("/api/generate", rateLimit({ windowMs: 60_000, limit: 5 }), async (req,
     const msg = await anthropic.messages.create({
       model: MODEL,
       max_tokens: 8000,
-      system: SYSTEM,
+      // Prompt caching: isi skill sama di setiap generate, jadi di-cache supaya biaya input turun.
+      system: [{ type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }],
       messages: [{ role: "user", content }],
     });
     const text = msg.content.filter((c) => c.type === "text").map((c) => c.text).join("");
-    q.log.run(k, msg.usage?.input_tokens ?? null, msg.usage?.output_tokens ?? null, 1);
-    res.json({ text, credits: q.get.get(k).credits });
+    const u = msg.usage || {};
+    const input = (u.input_tokens || 0) + (u.cache_creation_input_tokens || 0) + (u.cache_read_input_tokens || 0);
+    q.log.run(k, input, u.output_tokens ?? null, 1);
+    res.json({ text, credits: q.get.get(k).credits, usedToday: q.today.get(k).n, dailyLimit: DAILY });
   } catch (e) {
     q.refund.run(k); // generate gagal tidak memotong kredit
     q.log.run(k, null, null, 0);
