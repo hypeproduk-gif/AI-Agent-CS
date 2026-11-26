@@ -68,6 +68,7 @@ Lokasi   : ...
 Aksi     : satu aksi saja
 Produk   : tampil / tidak — bagaimana
 Foto     : nama file produk yang dipakai (jika tampil)
+Nada     : nada bicara + ekspresi (lihat "Intonasi dan ekspresi")
 Dialog   : "..."
 ```
 
@@ -84,6 +85,7 @@ Aturan naskah:
 ```
 Video UGC vertikal, creator.png [posisi] di [lokasi], memakai [pakaian]. [Satu aksi].
 [Jika produk tampil: nama-file-produk + cara dipegang + deskripsi warna/bentuk/bahan].
+Nada bicara: [nada]. Ekspresi: [ekspresi].
 Berbicara langsung ke kamera dalam Bahasa Indonesia sehari-hari: "[dialog]."
 [Modifier gaya: 4K HD, fokus tajam, wajah identik dengan creator.png]. [Pencahayaan lokasi yang terang]. Vertikal 9:16, [durasi] detik.
 ```
@@ -105,7 +107,7 @@ Aset:
 
 Buat shot berikut secara berurutan:
 
-Shot 1: [lokasi]. creator.png [aksi]. Berbicara dalam Bahasa Indonesia: "[dialog]." [cahaya], [modifier]. 9:16, [durasi] detik.
+Shot 1: [lokasi]. creator.png [aksi]. Nada bicara: [nada]. Ekspresi: [ekspresi]. Berbicara dalam Bahasa Indonesia: "[dialog]." [cahaya], [modifier]. 9:16, [durasi] detik.
 ...
 
 Jaga wajah, rambut, dan pakaian creator.png identik di semua shot. Semua shot vertikal 9:16.
@@ -120,13 +122,13 @@ Catatan untuk user: brief ini hanya jalan di Agent mode. Di mode biasa, satu pro
 VOICEOVER — [Produk]
 Total ±[N] detik
 
-[Shot 1 · 0–8 dtk]
-"..."
-[Shot 2 · 8–16 dtk]
-"..."
+[Shot 1 · 0–8 dtk] Nada: penuh energi, penasaran
+"[excited] ..."
+[Shot 2 · 8–16 dtk] Nada: lesu, mengeluh
+"[sighs] ..."
 
-ElevenLabs: Stability 0.45–0.55 · Similarity 0.75 · Style 0.25–0.35
-Karakter suara: ngobrol, hangat, sedikit tidak rapi — bukan penyiar.
+ElevenLabs (model v3): Stability · Similarity 0.75 · Style — sesuai kelompok angle (lihat "Intonasi dan ekspresi")
+Karakter suara: [karakter suara angle ini] — ngobrol, bukan penyiar.
 ```
 
 Timing dihitung dari durasi per shot yang dipilih.
