@@ -41,6 +41,23 @@ Flow mengenali gambar yang diunggah dari **nama file yang ditulis di kalimat pro
 - Beri nama file yang deskriptif (`serum-vitc.jpg`), bukan `IMG_2231.jpg`.
 - `model.png` hanya untuk membuat gambar kreator, tidak dipakai di Flow.
 
+## Kunci produk — larangan ketat
+
+Produk di video **harus identik** dengan foto produk. Perubahan sekecil apa pun dilarang:
+- bentuk, ukuran relatif, dan proporsi
+- warna (termasuk gradasi, transparansi, dan finishing doff/glossy)
+- posisi, ukuran, jenis huruf, dan isi semua teks, logo, dan label
+- jumlah dan letak komponen (tutup, tombol, engsel, tali, stiker)
+- tekstur dan bahan
+
+Cara menulisnya di setiap prompt Flow yang menampilkan produk:
+1. Sebut nama file foto produk yang dipakai di shot itu.
+2. Deskripsikan produk persis seperti di foto: warna, bentuk, bahan, letak teks/logo. Jangan menambah detail yang tidak ada di foto, dan jangan mengarang isi label.
+3. Tutup dengan kalimat kunci: **"Produk harus identik dengan [nama file]: bentuk, warna, teks, logo, dan posisinya tidak boleh berubah sedikit pun. Jangan menambah, menghapus, atau memindahkan teks dan logo."**
+4. Jaga gerakan produk sederhana (pegang, angkat, putar pelan) dan produk mengisi 30–40% frame, karena gerakan rumit dan produk kecil adalah penyebab utama produk berubah bentuk.
+
+Di briefing Agent, tambahkan kalimat kunci yang sama untuk semua shot.
+
 ## Panjang dialog
 
 ±3 kata per detik.
@@ -94,5 +111,7 @@ Berbicara langsung ke kamera: "[dialog sesuai batas kata]."
 Nuansa handheld, sedikit goyangan kamera, candid, tekstur kulit natural, framing tidak sempurna, [pencahayaan].
 Vertikal 9:16, [durasi] detik.
 ```
+
+Untuk shot yang menampilkan produk, tambahkan kalimat kunci produk di akhir prompt.
 
 Semakin spesifik isi tiap kurung, semakin kecil peluang hasilnya terlihat generik.

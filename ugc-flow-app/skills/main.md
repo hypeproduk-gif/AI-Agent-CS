@@ -15,12 +15,13 @@ Tiga pertanyaan yang selalu dijawab sebelum menulis:
 
 | Data | Wajib? | Jika kosong |
 |------|--------|-------------|
-| Foto produk | Ya | — |
+| Foto produk (bisa beberapa sisi: depan, belakang, samping, detail) | Ya | — |
 | Nama + deskripsi singkat | Ya | Tanyakan |
 | Angle iklan | Ya | Tanyakan, jangan diasumsikan |
 | Kategori produk | Disarankan | Tebak dari foto & deskripsi |
 | Profil kreator | Opsional | Pilih arketipe yang paling cocok dengan kategori |
 | Durasi per shot | Opsional | 8 detik |
+| Sudah punya foto kreator siap pakai | Opsional | Tidak — buat prompt gambar |
 
 ## Output — lima bagian
 
@@ -40,6 +41,18 @@ Larangan: kata pujian fisik ("cantik", "tampan", "menawan", "sempurna"), latar p
 
 Lokasi dan pakaian di gambar ini mengikuti lokasi utama angle, supaya `creator.png` langsung cocok dipakai di shot pertama.
 
+**Kenapa perlu prompt gambar:** Flow meniru gaya foto referensinya. Kalau referensinya foto studio, videonya cenderung ikut terlihat seperti iklan TV, bukan UGC. Prompt gambar mengubah foto model menjadi foto kreator bergaya HP candid dengan baju dan latar yang sesuai iklan.
+
+**Kapan dilewati:** jika user sudah punya foto kreator yang candid gaya HP, bajunya sesuai, dan latarnya cocok dengan lokasi iklan, bagian ini dilewati. User cukup mengganti nama filenya menjadi `creator.png`. Tulis di bagian 1: "Dilewati — pakai foto kreator milikmu sebagai creator.png." 
+
+## Foto produk dari beberapa sisi
+
+User boleh mengunggah beberapa foto produk, misalnya `nama-produk-depan.jpg`, `nama-produk-belakang.jpg`, `nama-produk-samping.jpg`, `nama-produk-detail.jpg`.
+- Untuk setiap shot yang menampilkan produk, pilih **satu** foto yang sisinya paling sesuai dengan cara produk dipegang atau dilihat di shot itu (produk diangkat ke kamera → depan; diputar → samping; close-up label → detail).
+- Sebut nama file yang dipilih di prompt Flow shot itu, dan tulis di shot list: "Foto produk: [nama file] — alasan singkat".
+- Di briefing Agent, daftarkan semua foto produk sebagai aset dengan keterangan sisinya.
+- Arahkan aksi supaya produk menghadap kamera dengan sisi yang sama seperti foto yang dipilih; hindari memutar produk ke sisi yang tidak ada fotonya.
+
 ## 2. Shot list
 
 Format tiap shot:
@@ -49,6 +62,7 @@ Shot N — [fungsi shot]
 Lokasi   : ...
 Aksi     : satu aksi saja
 Produk   : tampil / tidak — bagaimana
+Foto     : nama file produk yang dipakai (jika tampil)
 Dialog   : "..."
 ```
 

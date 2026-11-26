@@ -26,6 +26,7 @@ textarea{min-height:70px;resize:vertical}
 button{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:12px 18px;font:600 15px system-ui;cursor:pointer}
 button:disabled{opacity:.5;cursor:wait}
 .ghost{background:transparent;color:var(--acc);border:1px solid var(--acc);padding:6px 10px;font-size:13px}
+.previews{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.previews img{height:90px;border-radius:8px;border:1px solid var(--line)}.check{display:flex;gap:8px;align-items:center;margin-top:14px}.check input{width:auto;margin:0}.note{background:var(--accs);border-radius:10px;padding:10px 12px;font-size:13px;margin-top:8px;font-weight:400}
 .hint{font-size:12px;color:var(--mut);margin-top:4px}
 #preview{max-height:120px;border-radius:8px;margin-top:8px;display:none}
 .out h3{display:flex;justify-content:space-between;align-items:center;font-size:15px;margin:0 0 8px}
@@ -47,12 +48,13 @@ pre{white-space:pre-wrap;word-wrap:break-word;background:var(--bg);border:1px so
 
 <div class="card">
 <h2>2. Produk</h2>
-<label>Foto produk (JPG/PNG)</label>
-<input id="img" type="file" accept="image/jpeg,image/png,image/webp">
-<img id="preview" alt="">
+<label>Foto produk</label>
+<input id="img" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+<div class="hint">Boleh pilih sampai 4 foto dari sisi berbeda (depan, belakang, samping, detail). Beri nama file sesuai sisinya, misalnya kacamata-depan.jpg. AI akan memilih foto yang paling sesuai untuk tiap shot.</div>
+<div class="previews" id="previews"></div>
 <div class="row">
 <div><label>Nama produk</label><input id="pname" placeholder="mis. Salep Glowing FILO"></div>
-<div><label>Nama file produk di Flow</label><input id="pfile" placeholder="filo-salep.jpg"></div>
+<div><label>Nama file foto produk di Flow</label><input id="pfile" placeholder="filo-salep.jpg"></div>
 </div>
 <label>Deskripsi satu baris</label><input id="pdesc" placeholder="Salep pencerah wajah, hasil terlihat 2 minggu">
 <label>Kategori</label>
@@ -70,6 +72,8 @@ pre{white-space:pre-wrap;word-wrap:break-word;background:var(--bg);border:1px so
 <div><label>Model kreator</label><select id="char"></select></div>
 <div><label>Catatan tambahan (opsional)</label><input id="cnote" placeholder="mis. berhijab, usia 30an"></div>
 </div>
+<label class="check"><input id="ownc" type="checkbox"> Saya sudah punya foto kreator siap pakai</label>
+<div class="note">Flow meniru gaya foto referensinya. Kalau referensinya foto studio, videonya cenderung ikut terlihat seperti iklan TV, bukan UGC. Karena itu ada prompt gambar untuk mengubah foto model jadi foto kreator bergaya HP.<br><br>Tapi kalau foto model kamu sudah memenuhi syarat, prompt gambar tidak perlu dipakai. Syaratnya: foto candid gaya HP, bajunya sudah sesuai, dan latarnya cocok dengan lokasi iklan. Cukup ganti nama filenya jadi <b>creator.png</b> lalu langsung pakai di Flow, dan centang kotak ini.</div>
 <label>Durasi per shot</label><select id="dur"><option value="8" selected>8 detik</option><option value="10">10 detik</option></select><label>Jumlah shot</label><select id="shots"><option value="asli" selected>Ikuti struktur angle</option><option value="3">Ringkas jadi 3 shot</option></select><div class="hint">Cek dulu durasi yang tersedia di Flow kamu sebelum memilih 10 detik.</div>
 <label>Catatan brief lain (opsional)</label><textarea id="extra" placeholder="Klaim utama, promo, harga, gaya bahasa brand..."></textarea>
 </div>
@@ -86,7 +90,7 @@ const ANGLES=[["testimonial","Testimonial","5 shot · hasil spesifik"],["car-on-
 const CHARS=["A — Anak Kos Aktif (P, 21–24)","B — Ibu Muda Praktis (P, 29–36)","C — Hijaber Kantoran (P, 25–32)","D — Beauty Enthusiast (P, 22–28)","E — Mas Gym (L, 24–32)","F — Bapak Muda Rumahan (L, 28–38)","G — Anak Motor / Outdoor (L, 23–32)","H — Profesional Muda (P/L, 27–35)","Pilihkan otomatis sesuai produk"];
 const SECTIONS=[["CHARACTER","1. Prompt gambar kreator (ChatGPT / Nano Banana)","image-prompts.md"],["SHOTLIST","2. Shot list + dialogue","shot-list.md"],["FLOW","3. Prompt Flow bertag aset","flow-prompts.md"],["AGENT","4. Briefing Agent mode","agent-instruction.md"],["VOICEOVER","5. Skrip voiceover ElevenLabs","voiceover-script.md"]];
 const $=id=>document.getElementById(id);
-let angle="testimonial",img=null,result={};
+let angle="testimonial",imgs=[],result={};
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 $("key").value=store.get("ugc_key")||"";
 async function checkCredit(){const k=$("key").value.trim();if(!k)return;try{const r=await fetch("/api/license?key="+encodeURIComponent(k));const j=await r.json();$("credit").textContent=r.ok?`Sisa kredit: ${j.credits} generate`+(j.expiresAt?` · berlaku sampai ${new Date(j.expiresAt).toLocaleDateString("id-ID")}`:""):j.error}catch(e){}}
@@ -94,7 +98,7 @@ $("key").onchange=checkCredit;checkCredit();
 $("angles").innerHTML=ANGLES.map(a=>`<div class="ang${a[0]==angle?" on":""}" data-a="${a[0]}"><b>${a[1]}</b><span>${a[2]}</span></div>`).join("");
 $("angles").onclick=e=>{const d=e.target.closest(".ang");if(!d)return;angle=d.dataset.a;document.querySelectorAll(".ang").forEach(x=>x.classList.toggle("on",x===d))};
 $("char").innerHTML=CHARS.map((c,i)=>`<option ${i==8?"selected":""}>${c}</option>`).join("");
-$("img").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{img={type:f.type,data:r.result.split(",")[1]};$("preview").src=r.result;$("preview").style.display="block";if(!$("pfile").value)$("pfile").value=f.name.toLowerCase().replace(/\s+/g,"-")};r.readAsDataURL(f)};
+$("img").onchange=e=>{const fs=[...e.target.files].slice(0,4);imgs=[];$("previews").innerHTML="";$("pfile").value=fs.map(f=>f.name.toLowerCase().replace(/\s+/g,"-")).join(", ");fs.forEach(f=>{const r=new FileReader();r.onload=()=>{imgs.push({type:f.type,data:r.result.split(",")[1],file:f});const im=document.createElement("img");im.src=r.result;im.alt=f.name;$("previews").appendChild(im)};r.readAsDataURL(f)})};
 
 
 $("go").onclick=async()=>{
@@ -103,10 +107,10 @@ $("go").onclick=async()=>{
   if(!$("pname").value.trim())return $("err").textContent="Isi nama produk dulu.";
   store.set("ugc_key",key);
   const pfile=$("pfile").value.trim()||"produk.jpg";
-  const brief=`Produk: ${$("pname").value}\nDeskripsi: ${$("pdesc").value||"-"}\nKategori: ${$("cat").value}\nNama file produk di Flow: ${pfile}\nAngle: ${angle}\nModel kreator: ${$("char").value}${$("cnote").value?" — "+$("cnote").value:""}\nDurasi per shot: ${$("dur").value} detik\nJumlah shot: ${$("shots").value==="3"?"RINGKAS JADI 3 SHOT":"ikuti struktur angle"}\nCatatan brief: ${$("extra").value||"-"}\n\nBuat paket produksi lengkap.${img?" Foto produk terlampir — perhatikan warna, bentuk kemasan, dan label untuk deskriptor visual.":""}`;
+  const brief=`Produk: ${$("pname").value}\nDeskripsi: ${$("pdesc").value||"-"}\nKategori: ${$("cat").value}\nNama file produk di Flow: ${pfile}\nAngle: ${angle}\nModel kreator: ${$("char").value}${$("cnote").value?" — "+$("cnote").value:""}\nDurasi per shot: ${$("dur").value} detik\nFoto kreator: ${$("ownc").checked?"SUDAH PUNYA (lewati prompt gambar)":"buat prompt gambar"}\nJumlah shot: ${$("shots").value==="3"?"RINGKAS JADI 3 SHOT":"ikuti struktur angle"}\nCatatan brief: ${$("extra").value||"-"}\n\nBuat paket produksi lengkap.${imgs.length?" Foto produk terlampir ("+imgs.length+" sisi, urutan sesuai nama file) — salin warna, bentuk, teks, dan letak label persis.":""}`;
   $("go").disabled=true;$("status").textContent="Menulis paket produksi… (±30–60 detik)";$("out").innerHTML="";$("dl").style.display="none";
   try{
-    const res=await fetch("/api/generate",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({key,brief,image:img})});
+    const res=await fetch("/api/generate",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({key,brief,images:imgs.map(({type,data})=>({type,data}))})});
     const j=await res.json();
     if(!res.ok)throw new Error(j.error||res.status);
     render(j.text);

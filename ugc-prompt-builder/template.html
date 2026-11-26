@@ -22,6 +22,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 .ang{border:1px solid var(--line);border-radius:10px;padding:10px;cursor:pointer;background:var(--bg);text-align:left;color:var(--ink);font:inherit}
 .ang b{display:block;font-size:14px}.ang span{font-size:12px;color:var(--mut)}
 .ang[aria-pressed="true"]{border-color:var(--acc);background:var(--accs)}
+.check{display:flex;gap:8px;align-items:center;margin-top:14px}.check input{width:auto;margin:0}.note{background:var(--accs);border-radius:10px;padding:10px 12px;font-size:13px;margin-top:8px}
 .hint{font-size:12px;color:var(--mut);margin-top:4px}
 button.main{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:12px 18px;font:600 15px system-ui;cursor:pointer}
 .ghost{display:inline-block;background:transparent;color:var(--acc);border:1px solid var(--acc);border-radius:10px;padding:8px 12px;font:600 13px system-ui;cursor:pointer;text-decoration:none}
@@ -42,8 +43,9 @@ ol.how{margin:8px 0 0;padding-left:20px;color:var(--mut);font-size:14px}ol.how l
 <h2>Produk</h2>
 <div class="row">
 <div><label for="pname">Nama produk</label><input id="pname" placeholder="mis. Kacamata Anti Radiasi"></div>
-<div><label for="pfile">Nama file foto produk di Flow</label><input id="pfile" placeholder="kacamata-anti-radiasi.jpg"></div>
+<div><label for="pfile">Nama file foto produk (pisahkan koma)</label><input id="pfile" placeholder="kacamata-depan.jpg, kacamata-samping.jpg"></div>
 </div>
+<div class="hint">Boleh lebih dari satu foto dari sisi berbeda (depan, belakang, samping, detail). Beri nama file sesuai sisinya. AI akan memilih foto yang paling sesuai untuk tiap shot. Lampirkan semua foto ini saat menempel prompt.</div>
 <label for="pdesc">Deskripsi singkat</label><input id="pdesc" placeholder="Frame transparan coklat, lensa filter blue light">
 <label for="pvis">Tampilan produk (warna, bentuk, bahan)</label><input id="pvis" placeholder="Frame transparan coklat keabuan, bulat-persegi, engsel logam perak">
 <div class="hint">Penting kalau AI yang kamu pakai tidak bisa melihat foto.</div>
@@ -66,6 +68,8 @@ ol.how{margin:8px 0 0;padding-left:20px;color:var(--mut);font-size:14px}ol.how l
 <div><label for="dur">Durasi per shot</label><select id="dur"><option value="8" selected>8 detik</option><option value="10">10 detik</option></select></div>
 <div><label for="shots">Jumlah shot</label><select id="shots"><option value="asli" selected>Ikuti struktur angle</option><option value="3">Ringkas jadi 3 shot</option></select></div>
 </div>
+<label class="check"><input id="ownc" type="checkbox"> Saya sudah punya foto kreator siap pakai</label>
+<div class="note">Flow meniru gaya foto referensinya. Kalau referensinya foto studio, videonya cenderung ikut terlihat seperti iklan TV, bukan UGC. Karena itu ada prompt gambar untuk mengubah foto model jadi foto kreator bergaya HP.<br><br>Tapi kalau foto model kamu sudah memenuhi syarat, prompt gambar tidak perlu dipakai. Syaratnya: foto candid gaya HP, bajunya sudah sesuai, dan latarnya cocok dengan lokasi iklan. Cukup ganti nama filenya jadi <b>creator.png</b> lalu langsung pakai di Flow, dan centang kotak ini.</div>
 <label for="extra">Catatan brief lain (opsional)</label><textarea id="extra" rows="2" placeholder="Klaim utama, promo, gaya bahasa brand..."></textarea>
 </div>
 
@@ -78,7 +82,7 @@ ol.how{margin:8px 0 0;padding-left:20px;color:var(--mut);font-size:14px}ol.how l
 <ol class="how">
 <li>Klik tombol <b>Salin prompt</b>.</li>
 <li>Pilih salah satu AI (ChatGPT, Gemini, atau Claude), lalu klik <b>Buka</b>.</li>
-<li>Di AI tersebut, mulai chat baru. Lampirkan foto produk. Kalau kamu sudah punya foto model, lampirkan juga supaya hasilnya lebih bagus.</li>
+<li>Di AI tersebut, mulai chat baru. Lampirkan semua foto produk. Kalau kamu sudah punya foto model, lampirkan juga supaya hasilnya lebih bagus.</li>
 <li>Tempel prompt yang tadi disalin, lalu kirim.</li>
 <li>Kalau ada yang kurang pas, minta perubahan di chat yang sama. Contoh: "Buat dialog shot 2 lebih santai."</li>
 </ol>
@@ -135,10 +139,12 @@ ${D.chAdj}
 
 ==================== ATURAN TAMBAHAN ====================
 
-- Bagian 1 (prompt gambar kreator): tulis SATU prompt, diawali "Gunakan wajah dari model.png sebagai referensi, jaga wajahnya identik." Hasilnya akan disimpan sebagai creator.png. Jangan sebut model.png di bagian lain.
+- ${$("ownc").checked?"User SUDAH PUNYA foto kreator siap pakai. Isi Bagian 1 hanya dengan: Dilewati — pakai foto kreator milikmu sebagai creator.png.":`Bagian 1 (prompt gambar kreator): tulis SATU prompt, diawali "Gunakan wajah dari model.png sebagai referensi, jaga wajahnya identik." Hasilnya akan disimpan sebagai creator.png. Jangan sebut model.png di bagian lain.`}
+- KUNCI PRODUK: di setiap shot yang menampilkan produk, terapkan aturan "Kunci produk" secara ketat. Produk harus identik dengan foto: bentuk, warna, teks, logo, dan posisinya tidak boleh berubah sedikit pun.
+- Foto produk: ${pfile}. Untuk tiap shot yang menampilkan produk, pilih satu foto yang sisinya paling sesuai, sebut nama filenya di prompt Flow, dan tulis alasannya singkat di shot list.
 - Semua shot berdurasi ${dur} detik. Batas dialog ±${dur*3} kata per shot. Timing voiceover dihitung dari durasi ini.
 - ${three?"Padatkan jadi tepat 3 shot: Shot 1 hook + masalah, Shot 2 produk masuk, Shot 3 hasil + CTA. Pertahankan ciri visual angle.":"Jumlah shot mengikuti struktur angle di atas."}
-- Gunakan nama file creator.png dan ${pfile} persis seperti ini di semua prompt Flow dan briefing Agent.
+- Gunakan nama file creator.png dan nama file foto produk persis seperti ini di semua prompt Flow dan briefing Agent.
 - ${ci==="auto"?"Pilih satu arketipe kreator yang paling cocok dengan produk, dan sebutkan alasannya dalam satu kalimat.":"Pakai arketipe kreator di atas, sesuaikan pakaian dan lokasi dengan angle."}
 
 ==================== FORMAT JAWABAN ====================
@@ -158,14 +164,15 @@ Produk: ${v("pname")}
 Deskripsi: ${v("pdesc")||"-"}
 Tampilan produk: ${v("pvis")||"lihat foto terlampir"}
 Kategori: ${$("cat").value}
-Nama file produk di Flow: ${pfile}
+Nama file foto produk: ${pfile}
+Foto kreator: ${$("ownc").checked?"sudah punya, lewati prompt gambar":"buat prompt gambar dari model.png"}
 Angle: ${ANGLES[angle][0]}
 Kreator: ${ci==="auto"?"pilihkan otomatis":CHARS[+ci]}${v("cnote")?" — "+v("cnote"):""}
 Durasi per shot: ${dur} detik
 Jumlah shot: ${three?"ringkas jadi 3 shot":"ikuti struktur angle"}
 Catatan: ${v("extra")||"-"}
 
-Foto produk terlampir di pesan ini. Perhatikan warna, bentuk, dan bahannya untuk deskripsi visual di setiap prompt. Jika foto model (wajah kreator) juga dilampirkan, itulah model.png: sesuaikan deskripsi fisik di prompt gambar kreator dengan foto itu.`;
+Semua foto produk terlampir di pesan ini, urutannya sesuai nama file. Salin warna, bentuk, bahan, teks, dan letak label persis seperti di foto untuk deskripsi visual di setiap prompt. Jika foto model (wajah kreator) juga dilampirkan, itulah model.png: sesuaikan deskripsi fisik di prompt gambar kreator dengan foto itu.`;
 }
 
 $("go").onclick=()=>{

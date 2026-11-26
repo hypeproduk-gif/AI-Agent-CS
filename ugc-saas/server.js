@@ -80,7 +80,7 @@ function checkLicense(key) {
 // ---------- App ----------
 const app = express();
 app.set("trust proxy", 1);
-app.use(express.json({ limit: "8mb" }));
+app.use(express.json({ limit: "25mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
 const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY });
@@ -92,7 +92,7 @@ app.get("/api/license", rateLimit({ windowMs: 60_000, limit: 30 }), (req, res) =
 });
 
 app.post("/api/generate", rateLimit({ windowMs: 60_000, limit: 5 }), async (req, res) => {
-  const { key, brief, image } = req.body || {};
+  const { key, brief, images = [] } = req.body || {};
   if (typeof brief !== "string" || brief.length < 10 || brief.length > 4000)
     return res.status(400).json({ error: "Brief tidak valid." });
 
@@ -102,8 +102,9 @@ app.post("/api/generate", rateLimit({ windowMs: 60_000, limit: 5 }), async (req,
   if (q.take.run(k).changes === 0) return res.status(402).json({ error: "Kredit habis." });
 
   const content = [];
-  if (image?.data && /^image\/(jpeg|png|webp|gif)$/.test(image.type || ""))
-    content.push({ type: "image", source: { type: "base64", media_type: image.type, data: image.data } });
+  for (const image of (Array.isArray(images) ? images : []).slice(0, 4))
+    if (image?.data && /^image\/(jpeg|png|webp|gif)$/.test(image.type || ""))
+      content.push({ type: "image", source: { type: "base64", media_type: image.type, data: image.data } });
   content.push({ type: "text", text: brief });
 
   try {
