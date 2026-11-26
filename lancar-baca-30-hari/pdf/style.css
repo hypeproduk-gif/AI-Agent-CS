@@ -1,0 +1,92 @@
+@font-face { font-family: "Fraunces"; src: url("FONTDIR/Fraunces.ttf"); font-weight: 100 900; }
+@font-face { font-family: "Jakarta"; src: url("FONTDIR/PlusJakartaSans.ttf"); font-weight: 200 800; }
+
+:root { --teal:#1F4E4A; --gold:#C99A3B; --ink:#2F2A26; --muted:#7A6E63; --line:#E6DCCB; --paper:#FAF5EC; --terra:#C8735A; --sage:#8FB39A; }
+
+@page { size: A4; margin: 22mm 20mm 20mm; background: var(--paper);
+  @bottom-left { content: "Lancar Baca 30 Hari  ·  © ToolkitParenting"; font: 500 6.8pt Jakarta; color: #B3A594; }
+  @bottom-right { content: "Untuk penggunaan pribadi, dilarang disebarluaskan"; font: 500 6.8pt Jakarta; color: #B3A594; }
+  @bottom-center { content: counter(page); font: 600 8pt Jakarta; color: var(--gold); } }
+@page cover { margin: 0; @bottom-left{content:none} @bottom-right{content:none} @bottom-center{content:none} }
+
+html { font-family: Jakarta; font-size: 9.6pt; line-height: 1.62; color: var(--ink); }
+p { margin: 0 0 3.2mm; }
+strong { color: var(--teal); font-weight: 700; }
+em { font-style: italic; }
+
+/* COVER */
+.cover { page: cover; width: 210mm; height: 297mm; position: relative; overflow: hidden; background: #EFE6D6; }
+.cover-img { position: absolute; inset: 0; width: 210mm; height: 297mm; object-fit: cover; }
+.cover-img.ph { background: linear-gradient(180deg,#F4ECDF 0%,#E7D9C3 100%); }
+.cover-img.ph span { position: absolute; bottom: 70mm; left: 0; right: 0; text-align: center; font-size: 9pt; color: #A8957E; letter-spacing: .1em; text-transform: uppercase; }
+.cover-text { position: absolute; top: 26mm; left: 22mm; right: 22mm; }
+.cover-kicker { font: 600 8.5pt Jakarta; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); margin-bottom: 6mm; }
+.cover-title { font: 400 50pt/0.98 Fraunces; color: var(--teal); letter-spacing: -.01em; }
+.cover-title em { font-style: italic; font-weight: 300; color: var(--terra); }
+.cover-sub { margin-top: 7mm; font: 500 10pt Jakarta; color: var(--ink); border-top: 1px solid var(--gold); padding-top: 4mm; width: 120mm; }
+.cover-badge { position: absolute; left: 50%; bottom: 13mm; transform: translateX(-50%); background: rgba(255,255,255,.93); border-radius: 30mm; padding: 3mm 8mm; }
+.logo { height: 11mm; }
+.logo-lg { height: 18mm; margin-bottom: 8mm; }
+.wordmark { font: 500 12pt Jakarta; color: var(--teal); white-space: nowrap; line-height: 11mm; }
+.wordmark b { color: var(--gold); font-weight: 800; }
+.logo-lg.wordmark { font-size: 18pt; line-height: 18mm; }
+
+/* LISENSI */
+.lisensi { break-before: page; padding-top: 18mm; text-align: center; }
+.lisensi h1 { font: 400 22pt Fraunces; color: var(--teal); margin: 0 0 4mm; }
+.lisensi .lead { width: 130mm; margin: 0 auto 9mm; color: var(--muted); }
+.two { font-size: 0; text-align: left; }
+.two .card { display: inline-block; vertical-align: top; width: 48%; margin-right: 4%; font-size: 9.2pt; background: #fff; border-radius: 4mm; padding: 5mm 6mm; box-sizing: border-box; border-top: 3px solid var(--sage); }
+.two .card.no { margin-right: 0; border-top-color: var(--terra); }
+.two h3 { font: 600 11pt Fraunces; margin: 0 0 2mm; color: var(--teal); }
+.two ul { margin: 0; padding-left: 4.5mm; }
+.law { margin: 10mm auto 0; width: 140mm; font-size: 8.6pt; color: var(--muted); }
+.copy { font-size: 8pt; color: var(--gold); letter-spacing: .06em; }
+
+/* CHAPTER */
+.chapter { break-before: page; }
+.hero { width: 100%; height: 72mm; object-fit: cover; border-radius: 3mm; margin-bottom: 9mm; display: block; }
+.hero.ph { background: repeating-linear-gradient(135deg,#EFE5D4 0 6mm,#F3EBDD 6mm 12mm); position: relative; }
+.hero.ph span { position: absolute; top: 32mm; width: 100%; text-align: center; font: 600 7.5pt Jakarta; letter-spacing: .14em; text-transform: uppercase; color: #B09C84; }
+.eyebrow { font: 700 8pt Jakarta; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); margin-bottom: 2mm; }
+.lvl { color: #fff; font-size: 7pt; letter-spacing: .1em; padding: .6mm 2.6mm; border-radius: 3mm; margin-left: 2mm; }
+h1 { font: 400 25pt/1.12 Fraunces; color: var(--teal); margin: 0 0 7mm; letter-spacing: -.005em; }
+h2 { font: 600 13.5pt/1.3 Fraunces; color: var(--teal); margin: 8mm 0 3mm; break-after: avoid; }
+h2::before { content: ""; display: block; width: 9mm; height: 1.5px; background: var(--acc, var(--gold)); margin-bottom: 2.5mm; }
+h3 { font: 700 10pt Jakarta; color: var(--ink); margin: 5mm 0 2mm; break-after: avoid; }
+ul, ol { padding-left: 5mm; margin: 0 0 3.5mm; }
+li { margin-bottom: 1.2mm; }
+
+/* time-log moment */
+blockquote.moment { margin: 0 0 6mm; padding: 4mm 6mm; background: #fff; border-left: 3px solid var(--acc, var(--gold)); border-radius: 0 3mm 3mm 0; font: 400 10.2pt/1.6 Fraunces; color: var(--ink); break-inside: avoid; }
+blockquote.moment p { margin: 0 0 1.5mm; }
+.jam { font: 700 8pt Jakarta; color: var(--terra); letter-spacing: .06em; margin-right: 2mm; }
+blockquote.tip { margin: 4mm 0; padding: 3.5mm 5mm; background: #EEF3EC; border-radius: 3mm; font-size: 9pt; break-inside: avoid; }
+blockquote.tip p { margin: 0; }
+
+/* tables */
+table { width: 100%; border-collapse: collapse; margin: 2mm 0 5mm; font-size: 8.7pt; background: #fff; border-radius: 2mm; break-inside: auto; }
+tr { break-inside: avoid; }
+th { background: var(--teal); color: #fff; font-weight: 600; text-align: left; padding: 2.2mm 3mm; font-size: 8pt; letter-spacing: .02em; }
+td { padding: 2.2mm 3mm; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+table.alt th:first-child { background: #9C8F82; }
+table.alt th:last-child { background: var(--sage); }
+table.alt td:first-child { color: var(--muted); font-style: italic; width: 45%; }
+table.alt td:last-child { color: var(--teal); font-weight: 600; }
+.siap p, .aksi p { line-height: 2; }
+table.fill th { display: none; }
+table.fill td:first-child { width: 45%; font-weight: 600; color: var(--teal); }
+table.fill td { height: 7mm; }
+
+.box { display: inline-block; width: 3.3mm; height: 3.3mm; border: 1.2px solid #A9967F; border-radius: .8mm; vertical-align: -0.5mm; margin-right: 1mm; background: #fff; }
+
+/* special boxes */
+.aksi, .siap { break-inside: avoid; border-radius: 4mm; padding: 5mm 6mm 2mm; margin: 8mm 0 4mm; position: relative; }
+.aksi { background: #fff; border: 1.5px solid var(--gold); }
+.siap { background: #F1F5EF; border: 1.5px solid var(--sage); }
+.aksi h2, .siap h2 { margin-top: 0; }
+.aksi h2::before, .siap h2::before { display: none; }
+.box-label { position: absolute; top: -3.5mm; left: 6mm; width: 7mm; height: 7mm; border-radius: 50%; text-align: center; line-height: 7mm; color: #fff; font-size: 9pt; background: var(--gold); }
+.siap .box-label { background: var(--sage); }
+.aksi table { background: var(--paper); }
