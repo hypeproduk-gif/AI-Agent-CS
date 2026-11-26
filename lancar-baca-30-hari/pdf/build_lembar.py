@@ -8,6 +8,8 @@ VOK = list("aiueo")
 KONS = ["m", "s", "l", "b", "t", "k", "p", "n", "d", "r", "g"]
 LVL = {1: "#E9C46A", 2: "#8FB39A", 3: "#9CC3D5", 4: "#C8735A", 5: "#1F4E4A"}
 random.seed(7)
+EMO = {"ayam":"🐔","ikan":"🐟","ular":"🐍","ember":"🪣","obat":"💊","mata":"👁️","sapu":"🧹","lampu":"💡","bola":"⚽","topi":"🧢","kucing":"🐱","pisang":"🍌","nanas":"🍍","dasi":"👔","roti":"🍞","gajah":"🐘","sapi":"🐄","buku":"📖","kaki":"🦶","susu":"🥛","kuda":"🐴","nasi":"🍚","gigi":"🦷","kue":"🍰"}
+SCENE = {"Bola Merah Dimas":"⚽ 🏠 🧹 👨","Nasi Goreng Nenek":"👵 🍳 🧅 🍚","Hujan di Sekolah":"🌧️ 🏫 ☂️ 👦","Kucing di Atas Genteng":"🐱 🏠 🪜 🥛","Pasar Pagi":"🧺 🍅 🥬 💵","Hari Pertama di SD":"🏫 🎒 👧 🤝"}
 
 def page(level, title, body, sub=""):
     c = LVL[level]
@@ -34,7 +36,7 @@ urut = VOK + ["m","b","s","t","k","p","l","n","d","r","g"]
 for h in urut:
     w = KUNCI[h]
     body = f'''<div class="big"><span>{h.upper()}</span><span>{h}</span></div>
-    <div class="kunci"><div class="ph">gambar: {w}</div><div class="kata"><b>{w[0]}</b>{w[1:]}</div></div>
+    <div class="kunci"><div class="emo">{EMO[w]}</div><div class="kata"><b>{w[0]}</b>{w[1:]}</div></div>
     <div class="lbl">Telusuri dengan jari, lalu dengan pensil</div>
     <div class="trace">{(h+" ")*7}</div>
     <div class="lbl">Lingkari kata yang bunyi awalnya /{h}/</div>
@@ -58,10 +60,10 @@ for k in KONS + ["c","j","h"][:0]:
 
 # LEVEL 3 — kata
 KATA3 = [("bo·la","bola"),("ma·ta","mata"),("sa·pi","sapi"),("bu·ku","buku"),("ro·ti","roti"),("ka·ki","kaki"),
-         ("su·su","susu"),("to·pi","topi"),("me·ja","meja"),("ku·da","kuda"),("na·si","nasi"),("gi·gi","gigi")]
+         ("su·su","susu"),("to·pi","topi"),("ku·e","kue"),("ku·da","kuda"),("na·si","nasi"),("gi·gi","gigi")]
 for i in range(0, 12, 4):
     grp = KATA3[i:i+4]
-    cards = "".join(f'<div class="wc"><div class="ph sm">gambar: {b}</div><div class="w">{a}</div><div class="w2">{b}</div></div>' for a, b in grp)
+    cards = "".join(f'<div class="wc"><div class="emo sm">{EMO[b]}</div><div class="w">{a}</div><div class="w2">{b}</div></div>' for a, b in grp)
     pages.append(page(3, "Baca kata, lihat gambarnya", f'<div class="wcs">{cards}</div>', "Baca yang ada titiknya dulu, lalu yang utuh"))
 KAL3 = ["mama beli roti", "papa minum susu", "adik suka bola", "kuda makan rumput", "baju kakak biru", "topi nenek baru"]
 pages.append(page(3, "Kalimat pendek", '<ol class="kal">' + "".join(f"<li>{k}<div class='draw'></div></li>" for k in KAL3[:3]) + "</ol>", "Baca, lalu gambar di kotaknya"))
@@ -83,7 +85,7 @@ CERITA = {
  "Hari Pertama di SD": ["Hari ini Nala masuk SD.", "Baju Nala merah putih.", "Nala agak takut.", "Ibu guru senyum pada Nala.", "Ada anak duduk di dekat Nala.", "Namanya Rara.", "Rara bilang, \"Mau main sama aku?\"", "Nala tidak takut lagi."],
 }
 for judul, kal in CERITA.items():
-    body = f'<div class="ph wide">ilustrasi cerita</div><div class="cerita">{" ".join(kal)}</div><div class="lbl">Jawab bersama Mama</div><ol class="q"><li>Siapa tokohnya?</li><li>Kenapa ia sedih / takut?</li><li>Kalau kamu, apa yang kamu lakukan?</li></ol>'
+    body = f'<div class="emo wide">{SCENE[judul]}</div><div class="cerita">{" ".join(kal)}</div><div class="lbl">Jawab bersama Mama</div><ol class="q"><li>Siapa tokohnya?</li><li>Kenapa ia sedih / takut?</li><li>Kalau kamu, apa yang kamu lakukan?</li></ol>'
     pages.append(page(5, judul, body, "Baca 2 kali. Kali kedua pasti lebih lancar."))
 
 # KARTU
@@ -117,6 +119,7 @@ html{{font-family:Jk;color:#2F2A26}}
 .big{{font:500 110pt/1 Fr;color:#1F4E4A;text-align:center}} .big span{{margin:0 8mm}} .big span+span{{color:var(--c)}}
 .kunci{{text-align:center;margin-top:4mm}} .kata{{font:500 30pt Jk;margin-top:3mm}} .kata b{{color:#C8735A}}
 .ph{{background:#F3EBDD;border-radius:4mm;color:#B09C84;font:600 7pt Jk;letter-spacing:.12em;text-transform:uppercase;width:55mm;height:42mm;margin:0 auto;display:flex;align-items:center;justify-content:center}}
+.emo{{font-family:"Noto Color Emoji";font-size:70pt;line-height:1;text-align:center;background:#F6EFE3;border-radius:6mm;width:55mm;height:42mm;margin:0 auto;padding-top:7mm;box-sizing:border-box}} .emo.sm{{width:100%;height:32mm;font-size:48pt;padding-top:5mm}} .emo.wide{{width:100%;height:44mm;font-size:44pt;letter-spacing:3mm;padding-top:9mm;white-space:nowrap}}
 .ph.sm{{width:100%;height:32mm}} .ph.wide{{width:100%;height:60mm}}
 .trace{{font:300 54pt Jk;color:#D9CFC0;letter-spacing:6mm;border-top:1px dashed #D9CFC0;border-bottom:1px dashed #D9CFC0;white-space:nowrap;overflow:hidden}}
 .bisa{{position:absolute;bottom:9mm;right:14mm;font:600 10pt Jk;color:#1F4E4A}} .bisa span{{font-size:20pt;color:var(--c);margin-left:2mm}}
