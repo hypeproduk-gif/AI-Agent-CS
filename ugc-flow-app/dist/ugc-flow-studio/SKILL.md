@@ -22,6 +22,7 @@ Tiga pertanyaan yang selalu dijawab sebelum menulis:
 |------|--------|-------------|
 | Foto produk | Ya | — |
 | Nama + deskripsi singkat | Ya | Tanyakan |
+| Mode sudut pandang | Disarankan | Kreator (default) |
 | Angle iklan | Ya | Tanyakan, jangan diasumsikan |
 | Kategori produk | Disarankan | Tebak dari foto & deskripsi |
 | Profil kreator | Opsional | Pilih arketipe yang paling cocok dengan kategori |
@@ -123,7 +124,7 @@ Jika user meminta 3 shot untuk angle yang aslinya lebih panjang:
 
 Ciri khas visual angle tetap dipertahankan.
 
-Referensi: `references/prompting.md` (aturan prompt), `references/angles.md` (15 angle), `references/characters.md` (8 arketipe kreator).
+Referensi: `references/prompting.md` (aturan prompt), `references/angles.md` (15 angle), `references/characters.md` (8 arketipe kreator), `references/modes.md` (mode Brand Owner, Produk Digital, POV Seller — tanyakan mode ke user bersama angle).
 
 ## Batasan yang perlu disampaikan ke user
 
