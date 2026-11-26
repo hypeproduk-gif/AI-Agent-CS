@@ -36,6 +36,7 @@ button.main{background:var(--acc);color:#fff;border:0;border-radius:10px;padding
 #out{min-height:260px;font:12.5px/1.5 ui-monospace,Menlo,monospace}
 .ok{color:var(--good);font-size:13px}
 .err{color:#c92a2a;font-size:14px;margin:8px 0}
+.sub3{font-size:14px;margin:0 0 4px}.parts{margin:6px 0 0;font-size:14px}.parts dt{font-weight:600;margin-top:10px}.parts dd{margin:2px 0 0;color:var(--mut)}code{font-size:13px}
 ol.how{margin:8px 0 0;padding-left:20px;color:var(--mut);font-size:14px}ol.how li{margin:3px 0}
 </style>
 
@@ -80,20 +81,28 @@ ol.how{margin:8px 0 0;padding-left:20px;color:var(--mut);font-size:14px}ol.how l
 
 <div class="card" id="result" hidden>
 <h2>Prompt siap ditempel</h2>
-<div class="actions" style="margin-bottom:10px">
+<h3 class="sub3">Cara pakai</h3>
+<ol class="how">
+<li>Klik <b>Salin prompt</b>.</li>
+<li>Pilih AI yang mau dipakai, lalu klik <b>Buka</b>. Pilih salah satu saja.</li>
+<li>Di chat baru, lampirkan foto produk, tempel prompt, lalu kirim.</li>
+<li>Minta revisi langsung di chat itu kalau perlu, misalnya "ganti dialog shot 2 jadi lebih santai".</li>
+</ol>
+<div class="actions" style="margin:14px 0 10px">
 <button class="ghost" id="copy">Salin prompt</button>
-<a class="ghost" href="https://chatgpt.com/" target="_blank" rel="noopener">Buka ChatGPT</a>
-<a class="ghost" href="https://gemini.google.com/" target="_blank" rel="noopener">Buka Gemini</a>
-<a class="ghost" href="https://claude.ai/new" target="_blank" rel="noopener">Buka Claude</a>
+<select id="ai" aria-label="Pilih AI" style="width:auto"><option value="https://chatgpt.com/">ChatGPT</option><option value="https://gemini.google.com/">Gemini</option><option value="https://claude.ai/new">Claude</option></select>
+<a class="ghost" id="openai" href="https://chatgpt.com/" target="_blank" rel="noopener">Buka ChatGPT</a>
 <span class="ok" id="copied"></span>
 </div>
 <textarea id="out" readonly></textarea>
-<ol class="how">
-<li>Buka chat baru di ChatGPT, Gemini, atau Claude.</li>
-<li>Lampirkan foto produk, lalu tempel prompt ini dan kirim.</li>
-<li>Kamu akan dapat 5 bagian: prompt gambar kreator, shot list, prompt Flow per shot, briefing Agent mode, dan skrip voiceover.</li>
-<li>Minta revisi langsung di chat itu, misalnya "ganti dialog shot 2 jadi lebih santai".</li>
-</ol>
+<h3 class="sub3">Hasil yang akan kamu dapat dari AI</h3>
+<dl class="parts">
+<dt>1. Prompt gambar kreator</dt><dd>Tempel ke ChatGPT Images atau Nano Banana bersama foto <code>model.png</code>. Simpan hasilnya sebagai <code>creator.png</code>.</dd>
+<dt>2. Shot list</dt><dd>Naskah iklan per adegan: lokasi, aksi kreator, produk tampil atau tidak, dan dialognya. Ini untuk kamu baca dan cek dulu, bukan untuk ditempel ke Flow. Edit dialog di tahap ini gratis, sedangkan generate ulang video makan kredit.</dd>
+<dt>3. Prompt Flow per shot</dt><dd>Satu prompt untuk satu klip video. Tempel satu per satu di Flow, dengan <code>creator.png</code> dan foto produk sebagai ingredient.</dd>
+<dt>4. Briefing Agent mode</dt><dd>Satu teks untuk membuat semua shot sekaligus. Hanya jalan kalau Agent mode di Flow sudah aktif.</dd>
+<dt>5. Skrip voiceover</dt><dd>Dialog lengkap dengan timing, untuk dibuat suaranya di ElevenLabs lalu digabung di CapCut.</dd>
+</dl>
 </div>
 </div>
 
@@ -171,6 +180,7 @@ $("go").onclick=()=>{
   $("out").value=build();$("result").hidden=false;$("copied").textContent="";
   $("result").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
 };
+$("ai").onchange=e=>{const o=e.target.selectedOptions[0];$("openai").href=o.value;$("openai").textContent="Buka "+o.textContent};
 $("copy").onclick=()=>{
   const t=$("out");
   navigator.clipboard.writeText(t.value).then(()=>{$("copied").textContent="Prompt tersalin"}).catch(()=>{t.focus();t.select();$("copied").textContent="Tekan Ctrl+C / Cmd+C untuk menyalin"});
