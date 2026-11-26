@@ -1,5 +1,5 @@
 # Ad copy — Bank Hook + Prompt AI (Rp29rb)
-Link: https://ghinaelsha.my.id · CTA button: **Shop now / Beli sekarang**
+Link: https://ghinaelsha.my.id/lp-50-bank-hook-50-prompt-ai · CTA button: **Shop now / Beli sekarang**
 
 ## Creative A — Screenshot postingan (1 gambar)
 **Primary text v1**
