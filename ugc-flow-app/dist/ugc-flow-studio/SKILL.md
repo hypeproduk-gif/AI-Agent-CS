@@ -84,7 +84,7 @@ Aturan naskah:
 ```
 Video UGC vertikal, creator.png [posisi] di [lokasi], memakai [pakaian]. [Satu aksi].
 [Jika produk tampil: nama-file-produk + cara dipegang + deskripsi warna/bentuk/bahan].
-Berbicara langsung ke kamera: "[dialog]."
+Berbicara langsung ke kamera dalam Bahasa Indonesia sehari-hari: "[dialog]."
 [Modifier gaya: 4K HD, fokus tajam, wajah identik dengan creator.png]. [Pencahayaan lokasi yang terang]. Vertikal 9:16, [durasi] detik.
 ```
 
@@ -95,6 +95,8 @@ Berbicara langsung ke kamera: "[dialog]."
 ## 4. Briefing Agent mode
 
 ```
+PENTING: semua kreator berbicara dalam Bahasa Indonesia sehari-hari, diucapkan persis sesuai teks dialog. Jangan berbicara bahasa Inggris.
+
 Aku sedang membuat iklan UGC vertikal [N] shot untuk [produk].
 
 Aset:
@@ -103,10 +105,11 @@ Aset:
 
 Buat shot berikut secara berurutan:
 
-Shot 1: [lokasi]. creator.png [aksi]. Berbicara ke kamera: "[dialog]." [cahaya], [modifier]. 9:16, [durasi] detik.
+Shot 1: [lokasi]. creator.png [aksi]. Berbicara dalam Bahasa Indonesia: "[dialog]." [cahaya], [modifier]. 9:16, [durasi] detik.
 ...
 
 Jaga wajah, rambut, dan pakaian creator.png identik di semua shot. Semua shot vertikal 9:16.
+Ingat: seluruh dialog dalam Bahasa Indonesia, bukan bahasa Inggris.
 ```
 
 Catatan untuk user: brief ini hanya jalan di Agent mode. Di mode biasa, satu prompt = satu klip, jadi pakai prompt per shot.

@@ -106,7 +106,7 @@ ol.how{margin:8px 0 0;padding-left:20px;color:var(--mut);font-size:14px}ol.how l
 
 <script>
 const D = __DATA__;
-const ANGLES=[["Testimonial","5 shot · hasil spesifik"],["Mobil / On-the-Go","4 shot · kepraktisan"],["Unboxing","3–4 shot · reveal"],["Lifestyle Demo","5 shot · rutinitas"],["Problem-Solution","4 shot · masalah→solusi"],["GRWM","4 shot · siap-siap"],["Day in the Life","5 shot · scene cepat"],["Car Talking Head","3 shot · curhat"],["Reply to Comment","3 shot · jawab FAQ"],["Before / After","3 shot · hasil visual"],["Mirror Try-On","3–4 shot · fashion"],["POV","3 shot · first person"],["Storytime","4 shot · cerita"],["Walk and Talk","3 shot · outdoor"],["Podcast Clip","3 shot · kamera statis"]];
+const ANGLES=[["Testimonial","5 shot · hasil spesifik"],["Mobil / On-the-Go","4 shot · kepraktisan"],["Unboxing","3–4 shot · reveal"],["Lifestyle Demo","5 shot · rutinitas"],["Problem-Solution","4 shot · masalah→solusi"],["GRWM","4 shot · siap-siap"],["Day in the Life","5 shot · scene cepat"],["Car Talking Head","3 shot · curhat"],["Reply to Comment","3 shot · jawab FAQ"],["Before / After","3 shot · hasil visual"],["Mirror Try-On","3–4 shot · fashion"],["POV","3 shot · first person"],["Storytime","4 shot · cerita"],["Walk and Talk","3 shot · outdoor"],["Podcast Clip","3 shot · kamera statis"],["3 Alasan","4 shot · listicle"],["Mitos vs Fakta","3 shot · edukasi"],["Dulu vs Sekarang","3 shot · pindah produk"],["Jangan Beli Dulu","3 shot · hook kebalikan"],["Tips / Edukasi","3 shot · tips praktis"],["Review dari Ulasan","3 shot · bukti ulasan"],["Hot Take","3 shot · pancing komen"],["Rekomendasi Kado","3 shot · musiman"]];
 const CHARS=["A — Anak Kos Aktif (P, 21–24)","B — Ibu Muda Praktis (P, 29–36)","C — Hijaber Kantoran (P, 25–32)","D — Beauty Enthusiast (P, 22–28)","E — Mas Gym (L, 24–32)","F — Bapak Muda Rumahan (L, 28–38)","G — Anak Motor / Outdoor (L, 23–32)","H — Profesional Muda (P/L, 27–35)"];
 const $=id=>document.getElementById(id);
 let angle=9;
@@ -140,6 +140,7 @@ ${D.chAdj}
 ==================== ATURAN TAMBAHAN ====================
 
 - ${$("ownc").checked?"User SUDAH PUNYA foto kreator siap pakai. Isi Bagian 1 hanya dengan: Dilewati — pakai foto kreator milikmu sebagai creator.png.":`Bagian 1 (prompt gambar kreator): tulis SATU prompt, diawali "Gunakan wajah dari model.png sebagai referensi, jaga wajahnya identik." Hasilnya akan disimpan sebagai creator.png. Jangan sebut model.png di bagian lain.`}
+- BAHASA: semua dialog WAJIB Bahasa Indonesia sehari-hari. Di setiap prompt Flow tulis "Berbicara dalam Bahasa Indonesia sehari-hari:" sebelum dialog, dan tutup dengan "Seluruh ucapan dalam Bahasa Indonesia, diucapkan persis sesuai teks dalam tanda kutip. Jangan berbicara bahasa Inggris, jangan menerjemahkan." Di briefing Agent, taruh aturan bahasa di baris pertama dan ulangi di baris terakhir.
 - KUNCI PRODUK: di setiap shot yang menampilkan produk, terapkan aturan "Kunci produk" secara ketat. Produk harus identik dengan foto: bentuk, warna, teks, logo, dan posisinya tidak boleh berubah sedikit pun.
 - Foto produk: ${pfile}. Untuk tiap shot yang menampilkan produk, pilih satu foto yang sisinya paling sesuai, sebut nama filenya di prompt Flow, dan tulis alasannya singkat di shot list.
 - Semua shot berdurasi ${dur} detik. Batas dialog ±${dur*3} kata per shot. Timing voiceover dihitung dari durasi ini.

@@ -6,7 +6,7 @@ clean=lambda s:re.sub(r'\n-{3,}\s*$','',s.strip()).strip()
 angles=[clean(s) for s in re.split(r'\n(?=## \d+\. )',ang)[1:]]
 parts=ch.split("\n## Menyesuaikan"); chars=[clean(s) for s in re.split(r'\n(?=## [A-H]\. )',parts[0])[1:]]
 data={"main":main,"prompting":pr,"angles":angles,"chars":chars,"chHead":parts[0].split("\n## A. ")[0],"chAdj":"## Menyesuaikan"+parts[1]}
-assert len(angles)==15 and len(chars)==8
+assert len(angles)==23 and len(chars)==8
 js=json.dumps(data,ensure_ascii=False).replace("</","<\\/").replace("`","\\u0060")
 page=(d/"template.html").read_text().replace("__DATA__",js)
 (d/"artifact.html").write_text(page)

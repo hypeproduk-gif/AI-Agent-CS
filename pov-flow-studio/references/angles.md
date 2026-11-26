@@ -221,3 +221,115 @@ Goyangan kamera mengikuti irama langkah.
 | 3 | Kesimpulan + CTA | Di meja / dipegang |
 
 Satu-satunya angle dengan **kamera statis**.
+
+---
+
+## 16. 3 Alasan (Listicle)
+**Kuat untuk:** produk dengan beberapa keunggulan jelas — gadget, skincare, peralatan rumah.
+**Bentuk:** 4 shot · ±30 dtk
+
+| Shot | Tugas | Aksi | Produk | Arah dialog |
+|------|-------|------|--------|-------------|
+| 1 | Hook angka | Produk diangkat ke kamera | Ya | "Tiga alasan aku nggak bakal ganti [kategori] lagi." |
+| 2 | Alasan 1 | Menunjukkan fitur pertama | Ya | Satu alasan, satu bukti |
+| 3 | Alasan 2 | Menunjukkan fitur kedua | Ya | Satu alasan, satu bukti |
+| 4 | Alasan 3 + CTA | Alasan paling kuat disimpan terakhir | Ya | Alasan + link |
+
+Tambahkan angka 1/2/3 sebagai teks di CapCut supaya penonton tahu progresnya.
+
+---
+
+## 17. Mitos vs Fakta
+**Kuat untuk:** kategori yang banyak salah kaprah — skincare, suplemen, kacamata, produk kesehatan.
+**Bentuk:** 3 shot · ±24 dtk
+
+| Shot | Tugas | Produk | Arah dialog |
+|------|-------|--------|-------------|
+| 1 | Sebut mitos | Tidak | "Banyak yang bilang [mitos umum]. Itu salah." |
+| 2 | Fakta + produk | Ya | Penjelasan singkat yang benar, lalu produk sebagai solusinya |
+| 3 | Penutup | Ya | Kesimpulan + CTA |
+
+Fakta harus benar dan umum diketahui. Jangan mengarang data atau klaim medis.
+
+---
+
+## 18. Dulu vs Sekarang
+**Kuat untuk:** pengganti produk lama — tumbler vs botol plastik, kacamata biasa vs anti radiasi.
+**Bentuk:** 3 shot · ±24 dtk · lokasi sama
+
+| Shot | Tugas | Produk | Arah dialog |
+|------|-------|--------|-------------|
+| 1 | Dulu | Barang lama / tanpa produk | "Dulu aku pakai [cara lama], dan [masalahnya]." |
+| 2 | Sekarang | Ya | "Sekarang pakai ini, [perbedaan nyata]." |
+| 3 | Penutup | Ya | Alasan pindah + CTA |
+
+Jangan menyebut merek pesaing. Bandingkan dengan "yang biasa" atau "yang lama".
+
+---
+
+## 19. Jangan Beli Dulu
+**Kuat untuk:** produk yang sedang ramai — hook kebalikan membuat penonton penasaran.
+**Bentuk:** 3 shot · ±24 dtk
+
+| Shot | Tugas | Produk | Arah dialog |
+|------|-------|--------|-------------|
+| 1 | Hook larangan | Ya | "Jangan beli [produk] ini sebelum kamu tahu satu hal." |
+| 2 | Satu hal itu | Ya | Info jujur: cara pakai yang benar, untuk siapa cocok, atau kekurangan kecil |
+| 3 | Rekomendasi | Ya | "Kalau kamu [kriteria], ini worth it. Linknya di bawah." |
+
+Kejujuran kecil (misalnya "bukan untuk yang...") justru menaikkan kepercayaan.
+
+---
+
+## 20. Tips / Edukasi
+**Kuat untuk:** produk yang butuh konteks — perawatan, kesehatan, alat kerja.
+**Bentuk:** 3 shot · ±24 dtk
+
+| Shot | Tugas | Produk | Arah dialog |
+|------|-------|--------|-------------|
+| 1 | Hook tips | Tidak | "Kalau kamu [aktivitas] tiap hari, coba tips ini." |
+| 2 | Tips + produk | Ya | Satu tips praktis, produk muncul sebagai bagian tips |
+| 3 | Penutup | Ya | Ringkasan + CTA ringan |
+
+Nilai utamanya di tips. Produk tidak boleh terasa dipaksakan.
+
+---
+
+## 21. Review dari Ulasan
+**Kuat untuk:** produk yang sudah punya banyak ulasan bagus di marketplace.
+**Bentuk:** 3 shot · ±24 dtk
+
+| Shot | Tugas | Produk | Arah dialog |
+|------|-------|--------|-------------|
+| 1 | Baca ulasan | Belum | "Ulasan [produk] ini rame banget, aku penasaran beneran nggak." |
+| 2 | Coba sendiri | Ya | Membuktikan satu poin dari ulasan |
+| 3 | Kesimpulan | Ya | "Ternyata bener." + CTA |
+
+Tangkapan layar ulasan asli ditempel di CapCut (gaya green screen), bukan digenerate model.
+
+---
+
+## 22. Hot Take
+**Kuat untuk:** memancing komentar dan tontonan ulang — produk dengan sudut pandang tegas.
+**Bentuk:** 3 shot · ±20 dtk
+
+| Shot | Tugas | Produk | Arah dialog |
+|------|-------|--------|-------------|
+| 1 | Pendapat berani | Tidak | "Unpopular opinion: [pendapat tentang kebiasaan / kategori]." |
+| 2 | Alasan | Ya | Kenapa, dengan produk sebagai contoh |
+| 3 | Ajakan | Ya | "Setuju nggak? Tulis di komen." + link |
+
+Pendapat boleh tegas, tapi jangan menjatuhkan merek lain atau kelompok orang.
+
+---
+
+## 23. Rekomendasi Kado
+**Kuat untuk:** momen musiman — Lebaran, Natal, ulang tahun, Hari Ibu, akhir tahun.
+**Bentuk:** 3 shot · ±24 dtk
+
+| Shot | Tugas | Produk | Arah dialog |
+|------|-------|--------|-------------|
+| 1 | Hook momen | Kemasan / kado | "Bingung kado buat [orang]? Ini jawabannya." |
+| 2 | Kenapa cocok | Ya | Satu alasan produk ini jadi kado yang dipakai, bukan disimpan |
+| 3 | Penutup | Ya, dibungkus / dipegang | CTA + info pengiriman tepat waktu (jika diberikan user) |
+

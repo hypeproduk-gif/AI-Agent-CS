@@ -51,6 +51,15 @@ Flow mengenali gambar yang diunggah dari **nama file yang ditulis di kalimat pro
 - Beri nama file yang deskriptif (`serum-vitc.jpg`), bukan `IMG_2231.jpg`.
 - `model.png` hanya untuk membuat gambar kreator, tidak dipakai di Flow.
 
+## Kunci bahasa — dialog wajib Bahasa Indonesia
+
+Model video sering mengubah dialog jadi bahasa Inggris, terutama di Agent mode. Cegah dengan tiga hal:
+1. Di setiap prompt shot, tulis **"Berbicara dalam Bahasa Indonesia sehari-hari:"** sebelum dialog, bukan sekadar "Berbicara ke kamera:".
+2. Tutup setiap prompt shot dengan: **"Seluruh ucapan dalam Bahasa Indonesia, diucapkan persis sesuai teks dalam tanda kutip. Jangan berbicara bahasa Inggris, jangan menerjemahkan."**
+3. Di briefing Agent, taruh aturan bahasa di **baris paling atas** dan ulangi di baris paling bawah.
+
+Tambahan: hindari kata bahasa Inggris yang tidak perlu di dialog (pakai "kulit" bukan "skin", "hasilnya" bukan "result"), karena satu kata Inggris bisa memancing model melanjutkan dalam bahasa Inggris. Istilah yang memang umum dipakai (skincare, blue light, link) boleh.
+
 ## Kunci produk — larangan ketat
 
 Produk di video **harus identik** dengan foto produk. Perubahan sekecil apa pun dilarang:
@@ -117,11 +126,11 @@ Tulis seperti orang mengirim voice note ke teman.
 ```
 Video UGC vertikal, creator.png [posisi] di [lokasi spesifik], memakai [pakaian identik].
 [Satu aksi]. [file-produk + cara dipegang + warna/bentuk/bahan].
-Berbicara langsung ke kamera: "[dialog sesuai batas kata]."
+Berbicara langsung ke kamera dalam Bahasa Indonesia sehari-hari: "[dialog sesuai batas kata]."
 Direkam dengan iPhone terbaru, video 4K HD, fokus tajam, warna bersih dan natural. Wajah identik dengan creator.png, jernih dan tajam. Handheld halus, candid, tekstur kulit natural tapi jernih, komposisi santai sedikit off-center, [pencahayaan terang dan bersih].
 Vertikal 9:16, [durasi] detik.
 ```
 
-Untuk shot yang menampilkan produk, tambahkan kalimat kunci produk di akhir prompt.
+Untuk shot yang menampilkan produk, tambahkan kalimat kunci produk di akhir prompt. Semua shot ditutup dengan kalimat kunci bahasa.
 
 Semakin spesifik isi tiap kurung, semakin kecil peluang hasilnya terlihat generik.
