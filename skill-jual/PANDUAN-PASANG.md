@@ -18,13 +18,17 @@ Skill ini membuat Claude bisa menyusun paket produksi iklan video UGC untuk Goog
 
 > Buatkan iklan UGC Google Flow untuk produk ini. Nama produk: Kacamata Anti Radiasi. Angle: before/after. Durasi 8 detik, 3 shot.
 
-4. Claude akan memberi 5 bagian:
-   - **Prompt gambar kreator**: tempel ke ChatGPT atau Nano Banana bersama foto model. Simpan hasilnya sebagai `creator.png`.
-   - **Shot list**: naskah per adegan untuk dicek dulu.
-   - **Prompt Flow per shot**: tempel satu per satu di Flow, dengan `creator.png` dan foto produk sebagai ingredient.
-   - **Briefing Agent mode**: untuk membuat semua shot sekaligus kalau Agent mode di Flow aktif.
-   - **Skrip voiceover**: untuk dibuat suaranya di ElevenLabs.
-5. Minta revisi di chat yang sama, misalnya "buat dialog shot 2 lebih santai".
+<ol start="4">
+<li>Claude akan memberi 5 bagian:
+<ul>
+<li><b>Prompt gambar kreator</b>: tempel ke ChatGPT atau Nano Banana bersama foto model. Simpan hasilnya sebagai <code>creator.png</code>.</li>
+<li><b>Shot list</b>: naskah per adegan untuk dicek dulu.</li>
+<li><b>Prompt Flow per shot</b>: tempel satu per satu di Flow, dengan <code>creator.png</code> dan foto produk sebagai ingredient.</li>
+<li><b>Briefing Agent mode</b>: untuk membuat semua shot sekaligus kalau Agent mode di Flow aktif.</li>
+<li><b>Skrip voiceover</b>: untuk dibuat suaranya di ElevenLabs.</li>
+</ul></li>
+<li>Minta revisi di chat yang sama, misalnya "buat dialog shot 2 lebih santai".</li>
+</ol>
 
 ## Pilihan angle (23)
 Testimonial · Mobil/On-the-Go · Unboxing · Lifestyle Demo · Problem-Solution · GRWM · Day in the Life · Car Talking Head · Reply to Comment · Before/After · Mirror Try-On · POV · Storytime · Walk and Talk · Podcast Clip · 3 Alasan · Mitos vs Fakta · Dulu vs Sekarang · Jangan Beli Dulu · Tips/Edukasi · Review dari Ulasan · Hot Take · Rekomendasi Kado
