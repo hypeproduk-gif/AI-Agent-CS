@@ -77,8 +77,8 @@ ol.how{margin:8px 0 0;padding-left:20px;color:var(--mut);font-size:14px}ol.how l
 <h3 class="sub3">Cara pakai</h3>
 <ol class="how">
 <li>Klik <b>Salin prompt</b>.</li>
-<li>Pilih AI yang mau dipakai, lalu klik <b>Buka</b>. Pilih salah satu saja.</li>
-<li>Di chat baru, lampirkan foto produk, tempel prompt, lalu kirim.</li>
+<li>Pilih AI yang mau dipakai (ChatGPT, Gemini, atau Claude), lalu klik <b>Buka</b>. Pilih salah satu saja.</li>
+<li>Di chat baru, lampirkan foto produk dan foto model (kalau sudah punya, hasilnya lebih bagus), tempel prompt, lalu kirim.</li>
 <li>Minta revisi langsung di chat itu kalau perlu, misalnya "ganti dialog shot 2 jadi lebih santai".</li>
 </ol>
 <div class="actions" style="margin:14px 0 10px">
@@ -164,7 +164,7 @@ Durasi per shot: ${dur} detik
 Jumlah shot: ${three?"ringkas jadi 3 shot":"ikuti struktur angle"}
 Catatan: ${v("extra")||"-"}
 
-Foto produk terlampir di pesan ini. Perhatikan warna, bentuk, dan bahannya untuk deskripsi visual di setiap prompt.`;
+Foto produk terlampir di pesan ini. Perhatikan warna, bentuk, dan bahannya untuk deskripsi visual di setiap prompt. Jika foto model (wajah kreator) juga dilampirkan, itulah model.png: sesuaikan deskripsi fisik di prompt gambar kreator dengan foto itu.`;
 }
 
 $("go").onclick=()=>{
