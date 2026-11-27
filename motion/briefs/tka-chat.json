@@ -1,0 +1,5 @@
+{ "style":"chat","palette":2,
+  "scenes":[
+  {"group":"Ortu Kelas 9B","notif":{"text":"Bu Rina: anakmu latihan TKA pakai apa?"},"messages":[{"from":"Bu Rina","text":"Bun, anakmu latihan TKA pakai apa?"},{"from":"Pak Dedi","text":"Soal gratisan di internet, tapi jawabannya nggak ada pembahasan 😅"},{"me":true,"text":"Sama, aku juga bingung ngecek benar salahnya"}]},
+  {"group":"Ortu Kelas 9B","messages":[{"from":"Bu Sari","text":"Aku pakai Bank Soal TKA SMP, 400 soal","hl":"400 soal"},{"from":"Bu Sari","text":"Langsung kelihatan benar/salah + pembahasan tiap soal"},{"me":true,"text":"Wah, bisa di HP?"},{"from":"Bu Sari","text":"Bisa, ada ringkasan kompetensi yang masih lemah juga"}]},
+  {"type":"cta","title":"Biar Bunda tahu anak sudah sampai mana","hl":"sudah sampai mana","chips":["400 soal","pembahasan","di HP"],"price":"Rp99.000","button":"Cek Kemampuan Anak"}]}

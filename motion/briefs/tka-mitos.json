@@ -1,0 +1,6 @@
+{ "style":"mitos","palette":3,
+  "scenes":[
+  {"tag":"MITOS VS FAKTA TKA","mitos":"Banyak latihan soal pasti siap TKA","fakta":"Yang penting tahu salahnya di mana","hl":"salahnya di mana"},
+  {"tag":"MITOS VS FAKTA TKA","mitos":"Soal gratis di internet sudah cukup","fakta":"Tanpa pembahasan, kesalahan yang sama terulang","hl":"terulang"},
+  {"type":"counter","value":400,"label":"soal TKA SMP + pembahasan","bar":100,"sub":"8 paket · 8 kompetensi · bisa di HP","hl":"bisa di HP"},
+  {"type":"cta","title":"Latihan yang menunjukkan salahnya","hl":"salahnya","chips":["400 soal","8 paket"],"price":"Rp99.000","button":"Cek Kemampuan Anak"}]}

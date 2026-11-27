@@ -1,0 +1,6 @@
+{ "style":"quiz","palette":0,"watermark":"Bank Soal TKA SMP",
+  "scenes":[
+  {"type":"kinetic","tag":"TKA SMP · KELAS 9","text":"Tebak dulu, Bun. Bisa jawab soal anak?","hl":"Bisa jawab"},
+  {"tag":"SOAL ASLI · MATEMATIKA","question":"−12 + 8 × (−3) = ?","options":["−36","12","−60","36"],"answer":0,"explain":"Kali dulu: 8 × (−3) = −24, lalu −12 − 24 = −36"},
+  {"tag":"PENALARAN","question":"Banyak yang salah di sini. Kenapa?","hl":"salah","options":["Lupa urutan operasi","Salah tanda negatif","Dua-duanya"],"answer":2,"explain":"Pembahasan tiap soal menunjukkan salahnya di mana"},
+  {"type":"cta","title":"Latihan 400 soal TKA, ada pembahasannya","hl":"ada pembahasannya","chips":["400 soal","8 paket","8 kompetensi"],"price":"Rp99.000","button":"Cek Kemampuan Anak"}]}
